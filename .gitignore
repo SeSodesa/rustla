@@ -13,6 +13,7 @@
 
 # Whitelist specific files
 !README.md
+!Cargo.toml
 
 # Blacklist specific files
 
