@@ -1,0 +1,18 @@
+# Blacklist everything
+*
+
+# Whitelist this file
+!.gitignore
+
+# Whitelist directories
+!*/
+
+# Whitelist file types.
+!*.rs
+!*.pdf
+
+# Whitelist specific files
+!README.md
+
+# Blacklist specific files
+
