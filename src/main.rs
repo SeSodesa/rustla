@@ -3,7 +3,8 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
-use std::{env, process, fs};
+use std::{env, process, fs, path, io};
+use path_clean::PathClean;
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -23,6 +24,16 @@ fn main() {
     process::exit(1)
   }
 
+  let path: path::PathBuf = match absolute_path(&args[1]) {
+    Ok(p) => p,
+    Err(e) => {
+      println!("Could not resolve file path:\n{}",e);
+      process::exit(1);
+    }
+  };
+
+  println!("{:?}", path);
+
   let arg: &String = &args[1];
   let md: fs::Metadata = match fs::metadata(&arg) {
     Ok(meta) => meta,
@@ -31,6 +42,7 @@ fn main() {
       process::exit(1);
     }
   };
+
   if md.is_dir() {
     println!("{:?} is a directory", args[1]);
 
@@ -39,6 +51,22 @@ fn main() {
   }
 
 }
+
+
+pub fn absolute_path<P>(path: P) -> io::Result<path::PathBuf>
+where
+    P: AsRef<path::Path>,
+{
+    let path: &path::Path = path.as_ref();
+    let absolute_path = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        env::current_dir()?.join(path)
+    }.clean();
+
+    Ok(absolute_path)
+}
+
 
 /// # Copyright
 /// Prints out copyright information of ruSTLa
