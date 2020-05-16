@@ -32,10 +32,10 @@ fn main() {
     }
   };
   if md.is_dir() {
-    println!("{} is a directory", args[1]);
+    println!("{:?} is a directory", args[1]);
 
   } else if md.is_file(){
-    println!("{} is a file", args[1]);
+    println!("{:?} is a file", args[1]);
   }
 
 }
