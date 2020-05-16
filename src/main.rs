@@ -3,22 +3,46 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
+use std::{env, process};
+use std::fs;
+
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
 const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
 
+/// Program starting point
 fn main() {
     
   copyright();
-  usage();
+  
+  let args: Vec<String> = env::args().collect();
+
+  println!("{:?}", args); // Debug with :?
+
+  if args.len() != 2 {
+    usage();
+    process::exit(1)
+  }
+
+  let md: fs::Metadata = fs::metadata(&args[1]).unwrap();
+  if md.is_dir() {
+    println!("{} is a directory", args[1]);
+  } else {
+    println!("{} is a file", args[1]);
+  }
 
 }
 
+/// # Copyright
+/// Prints out copyright information of ruSTLa
 fn copyright() {
-  println!("\nThis is ruSTLa, version {}\n", VERSION);
+  println!("\nThis is ruSTLa, version {}", VERSION);
   println!("©{}, {}\n", AUTHOR_NAME, AUTHOR_EMAIL);
 }
 
+/// # Usage
+/// A function that prints the usage instructions
+/// for ruSTLa
 fn usage() {
   println!("Instructions");
   println!("============");
@@ -26,6 +50,6 @@ fn usage() {
   println!("point ruSTLa to a directory that contains");
   println!("and index.rst file with");
   println!("\n  $ rustla <dir>\n");
-  println!("A single file cab be transpiled with");
-  println!("  $ rustla <file>");
+  println!("A single file can be transpiled with");
+  println!("  $ rustla <file>\n");
 }
