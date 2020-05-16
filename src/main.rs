@@ -3,8 +3,7 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
-use std::{env, process, fs, path, io};
-use path_clean::PathClean;
+use std::{env, process, fs, path};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -24,7 +23,7 @@ fn main() {
     process::exit(1)
   }
 
-  let path: path::PathBuf = match absolute_path(&args[1]) {
+  let path: path::PathBuf = match fs::canonicalize(&args[1]) {
     Ok(p) => p,
     Err(e) => {
       println!("Could not resolve file path:\n{}",e);
@@ -34,8 +33,7 @@ fn main() {
 
   println!("{:?}", path);
 
-  let arg: &String = &args[1];
-  let md: fs::Metadata = match fs::metadata(&arg) {
+  let md: fs::Metadata = match fs::metadata(&path) {
     Ok(meta) => meta,
     Err(e) => {
       println!("\nCannot determine the type of input:\n{}", e);
@@ -48,23 +46,9 @@ fn main() {
 
   } else if md.is_file(){
     println!("{:?} is a file", args[1]);
+
   }
 
-}
-
-
-pub fn absolute_path<P>(path: P) -> io::Result<path::PathBuf>
-where
-    P: AsRef<path::Path>,
-{
-    let path: &path::Path = path.as_ref();
-    let absolute_path = if path.is_absolute() {
-        path.to_path_buf()
-    } else {
-        env::current_dir()?.join(path)
-    }.clean();
-
-    Ok(absolute_path)
 }
 
 

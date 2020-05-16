@@ -14,4 +14,3 @@ path= "src/main.rs"
 
 [dependencies]
 regex = "1"
-path-clean = "0.1.0"
