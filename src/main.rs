@@ -9,6 +9,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
 const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
 
+
 /// Program starting point
 fn main() {
     
@@ -31,8 +32,6 @@ fn main() {
     }
   };
 
-  println!("{:?}", path);
-
   let md: fs::Metadata = match fs::metadata(&path) {
     Ok(meta) => meta,
     Err(e) => {
@@ -42,13 +41,43 @@ fn main() {
   };
 
   if md.is_dir() {
-    println!("{:?} is a directory", args[1]);
+    println!("{:?} is a directory", path);
+
 
   } else if md.is_file(){
-    println!("{:?} is a file", args[1]);
+    println!("{:?} is a file.", path);
+    println!("Opening it...");
+    let fc: String = match fs::read_to_string(path) {
+      Ok(a) => a,
+      Err(b) => {
+        println!("Could not read file:\n{}", b);
+        process::exit(1);
+      }
+    };
+    let htt: bool = has_toctree(&fc);
 
+    if htt {
+      // create document tree structure
+    } else {
+      // Attempt lexing
+    }
+    
   }
+}
 
+
+/// # `has_toctree`
+/// Checks the file contents `fc`
+/// for the substring `.. toctree::`
+fn has_toctree (fc: &String) -> bool{
+  println!("Checking for toctree...");
+  if fc.contains(".. toctree::") {
+    println!("Toctree found...");
+    true
+  } else {
+    println!("No toctree to be seen...");
+    false
+  }
 }
 
 
