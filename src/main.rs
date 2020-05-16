@@ -23,11 +23,18 @@ fn main() {
     process::exit(1)
   }
 
-  let md: fs::Metadata = fs::metadata(&args[1]).unwrap();
+  let arg: &String = &args[1];
+  let md: fs::Metadata = match fs::metadata(&arg) {
+    Ok(meta) => meta,
+    Err(e) => {
+      println!("\nCannot determine the type of input:\n{}", e);
+      process::exit(1);
+    }
+  };
   if md.is_dir() {
     println!("{} is a directory", args[1]);
 
-  } else {
+  } else if md.is_file(){
     println!("{} is a file", args[1]);
   }
 
