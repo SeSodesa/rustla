@@ -3,8 +3,7 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
-use std::{env, process};
-use std::fs;
+use std::{env, process, fs};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -27,6 +26,7 @@ fn main() {
   let md: fs::Metadata = fs::metadata(&args[1]).unwrap();
   if md.is_dir() {
     println!("{} is a directory", args[1]);
+
   } else {
     println!("{} is a file", args[1]);
   }
