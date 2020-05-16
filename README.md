@@ -1,4 +1,4 @@
-# ruSTLa - rSTLA in Rust
+# ruSTLa - rSTLa in Rust
 
 ruSTLa is an implementation of the rSTLa
 (reStructuredText to $`LaTeX`$) transpiler,
