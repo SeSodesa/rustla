@@ -1,6 +1,7 @@
 /// This is the lexer module of ruSTLa
 
 pub mod token;
+mod tests;
 
 use std::fmt;
 use crate::lexer::token::Token;
@@ -29,22 +30,6 @@ impl Lexer {
       source: source,
       tokens: Vec::new(),
     }
-  }
-
-}
-
-#[cfg(test)]
-/// Tests for the lexer module
-mod tests {
-
-  use super::*;
-
-  #[test]
-  /// A test for the Lexer constructor
-  fn new() {
-    let ls = String::from("Aaa!");
-    let lex = Lexer::new(ls);
-    assert_eq!(lex.tokens, Vec::new())
   }
 
 }

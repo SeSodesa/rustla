@@ -1,6 +1,8 @@
 /// This is the token module used by
 /// the ruSTLa Lexer and Parser
 
+mod tests;
+
 use std::fmt;
 
 #[derive(PartialEq)]
@@ -50,19 +52,3 @@ pub enum TokenType{
 
   //
 }
-
-#[cfg(test)]
-/// Tests for `Token` methods
-mod tests {
-
-  use super::*;
-
-  #[test]
-  /// Tests the constructor
-  fn new(){
-    let t = Token::new(TokenType::Test, String::from("test"), 3);
-    assert_eq!(t.t_type, TokenType::Test);
-  }
-
-}
-
