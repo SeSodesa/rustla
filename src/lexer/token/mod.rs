@@ -1,8 +1,7 @@
 /// This is the token module used by
 /// the ruSTLa Lexer and Parser
-/// 
+
 use std::fmt;
-use std::cmp;
 
 #[derive(PartialEq)]
 /// Token is a token of type `TokenType`
@@ -37,7 +36,19 @@ impl Token {
 #[derive(Debug, PartialEq)]
 /// TokenType lists the possible `Token` types
 pub enum TokenType{
-  Test
+  // For testing
+  Test,
+
+  // Closing symbols
+  LParenth, RSquareBrack, RWavyBrack, RAngleBrack,
+  RSingleQuot, RDoubleQuot, RDoubleAngleBrack,
+  Exclamation, Question,
+
+  // Unicode delimiters
+  Hyphen, NonBreakingHyphen, FigureDash, EnDash,
+  EmDash, NonBreakingSpace,
+
+  //
 }
 
 #[cfg(test)]
