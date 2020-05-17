@@ -2,7 +2,7 @@
 /// the ruSTLa lexer and Parser
 pub mod token {
 
-  use std::ftm;
+  use std::fmt;
 
   pub struct Token {
 
