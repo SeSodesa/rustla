@@ -10,7 +10,7 @@ use std::fmt;
 pub struct Token {
   t_type: TokenType,
   lexeme: String,
-  line: usize,
+  row: usize,
 }
 
 
@@ -19,18 +19,18 @@ impl fmt::Debug for Token {
     f.debug_struct("Token")
       .field("t_type", &self.t_type)
       .field("t_type", &self.lexeme)
-      .field("t_type", &self.line)
+      .field("t_type", &self.row)
       .finish()
   }
 }
 
 /// Methods for the `Token` type
 impl Token {
-  pub fn new(t_type: TokenType, lexeme: String, line: usize) -> Token {
+  pub fn new(t_type: TokenType, lexeme: String, row: usize) -> Token {
     Token{
       t_type: t_type,
       lexeme: lexeme,
-      line: line
+      row: row,
     }
   }
 }
@@ -82,4 +82,7 @@ pub enum TokenType{
   Hyperlink,
   Interpreted,
   Literal,
+
+  // End of file
+  EOF,
 }
