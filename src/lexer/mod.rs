@@ -5,17 +5,37 @@ pub mod token;
 use std::fmt;
 use crate::lexer::token::Token;
 
+pub struct Lexer {
+  source: String,
+  tokens: Vec<Token>
+}
 
-  static LC: usize = 0;
-  pub struct Lexer {
-    id: usize,
-    source: String,
-    tokens: Vec<Token>
+impl fmt::Debug for Lexer {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      f.debug_struct("Lexer")
+        .field("source", &self.source)
+        .field("id", &self.tokens)
+        .finish()
   }
+}
 
-  impl fmt::Debug for Lexer {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Lexer")
-         .finish()
+/// Lexer type methods
+impl Lexer {
+
+  /// Lexer constructor
+  pub fn new(source: String) -> Lexer {
+    Lexer {
+      source: source,
+      tokens: Vec::new(),
     }
   }
+
+}
+
+#[cfg(test)]
+/// Tests for the lexer module
+mod tests {
+
+  use super::*;
+
+}
