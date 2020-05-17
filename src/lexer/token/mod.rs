@@ -42,7 +42,7 @@ pub enum TokenType{
   Test,
 
   // Closing symbols
-  LParenth, RSquareBrack, RWavyBrack, RAngleBrack,
+  RParenth, RSquareBrack, RWavyBrack, RAngleBrack,
   RSingleQuot, RDoubleQuot, RDoubleAngleBrack,
   Exclamation, Question,
 
@@ -50,5 +50,36 @@ pub enum TokenType{
   Hyphen, NonBreakingHyphen, FigureDash, EnDash,
   EmDash, NonBreakingSpace,
 
-  //
+  // Document root elements
+  OverlinedHeading,
+  Heading,
+  UnnumberedList,
+  NumberedList,
+  NoBOLNumberedList, // Watch out the beginning of line
+  DefinitionList,
+  FieldListMarker,
+  LineBlock,
+  SourceDirective,
+  Directive,
+  ReferenceTarget,
+  FootnoteCitationTarget, // Lexically the same
+  SubstitutionDefinition,
+  Comment,
+  CodeBlock,
+
+  // Inline formatting
+  Escape,
+  Code,
+  InlineReference,
+  TargetReference,
+  SubstitutionReference,
+  Role,
+  RoleContent, // content second
+  ContentRole, // content first
+  StrongEmphasis,
+  Emphasis,
+  FootnoteOrCitation,
+  Hyperlink,
+  Interpreted,
+  Literal,
 }
