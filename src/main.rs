@@ -3,6 +3,8 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
+// mod lexer;
+
 use std::{env, process, fs, path};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
