@@ -8,6 +8,7 @@ use std::{env, process, fs, path};
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
 const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
+const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
 
 /// Program starting point
@@ -16,8 +17,6 @@ fn main() {
   copyright();
   
   let args: Vec<String> = env::args().collect();
-
-  println!("{:?}", args); // Debug with :?
 
   if args.len() != 2 {
     usage();
@@ -42,11 +41,13 @@ fn main() {
 
   if md.is_dir() {
     println!("{:?} is a directory", path);
+    println!("At this stage, ruSTLa is designed to work with");
+    println!("files only. Please enter a valid rST file.");
+    process::exit(1);
 
-
-  } else if md.is_file(){
+  } else if md.is_file() {
     println!("{:?} is a file.", path);
-    println!("Opening it...");
+    
     let fc: String = match fs::read_to_string(path) {
       Ok(a) => a,
       Err(b) => {
@@ -57,9 +58,10 @@ fn main() {
     let htt: bool = has_toctree(&fc);
 
     if htt {
-      // create document tree structure
+      // Create document tree structure,
+      // then transpile the files
     } else {
-      // Attempt lexing
+      // Attempt transpiling a single file
     }
     
   }
@@ -85,7 +87,7 @@ fn has_toctree (fc: &String) -> bool{
 /// Prints out copyright information of ruSTLa
 fn copyright() {
   println!("\nThis is ruSTLa, version {}", VERSION);
-  println!("©{}, {}\n", AUTHOR_NAME, AUTHOR_EMAIL);
+  println!("©{} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
 }
 
 /// # Usage
@@ -94,10 +96,9 @@ fn copyright() {
 fn usage() {
   println!("Instructions");
   println!("============");
-  println!("In order to transpile a set of documents");
-  println!("point ruSTLa to a directory that contains");
-  println!("and index.rst file with");
-  println!("\n  $ rustla <dir>\n");
-  println!("A single file can be transpiled with");
-  println!("  $ rustla <file>\n");
+  println!("In order to transpile a document,");
+  println!("point ruSTLa to an rST file with");
+  println!("\n  $ rustla path/to/file.rst\n");
+  println!("Capabilities to transpile an entire");
+  println!("toctree will be added later.");
 }
