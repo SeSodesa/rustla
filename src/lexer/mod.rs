@@ -10,6 +10,10 @@ use crate::lexer::token::Token;
 pub struct Lexer {
   source: String,
   tokens: Vec<Token>,
+  lexeme_start: usize,
+  lexeme_current: usize,
+  row: usize,
+  col: usize,
 }
 
 impl fmt::Debug for Lexer {
@@ -29,6 +33,10 @@ impl Lexer {
     Lexer {
       source: source,
       tokens: Vec::new(),
+      lexeme_start: 0,
+      lexeme_current: 0,
+      row:0,
+      col: 0,
     }
   }
 
