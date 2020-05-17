@@ -8,7 +8,7 @@ use crate::lexer::token::Token;
 #[derive(PartialEq)]
 pub struct Lexer {
   source: String,
-  tokens: Vec<Token>
+  tokens: Vec<Token>,
 }
 
 impl fmt::Debug for Lexer {
