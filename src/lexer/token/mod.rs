@@ -46,6 +46,7 @@ mod tests {
 
   use super::*;
 
+  #[test]
   /// Tests the constructor
   fn new(){
     let t = Token::new(TokenType::Test, String::from("test"), 3);

@@ -5,6 +5,7 @@ pub mod token;
 use std::fmt;
 use crate::lexer::token::Token;
 
+#[derive(PartialEq)]
 pub struct Lexer {
   source: String,
   tokens: Vec<Token>
@@ -37,5 +38,13 @@ impl Lexer {
 mod tests {
 
   use super::*;
+
+  #[test]
+  /// A test for the Lexer constructor
+  fn new() {
+    let ls = String::from("Aaa!");
+    let lex = Lexer::new(ls);
+    assert_eq!(lex.tokens, Vec::new())
+  }
 
 }
