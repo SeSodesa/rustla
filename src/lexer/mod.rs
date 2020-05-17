@@ -1,4 +1,4 @@
-/// This is the lexer module of ruSTLa
+/// This is the `lexer` module of ruSTLa
 
 pub mod token;
 mod tests;
@@ -28,7 +28,7 @@ impl fmt::Debug for Lexer {
 /// Lexer type methods
 impl Lexer {
 
-  /// Lexer constructor
+  /// ### Lexer constructor
   pub fn new(source: String) -> Lexer {
     Lexer {
       source: source,
@@ -38,6 +38,14 @@ impl Lexer {
       row:0,
       col: 0,
     }
+  }
+
+  /// ### is_at_eof
+  /// A function that checks whether all
+  /// of the characters in the current file
+  /// have been consumed.
+  fn is_at_eof(&self) -> bool {
+    self.lexeme_current >= self.source.chars().count()
   }
 
 }
