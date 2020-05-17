@@ -3,7 +3,7 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
-// mod lexer;
+pub mod lexer;
 
 use std::{env, process, fs, path};
 

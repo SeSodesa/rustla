@@ -1,15 +1,16 @@
 /// This is the lexer module of ruSTLa
-pub mod lexer {
 
-  use std::fmt;
+pub mod token;
 
-  // use crate::token::Token;
+use std::fmt;
+use crate::lexer::token::Token;
+
 
   static LC: usize = 0;
   pub struct Lexer {
     id: usize,
     source: String,
-    //tokens: Vec<Token>
+    tokens: Vec<Token>
   }
 
   impl fmt::Debug for Lexer {
@@ -18,5 +19,3 @@ pub mod lexer {
          .finish()
     }
   }
-
-}
