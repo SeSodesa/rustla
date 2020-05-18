@@ -5,21 +5,22 @@
 use std::{fmt};
 
 #[derive(Debug)]
-pub struct TokenizeError {
-  row: usize,
-  col: usize,
+pub struct TokenizeError <'a> {
+  row: &'a usize,
+  col: &'a usize,
 }
 
-impl TokenizeError {
-  fn new(row: usize, col: usize) -> TokenizeError {
+impl<'a> TokenizeError<'a>  {
+  pub fn new(row: &'a usize, col: &'a usize) -> TokenizeError<'a> {
     TokenizeError{
+       // Borrows need to be dereferenced with *
       row: row,
       col: col
     }
   }
 }
 
-impl fmt::Display for TokenizeError {
+impl fmt::Display for TokenizeError <'a> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "TokenizeError: \
     no matching lexeme for <{}, {}>", self.row, self.col)
