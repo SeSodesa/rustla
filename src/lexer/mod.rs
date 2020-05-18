@@ -2,9 +2,11 @@
 
 pub mod token;
 mod tests;
+pub mod error;
 
 use std::fmt;
 use crate::lexer::token::{Token, TokenType};
+use crate::lexer::error::TokenizeError;
 
 #[derive(PartialEq)]
 pub struct Lexer {
@@ -62,7 +64,16 @@ impl Lexer {
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
   /// core of the lexer itself.
-  fn scan_token(&mut self) {
+  fn scan_token(&mut self) -> Result<Token, TokenizeError>{
+    
+    let c: char = match Self::advance(self) {
+      Some(c) => c,
+      None => return Err(TokenizeError::new(&self.row, &self.col))
+    };
+
+    match c {
+      _ => Err(TokenizeError::new(&self.row, &self.col))
+    }
 
   }
 
@@ -70,17 +81,13 @@ impl Lexer {
   /// Reads the next character
   /// (unicode scalar, not grapheme cluster!)
   /// in the source.
-  fn advance(&mut self) -> Option<String>{
+  fn advance(&mut self) -> Option<char>{
 
     self.lookahead += 1;
 
-    println!("Lookahead is at {:?}", self.lookahead);
-
-    let c: String = self.source
+    let c: char = self.source
     .chars()
-    .nth(self.lookahead - 1)?
-    .to_string()
-    .into();
+    .nth(self.lookahead - 1)?;
 
     Some(c)
   }
