@@ -22,6 +22,6 @@ impl<'a> TokenizeError<'a>  {
 impl<'a> fmt::Display for TokenizeError <'a> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "TokenizeError: \
-    no matching lexeme for <{}, {}>", self.row, self.col)
+    no matching lexeme for <row, col> = <{}, {}>", self.row, self.col)
   }
 }
