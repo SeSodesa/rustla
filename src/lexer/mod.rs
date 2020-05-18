@@ -70,8 +70,19 @@ impl Lexer {
   /// Reads the next character
   /// (unicode scalar, not grapheme cluster!)
   /// in the source.
-  fn advance(&mut self) {
+  fn advance(&mut self) -> Option<String>{
 
+    self.lookahead += 1;
+
+    println!("Lookahead is at {:?}", self.lookahead);
+
+    let c: String = self.source
+    .chars()
+    .nth(self.lookahead - 1)?
+    .to_string()
+    .into();
+
+    Some(c)
   }
 
 
