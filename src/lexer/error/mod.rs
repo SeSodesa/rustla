@@ -13,7 +13,6 @@ pub struct TokenizeError <'a> {
 impl<'a> TokenizeError<'a>  {
   pub fn new(row: &'a usize, col: &'a usize) -> TokenizeError<'a> {
     TokenizeError{
-       // Borrows need to be dereferenced with *
       row: row,
       col: col
     }
