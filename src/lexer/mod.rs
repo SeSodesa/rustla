@@ -54,9 +54,12 @@ impl Lexer {
   fn lex(mut self) -> Result<Vec<Token>, LexError> {
     while ! self.is_at_eof() {
       self.lexeme_start = self.lookahead;
-      let tok = match Lexer::scan_token(&mut self) {
+      let tok = match self.scan_token() {
         Ok(tok) => tok,
-        Err(e) => return Err(LexError::new(&e.row, &e.col))
+        Err(e) => {
+          eprintln!("A TokenizeError occurred on row {}, col {}", e.row, e.col);
+          continue
+        }
       };
       self.tokens.push(tok);
     }
@@ -105,7 +108,8 @@ impl Lexer {
 
   /// ### add_token
   /// Pushes a token from the lexeme between
-  /// `lexeme_start` and `lookahead`
+  /// `lexeme_start` and `lookahead` into
+  /// Lexer.tokens
   fn add_token (&mut self, token_type: TokenType) {
     let s = self.source.to_owned();
     let slice = &s[(self.lexeme_start)..self.lookahead];
