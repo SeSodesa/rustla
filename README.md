@@ -25,3 +25,4 @@ src
 
 6 directories, 7 files
 ```
+If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`).
