@@ -57,7 +57,7 @@ impl Lexer {
       let tok = match self.scan_token() {
         Ok(tok) => tok,
         Err(e) => {
-          eprintln!("A TokenizeError occurred on row {}, col {}", e.row, e.col);
+          eprintln!("TokenizeError on row {}, col {}", e.row, e.col);
           continue
         }
       };
