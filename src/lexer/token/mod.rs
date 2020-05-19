@@ -8,9 +8,9 @@ use std::fmt;
 #[derive(PartialEq)]
 /// Token is a token of type `TokenType`
 pub struct Token {
-  t_type: TokenType,
-  lexeme: String,
-  row: usize,
+  pub t_type: TokenType,
+  pub lexeme: String,
+  pub row: usize,
 }
 
 
