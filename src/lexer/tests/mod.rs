@@ -67,13 +67,13 @@ fn advance_char_twice() {
 /// Tests the addition of a token to
 /// the Lexer field `tokens`
 fn add_token() {
-  let source = String::from("abcdefg");
+  let source = String::from("abcöäfg");
   let mut lex = Lexer::new(source);
   lex.lookahead += lex.source.len() - 1;
   lex.add_token(TokenType::Test);
   assert_eq!(
     lex.tokens.first().unwrap().lexeme,
-    "abcdef"
+    "abcöäf"
   );
 }
 
