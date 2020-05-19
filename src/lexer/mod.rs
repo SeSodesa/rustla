@@ -27,6 +27,12 @@ impl fmt::Debug for Lexer {
   }
 }
 
+impl fmt::Display for Lexer {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Lexer location: row = {}, col = {}", self.row, self.col)
+  }
+}
+
 /// Lexer type methods
 impl Lexer {
 
@@ -100,7 +106,7 @@ impl Lexer {
   /// ### add_token
   /// Pushes a token from the lexeme between
   /// `lexeme_start` and `lookahead`
-  fn add_token (&mut self, token_type: TokenType, lexeme: String) {
+  fn add_token (&mut self, token_type: TokenType) {
     let s = self.source.to_owned();
     let slice = &s[(self.lexeme_start)..self.lookahead];
     self.tokens.push(
