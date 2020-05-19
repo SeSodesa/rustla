@@ -13,7 +13,7 @@ fn new() {
   let col: usize = 2;
   let tok_err
     = TokenizeError::new(&row, &col);
-  assert_eq!(tok_err.row, &row);
+  assert_eq!(tok_err.row, row);
 }
 
 #[test]
