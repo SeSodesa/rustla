@@ -33,10 +33,20 @@ fn scan_token() {
 #[test]
 /// Test the advancement of the
 /// "lexing buffer"
-fn advance() {
+fn advance_lookahead() {
   let mut lex = Lexer::new(String::from(""));
   lex.advance();
   assert_eq!(lex.lookahead, 1);
+}
+
+
+#[test]
+/// Test the advancement of the
+/// "lexing buffer"
+fn advance_char() {
+  let mut lex = Lexer::new(String::from("abc"));
+  let c:char = lex.advance().unwrap();
+  assert_eq!(c,'a');
 }
 
 
