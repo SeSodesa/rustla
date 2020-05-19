@@ -80,5 +80,10 @@ fn add_token() {
 #[test]
 /// A test for finding the EOF
 fn is_at_eof() {
-  panic!();
+  let source = String::from("a");
+  let mut lex = Lexer::new(source);
+  lex.lookahead +=2;
+  if !lex.is_at_eof() {
+    panic!();
+  }
 }
