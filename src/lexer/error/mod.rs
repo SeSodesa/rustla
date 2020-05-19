@@ -2,6 +2,8 @@
 /// Implements errors for each lexing function
 /// (where necessary).
 
+mod tests;
+
 use std::{fmt};
 
 #[derive(Debug)]
