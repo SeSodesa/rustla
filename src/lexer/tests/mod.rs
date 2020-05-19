@@ -51,6 +51,18 @@ fn advance_char() {
 
 
 #[test]
+/// Test the advancement of the
+/// "lexing buffer"
+fn advance_char_twice() {
+  let mut lex = Lexer::new(String::from("abc"));
+  lex.advance();
+  let c:char = lex.advance().unwrap();
+  assert_eq!(c,'b');
+  assert_eq!(lex.lookahead, 2);
+}
+
+
+#[test]
 /// Tests the addition of a token to
 /// the Lexer field `tokens`
 fn add_token() {
