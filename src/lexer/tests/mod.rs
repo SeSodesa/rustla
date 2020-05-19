@@ -34,7 +34,9 @@ fn scan_token() {
 /// Test the advancement of the
 /// "lexing buffer"
 fn advance() {
-  panic!();
+  let mut lex = Lexer::new(String::from(""));
+  lex.advance();
+  assert_eq!(lex.lookahead, 1);
 }
 
 
