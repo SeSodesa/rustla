@@ -100,8 +100,16 @@ impl Lexer {
   /// ### add_token
   /// Pushes a token from the lexeme between
   /// `lexeme_start` and `lookahead`
-  fn add_token () {
-
+  fn add_token (&mut self, token_type: TokenType, lexeme: String) {
+    let s = self.source.to_owned();
+    let slice = &s[(self.lexeme_start)..self.lookahead];
+    self.tokens.push(
+      Token{
+        t_type: token_type,
+        lexeme: String::from(slice),
+        row: self.row,
+      }
+    );
   }
 
   /// ### is_at_eof
