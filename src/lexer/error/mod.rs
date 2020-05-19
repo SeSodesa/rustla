@@ -17,7 +17,7 @@ pub struct LexError {
   col: usize,
 }
 
-impl<'t> TokenizeError  {
+impl TokenizeError  {
   pub fn new(row: &usize, col: &usize) -> TokenizeError {
     TokenizeError{
       row: row.clone(),
@@ -26,7 +26,7 @@ impl<'t> TokenizeError  {
   }
 }
 
-impl<'a> fmt::Display for TokenizeError {
+impl fmt::Display for TokenizeError {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "TokenizeError: \
     no matching lexeme for <row, col> = <{}, {}>", self.row, self.col)
@@ -34,8 +34,8 @@ impl<'a> fmt::Display for TokenizeError {
 }
 
 
-impl<'a> LexError  {
-  pub fn new(row: &'a usize, col: &'a usize) -> LexError {
+impl LexError  {
+  pub fn new(row: &usize, col: &usize) -> LexError {
     LexError{
       row: row.clone(),
       col: col.clone(),
@@ -44,7 +44,7 @@ impl<'a> LexError  {
 }
 
 
-impl<'a> fmt::Display for LexError {
+impl fmt::Display for LexError {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "LexError: \
     something went wrong because of <row, col> = <{}, {}>", self.row, self.col)
