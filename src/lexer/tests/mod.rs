@@ -44,9 +44,9 @@ fn advance_lookahead() {
 /// Test the advancement of the
 /// "lexing buffer"
 fn advance_char() {
-  let mut lex = Lexer::new(String::from("abc"));
+  let mut lex = Lexer::new(String::from("äöø"));
   let c:char = lex.advance().unwrap();
-  assert_eq!(c,'a');
+  assert_eq!(c,'ä');
 }
 
 
@@ -54,10 +54,11 @@ fn advance_char() {
 /// Test the advancement of the
 /// "lexing buffer"
 fn advance_char_twice() {
-  let mut lex = Lexer::new(String::from("abc"));
-  lex.advance();
-  let c:char = lex.advance().unwrap();
-  assert_eq!(c,'b');
+  let mut lex = Lexer::new(String::from("åø"));
+  let mut c:char = lex.advance().unwrap();
+  assert_eq!(c,'å');
+  c = lex.advance().unwrap();
+  assert_eq!(c,'ø');
   assert_eq!(lex.lookahead, 2);
 }
 
