@@ -18,7 +18,7 @@ fn new() {
 
 #[test]
 /// Tests the scanning of the entire source
-fn scan_tokens() {
+fn lex() {
   panic!();
 }
 
