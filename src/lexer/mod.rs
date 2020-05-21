@@ -12,6 +12,7 @@ use crate::lexer::error::{TokenizeError, LexError};
 pub struct Lexer {
   source: String,
   tokens: Vec<Token>,
+  buffer: String,
   lexeme_start: usize,
   lookahead: usize,
   row: usize,
@@ -21,8 +22,8 @@ pub struct Lexer {
 impl fmt::Debug for Lexer {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
-        .field("source", &self.source)
-        .field("id", &self.tokens)
+        .field("lexeme_start", &self.source)
+        .field("buffer", &self.buffer)
         .finish()
   }
 }
@@ -41,6 +42,7 @@ impl Lexer {
     Lexer {
       source: source,
       tokens: Vec::new(),
+      buffer: String::with_capacity(4096),
       lexeme_start: 0,
       lookahead: 0,
       row:0,
