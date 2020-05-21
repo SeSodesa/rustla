@@ -1,4 +1,5 @@
 /// This module contains the regexes used
-/// by the Lexer, wrapped in a function
+/// by the Lexer.
 
 pub mod titles;
+pub mod lists;
