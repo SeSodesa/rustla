@@ -83,7 +83,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_EQUALS: Regex
     = Regex::new(
       format!(
-        r"{}\n{}[ \t]*\n{}\n",
+        r"(?m)^{}\n{}[ \t]*\n{}\n",
         TITLE_LINE_EQUALS, ANY_TITLE_CHARS, TITLE_LINE_EQUALS
       ).as_str()
     ).unwrap();
@@ -92,7 +92,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_DASH: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_DASH, ANY_TITLE_CHARS, TITLE_LINE_DASH
     ).as_str()
   ).unwrap();
@@ -101,7 +101,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_BACKTICK: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_BACKTICK, ANY_TITLE_CHARS, TITLE_LINE_BACKTICK
     ).as_str()
   ).unwrap();
@@ -110,7 +110,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_COLON: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_COLON, ANY_TITLE_CHARS, TITLE_LINE_COLON
     ).as_str()
   ).unwrap();
@@ -119,7 +119,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_SQUOTE: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_SQUOTE, ANY_TITLE_CHARS, TITLE_LINE_SQUOTE
     ).as_str()
   ).unwrap();
@@ -128,7 +128,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_DQUOTE: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_DQUOTE, ANY_TITLE_CHARS, TITLE_LINE_DQUOTE
     ).as_str()
   ).unwrap();
@@ -137,7 +137,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_TILDE: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_TILDE, ANY_TITLE_CHARS, TITLE_LINE_TILDE
     ).as_str()
   ).unwrap();
@@ -146,7 +146,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_CARET: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_CARET, ANY_TITLE_CHARS, TITLE_LINE_CARET
     ).as_str()
   ).unwrap();
@@ -155,7 +155,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_UNDERSCORE: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_UNDERSCORE, ANY_TITLE_CHARS, TITLE_LINE_UNDERSCORE
     ).as_str()
   ).unwrap();
@@ -164,7 +164,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_ASTERISK: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_ASTERISK, ANY_TITLE_CHARS, TITLE_LINE_ASTERISK
     ).as_str()
   ).unwrap();
@@ -173,7 +173,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_PLUS: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_PLUS, ANY_TITLE_CHARS, TITLE_LINE_PLUS
     ).as_str()
   ).unwrap();
@@ -182,7 +182,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_HASH: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_HASH, ANY_TITLE_CHARS, TITLE_LINE_HASH
     ).as_str()
   ).unwrap();
@@ -191,7 +191,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_LESS: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_LESS, ANY_TITLE_CHARS, TITLE_LINE_LESS
     ).as_str()
   ).unwrap();
@@ -200,7 +200,7 @@ lazy_static! {
   static ref OVERLINED_TITLE_MORE: Regex
   = Regex::new(
     format!(
-      r"{}\n{}[ \t]*\n{}\n",
+      r"(?m)^{}\n{}[ \t]*\n{}\n",
       TITLE_LINE_MORE, ANY_TITLE_CHARS, TITLE_LINE_MORE
     ).as_str()
   ).unwrap();
@@ -213,7 +213,7 @@ lazy_static! {
     static ref TITLE_EQUALS: Regex
     = Regex::new(
       format!(
-        r"{}[ \t]*\n{}\n",
+        r"(?m)^{}[ \t]*\n{}\n",
         ANY_TITLE_CHARS, TITLE_LINE_EQUALS
       ).as_str()
     ).unwrap();
@@ -222,7 +222,7 @@ lazy_static! {
   static ref TITLE_DASH: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_DASH
     ).as_str()
   ).unwrap();
@@ -231,7 +231,7 @@ lazy_static! {
   static ref TITLE_BACKTICK: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_BACKTICK
     ).as_str()
   ).unwrap();
@@ -240,7 +240,7 @@ lazy_static! {
   static ref TITLE_COLON: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_COLON
     ).as_str()
   ).unwrap();
@@ -249,7 +249,7 @@ lazy_static! {
   static ref TITLE_SQUOTE: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_SQUOTE
     ).as_str()
   ).unwrap();
@@ -258,7 +258,7 @@ lazy_static! {
   static ref TITLE_DQUOTE: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_DQUOTE
     ).as_str()
   ).unwrap();
@@ -267,7 +267,7 @@ lazy_static! {
   static ref TITLE_TILDE: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_TILDE
     ).as_str()
   ).unwrap();
@@ -276,7 +276,7 @@ lazy_static! {
   static ref TITLE_CARET: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_CARET
     ).as_str()
   ).unwrap();
@@ -285,7 +285,7 @@ lazy_static! {
   static ref TITLE_UNDERSCORE: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_UNDERSCORE
     ).as_str()
   ).unwrap();
@@ -294,7 +294,7 @@ lazy_static! {
   static ref TITLE_ASTERISK: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_ASTERISK
     ).as_str()
   ).unwrap();
@@ -303,7 +303,7 @@ lazy_static! {
   static ref TITLE_PLUS: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_PLUS
     ).as_str()
   ).unwrap();
@@ -312,7 +312,7 @@ lazy_static! {
   static ref TITLE_HASH: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_HASH
     ).as_str()
   ).unwrap();
@@ -321,7 +321,7 @@ lazy_static! {
   static ref TITLE_LESS: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_LESS
     ).as_str()
   ).unwrap();
@@ -330,7 +330,7 @@ lazy_static! {
   static ref TITLE_MORE: Regex
   = Regex::new(
     format!(
-      r"{}[ \t]*\n{}\n",
+      r"(?m)^{}[ \t]*\n{}\n",
       ANY_TITLE_CHARS, TITLE_LINE_MORE
     ).as_str()
   ).unwrap();
