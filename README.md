@@ -8,7 +8,7 @@ rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ to reStructuredTe
 The current structure of the project is given below.
 This is subject to change as the project advances further.
 ```bash
-src
+src/
 ├── bin
 ├── lexer
 │   ├── error
@@ -18,8 +18,11 @@ src
 │   ├── mod.rs
 │   ├── regex
 │   │   ├── mod.rs
-│   │   └── test
-│   │       └── mod.rs
+│   │   ├── test
+│   │   └── titles
+│   │       ├── mod.rs
+│   │       └── test
+│   │           └── mod.rs
 │   ├── tests
 │   │   └── mod.rs
 │   └── token
@@ -28,6 +31,6 @@ src
 │           └── mod.rs
 └── main.rs
 
-9 directories, 9 files
+11 directories, 10 files
 ```
 If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`).
