@@ -80,3 +80,13 @@ fn r_alpha_list() {
     panic!();
   }
 }
+
+#[test]
+fn description_list() {
+  let list = "kuvaus1  \n  asfsadfsdfafdasf\n  asdsdafdsfasgsag\nkuvaus2\n  sadfsafsdfdsfsadsadf\n  sdfsafasfasdfsfas\n";
+
+  if !DESCRIPTION_LIST_RE.is_match(list) {
+    panic!();
+  }
+}
+

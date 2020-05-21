@@ -46,6 +46,9 @@ const ALPHA_LIST_RPAREN: &'static str
   = r"\s*[a-zA-Z]+\) .+\n(?:[a-zA-Z]+\) .+\n)+";
 
 
+/// Desciption lists
+const DESCRIPTION_LIST: &'static str
+  = r"^(?:(\s*).+\n(?:  .+\n)+\s)+";
 
 
 // Regexes describing lists
@@ -112,6 +115,15 @@ lazy_static! {
     = Regex::new(
       format!(
         r"(?m)^{}", ALPHA_LIST_RPAREN
+      ).as_str()
+    ).unwrap();
+
+
+  /// Regex representing description lists
+  static ref DESCRIPTION_LIST_RE: Regex
+    = Regex::new(
+      format!(
+        r"(?m)^{}", DESCRIPTION_LIST
       ).as_str()
     ).unwrap();
 
