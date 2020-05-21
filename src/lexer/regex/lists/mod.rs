@@ -11,7 +11,7 @@ use lazy_static::lazy_static;
 
 /// Unnumbered list item
 const UNNUMBERED_LIST: &'static str
-  = r"\s*[*-+] .+\n(?:[*.+]  .+\n)*";
+  = r"\s*[*\-+] .+\n(?:[*\-+] .+\n)+";
 
 /// Numbered list item with a dot
 const NUMBERED_LIST_DOT: &'static str

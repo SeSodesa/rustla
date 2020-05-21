@@ -7,7 +7,7 @@ use super::*;
 #[test]
 fn unnumbered_list_item() {
   let list
-    = "* Tässä on lista-alkio\n* Jos toinenkin.";
+    = "* Tässä on lista-alkio\n* Jos toinenkin.\n";
 
   if !UNNUMBERED_LIST_RE.is_match(list) {
     panic!();
