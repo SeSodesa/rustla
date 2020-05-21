@@ -51,6 +51,9 @@ const DESCRIPTION_LIST: &'static str
   = r"^(?:(\s*).+\n(?:  .+\n)+\s)+";
 
 
+const FIELD_LIST: &'static str
+  = r"^\s*(?::.+: .+\n(?:[ \t]{2}.+\n)*)+";
+
 // Regexes describing lists
 // ========================
 
@@ -124,6 +127,14 @@ lazy_static! {
     = Regex::new(
       format!(
         r"(?m)^{}", DESCRIPTION_LIST
+      ).as_str()
+    ).unwrap();
+
+  /// Regex representing field lists
+  static ref FIELD_LIST_RE: Regex
+    = Regex::new(
+      format!(
+        r"(?m)^{}", FIELD_LIST
       ).as_str()
     ).unwrap();
 

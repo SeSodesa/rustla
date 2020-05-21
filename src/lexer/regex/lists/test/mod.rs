@@ -90,3 +90,16 @@ fn description_list() {
   }
 }
 
+
+#[test]
+fn field_list() {
+  let list = ":Date: 2001-08-16
+  :Version: 1
+  :Authors: - Me
+            - Myself
+            - I";
+
+  if !FIELD_LIST_RE.is_match(list) {
+    panic!();
+  }
+}
