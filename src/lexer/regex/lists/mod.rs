@@ -11,7 +11,7 @@ use lazy_static::lazy_static;
 
 /// Unnumbered list item
 const UNNUMBERED_LIST: &'static str
-  = r"\s*[*-+] .+\n(?:[*.+]  .+)*";
+  = r"\s*[*-+] .+\n(?:[*.+]  .+\n)*";
 
 /// Numbered list item with a dot
 const NUMBERED_LIST_DOT: &'static str
@@ -19,12 +19,12 @@ const NUMBERED_LIST_DOT: &'static str
 
 /// Numbered list with parentheses around labels
 const NUMBERED_LIST_LRPAREN: &'static str
-  = r"\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+)*";
+  = r"\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*";
 
 /// Numbered list with parentheses on
 /// the right side of labels
 const NUMBERED_LIST_RPAREN: &'static str
-  = r"\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+)*";
+  = r"\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*";
 
 /// Alphabetical list with dots on
 /// the right side of labels.
