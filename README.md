@@ -17,6 +17,10 @@ src/
 │   │       └── mod.rs
 │   ├── mod.rs
 │   ├── regex
+│   │   ├── lists
+│   │   │   ├── mod.rs
+│   │   │   └── test
+│   │   │       └── mod.rs
 │   │   ├── mod.rs
 │   │   ├── test
 │   │   └── titles
@@ -31,6 +35,6 @@ src/
 │           └── mod.rs
 └── main.rs
 
-11 directories, 10 files
+13 directories, 12 files
 ```
 If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`).
