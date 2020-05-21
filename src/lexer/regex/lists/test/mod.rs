@@ -52,7 +52,7 @@ fn r_numbered_list() {
 fn dot_alpha_list() {
 
   let dot_list
-  = "f. Tässä on lista-alkio\nz. Jos toinenkin.\n";
+  = "B. Tässä on lista-alkio\nA. Jos toinenkin.\n\n";
 
   if !ALPHA_LIST_DOT_RE.is_match(dot_list) {
     panic!();
@@ -63,7 +63,7 @@ fn dot_alpha_list() {
 #[test]
 fn lr_alpha_list() {
   let lr_list
-  = "(C) Tässä on lista-alkio\n(d) Jos toinenkin.";
+  = "(C) Tässä on lista-alkio\n(d) Jos toinenkin.\n\n";
 
   if !ALPHA_LIST_LRPAREN_RE.is_match(lr_list) {
     panic!();
@@ -74,7 +74,7 @@ fn lr_alpha_list() {
 #[test]
 fn r_alpha_list() {
   let r_list
-  = "a) Tässä on lista-alkio\nB) Jos toinenkin.";
+  = "a) Tässä on lista-alkio\nB) Jos toinenkin.\n\n";
 
   if !ALPHA_LIST_RPAREN_RE.is_match(r_list) {
     panic!();

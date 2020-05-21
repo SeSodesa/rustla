@@ -19,7 +19,7 @@ const NUMBERED_LIST_DOT: &'static str
 
 /// Numbered list with parentheses around labels
 const NUMBERED_LIST_LRPAREN: &'static str
-  = r"\s*\([0-9#ivxlcmIVXLCM]+\) .+\n";
+  = r"\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+)*";
 
 /// Numbered list with parentheses on
 /// the right side of labels
@@ -29,22 +29,24 @@ const NUMBERED_LIST_RPAREN: &'static str
 /// Numbered list with parentheses on
 /// the right side of labels
 const ALPHA_LIST_DOT: &'static str
-  = r"\s*[a-zA-Z]+\. .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+)*";
+  = r"\s*[A-Z]+\. .+\n(?:[A-Z]+\. .+\n)+";
 
 
 /// Numbered list with parentheses on
 /// the right side of labels
 const ALPHA_LIST_LRPAREN: &'static str
-  = r"\s*\([a-zA-Z]+\) .+\n(?:\([a-zA-Z]+\) .+)*";
+  = r"\s*\(?[a-zA-Z]+\) .+\n(?:\([a-zA-Z]+\) .+\n)+";
 
 
 /// Numbered list with parentheses on
 /// the right side of labels
 const ALPHA_LIST_RPAREN: &'static str
-  = r"\s*[a-zA-Z]+\) .+\n(?:[a-zA-Z]+\) .+)*";
+  = r"\s*[a-zA-Z]+\) .+\n(?:[a-zA-Z]+\) .+\n)+";
 
 
-  // Regexes describing lists
+
+
+// Regexes describing lists
 // ========================
 
 lazy_static! {
