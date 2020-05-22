@@ -1,7 +1,7 @@
 /// This is the `lexer` module of ruSTLa
 
 pub mod token;
-mod regex;
+mod token_mappings;
 mod tests;
 pub mod error;
 
