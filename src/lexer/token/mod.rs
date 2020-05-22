@@ -82,16 +82,27 @@ pub enum TokenType{
   HashHeading,
   LessHeading,
   MoreHeading,
+
+  // Lists
+  // -----
   UnnumberedList,
-  NumberedList,
-  NoBOLNumberedList, // Watch out the beginning of line
+  NumberedDotList,
+  NumberedLRparList,
+  NumberedRparList,
+  NoBolAlphaDotList, // Watch out the beginning of line
+  AlphaDotList,
+  AlphaLRparList,
+  AlphaRparList,
   DefinitionList,
-  FieldListMarker,
+  FieldList,
+
+  // Blocks
+  // ------
   LineBlock,
   SourceDirective,
   Directive,
   ReferenceTarget,
-  FootnoteCitationTarget, // Lexically the same
+  FootnoteOrCitationTarget, // Lexically the same
   SubstitutionDefinition,
   Comment,
   CodeBlock,
