@@ -25,6 +25,26 @@ dadasdd  ";
   }
 }
 
+#[test]
+fn match_per_line_literal_block() {
+  let list
+  = "asdasd::
+
+> asdasdads
+>   dadasdd
+
+adasdasd
+";
+
+  let pattern:String = val_from_key(
+    &TokenType::PerLineLiteralBlock, 
+    BLOCK_RE_MAP).unwrap();
+  let re = Regex::new(pattern.as_str()).unwrap();
+  if !re.is_match(list) {
+    panic!();
+  }
+}
+
 
 #[test]
 fn match_line_block() {
