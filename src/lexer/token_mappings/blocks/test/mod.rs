@@ -16,8 +16,6 @@ fn match_literal_block() {
 
 dadasdd  ";
 
-  println!("{}", list);
-
   let pattern:String = val_from_key(
     &TokenType::LiteralBlock, 
     BLOCK_RE_MAP).unwrap();
@@ -41,10 +39,29 @@ fn match_line_block() {
 
 dasdasd";
 
-  println!("{}", list);
-
   let pattern:String = val_from_key(
     &TokenType::LineBlock, 
+    BLOCK_RE_MAP).unwrap();
+  let re = Regex::new(pattern.as_str()).unwrap();
+  if !re.is_match(list) {
+    panic!();
+  }
+}
+
+#[test]
+fn match_paragraph() {
+  let list
+  = "asdasd::
+
+adasfasfsadf
+asdfsadfsadgsgsggasgd
+  asdfsafsdfasdafa 
+   asdfsafsaf
+
+dasdasd";
+
+  let pattern:String = val_from_key(
+    &TokenType::Paragraph, 
     BLOCK_RE_MAP).unwrap();
   let re = Regex::new(pattern.as_str()).unwrap();
   if !re.is_match(list) {
