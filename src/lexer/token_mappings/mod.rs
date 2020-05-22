@@ -3,6 +3,7 @@
 
 pub mod titles;
 pub mod lists;
+pub mod blocks;
 
 use crate::lexer::token::TokenType;
 
