@@ -100,6 +100,7 @@ pub enum TokenType{
   // ------
   Paragraph,
   LineBlock,
+  LiteralBlock,
   SourceDirective,
   Directive,
   ReferenceTarget,
