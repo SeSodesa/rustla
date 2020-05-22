@@ -36,7 +36,10 @@ fn match_line_block() {
 | asdasdasfasf
 | asdasfasfasdfa
 |
-|   asdafasf";
+|   asdafasf
+    asdasdasda
+
+dasdasd";
 
   println!("{}", list);
 
