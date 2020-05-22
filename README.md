@@ -16,23 +16,23 @@ src/
 │   │   └── tests
 │   │       └── mod.rs
 │   ├── mod.rs
-│   ├── regex
-│   │   ├── lists
-│   │   │   ├── mod.rs
-│   │   │   └── test
-│   │   │       └── mod.rs
-│   │   ├── mod.rs
-│   │   ├── test
-│   │   └── titles
-│   │       ├── mod.rs
-│   │       └── test
-│   │           └── mod.rs
 │   ├── tests
 │   │   └── mod.rs
-│   └── token
+│   ├── token
+│   │   ├── mod.rs
+│   │   └── tests
+│   │       └── mod.rs
+│   └── token_mappings
+│       ├── lists
+│       │   ├── mod.rs
+│       │   └── test
+│       │       └── mod.rs
 │       ├── mod.rs
-│       └── tests
-│           └── mod.rs
+│       ├── test
+│       └── titles
+│           ├── mod.rs
+│           └── test
+│               └── mod.rs
 └── main.rs
 
 13 directories, 12 files
