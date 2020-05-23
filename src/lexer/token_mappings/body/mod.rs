@@ -78,4 +78,8 @@ const BODY_TRANSITIONS: &[(TokenType, &'static str, State)] = &[
   (TokenType::FootnoteOrCitationTarget, r"(?m)^ *\.\.\s*\[.+\].*?$", State::Inline),
   (TokenType::SubstitutionDefinition, r"(?m)^ *\.\.\s*\|.+\|\s*[\w:-]+?::[ \t]*.*", State::Inline),
 
+  // Comments
+  // --------
+  (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", State::Body),
+
 ];
