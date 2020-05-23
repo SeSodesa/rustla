@@ -27,6 +27,7 @@ src/
 │   └── token_mappings
 │       ├── body
 │       │   ├── block_tests.rs
+│       │   ├── directive_tests.rs
 │       │   ├── list_tests.rs
 │       │   ├── mod.rs
 │       │   └── title_tests.rs
@@ -36,6 +37,6 @@ src/
 │       └── test
 └── main.rs
 
-12 directories, 14 files
+12 directories, 15 files
 ```
 If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo run`.
