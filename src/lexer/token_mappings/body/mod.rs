@@ -14,8 +14,15 @@ use crate::lexer::state::State;
 /// Body element tokens and their matching
 /// regexes. The elements are scanned in order,
 /// the ones at the top, as in the most significant
-/// ones being matched agains first.
+/// ones being matched against first.
+///
+/// Once a token is scanned, a state transition
+/// occurs. If a lexeme might contain inline
+/// elements such as ``code``, the transition will be to
+/// State::Inline, otherwise a transition
+/// to the state itself occurs.
 const BODY_TRANSITIONS: &[(TokenType, &'static str, State)] = &[
+
   // Overlined headings
   // ------------------
   (TokenType::EqualsOverlinedHeading, r"(?m)^{3,}\n[ \t]*.+\n={3,}\n", State::Body),
