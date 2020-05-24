@@ -60,7 +60,7 @@ impl Lexer {
   /// `scan_token` to `Lexer.tokens`
   /// Consumes the Lexer.
   fn lex(mut self) { // -> Result<Vec<Token>, LexError>
-    for (i, c) in self.source.chars().enumerate() {
+    for (_, c) in self.source.chars().enumerate() {
       self.buffer.push(c);
       self.tokenize_buffer();
     }

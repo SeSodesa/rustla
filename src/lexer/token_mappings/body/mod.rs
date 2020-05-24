@@ -5,6 +5,7 @@ mod title_tests;
 mod list_tests;
 mod block_tests;
 mod directive_tests;
+mod ref_target_tests;
 
 use crate::lexer::token::TokenType;
 use crate::lexer::state::State;
