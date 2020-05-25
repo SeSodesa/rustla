@@ -10,7 +10,8 @@ use std::fmt;
 pub struct Token {
   pub t_type: TokenType,
   pub lexeme: String,
-  pub row: usize,
+  pub begin: usize,
+  pub end: usize,
 }
 
 
@@ -158,6 +159,7 @@ pub enum TokenType{
   Hyperlink,
   Interpreted,
   Literal,
+  Text,
 
   // End of file
   EOF,
