@@ -18,17 +18,27 @@ fn new() {
 
 #[test]
 /// Tests the scanning of the entire source
-fn lex() {
-  panic!();
-}
+fn lex_01() {
+  let src = "
+  
+=====\ntekstiä1\n========\n
 
-#[test]
-/// Test the advancement of the
-/// "lexing buffer"
-fn advance_lookahead() {
-  let mut lex = Lexer::new("");
-  lex.advance();
-  assert_eq!(lex.lookahead, 1);
+
+tekstiä2
+^^^^
+  
+  ";
+  let lexer = Lexer::new(src);
+
+  println!("{}",src);
+
+  let tokens = lexer.lex();
+
+  println!("{:?}",tokens);
+
+  assert_eq!(tokens[0].lexeme, "tekstiä1");
+  assert_eq!(tokens[1].lexeme, "tekstiä2");
+
 }
 
 #[test]
@@ -39,37 +49,6 @@ fn scan_token() {
 
   println!("{:?}", lexer.tokens);
 
-}
+  assert_eq!(lexer.tokens[0].lexeme, "tekstiä");
 
-#[test]
-/// Test the advancement of the
-/// "lexing buffer"
-fn advance_char() {
-  let mut lex = Lexer::new("äöø");
-  let c:char = lex.advance().unwrap();
-  assert_eq!(c,'ä');
-}
-
-
-#[test]
-/// Test the advancement of the
-/// "lexing buffer"
-fn advance_char_twice() {
-  let mut lex = Lexer::new("åø");
-  let mut c:char = lex.advance().unwrap();
-  assert_eq!(c,'å');
-  c = lex.advance().unwrap();
-  assert_eq!(c,'ø');
-  assert_eq!(lex.lookahead, 2);
-}
-
-#[test]
-/// A test for finding the EOF
-fn is_at_eof() {
-  let source = "a";
-  let mut lex = Lexer::new(source);
-  lex.lookahead +=2;
-  if !lex.is_at_eof() {
-    panic!();
-  }
 }

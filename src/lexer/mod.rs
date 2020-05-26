@@ -24,7 +24,6 @@ pub struct Lexer {
   body_actions: Vec<(TokenType, regex::Regex, Action)>,
   inline_actions: Vec<(TokenType, regex::Regex, Action)>,
   tokens: Vec<Token>,
-  buffer: String,
   lexeme_start: usize,
   lookahead: usize,
   row: usize,
@@ -71,7 +70,6 @@ impl Lexer {
       body_actions: body_actions,
       inline_actions: inline_actions,
       tokens: Vec::new(),
-      buffer: String::with_capacity(4096),
       lexeme_start: 0,
       lookahead: 0,
       row:0,
@@ -88,21 +86,28 @@ impl Lexer {
     let s = self.source.clone();
     let mut chars = s.chars();
 
-    while let Some(_) = chars.next() {
-      let slice = chars.as_str();
+    while let Some(c) = chars.next() {
+
+      let slice = &chars.as_str();
       self.scan_token(slice);
+      while self.lexeme_start <= self.lookahead {
+        self.lexeme_start += 1;
+        
+        if let Some(c) = chars.next() {
+
+          println!("row: {:?}, col: {:?}", self.row, self.col);
+
+          self.col += 1;
+          if c == '\n' {
+            self.row += 1;
+            self.col = 0;
+          }
+        };
+
+      }
     }
 
     self.tokens
-
-  }
-
-  /// ### tokenize_buffer
-  /// Tries to match the contents of the buffer
-  /// with the regexes found in the regex
-  /// submodule. If a match is found,
-  /// `Some<Token>` of matching type is returned.
-  fn tokenize_buffer(&self) { // -> Some<Token> {
 
   }
 
@@ -115,19 +120,14 @@ impl Lexer {
     if self.state == State::Body {
       for (tt, re, a) in self.body_actions.clone().iter() {
 
-        println!("\n{:?}\n", tt);
-        println!("\n{:?}\n", re);
-
         if let Some(cs) = re.captures(s) {
-
-          println!("\n{} matches!\n", s);
 
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
           break
         } else {
-          println!("No match for {}", s);
+          continue
         }
       }
     } else if self.state == State::Inline {
@@ -137,26 +137,13 @@ impl Lexer {
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
           break
+        } else {
+          continue
         }
       }
     }
   }
 
-
-  /// ### advance
-  /// Reads the next character
-  /// (unicode scalar, not grapheme cluster!)
-  /// in the source.
-  fn advance(&mut self) -> Option<char>{
-
-    self.lookahead += 1;
-
-    let c: char = self.source
-    .chars()
-    .nth(self.lookahead - 1)?;
-
-    Some(c)
-  }
 
   /// ### is_at_eof
   /// A function that checks whether all

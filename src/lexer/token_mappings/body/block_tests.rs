@@ -1,90 +1,90 @@
-/// Tests for block elements
+// /// Tests for block elements
 
 
-use super::*;
-use super::super::val_from_key;
-use regex::Regex;
+// use super::*;
+// use super::super::val_from_key;
+// use regex::Regex;
 
-#[cfg(test)]
+// #[cfg(test)]
 
-#[test]
-fn match_literal_block() {
-  let list
-  = "asdasd::
+// #[test]
+// fn match_literal_block() {
+//   let list
+//   = "asdasd::
 
-  asdasdads
+//   asdasdads
 
-dadasdd  ";
+// dadasdd  ";
 
-  let pattern:String = val_from_key(
-    &TokenType::LiteralBlock, 
-    BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
-  if !re.is_match(list) {
-    panic!();
-  }
-}
+//   let pattern:String = val_from_key(
+//     &TokenType::LiteralBlock, 
+//     BODY_TRANSITIONS).unwrap();
+//   let re = Regex::new(pattern.as_str()).unwrap();
+//   if !re.is_match(list) {
+//     panic!();
+//   }
+// }
 
-#[test]
-fn match_per_line_literal_block() {
-  let list
-  = "asdasd::
+// #[test]
+// fn match_per_line_literal_block() {
+//   let list
+//   = "asdasd::
 
-> asdasdads
->   dadasdd
+// > asdasdads
+// >   dadasdd
 
-adasdasd
-";
+// adasdasd
+// ";
 
-  let pattern:String = val_from_key(
-    &TokenType::PerLineLiteralBlock, 
-    BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
-  if !re.is_match(list) {
-    panic!();
-  }
-}
+//   let pattern:String = val_from_key(
+//     &TokenType::PerLineLiteralBlock, 
+//     BODY_TRANSITIONS).unwrap();
+//   let re = Regex::new(pattern.as_str()).unwrap();
+//   if !re.is_match(list) {
+//     panic!();
+//   }
+// }
 
 
-#[test]
-fn match_line_block() {
-  let list
-  = "asdasd::
+// #[test]
+// fn match_line_block() {
+//   let list
+//   = "asdasd::
 
-| asdasdasfasf
-| asdasfasfasdfa
-|
-|   asdafasf
-    asdasdasda
+// | asdasdasfasf
+// | asdasfasfasdfa
+// |
+// |   asdafasf
+//     asdasdasda
 
-dasdasd";
+// dasdasd";
 
-  let pattern:String = val_from_key(
-    &TokenType::LineBlock, 
-    BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
-  if !re.is_match(list) {
-    panic!();
-  }
-}
+//   let pattern:String = val_from_key(
+//     &TokenType::LineBlock, 
+//     BODY_TRANSITIONS).unwrap();
+//   let re = Regex::new(pattern.as_str()).unwrap();
+//   if !re.is_match(list) {
+//     panic!();
+//   }
+// }
 
-#[test]
-fn match_paragraph() {
-  let list
-  = "asdasd::
+// #[test]
+// fn match_paragraph() {
+//   let list
+//   = "asdasd::
 
-adasfasfsadf
-asdfsadfsadgsgsggasgd
-  asdfsafsdfasdafa 
-   asdfsafsaf
+// adasfasfsadf
+// asdfsadfsadgsgsggasgd
+//   asdfsafsdfasdafa 
+//    asdfsafsaf
 
-dasdasd";
+// dasdasd";
 
-  let pattern:String = val_from_key(
-    &TokenType::Paragraph, 
-    BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
-  if !re.is_match(list) {
-    panic!();
-  }
-}
+//   let pattern:String = val_from_key(
+//     &TokenType::Paragraph, 
+//     BODY_TRANSITIONS).unwrap();
+//   let re = Regex::new(pattern.as_str()).unwrap();
+//   if !re.is_match(list) {
+//     panic!();
+//   }
+// }
