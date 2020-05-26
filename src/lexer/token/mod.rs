@@ -1,6 +1,7 @@
 /// This is the token module used by
 /// the ruSTLa Lexer and Parser
 
+#[cfg(test)]
 mod tests;
 
 use std::fmt;

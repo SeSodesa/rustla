@@ -21,7 +21,7 @@ fn new() {
 /// crate::lexer::error::TokenizeError::fmt
 fn fmt() {
   let lex
-    = Lexer::new(String::from("abc"));
+    = Lexer::new("abc");
   let tok_err
     = TokenizeError::new(&lex.row, &lex.col);
 

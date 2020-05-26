@@ -2,6 +2,7 @@
 /// Implements errors for each lexing function
 /// (where necessary).
 
+#[cfg(test)]
 mod tests;
 
 use std::{fmt};
