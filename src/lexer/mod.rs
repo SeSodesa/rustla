@@ -107,23 +107,6 @@ impl Lexer {
     Some(c)
   }
 
-
-  /// ### add_token
-  /// Pushes a token from the lexeme between
-  /// `lexeme_start` and `lookahead` into
-  /// Lexer.tokens
-  fn add_token (&mut self, token_type: TokenType) {
-    let s = self.source.to_owned();
-    let slice = &s[(self.lexeme_start)..self.lookahead];
-    self.tokens.push(
-      Token{
-        t_type: token_type,
-        lexeme: String::from(slice),
-        row: self.row,
-      }
-    );
-  }
-
   /// ### is_at_eof
   /// A function that checks whether all
   /// of the characters in the current file

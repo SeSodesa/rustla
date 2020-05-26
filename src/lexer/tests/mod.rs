@@ -62,21 +62,6 @@ fn advance_char_twice() {
   assert_eq!(lex.lookahead, 2);
 }
 
-
-#[test]
-/// Tests the addition of a token to
-/// the Lexer field `tokens`
-fn add_token() {
-  let source = String::from("abcöäfg");
-  let mut lex = Lexer::new(source);
-  lex.lookahead += lex.source.len() - 1;
-  lex.add_token(TokenType::Test);
-  assert_eq!(
-    lex.tokens.first().unwrap().lexeme,
-    "abcöäf"
-  );
-}
-
 #[test]
 /// A test for finding the EOF
 fn is_at_eof() {
