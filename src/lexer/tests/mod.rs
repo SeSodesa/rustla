@@ -22,14 +22,6 @@ fn lex() {
   panic!();
 }
 
-
-#[test]
-/// Tests the scanning of a single token
-fn scan_token() {
-  panic!();
-}
-
-
 #[test]
 /// Test the advancement of the
 /// "lexing buffer"
@@ -39,6 +31,15 @@ fn advance_lookahead() {
   assert_eq!(lex.lookahead, 1);
 }
 
+#[test]
+fn scan_token() {
+  let src = "========\ntekstiä\n=========\n";
+  let mut lexer = Lexer::new(src);
+  lexer.scan_token(src);
+
+  println!("{:?}", lexer.tokens);
+
+}
 
 #[test]
 /// Test the advancement of the

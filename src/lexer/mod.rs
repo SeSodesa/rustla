@@ -34,8 +34,8 @@ pub struct Lexer {
 impl fmt::Debug for Lexer {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
-        .field("lexeme_start", &self.source)
-        .field("buffer", &self.buffer)
+        .field("lexeme_start", &self.lexeme_start)
+        .field("lookahead", &self.lookahead)
         .finish()
   }
 }
@@ -114,16 +114,29 @@ impl Lexer {
     
     if self.state == State::Body {
       for (tt, re, a) in self.body_actions.clone().iter() {
+
+        println!("\n{:?}\n", tt);
+        println!("\n{:?}\n", re);
+
         if let Some(cs) = re.captures(s) {
+
+          println!("\n{} matches!\n", s);
+
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
+          break
+        } else {
+          println!("No match for {}", s);
         }
       }
     } else if self.state == State::Inline {
       for (tt, re, a) in self.inline_actions.clone().iter() {
         if let Some(cs) = re.captures(s) {
+          self.lexeme_start = cs.get(0).unwrap().start();
+          self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
+          break
         }
       }
     }

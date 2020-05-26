@@ -37,7 +37,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Overlined headings
   // ------------------
-  (TokenType::EqualsOverlinedHeading, r"(?m)^{3,}\n[ \t]*(.+)\n={3,}\n", Lexer::tokenize_section_title),
+  (TokenType::EqualsOverlinedHeading, r"(?m)^={3,}\n[ \t]*(.+)\n={3,}\n", Lexer::tokenize_section_title),
   (TokenType::DashOverlinedHeading, r"(?m)^-{3,}\n[ \t]*(.+)\n-{3,}\n", Lexer::tokenize_section_title),
   (TokenType::BacktickOverlinedHeading, r"(?m)^`{3,}\n[ \t]*(.+)\n`{3,}\n", Lexer::tokenize_section_title),
   (TokenType::ColonOverlinedHeading, r"(?m)^:{3,}\n[ \t]*(.+)\n:{3,}\n", Lexer::tokenize_section_title),
@@ -107,6 +107,9 @@ impl Lexer {
   /// ### tokenize_section_title
   /// Creates the tokens related to overlined titles
   fn tokenize_section_title (&mut self, tt:TokenType, cs: regex::Captures) {
+
+    println!("Found a {:?}", tt);
+
     let title = cs.get(1).map_or("", |c| c.as_str());
     self.tokens.push(
       Token::new(
