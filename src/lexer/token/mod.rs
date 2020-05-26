@@ -5,7 +5,7 @@ mod tests;
 
 use std::fmt;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 /// Token is a token of type `TokenType`
 pub struct Token {
   pub t_type: TokenType,
@@ -38,7 +38,7 @@ impl Token {
   }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 /// TokenType lists the possible `Token` types
 pub enum TokenType{
   // For testing
@@ -124,7 +124,6 @@ pub enum TokenType{
   Sidebar,
   LineBlockDirective,
   ParsedLiteralBlock,
-  Code,
   Math,
   Rubic,
   Epigraph,
@@ -149,6 +148,7 @@ pub enum TokenType{
   // Inline formatting
   // -----------------
   Escape,
+  Code,
   InlineReference,
   TargetReference,
   SubstitutionReference,
