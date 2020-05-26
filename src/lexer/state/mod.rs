@@ -3,7 +3,7 @@
 /// could be in
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Hash, Debug, PartialEq, Eq)]
 /// ### State
 /// This enum lists the possible states the
 /// lexer could be in. reStructuredText
