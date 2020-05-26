@@ -1,12 +1,13 @@
 /// This is the `lexer` module of ruSTLa
 
-pub mod token;
+mod token;
 mod state;
 mod token_mappings;
 mod tests;
-pub mod error;
+mod error;
 
 use std::fmt;
+
 use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::{State};
 use crate::lexer::error::{TokenizeError, LexError};
@@ -15,6 +16,7 @@ use crate::lexer::error::{TokenizeError, LexError};
 pub struct Lexer {
   source: String,
   state: State,
+  actions: token_mappings::LexerActions,
   tokens: Vec<Token>,
   buffer: String,
   lexeme_start: usize,
@@ -46,6 +48,7 @@ impl Lexer {
     Lexer {
       source: source,
       state: State::Body,
+      actions: token_mappings::lexer_actions(),
       tokens: Vec::new(),
       buffer: String::with_capacity(4096),
       lexeme_start: 0,
