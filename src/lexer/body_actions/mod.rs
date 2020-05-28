@@ -98,7 +98,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // // Comments
   // // --------
-  // (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", State::Body),
+  (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", Lexer::tokenize_comment),
 
 ];
 
@@ -209,6 +209,13 @@ impl Lexer {
   /// ### tokenize_substitution_definition
   /// Tokenizes a subsittution definition target
   fn tokenize_substitution_definition(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_comment
+  /// Tokenizes a subsittution definition target
+  fn tokenize_comment(&mut self, tt:TokenType, cs: regex::Captures) {
 
   }
 
