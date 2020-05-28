@@ -13,6 +13,8 @@ pub struct Token {
   pub lexeme: String,
   pub row: usize,
   pub col: usize,
+  pub begin: usize,
+  pub  end: usize,
 }
 
 
@@ -29,12 +31,14 @@ impl fmt::Debug for Token {
 
 /// Methods for the `Token` type
 impl Token {
-  pub fn new(t_type: TokenType, lexeme: String, begin: usize, end:usize) -> Token {
+  pub fn new(t_type: TokenType, lexeme: String, row: usize, col: usize, begin: usize, end:usize) -> Token {
     Token{
       t_type: t_type,
       lexeme: lexeme,
-      row: begin,
-      col: end,
+      row: row,
+      col: col,
+      begin: begin,
+      end: end
     }
   }
 }

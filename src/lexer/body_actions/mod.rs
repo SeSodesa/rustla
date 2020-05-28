@@ -112,13 +112,15 @@ impl Lexer {
 
     println!("Found {:?} at row {}, col {}", tt, self.row, self.col);
 
-    let title = cs.get(1).map_or("", |c| c.as_str());
+    let title = cs.get(1).unwrap();
     self.tokens.push(
       Token::new(
         tt,
-        title.to_string(),
+        title.as_str().to_string(),
         self.row,
-        self.col
+        self.col,
+        title.start(),
+        title.end(),
       )
     );
   }
@@ -134,6 +136,8 @@ impl Lexer {
       Token::new(
         TokenType::BlankLine,
         String::from("\n\n"),
+        self.row,
+        self.col,
         preceding_ws.start(),
         preceding_ws.end()
       )
@@ -144,6 +148,8 @@ impl Lexer {
       Token::new(
         TokenType::Bullet,
         bullet.as_str().to_string(),
+        self.row,
+        self.col,
         bullet.start(),
         bullet.end()
       )
