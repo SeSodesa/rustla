@@ -146,6 +146,12 @@ pub enum TokenType{
   Date,
   Class,
 
+  // Whitespace
+  // ----------
+  BlankLine,
+  Indentation,
+
+
   // Inline formatting
   // -----------------
   Escape,
