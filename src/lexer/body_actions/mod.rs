@@ -81,10 +81,10 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // // Blocks
   // // ------
-  // (TokenType::LiteralBlock, r"(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", State::Body),
-  // (TokenType::PerLineLiteralBlock, r"(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", State::Body),
-  // (TokenType::LineBlock, r"(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", State::Inline),
-  // (TokenType::Paragraph, r"(?m)^\s*(?:^.+\n)+\s+", State::Inline),
+  (TokenType::LiteralBlock, r"(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", Lexer::tokenize_literal_block),
+  (TokenType::PerLineLiteralBlock, r"(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", Lexer::tokenize_per_line_literal_block),
+  (TokenType::LineBlock, r"(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", Lexer::tokenize_line_block),
+  (TokenType::Paragraph, r"(?m)^\s*(?:^.+\n)+\s+", Lexer::tokenize_paragraph),
 
   // // Directives
   // // ----------
@@ -149,6 +149,34 @@ impl Lexer {
   /// ### Tokenize_field_list
   /// Tokenizes an unnumbered list
   fn tokenize_field_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_literal_block
+  /// Tokenizes a literal block
+  fn tokenize_literal_block(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_per_line_literal_block
+  /// Tokenizes a per-line literal block
+  fn tokenize_per_line_literal_block(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_line_block
+  /// Tokenizes a line block
+  fn tokenize_line_block(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_paragraph
+  /// Tokenizes a paragraph
+  fn tokenize_paragraph(&mut self, tt:TokenType, cs: regex::Captures) {
 
   }
 
