@@ -162,8 +162,13 @@ impl Lexer {
 }
 
 /// ### val_from_key
-/// Searches through a list of TokenType--regex pairs
-/// for a mathing tokentype
+/// Goes through a given list of tuples
+/// ```
+/// (TokenType, str_pattern, Action)
+/// ```
+/// and looks for a matching tokentype.
+/// If it finds one, returns and `Option<&'static str>`,
+/// otherwise returns `None`.
 pub fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)]) -> Option<&'static str> {
   for (_, val, _) in map.iter().filter(|&(map_key, _, _)| map_key == search_key) { 
     return Some(val);
