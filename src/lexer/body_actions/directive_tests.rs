@@ -1,30 +1,30 @@
-// /// This moduel tests directive-related regexes
+/// This moduel tests directive-related regexes
 
-// use super::*;
-// use super::super::*;
-// use regex::Regex;
+use super::*;
+use super::super::*;
+use regex::Regex;
 
-// #[cfg(test)]
+#[cfg(test)]
 
-// #[test]
-// fn general_directive_match() {
+#[test]
+fn general_directive_match() {
 
-//   let text = r"
-// asdasdfsadfdsafsadf
-// safadsfsadfasfadsf
-// asdfadsf
+  let text = r"
+asdasdfsadfdsafsadf
+safadsfsadfasfadsf
+asdfadsf
 
-//   .. image:: images/ball1.gif
+  .. image:: images/ball1.gif
   
-// asfsdafsdfsafasfsf";
+asfsdafsdfsafasfsf";
 
-//   let pattern:String = val_from_key(
-//     &TokenType::GeneralDirective, 
-//     BODY_TRANSITIONS).unwrap();
+  let pattern = val_from_key(
+    &TokenType::GeneralDirective, 
+    BODY_TRANSITIONS).unwrap();
 
-//   let re = Regex::new(pattern.as_str()).unwrap();
-//   if !re.is_match(text) {
-//     panic!();
-//   }
+  let re = Regex::new(pattern).unwrap();
+  if !re.is_match(text) {
+    panic!();
+  }
 
-// }
+}

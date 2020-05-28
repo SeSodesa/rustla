@@ -88,7 +88,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // // Directives
   // // ----------
-  // (TokenType::GeneralDirective, r"(?m)^ *\.\.\s*[\w:-]+?::[ \t]*.*", State::Inline),
+  (TokenType::GeneralDirective, r"(?m)^ *\.\.\s*[\w:-]+?::[ \t]*.*", Lexer::tokenize_general_directive),
 
   // // Reference targets
   // // -----------------
@@ -177,6 +177,13 @@ impl Lexer {
   /// ### tokenize_paragraph
   /// Tokenizes a paragraph
   fn tokenize_paragraph(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_general_directive
+  /// Tokenizes a paragraph
+  fn tokenize_general_directive(&mut self, tt:TokenType, cs: regex::Captures) {
 
   }
 
