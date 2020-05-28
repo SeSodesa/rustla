@@ -163,6 +163,7 @@ fn update_lookahead(&mut self) {
   if let Some(tok) = self.tokens.last() {
     // Add logic to read the end of the latest
     // detected token.
+    self.lookahead = tok.end;
   } else {
     self.lookahead = self.lexeme_start;
   }
