@@ -132,7 +132,6 @@ impl Lexer {
           a(self, tt.clone(), cs);
           break
         } else {
-          eprintln!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
@@ -144,7 +143,6 @@ impl Lexer {
           a(self, tt.clone(), cs);
           break
         } else {
-          eprintln!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
