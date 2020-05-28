@@ -99,6 +99,7 @@ pub enum TokenType{
   AlphaRparList,
   DefinitionList,
   FieldList,
+  Bullet,
 
   // Blocks
   // ------
