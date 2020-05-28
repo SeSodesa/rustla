@@ -22,7 +22,7 @@ fn overlined_titles() {
         s.repeat(3), title, s.repeat(3)
       );
     let mut some_re_matches:bool = false;
-    for (key, val, _) in BODY_TRANSITIONS.iter() {
+    for (_, val, _) in BODY_TRANSITIONS.iter() {
       let r = Regex::new(val).unwrap();
       if r.is_match(overlined_title.as_str()) {
         some_re_matches = true;
@@ -51,7 +51,7 @@ fn underlined_titles() {
         title, s.repeat(3)
       );
     let mut some_re_matches:bool = false;
-    for (key, val, _) in BODY_TRANSITIONS.iter() {
+    for (_, val, _) in BODY_TRANSITIONS.iter() {
       let r = Regex::new(val).unwrap();
       if r.is_match(overlined_title.as_str()) {
         some_re_matches = true;

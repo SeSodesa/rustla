@@ -1,8 +1,6 @@
 /// Tests related to list mappings
 
 use super::*;
-
-use super::*;
 use super::super::val_from_key;
 use regex::Regex;
 
