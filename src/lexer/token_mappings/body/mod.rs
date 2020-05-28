@@ -22,17 +22,15 @@ use crate::lexer::token_mappings::Action;
 use regex;
 
 /// ### BODY_TRANSITIONS
-/// This is a  list of all possible
-/// Body element tokens and their matching
-/// regexes. The elements are scanned in order,
-/// the ones at the top, as in the most significant
-/// ones being matched against first.
-///
-/// Once a token is scanned, a state transition
-/// occurs. If a lexeme might contain inline
-/// elements such as ``code``, the transition will be to
-/// State::Inline, otherwise a transition
-/// to the state itself occurs.
+/// This is a  list of tuples of the form
+/// ```rust
+/// (TokenType, regex, Action)
+/// ```
+/// Where the first element is a type of token found in
+/// `crate::lexer::token::TokenType`, the second element
+/// is a `&'static str` that describes the regex invoved with
+/// the `TokenType` and `Action` is a function pointer to
+/// a function that handles that type of token.
 pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Overlined headings
