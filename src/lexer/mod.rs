@@ -2,7 +2,8 @@
 
 mod token;
 mod state;
-mod token_mappings;
+mod body_actions;
+mod inline_actions;
 mod error;
 
 #[cfg(test)]
@@ -15,6 +16,9 @@ use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::{State};
 use crate::lexer::error::{TokenizeError, LexError};
 
+
+/// ### Action
+/// A function pointer type alias
 type Action = fn(&mut Lexer, TokenType, regex::Captures) -> ();
 
 //#[derive(PartialEq)]
@@ -54,12 +58,12 @@ impl Lexer {
     let mut body_actions = Vec::new();
     let mut inline_actions = Vec::new();
 
-    for (tt, re, fun) in token_mappings::body::BODY_TRANSITIONS.iter() {
+    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
       let r = regex::Regex::new(re).unwrap();
       body_actions.push((tt.clone(), r, *fun));
     }
 
-    for (tt, re, fun) in token_mappings::inline::INLINE_TRANSITIONS.iter() {
+    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
       let r = regex::Regex::new(re).unwrap();
       inline_actions.push((tt.clone(), r, *fun));
     }
@@ -79,7 +83,9 @@ impl Lexer {
 
   /// ### lex
   /// Loops over the source string
-  /// until it has been consumed.
+  /// until it has been consumed,
+  /// calling `scan_token` to try and match
+  /// lexemes at the current position.
   /// Consumes the Lexer itself as well.
   fn lex(mut self) -> Vec<Token>{
 
@@ -153,4 +159,14 @@ impl Lexer {
     self.lookahead >= self.source.chars().count()
   }
 
+}
+
+/// ### val_from_key
+/// Searches through a list of TokenType--regex pairs
+/// for a mathing tokentype
+pub fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)]) -> Option<String> {
+  for (_, val, _) in map.iter().filter(|&(map_key, _, _)| map_key == search_key) { 
+    return Some(val.to_string());
+  }
+  None
 }
