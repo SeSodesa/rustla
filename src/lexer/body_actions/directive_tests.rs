@@ -1,4 +1,5 @@
-/// This moduel tests directive-related regexes
+/// ### directive_tests
+/// This module tests directive-related regexes
 
 use super::*;
 use super::super::*;

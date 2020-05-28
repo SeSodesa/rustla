@@ -102,7 +102,10 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
 ];
 
+
+
 impl Lexer {
+
   /// ### tokenize_section_title
   /// Creates the tokens related to overlined titles
   fn tokenize_section_title (&mut self, tt:TokenType, cs: regex::Captures) {
@@ -184,6 +187,28 @@ impl Lexer {
   /// ### tokenize_general_directive
   /// Tokenizes a paragraph
   fn tokenize_general_directive(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+
+  /// ### tokenize_reference_target
+  /// Tokenizes a reference target
+  fn tokenize_reference_target(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_footnote_or_citation_target
+  /// Tokenizes both footnote and citation targets
+  fn tokenize_footnote_or_citation_target(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### tokenize_substitution_definition
+  /// Tokenizes a subsittution definition target
+  fn tokenize_substitution_definition(&mut self, tt:TokenType, cs: regex::Captures) {
 
   }
 
