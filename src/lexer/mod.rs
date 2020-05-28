@@ -97,7 +97,7 @@ impl Lexer {
       let slice = &chars.as_str();
       self.scan_token(slice);
 
-      while self.lexeme_start <= self.lookahead {
+      while self.lexeme_start < self.lookahead {
 
         self.lexeme_start += 1;
         
