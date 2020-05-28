@@ -1,6 +1,7 @@
 /// Tests for the lexer module
 
 #[cfg(test)]
+
 use super::*;
 
 #[test]

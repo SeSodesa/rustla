@@ -18,7 +18,7 @@ use crate::lexer::error::{TokenizeError, LexError};
 
 
 /// ### Action
-/// A function pointer type alias
+/// A function pointer type alias for a Lexer action
 type Action = fn(&mut Lexer, TokenType, regex::Captures) -> ();
 
 //#[derive(PartialEq)]
@@ -96,12 +96,12 @@ impl Lexer {
 
       let slice = &chars.as_str();
       self.scan_token(slice);
+
       while self.lexeme_start <= self.lookahead {
+
         self.lexeme_start += 1;
         
         if let Some(c) = chars.next() {
-
-          // println!("row: {:?}, col: {:?}", self.row, self.col);
 
           self.col += 1;
           if c == '\n' {
@@ -127,13 +127,12 @@ impl Lexer {
       for (tt, re, a) in self.body_actions.clone().iter() {
 
         if let Some(cs) = re.captures(s) {
-
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
           break
         } else {
-          println!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
+          eprintln!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
@@ -145,7 +144,7 @@ impl Lexer {
           a(self, tt.clone(), cs);
           break
         } else {
-          println!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
+          eprintln!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
