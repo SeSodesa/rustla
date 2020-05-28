@@ -110,8 +110,6 @@ impl Lexer {
   /// Creates the tokens related to overlined titles
   fn tokenize_section_title (&mut self, tt:TokenType, cs: regex::Captures) {
 
-    println!("Found {:?} at row {}, col {}", tt, self.row, self.col);
-
     let title = cs.get(1).unwrap();
     self.tokens.push(
       Token::new(

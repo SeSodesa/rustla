@@ -21,6 +21,7 @@ fn new() {
 /// Tests the scanning of the entire source
 fn lex_01() {
   let src = "
+  
 =====
   tekstiä1
 ========

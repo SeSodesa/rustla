@@ -31,6 +31,7 @@ pub struct Lexer {
   tokens: Vec<Token>,
   lexeme_start: usize,
   lookahead: usize,
+  pos: usize,
   row: usize,
   col: usize,
 }
@@ -77,6 +78,7 @@ impl Lexer {
       tokens: Vec::new(),
       lexeme_start: 0,
       lookahead: 0,
+      pos: 0,
       row:0,
       col: 0,
     }
@@ -97,20 +99,6 @@ impl Lexer {
 
       self.scan_token(&mut chars);
 
-      while self.lexeme_start < self.lookahead {
-
-        self.lexeme_start += 1;
-        
-        if let Some(c) = chars.next() {
-
-          self.col += 1;
-          if c == '\n' {
-            self.row += 1;
-            self.col = 0;
-          }
-        };
-
-      }
     }
 
     self.tokens
@@ -129,11 +117,46 @@ impl Lexer {
       for (tt, re, a) in self.body_actions.clone().iter() {
 
         if let Some(cs) = re.captures(s) {
-          self.lexeme_start = cs.get(0).unwrap().start();
-          self.lookahead = cs.get(0).unwrap().end();
+          self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
+          self.lookahead = cs.get(0).unwrap().end() + self.pos;
+
+          println!("{:?} detected at (begin, end) = ({}, {})", tt, self.lexeme_start, self.lookahead);
 
           a(self, tt.clone(), cs);
+
+          println!(" (pos, begin, end) = ({}, {}, {}) after callback...", self.pos, self.lexeme_start, self.lookahead);
+
+          self.lexeme_start = self.lookahead;
+
+          println!("Updated (pos, begin, end) -> ({}, {}, {})", self.pos, self.lexeme_start, self.lookahead);
+          println!("Updating pos...\n");
+
+          while self.pos < self.lexeme_start {
+
+            if let Some(c) = chars.next() {
+
+              println!("Consuming {:?}...", c);
+
+              self.pos += 1;
+              self.col += 1;
+
+              println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
+
+              if c == '\n' {
+                self.row += 1;
+                self.col = 0;
+              }
+
+            } else {
+              break
+            }
+
+          }
+
+          println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
+
           break
+
         } else {
           continue
         }
@@ -147,13 +170,15 @@ impl Lexer {
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
+
           break
-      
+
         } else {
           continue
         }
       }
     }
+
   }
 
 /// ### update_lookahead
