@@ -128,6 +128,8 @@ impl Lexer {
   /// Tokenizes an unnumbered list
   fn tokenize_unnumbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
     let preceding_ws = cs.get(1).unwrap();
+
+     // Whitespace replaced by a single blank line
     self.tokens.push(
       Token::new(
         TokenType::BlankLine,
@@ -135,7 +137,23 @@ impl Lexer {
         preceding_ws.start(),
         preceding_ws.end()
       )
-    )
+    );
+
+    let bullet = cs.get(2).unwrap();
+    self.tokens.push(
+      Token::new(
+        TokenType::Bullet,
+        bullet.as_str().to_string(),
+        bullet.start(),
+        bullet.end()
+      )
+    );
+
+    self.state = State::Inline;
+
+    // Scan the list item text...
+
+    self.state = State::Body;
 
   }
 
