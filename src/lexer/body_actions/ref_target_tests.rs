@@ -18,10 +18,10 @@ fn match_ref_target() {
     adasdasdasd
     ";
 
-  let pattern:String = val_from_key(
+  let pattern = val_from_key(
     &TokenType::ReferenceTarget, 
     BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
+  let re = Regex::new(pattern).unwrap();
   if !re.is_match(list) {
     panic!();
   }
@@ -38,10 +38,10 @@ fn match_footnote_or_citation_target() {
     
     adadasadadad";
 
-  let pattern:String = val_from_key(
+  let pattern = val_from_key(
     &TokenType::FootnoteOrCitationTarget, 
     BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
+  let re = Regex::new(pattern).unwrap();
   if !re.is_match(list) {
     panic!();
   }
@@ -57,10 +57,10 @@ fn match_substitution_definition() {
     
     adadasadadad";
 
-  let pattern:String = val_from_key(
+  let pattern = val_from_key(
     &TokenType::SubstitutionDefinition, 
     BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
+  let re = Regex::new(pattern).unwrap();
   if !re.is_match(list) {
     panic!();
   }

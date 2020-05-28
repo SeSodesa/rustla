@@ -20,10 +20,10 @@ fn match_comment() {
 ASDADADADADas
   ";
 
-  let pattern:String = val_from_key(
+  let pattern = val_from_key(
     &TokenType::Comment, 
     BODY_TRANSITIONS).unwrap();
-  let re = Regex::new(pattern.as_str()).unwrap();
+  let re = Regex::new(pattern).unwrap();
   if !re.is_match(text) {
     panic!();
   }

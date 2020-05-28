@@ -67,17 +67,17 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::LessHeading, r"(?m)^(.+)\n<{3,}\n", Lexer::tokenize_section_title),
   (TokenType::MoreHeading, r"(?m)^(.+)\n>{3,}\n", Lexer::tokenize_section_title),
 
-  // // Lists
-  // // -----
-  // (TokenType::UnnumberedList, r"(?m)^\s*[*\-+] .+\n(?:[*\-+] .+\n)+", State::Body),
-  // (TokenType::NumberedDotList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\. .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", State::Inline),
-  // (TokenType::NumberedLRparList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", State::Inline),
-  // (TokenType::NumberedRparList, r"(?m)^\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*", State::Inline),
-  // (TokenType::NoBolAlphaDotList, r"(?m)^\s*[A-Z]+\. .+\n(?:[ \t]*[A-Z]+\. .+\n)+", State::Inline),
-  // (TokenType::AlphaLRparList, r"(?m)^\s*\(?[a-zA-Z]+\) .+\n(?:[ \t]*\([a-zA-Z]+\) .+\n)+", State::Inline),
-  // (TokenType::AlphaRparList, r"(?m)^\s*[a-zA-Z]+\) .+\n(?:[ \t]*[a-zA-Z]+\) .+\n)+", State::Inline),
-  // (TokenType::DefinitionList, r"(?m)^(?:(\s*).+\n(?:  .+\n)+\s)+", State::Inline),
-  // (TokenType::FieldList, r"(?m)^\s*(?::.+: .+\n(?:[ \t]{2}.+\n)*)+", State::Inline),
+  // Lists
+  // -----
+  (TokenType::UnnumberedList, r"(?m)^\s*[*\-+] .+\n(?:[*\-+] .+\n)+", Lexer::tokenize_unnumbered_list),
+  (TokenType::NumberedDotList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\. .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
+  (TokenType::NumberedLRparList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
+  (TokenType::NumberedRparList, r"(?m)^\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
+  (TokenType::NoBolAlphaDotList, r"(?m)^\s*[A-Z]+\. .+\n(?:[ \t]*[A-Z]+\. .+\n)+", Lexer::tokenize_alpha_list),
+  (TokenType::AlphaLRparList, r"(?m)^\s*\(?[a-zA-Z]+\) .+\n(?:[ \t]*\([a-zA-Z]+\) .+\n)+", Lexer::tokenize_alpha_list),
+  (TokenType::AlphaRparList, r"(?m)^\s*[a-zA-Z]+\) .+\n(?:[ \t]*[a-zA-Z]+\) .+\n)+", Lexer::tokenize_alpha_list),
+  (TokenType::DefinitionList, r"(?m)^(?:(\s*).+\n(?:  .+\n)+\s)+", Lexer::tokenize_definition_list),
+  (TokenType::FieldList, r"(?m)^\s*(?::.+: .+\n(?:[ \t]{2}.+\n)*)+", Lexer::tokenize_field_list),
 
   // // Blocks
   // // ------
@@ -119,6 +119,39 @@ impl Lexer {
       )
     );
   }
+
+
+  /// ### Tokenize_unnumbered_list
+  /// Tokenizes an unnumbered list
+  fn tokenize_unnumbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+  /// ### Tokenize_numbered_list
+  /// Tokenizes an unnumbered list
+  fn tokenize_numbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+
+  /// ### Tokenize_alpha_list
+  /// Tokenizes an unnumbered list
+  fn tokenize_alpha_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+  /// ### Tokenize_definition_list
+  /// Tokenizes an unnumbered list
+  fn tokenize_definition_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
+  /// ### Tokenize_field_list
+  /// Tokenizes an unnumbered list
+  fn tokenize_field_list(&mut self, tt:TokenType, cs: regex::Captures) {
+
+  }
+
 }
 
 
