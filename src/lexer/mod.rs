@@ -151,6 +151,24 @@ impl Lexer {
     }
   }
 
+/// ### update_lookahead
+/// Pushes the lookahead to the end
+/// of the end position of the
+/// latest detected lexeme.
+/// If this doesn't succeed, simply
+/// makes sure `self.lookahead` doesn't
+/// lag behind `self.lexeme_start`.
+fn update_lookahead(&mut self) {
+  
+  if let Some(tok) = self.tokens.last() {
+    // Add logic to read the end of the latest
+    // detected token.
+  } else {
+    self.lookahead = self.lexeme_start;
+  }
+}
+
+
 }
 
 /// ### val_from_key
@@ -167,3 +185,4 @@ fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)
   }
   None
 }
+
