@@ -129,31 +129,8 @@ impl Lexer {
           self.lexeme_start = self.lookahead;
 
           println!("Updated (pos, begin, end) -> ({}, {}, {})", self.pos, self.lexeme_start, self.lookahead);
-          println!("Updating pos...\n");
 
-          while self.pos < self.lexeme_start {
-
-            if let Some(c) = chars.next() {
-
-              println!("Consuming {:?}...", c);
-
-              self.pos += 1;
-              self.col += 1;
-
-              println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
-
-              if c == '\n' {
-                self.row += 1;
-                self.col = 0;
-              }
-
-            } else {
-              break
-            }
-
-          }
-
-          println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
+          self.update_pos(chars);
 
           break
 
@@ -165,11 +142,17 @@ impl Lexer {
     } else if self.state == State::Inline {
       
       for (tt, re, a) in self.inline_actions.clone().iter() {
-      
+
         if let Some(cs) = re.captures(s) {
+
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
+
           a(self, tt.clone(), cs);
+
+          self.lexeme_start = self.lookahead;
+
+          self.update_pos(chars);
 
           break
 
@@ -188,15 +171,34 @@ impl Lexer {
 /// If this doesn't succeed, simply
 /// makes sure `self.lookahead` doesn't
 /// lag behind `self.lexeme_start`.
-fn update_lookahead(&mut self) {
+fn update_pos(&mut self, chars: &mut str::Chars) {
   
-  if let Some(tok) = self.tokens.last() {
-    // Add logic to read the end of the latest
-    // detected token.
-    self.lookahead = tok.end;
-  } else {
-    self.lookahead = self.lexeme_start;
+  println!("Updating pos...\n");
+
+  while self.pos < self.lexeme_start {
+
+    if let Some(c) = chars.next() {
+
+      println!("Consuming {:?}...", c);
+
+      self.pos += 1;
+      self.col += 1;
+
+      println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
+
+      if c == '\n' {
+        self.row += 1;
+        self.col = 0;
+      }
+
+    } else {
+      break
+    }
+
   }
+
+  println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
+
 }
 
 
