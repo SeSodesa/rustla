@@ -87,12 +87,12 @@ impl Lexer {
   /// calling `scan_token` to try and match
   /// lexemes at the current position.
   /// Consumes the Lexer itself as well.
-  fn lex(mut self) -> Vec<Token>{
+  fn lex(mut self) -> Vec<Token> {
 
     let s = self.source.clone();
     let mut chars = s.chars();
 
-    while let Some(c) = chars.next() {
+    while let Some(_c) = chars.next() {
 
       let slice = &chars.as_str();
       self.scan_token(slice);
@@ -101,7 +101,7 @@ impl Lexer {
         
         if let Some(c) = chars.next() {
 
-          println!("row: {:?}, col: {:?}", self.row, self.col);
+          // println!("row: {:?}, col: {:?}", self.row, self.col);
 
           self.col += 1;
           if c == '\n' {
@@ -133,6 +133,7 @@ impl Lexer {
           a(self, tt.clone(), cs);
           break
         } else {
+          println!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
@@ -144,19 +145,11 @@ impl Lexer {
           a(self, tt.clone(), cs);
           break
         } else {
+          println!("\nNo matching lexeme at (row, col) = ({}, {})\n", self.row, self.col);
           continue
         }
       }
     }
-  }
-
-
-  /// ### is_at_eof
-  /// A function that checks whether all
-  /// of the characters in the current file
-  /// have been consumed.
-  pub fn is_at_eof(&self) -> bool {
-    self.lookahead >= self.source.chars().count()
   }
 
 }
@@ -169,7 +162,7 @@ impl Lexer {
 /// and looks for a matching tokentype.
 /// If it finds one, returns and `Option<&'static str>`,
 /// otherwise returns `None`.
-pub fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)]) -> Option<&'static str> {
+fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)]) -> Option<&'static str> {
   for (_, val, _) in map.iter().filter(|&(map_key, _, _)| map_key == search_key) { 
     return Some(val);
   }
