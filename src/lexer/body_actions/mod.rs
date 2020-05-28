@@ -92,9 +92,9 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // // Reference targets
   // // -----------------
-  // (TokenType::ReferenceTarget, r"(?m)^[ \t]*\.\. _\w+:.*?$", State::Inline),
-  // (TokenType::FootnoteOrCitationTarget, r"(?m)^ *\.\.\s*\[.+\].*?$", State::Inline),
-  // (TokenType::SubstitutionDefinition, r"(?m)^ *\.\.\s*\|.+\|\s*[\w:-]+?::[ \t]*.*", State::Inline),
+  (TokenType::ReferenceTarget, r"(?m)^[ \t]*\.\. _\w+:.*?$", Lexer::tokenize_reference_target),
+  (TokenType::FootnoteOrCitationTarget, r"(?m)^ *\.\.\s*\[.+\].*?$", Lexer::tokenize_footnote_or_citation_target),
+  (TokenType::SubstitutionDefinition, r"(?m)^ *\.\.\s*\|.+\|\s*[\w:-]+?::[ \t]*.*", Lexer::tokenize_substitution_definition),
 
   // // Comments
   // // --------
