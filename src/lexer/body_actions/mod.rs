@@ -69,7 +69,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Lists
   // -----
-  (TokenType::UnnumberedList, r"(?m)^\s*[*\-+] .+\n(?:[*\-+] .+\n)+", Lexer::tokenize_unnumbered_list),
+  (TokenType::UnnumberedList, r"(?m)^(\s*)([*\-+])( .+\n(?:^\s*  .+\n)*)", Lexer::tokenize_unnumbered_list),
   (TokenType::NumberedDotList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\. .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
   (TokenType::NumberedLRparList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
   (TokenType::NumberedRparList, r"(?m)^\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
@@ -127,6 +127,15 @@ impl Lexer {
   /// ### Tokenize_unnumbered_list
   /// Tokenizes an unnumbered list
   fn tokenize_unnumbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
+    let preceding_ws = cs.get(1).unwrap();
+    self.tokens.push(
+      Token::new(
+        TokenType::BlankLine,
+        String::from("\n\n"),
+        preceding_ws.start(),
+        preceding_ws.end()
+      )
+    )
 
   }
 
