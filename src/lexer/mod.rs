@@ -145,8 +145,8 @@ impl Lexer {
 
         if let Some(cs) = re.captures(s) {
 
-          self.lexeme_start = cs.get(0).unwrap().start();
-          self.lookahead = cs.get(0).unwrap().end();
+          self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
+          self.lookahead = cs.get(0).unwrap().end() + self.pos;
 
           a(self, tt.clone(), cs);
 
