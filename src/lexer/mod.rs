@@ -10,6 +10,7 @@ mod error;
 mod tests;
 
 use std::fmt;
+use std::str;
 use regex;
 
 use crate::lexer::token::{Token, TokenType};
@@ -94,8 +95,7 @@ impl Lexer {
 
     while let Some(_c) = chars.next() {
 
-      let slice = &chars.as_str();
-      self.scan_token(slice);
+      self.scan_token(&mut chars);
 
       while self.lexeme_start < self.lookahead {
 
@@ -121,27 +121,34 @@ impl Lexer {
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
   /// core of the lexer itself.
-  fn scan_token(&mut self, s: &str) {
+  fn scan_token(&mut self, chars: &mut str::Chars) {
     
+    let s = chars.as_str();
+
     if self.state == State::Body {
       for (tt, re, a) in self.body_actions.clone().iter() {
 
         if let Some(cs) = re.captures(s) {
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
+
           a(self, tt.clone(), cs);
           break
         } else {
           continue
         }
       }
+
     } else if self.state == State::Inline {
+      
       for (tt, re, a) in self.inline_actions.clone().iter() {
+      
         if let Some(cs) = re.captures(s) {
           self.lexeme_start = cs.get(0).unwrap().start();
           self.lookahead = cs.get(0).unwrap().end();
           a(self, tt.clone(), cs);
           break
+      
         } else {
           continue
         }

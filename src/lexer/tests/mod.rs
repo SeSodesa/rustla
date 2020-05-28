@@ -47,7 +47,8 @@ tekstiä2
 fn scan_token() {
   let src = "========\ntekstiä\n=========\n";
   let mut lexer = Lexer::new(src, State::Body);
-  lexer.scan_token(src);
+  let mut chars = src.chars();
+  lexer.scan_token(&mut chars);
 
   println!("{:?}", lexer.tokens);
 
