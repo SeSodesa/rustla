@@ -53,7 +53,7 @@ impl fmt::Display for Lexer {
 impl Lexer {
 
   /// ### Lexer constructor
-  pub fn new(source: &'static str) -> Lexer {
+  pub fn new(source: &'static str, state: state::State) -> Lexer {
 
     let mut body_actions = Vec::new();
     let mut inline_actions = Vec::new();
@@ -70,7 +70,7 @@ impl Lexer {
 
     Lexer {
       source: source,
-      state: State::Body,
+      state: state,
       body_actions: body_actions,
       inline_actions: inline_actions,
       tokens: Vec::new(),

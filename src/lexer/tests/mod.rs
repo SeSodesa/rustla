@@ -8,7 +8,7 @@ use super::*;
 /// A test for the Lexer constructor
 fn new() {
   let ls = "Aaa!";
-  let lex = Lexer::new(ls);
+  let lex = Lexer::new(ls, State::Body);
   assert_eq!(lex.tokens, Vec::new());
   assert_eq!(lex.lexeme_start, 0);
   assert_eq!(lex.lookahead, 0);
@@ -29,7 +29,7 @@ tekstiä2
 ^^^^
   
   ";
-  let lexer = Lexer::new(src);
+  let lexer = Lexer::new(src, State::Body);
 
   println!("{}",src);
 
@@ -45,7 +45,7 @@ tekstiä2
 #[test]
 fn scan_token() {
   let src = "========\ntekstiä\n=========\n";
-  let mut lexer = Lexer::new(src);
+  let mut lexer = Lexer::new(src, State::Body);
   lexer.scan_token(src);
 
   println!("{:?}", lexer.tokens);
