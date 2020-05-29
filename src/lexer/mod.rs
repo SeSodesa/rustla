@@ -102,7 +102,7 @@ impl <'t> Lexer <'t> {
       inline_actions: lexer.inline_actions.clone(),
       tokens: Vec::new(),
       lexeme_start: lexer.lexeme_start,
-      lookahead: lexer.lookahead,
+      lookahead: lexer.lexeme_start,
       pos: pos,
       row: row,
       col: col,
