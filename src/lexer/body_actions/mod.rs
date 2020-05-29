@@ -235,14 +235,14 @@ fn tokenize_footnote_or_citation_target(lex: &mut Lexer, tt:TokenType, cs: regex
 
 
 /// ### tokenize_substitution_definition
-/// Tokenizes a subsittution definition target
+/// Tokenizes a subsititution definition target
 fn tokenize_substitution_definition(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
 
 }
 
 
 /// ### tokenize_comment
-/// Tokenizes a subsititution definition target
+/// Tokenizes a comment target
 fn tokenize_comment(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
 
 }
