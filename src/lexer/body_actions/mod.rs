@@ -150,11 +150,13 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) 
     )
   );
 
-  lex.state = State::Inline;
-
   // Scan the list item text...
 
-  lex.state = State::Body;
+  let inline_src = cs.get(3).unwrap().as_str();
+  let inline_toks = &mut Lexer::new_from_lexer(lex, inline_src, State::Inline).lex();
+
+  lex.tokens.append(inline_toks);
+
 
 }
 
