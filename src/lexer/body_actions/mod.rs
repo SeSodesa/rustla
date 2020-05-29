@@ -242,7 +242,7 @@ fn tokenize_substitution_definition(lex: &mut Lexer, tt:TokenType, cs: regex::Ca
 
 
 /// ### tokenize_comment
-/// Tokenizes a subsittution definition target
+/// Tokenizes a subsititution definition target
 fn tokenize_comment(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
 
 }
