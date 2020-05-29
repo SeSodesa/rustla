@@ -117,20 +117,8 @@ impl Lexer {
       for (tt, re, a) in self.body_actions.clone().iter() {
 
         if let Some(cs) = re.captures(s) {
-          self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
-          self.lookahead = cs.get(0).unwrap().end() + self.pos;
 
-          println!("{:?} detected at (begin, end) = ({}, {})", tt, self.lexeme_start, self.lookahead);
-
-          a(self, tt.clone(), cs);
-
-          println!(" (pos, begin, end) = ({}, {}, {}) after callback...", self.pos, self.lexeme_start, self.lookahead);
-
-          self.lexeme_start = self.lookahead;
-
-          println!("Updated (pos, begin, end) -> ({}, {}, {})", self.pos, self.lexeme_start, self.lookahead);
-
-          self.update_pos(chars);
+          self.perform_action(a, tt, chars, cs);
 
           break
 
@@ -145,14 +133,7 @@ impl Lexer {
 
         if let Some(cs) = re.captures(s) {
 
-          self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
-          self.lookahead = cs.get(0).unwrap().end() + self.pos;
-
-          a(self, tt.clone(), cs);
-
-          self.lexeme_start = self.lookahead;
-
-          self.update_pos(chars);
+          self.perform_action(a, tt, chars, cs);
 
           break
 
@@ -163,6 +144,23 @@ impl Lexer {
     }
 
   }
+
+/// ### perform_action
+/// Calls the callback function `a` corresponding to
+/// the detected lexeme.
+fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: regex::Captures) {
+
+  self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
+  self.lookahead = cs.get(0).unwrap().end() + self.pos;
+
+  a(self, tt.clone(), cs);
+
+  self.lexeme_start = self.lookahead;
+
+  self.update_pos(chars);
+
+}
+
 
 /// ### update_pos
 /// Pushes `pos` to the end
