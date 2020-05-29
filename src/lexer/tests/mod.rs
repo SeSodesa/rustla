@@ -44,6 +44,21 @@ tekstiä2
 
 }
 
+
+#[test]
+fn scan_un_list_item () {
+  let src = "a
+* asdsadasdsadadas
+  adasdasdaDADasd";
+
+  let toks = Lexer::new(src, State::Body).lex();
+
+  println!("{:?}",toks.last().unwrap());
+
+  panic!();
+
+}
+
 #[test]
 fn scan_token() {
   let src = "========\ntekstiä\n=========\n";
