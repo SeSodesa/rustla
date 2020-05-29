@@ -2,14 +2,14 @@
 /// of the lexer state transitions
 
 use crate::lexer::Lexer;
-use crate::lexer::token::TokenType;
+use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::State;
 use crate::lexer::Action;
 
 use regex;
 
 pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
-  (TokenType::Escape, r"\\.", tokenize_escape),
+  (TokenType::Escape, r"\\(.)", tokenize_escape),
   (TokenType::Code, r"``", tokenize_code),
   (TokenType::TargetReference, r"`.+?<.+?>`__?", tokenize_inline_reftarget),
   (TokenType::InlineReference, r"`.+?`__?", tokenize_inline_ref),
@@ -25,6 +25,20 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
 fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
 
+  let s = cs.get(0).unwrap().start();
+  let e = cs.get(0).unwrap().end();
+  let c = cs.get(1).unwrap();
+
+  lexer.tokens.push(
+    Token{
+      t_type: TokenType::Escape,
+      lexeme: c.as_str().to_string(),
+      row: lexer.row,
+      col: lexer.col,
+      begin: s,
+      end: e,
+    }
+  );
 }
 
 fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
