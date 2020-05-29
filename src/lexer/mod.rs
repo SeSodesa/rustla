@@ -107,6 +107,7 @@ impl <'t> Lexer <'t> {
       row: row,
       col: col,
     }
+
   }
 
   /// ### lex
@@ -117,12 +118,23 @@ impl <'t> Lexer <'t> {
   /// Consumes the Lexer itself as well.
   fn lex(mut self) -> Vec<Token> {
 
+    println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.row, self.col);
+
     let s = self.source;//.clone();
     let mut chars = s.chars();
 
-    while let Some(_c) = chars.next() {
+    while let Some(c) = chars.next() {
+
+      self.pos += 1;
+      self.col += 1;
+      if c == '\n' {
+        self.row += 1;
+        self.col = 0;
+      }
 
       self.scan_token(&mut chars);
+
+      assert!(self.lookahead >= self.lexeme_start);
 
     }
 
@@ -178,6 +190,8 @@ fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars,
   self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
   self.lookahead = cs.get(0).unwrap().end() + self.pos;
 
+  println!("Performing action...");
+
   a(self, tt.clone(), cs);
 
   self.lexeme_start = self.lookahead;
@@ -196,7 +210,7 @@ fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars,
 /// lag behind `self.lexeme_start`.
 fn update_pos(&mut self, chars: &mut str::Chars) {
   
-  println!("Updating pos...\n");
+  println!("\nUpdating pos...\n");
 
   while self.pos < self.lexeme_start {
 
@@ -207,20 +221,19 @@ fn update_pos(&mut self, chars: &mut str::Chars) {
       self.pos += 1;
       self.col += 1;
 
-      println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
-
       if c == '\n' {
         self.row += 1;
         self.col = 0;
       }
+
+      println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
+        self.pos, self.lexeme_start, self.lookahead, self.row, self.col);
 
     } else {
       break
     }
 
   }
-
-  println!("Updated (pos, begin, end) -> ({}, {}, {})\n", self.pos, self.lexeme_start, self.lookahead);
 
 }
 
