@@ -117,7 +117,7 @@ impl <'t> Lexer <'t> {
   /// Consumes the Lexer itself as well.
   fn lex(mut self) -> Vec<Token> {
 
-    let s = self.source.clone();
+    let s = self.source;//.clone();
     let mut chars = s.chars();
 
     while let Some(_c) = chars.next() {
