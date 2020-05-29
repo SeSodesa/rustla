@@ -57,6 +57,8 @@ fn lexer_from_another() {
 
   assert_eq!(4, child.lexeme_start);
 
+  assert_eq!(TokenType::Escape, child.inline_actions.first().unwrap().0);
+
 }
 
 
