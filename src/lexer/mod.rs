@@ -164,12 +164,12 @@ impl Lexer {
 
   }
 
-/// ### update_lookahead
-/// Pushes the lookahead to the end
-/// of the end position of the
+/// ### update_pos
+/// Pushes `pos` to the end
+/// position of the
 /// latest detected lexeme.
 /// If this doesn't succeed, simply
-/// makes sure `self.lookahead` doesn't
+/// makes sure `self.pos` doesn't
 /// lag behind `self.lexeme_start`.
 fn update_pos(&mut self, chars: &mut str::Chars) {
   
