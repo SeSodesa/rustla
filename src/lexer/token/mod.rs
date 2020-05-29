@@ -11,8 +11,8 @@ use std::fmt;
 pub struct Token {
   pub t_type: TokenType,
   pub lexeme: String,
-  pub row: usize,
-  pub col: usize,
+  // pub row: usize,
+  // pub col: usize,
   pub begin: usize,
   pub  end: usize,
 }
@@ -23,20 +23,22 @@ impl fmt::Debug for Token {
     f.debug_struct("Token")
       .field("t_type", &self.t_type)
       .field("lexeme", &self.lexeme)
-      .field("row", &self.row)
-      .field("col", &self.col)
+      // .field("row", &self.row)
+      // .field("col", &self.col)
+      .field("begin", &self.begin)
+      .field("end", &self.end)
       .finish()
   }
 }
 
 /// Methods for the `Token` type
 impl Token {
-  pub fn new(t_type: TokenType, lexeme: String, row: usize, col: usize, begin: usize, end:usize) -> Token {
+  pub fn new(t_type: TokenType, lexeme: String, begin: usize, end:usize) -> Token {
     Token{
       t_type: t_type,
       lexeme: lexeme,
-      row: row,
-      col: col,
+      // row: row,
+      // col: col,
       begin: begin,
       end: end
     }

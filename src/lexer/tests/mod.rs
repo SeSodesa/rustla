@@ -6,7 +6,7 @@ use super::*;
 
 #[test]
 /// A test for the Lexer constructor
-fn new() {
+ fn new() {
   let ls = "Aaa!";
   let lex = Lexer::new(ls, State::Body);
   assert_eq!(lex.tokens, Vec::new());
@@ -52,6 +52,8 @@ fn lexer_from_another() {
   let parent = &mut Lexer::new(src, State::Body);
 
   parent.lexeme_start += 4;
+  parent.row += 4;
+  parent.col += 5;
 
   let child = Lexer::new_from_lexer(parent, src, State::Inline);
 
@@ -59,20 +61,27 @@ fn lexer_from_another() {
 
   assert_eq!(TokenType::Escape, child.inline_actions.first().unwrap().0);
 
+  assert_eq!(4, child.row);
+  assert_eq!(5, child.col);
+
 }
 
 
 #[test]
 fn scan_un_list_item () {
-  let src = "a
-* asdsadasdsadadas
-  adasdasdaDADasd";
+  let src = "  
+  
+* aaaabbbbcccc
+  ccccbbbbaaaa
+
+* xxxxyyyy
+  yyyyxxxx'
+
+";
 
   let toks = Lexer::new(src, State::Body).lex();
 
   println!("{:?}",toks);
-
-  panic!();
 
 }
 
