@@ -35,222 +35,215 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Overlined headings
   // ------------------
-  (TokenType::EqualsOverlinedHeading, r"(?m)^={3,}\n[ \t]*(.+)\n={3,}\n", Lexer::tokenize_section_title),
-  (TokenType::DashOverlinedHeading, r"(?m)^-{3,}\n[ \t]*(.+)\n-{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::BacktickOverlinedHeading, r"(?m)^`{3,}\n[ \t]*(.+)\n`{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::ColonOverlinedHeading, r"(?m)^:{3,}\n[ \t]*(.+)\n:{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::SquoteOverlinedHeading, r"(?m)^'{3,}\n[ \t]*(.+)\n'{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::DquoteOverlinedHeading, r#"(?m)^"{3,}\n[ \t]*(.+)\n"{3,}\n"#, Lexer::tokenize_section_title),
-  (TokenType::TildeOverlinedHeading, r"(?m)^~{3,}\n[ \t]*(.+)\n~{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::CaretOverlinedHeading, r"(?m)^\^{3,}\n[ \t]*(.+)\n\^{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::UnderscoreOverlinedHeading, r"(?m)^_{3,}\n[ \t]*(.+)\n_{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::AsteriskOverlinedHeading, r"(?m)^\*{3,}\n[ \t]*(.+)\n\*{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::PlusOverlinedHeading, r"(?m)^\+{3,}\n[ \t]*(.+)\n\+{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::HashOverlinedHeading, r"(?m)^\#{3,}\n[ \t]*(.+)\n\#{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::LessOverlinedHeading, r"(?m)^<{3,}\n[ \t]*(.+)\n<{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::MoreOverlinedHeading, r"(?m)^>{3,}\n[ \t]*(.+)\n>{3,}\n", Lexer::tokenize_section_title),
+  (TokenType::EqualsOverlinedHeading, r"(?m)^={3,}\n[ \t]*(.+)\n={3,}\n", tokenize_section_title),
+  (TokenType::DashOverlinedHeading, r"(?m)^-{3,}\n[ \t]*(.+)\n-{3,}\n", tokenize_section_title),
+  (TokenType::BacktickOverlinedHeading, r"(?m)^`{3,}\n[ \t]*(.+)\n`{3,}\n", tokenize_section_title),
+  (TokenType::ColonOverlinedHeading, r"(?m)^:{3,}\n[ \t]*(.+)\n:{3,}\n", tokenize_section_title),
+  (TokenType::SquoteOverlinedHeading, r"(?m)^'{3,}\n[ \t]*(.+)\n'{3,}\n", tokenize_section_title),
+  (TokenType::DquoteOverlinedHeading, r#"(?m)^"{3,}\n[ \t]*(.+)\n"{3,}\n"#, tokenize_section_title),
+  (TokenType::TildeOverlinedHeading, r"(?m)^~{3,}\n[ \t]*(.+)\n~{3,}\n", tokenize_section_title),
+  (TokenType::CaretOverlinedHeading, r"(?m)^\^{3,}\n[ \t]*(.+)\n\^{3,}\n", tokenize_section_title),
+  (TokenType::UnderscoreOverlinedHeading, r"(?m)^_{3,}\n[ \t]*(.+)\n_{3,}\n", tokenize_section_title),
+  (TokenType::AsteriskOverlinedHeading, r"(?m)^\*{3,}\n[ \t]*(.+)\n\*{3,}\n", tokenize_section_title),
+  (TokenType::PlusOverlinedHeading, r"(?m)^\+{3,}\n[ \t]*(.+)\n\+{3,}\n", tokenize_section_title),
+  (TokenType::HashOverlinedHeading, r"(?m)^\#{3,}\n[ \t]*(.+)\n\#{3,}\n", tokenize_section_title),
+  (TokenType::LessOverlinedHeading, r"(?m)^<{3,}\n[ \t]*(.+)\n<{3,}\n", tokenize_section_title),
+  (TokenType::MoreOverlinedHeading, r"(?m)^>{3,}\n[ \t]*(.+)\n>{3,}\n", tokenize_section_title),
 
   // Normal headings
   // ---------------
-  (TokenType::EqualsHeading, r"(?m)^(.+)\n={3,}\n", Lexer::tokenize_section_title),
-  (TokenType::DashHeading, r"(?m)^(.+)\n-{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::BacktickHeading, r"(?m)^(.+)\n`{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::ColonHeading, r"(?m)^(.+)\n:{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::SquoteHeading, r"(?m)^(.+)\n'{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::DquoteHeading, r#"(?m)^(.+)\n"{3,}\n"#, Lexer::tokenize_section_title),
-  (TokenType::TildeHeading, r"(?m)^(.+)\n~{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::CaretHeading, r"(?m)^(.+)\n\^{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::UnderscoreHeading, r"(?m)^(.+)\n_{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::AsteriskHeading, r"(?m)^(.+)\n\*{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::PlusHeading, r"(?m)^(.+)\n\+{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::HashHeading, r"(?m)^(.+)\n\#{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::LessHeading, r"(?m)^(.+)\n<{3,}\n", Lexer::tokenize_section_title),
-  (TokenType::MoreHeading, r"(?m)^(.+)\n>{3,}\n", Lexer::tokenize_section_title),
+  (TokenType::EqualsHeading, r"(?m)^(.+)\n={3,}\n", tokenize_section_title),
+  (TokenType::DashHeading, r"(?m)^(.+)\n-{3,}\n", tokenize_section_title),
+  (TokenType::BacktickHeading, r"(?m)^(.+)\n`{3,}\n", tokenize_section_title),
+  (TokenType::ColonHeading, r"(?m)^(.+)\n:{3,}\n", tokenize_section_title),
+  (TokenType::SquoteHeading, r"(?m)^(.+)\n'{3,}\n", tokenize_section_title),
+  (TokenType::DquoteHeading, r#"(?m)^(.+)\n"{3,}\n"#, tokenize_section_title),
+  (TokenType::TildeHeading, r"(?m)^(.+)\n~{3,}\n", tokenize_section_title),
+  (TokenType::CaretHeading, r"(?m)^(.+)\n\^{3,}\n", tokenize_section_title),
+  (TokenType::UnderscoreHeading, r"(?m)^(.+)\n_{3,}\n", tokenize_section_title),
+  (TokenType::AsteriskHeading, r"(?m)^(.+)\n\*{3,}\n", tokenize_section_title),
+  (TokenType::PlusHeading, r"(?m)^(.+)\n\+{3,}\n", tokenize_section_title),
+  (TokenType::HashHeading, r"(?m)^(.+)\n\#{3,}\n", tokenize_section_title),
+  (TokenType::LessHeading, r"(?m)^(.+)\n<{3,}\n", tokenize_section_title),
+  (TokenType::MoreHeading, r"(?m)^(.+)\n>{3,}\n", tokenize_section_title),
 
   // Lists
   // -----
-  (TokenType::UnnumberedList, r"(?m)^(\s*)([*\-+])( .+\n(?:^\s*  .+\n)*)", Lexer::tokenize_unnumbered_list),
-  (TokenType::NumberedDotList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\. .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
-  (TokenType::NumberedLRparList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
-  (TokenType::NumberedRparList, r"(?m)^\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*", Lexer::tokenize_numbered_list),
-  (TokenType::NoBolAlphaDotList, r"(?m)^\s*[A-Z]+\. .+\n(?:[ \t]*[A-Z]+\. .+\n)+", Lexer::tokenize_alpha_list),
-  (TokenType::AlphaLRparList, r"(?m)^\s*\(?[a-zA-Z]+\) .+\n(?:[ \t]*\([a-zA-Z]+\) .+\n)+", Lexer::tokenize_alpha_list),
-  (TokenType::AlphaRparList, r"(?m)^\s*[a-zA-Z]+\) .+\n(?:[ \t]*[a-zA-Z]+\) .+\n)+", Lexer::tokenize_alpha_list),
-  (TokenType::DefinitionList, r"(?m)^(?:(\s*).+\n(?:  .+\n)+\s)+", Lexer::tokenize_definition_list),
-  (TokenType::FieldList, r"(?m)^\s*(?::.+: .+\n(?:[ \t]{2}.+\n)*)+", Lexer::tokenize_field_list),
+  (TokenType::UnnumberedList, r"(?m)^(\s*)([*\-+])( .+\n(?:^\s*  .+\n)*)", tokenize_unnumbered_list),
+  (TokenType::NumberedDotList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\. .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", tokenize_numbered_list),
+  (TokenType::NumberedLRparList, r"(?m)^\s*\(?[0-9#ivxlcmIVXLCM]+\) .+\n(?:\([0-9#ivxlcmIVXLCM]+\) .+\n)*", tokenize_numbered_list),
+  (TokenType::NumberedRparList, r"(?m)^\s*[0-9#ivxlcmIVXLCM]+\) .+\n(?:[0-9#ivxlcmIVXLCM]+\) .+\n)*", tokenize_numbered_list),
+  (TokenType::NoBolAlphaDotList, r"(?m)^\s*[A-Z]+\. .+\n(?:[ \t]*[A-Z]+\. .+\n)+", tokenize_alpha_list),
+  (TokenType::AlphaLRparList, r"(?m)^\s*\(?[a-zA-Z]+\) .+\n(?:[ \t]*\([a-zA-Z]+\) .+\n)+", tokenize_alpha_list),
+  (TokenType::AlphaRparList, r"(?m)^\s*[a-zA-Z]+\) .+\n(?:[ \t]*[a-zA-Z]+\) .+\n)+", tokenize_alpha_list),
+  (TokenType::DefinitionList, r"(?m)^(?:(\s*).+\n(?:  .+\n)+\s)+", tokenize_definition_list),
+  (TokenType::FieldList, r"(?m)^\s*(?::.+: .+\n(?:[ \t]{2}.+\n)*)+", tokenize_field_list),
 
   // // Blocks
   // // ------
-  (TokenType::LiteralBlock, r"(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", Lexer::tokenize_literal_block),
-  (TokenType::PerLineLiteralBlock, r"(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", Lexer::tokenize_per_line_literal_block),
-  (TokenType::LineBlock, r"(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", Lexer::tokenize_line_block),
-  (TokenType::Paragraph, r"(?m)^\s*(?:^.+\n)+\s+", Lexer::tokenize_paragraph),
+  (TokenType::LiteralBlock, r"(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", tokenize_literal_block),
+  (TokenType::PerLineLiteralBlock, r"(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", tokenize_per_line_literal_block),
+  (TokenType::LineBlock, r"(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", tokenize_line_block),
+  (TokenType::Paragraph, r"(?m)^\s*(?:^.+\n)+\s+", tokenize_paragraph),
 
   // // Directives
   // // ----------
-  (TokenType::GeneralDirective, r"(?m)^ *\.\.\s*[\w:-]+?::[ \t]*.*", Lexer::tokenize_general_directive),
+  (TokenType::GeneralDirective, r"(?m)^ *\.\.\s*[\w:-]+?::[ \t]*.*", tokenize_general_directive),
 
   // // Reference targets
   // // -----------------
-  (TokenType::ReferenceTarget, r"(?m)^[ \t]*\.\. _\w+:.*?$", Lexer::tokenize_reference_target),
-  (TokenType::FootnoteOrCitationTarget, r"(?m)^ *\.\.\s*\[.+\].*?$", Lexer::tokenize_footnote_or_citation_target),
-  (TokenType::SubstitutionDefinition, r"(?m)^ *\.\.\s*\|.+\|\s*[\w:-]+?::[ \t]*.*", Lexer::tokenize_substitution_definition),
+  (TokenType::ReferenceTarget, r"(?m)^[ \t]*\.\. _\w+:.*?$", tokenize_reference_target),
+  (TokenType::FootnoteOrCitationTarget, r"(?m)^ *\.\.\s*\[.+\].*?$", tokenize_footnote_or_citation_target),
+  (TokenType::SubstitutionDefinition, r"(?m)^ *\.\.\s*\|.+\|\s*[\w:-]+?::[ \t]*.*", tokenize_substitution_definition),
 
   // // Comments
   // // --------
-  (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", Lexer::tokenize_comment),
+  (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", tokenize_comment),
 
 ];
 
 
+/// ### tokenize_section_title
+/// Creates the tokens related to overlined titles
+fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
 
-impl Lexer {
-
-  /// ### tokenize_section_title
-  /// Creates the tokens related to overlined titles
-  fn tokenize_section_title (&mut self, tt:TokenType, cs: regex::Captures) {
-
-    let title = cs.get(1).unwrap();
-    self.tokens.push(
-      Token::new(
-        tt,
-        title.as_str().to_string(),
-        self.row,
-        self.col,
-        title.start(),
-        title.end(),
-      )
-    );
-  }
+  let title = cs.get(1).unwrap();
+  lex.tokens.push(
+    Token::new(
+      tt,
+      title.as_str().to_string(),
+      lex.row,
+      lex.col,
+      title.start(),
+      title.end(),
+    )
+  );
+}
 
 
-  /// ### Tokenize_unnumbered_list
-  /// Tokenizes an unnumbered list
-  fn tokenize_unnumbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
-    let preceding_ws = cs.get(1).unwrap();
+/// ### Tokenize_unnumbered_list
+/// Tokenizes an unnumbered list
+fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+  let preceding_ws = cs.get(1).unwrap();
 
-     // Whitespace replaced by a single blank line
-    self.tokens.push(
-      Token::new(
-        TokenType::BlankLine,
-        String::from("\n\n"),
-        self.row,
-        self.col,
-        preceding_ws.start(),
-        preceding_ws.end()
-      )
-    );
+    // Whitespace replaced by a single blank line
+  lex.tokens.push(
+    Token::new(
+      TokenType::BlankLine,
+      String::from("\n\n"),
+      lex.row,
+      lex.col,
+      preceding_ws.start(),
+      preceding_ws.end()
+    )
+  );
 
-    let bullet = cs.get(2).unwrap();
-    self.tokens.push(
-      Token::new(
-        TokenType::Bullet,
-        bullet.as_str().to_string(),
-        self.row,
-        self.col,
-        bullet.start(),
-        bullet.end()
-      )
-    );
+  let bullet = cs.get(2).unwrap();
+  lex.tokens.push(
+    Token::new(
+      TokenType::Bullet,
+      bullet.as_str().to_string(),
+      lex.row,
+      lex.col,
+      bullet.start(),
+      bullet.end()
+    )
+  );
 
-    self.state = State::Inline;
+  lex.state = State::Inline;
 
-    // Scan the list item text...
+  // Scan the list item text...
 
-    self.state = State::Body;
+  lex.state = State::Body;
 
-  }
+}
 
-  /// ### Tokenize_numbered_list
-  /// Tokenizes an unnumbered list
-  fn tokenize_numbered_list(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### Tokenize_alpha_list
-  /// Tokenizes an unnumbered list
-  fn tokenize_alpha_list(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-  /// ### Tokenize_definition_list
-  /// Tokenizes an unnumbered list
-  fn tokenize_definition_list(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-  /// ### Tokenize_field_list
-  /// Tokenizes an unnumbered list
-  fn tokenize_field_list(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_literal_block
-  /// Tokenizes a literal block
-  fn tokenize_literal_block(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_per_line_literal_block
-  /// Tokenizes a per-line literal block
-  fn tokenize_per_line_literal_block(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_line_block
-  /// Tokenizes a line block
-  fn tokenize_line_block(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_paragraph
-  /// Tokenizes a paragraph
-  fn tokenize_paragraph(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_general_directive
-  /// Tokenizes a paragraph
-  fn tokenize_general_directive(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-
-  /// ### tokenize_reference_target
-  /// Tokenizes a reference target
-  fn tokenize_reference_target(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_footnote_or_citation_target
-  /// Tokenizes both footnote and citation targets
-  fn tokenize_footnote_or_citation_target(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_substitution_definition
-  /// Tokenizes a subsittution definition target
-  fn tokenize_substitution_definition(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
-
-
-  /// ### tokenize_comment
-  /// Tokenizes a subsittution definition target
-  fn tokenize_comment(&mut self, tt:TokenType, cs: regex::Captures) {
-
-  }
+/// ### Tokenize_numbered_list
+/// Tokenizes an unnumbered list
+fn tokenize_numbered_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
 
 }
 
 
+/// ### Tokenize_alpha_list
+/// Tokenizes an unnumbered list
+fn tokenize_alpha_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+/// ### Tokenize_definition_list
+/// Tokenizes an unnumbered list
+fn tokenize_definition_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+/// ### Tokenize_field_list
+/// Tokenizes an unnumbered list
+fn tokenize_field_list(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_literal_block
+/// Tokenizes a literal block
+fn tokenize_literal_block(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_per_line_literal_block
+/// Tokenizes a per-line literal block
+fn tokenize_per_line_literal_block(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_line_block
+/// Tokenizes a line block
+fn tokenize_line_block(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_paragraph
+/// Tokenizes a paragraph
+fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_general_directive
+/// Tokenizes a paragraph
+fn tokenize_general_directive(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+
+/// ### tokenize_reference_target
+/// Tokenizes a reference target
+fn tokenize_reference_target(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_footnote_or_citation_target
+/// Tokenizes both footnote and citation targets
+fn tokenize_footnote_or_citation_target(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_substitution_definition
+/// Tokenizes a subsittution definition target
+fn tokenize_substitution_definition(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
+
+
+/// ### tokenize_comment
+/// Tokenizes a subsittution definition target
+fn tokenize_comment(lex: &mut Lexer, tt:TokenType, cs: regex::Captures) {
+
+}
 
