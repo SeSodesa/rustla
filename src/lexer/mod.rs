@@ -54,8 +54,9 @@ impl fmt::Display for Lexer {
 /// Lexer type methods
 impl Lexer {
 
-  /// ### Lexer constructor
-  pub fn new(source: &'static str, state: state::State) -> Lexer {
+  /// ### new
+  /// A Lexer constructor
+  pub fn new(source: &'static str, state: state::State) -> Self {
 
     let mut body_actions = Vec::new();
     let mut inline_actions = Vec::new();
@@ -81,6 +82,39 @@ impl Lexer {
       pos: 0,
       row:0,
       col: 0,
+    }
+  }
+
+  /// # new_with_pos
+  /// Allows constructing a Lexer with a specific logical position
+  /// in the source code. Mainly useful for generating sub lexers
+  /// for inline lexing.
+  pub fn new_with_pos (source: &'static str, state: state::State, pos: &mut usize, row: &mut usize, col: &mut usize) -> Self {
+
+    let mut body_actions = Vec::new();
+    let mut inline_actions = Vec::new();
+
+    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      body_actions.push((tt.clone(), r, *fun));
+    }
+
+    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      inline_actions.push((tt.clone(), r, *fun));
+    }
+
+    Lexer {
+      source: source,
+      state: state,
+      body_actions: body_actions,
+      inline_actions: inline_actions,
+      tokens: Vec::new(),
+      lexeme_start: 0,
+      lookahead: 0,
+      pos: *pos,
+      row: *row,
+      col: *col,
     }
   }
 
