@@ -44,6 +44,21 @@ tekstiä2
 
 }
 
+#[test]
+fn lexer_from_another() {
+
+  let src = "aaaabbbbcccc";
+
+  let parent = &mut Lexer::new(src, State::Body);
+
+  parent.lexeme_start += 4;
+
+  let child = Lexer::new_from_lexer(parent, src, State::Inline);
+
+  assert_eq!(4, child.lexeme_start);
+
+}
+
 
 #[test]
 fn scan_un_list_item () {
@@ -53,7 +68,7 @@ fn scan_un_list_item () {
 
   let toks = Lexer::new(src, State::Body).lex();
 
-  println!("{:?}",toks.last().unwrap());
+  println!("{:?}",toks);
 
   panic!();
 
