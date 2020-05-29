@@ -68,7 +68,7 @@ fn lexer_from_another() {
 
 
 #[test]
-fn scan_un_list_item () {
+fn scan_un_list_items () {
   let src = "  
   
 * aaaabbbbcccc
@@ -82,6 +82,13 @@ fn scan_un_list_item () {
   let toks = Lexer::new(src, State::Body).lex();
 
   println!("{:?}",toks);
+
+  assert_eq!(TokenType::Text, toks[2].t_type);
+  assert_eq!(TokenType::Text, toks[3].t_type);
+  assert_eq!(TokenType::BlankLine, toks[4].t_type);
+  assert_eq!(TokenType::Bullet, toks[5].t_type);
+  assert_eq!(TokenType::Text, toks[6].t_type);
+  assert_eq!(TokenType::Text, toks[7].t_type);
 
 }
 
