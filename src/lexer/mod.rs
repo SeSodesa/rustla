@@ -123,6 +123,8 @@ impl <'t> Lexer <'t> {
     let s = self.source;//.clone();
     let mut chars = s.chars();
 
+    self.scan_token(&mut chars);
+
     while let Some(c) = chars.next() {
 
       self.pos += 1;
