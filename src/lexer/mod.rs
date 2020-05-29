@@ -23,8 +23,8 @@ use crate::lexer::error::{TokenizeError, LexError};
 type Action = fn(&mut Lexer, TokenType, regex::Captures) -> ();
 
 //#[derive(PartialEq)]
-pub struct Lexer {
-  source: &'static str,
+pub struct Lexer <'t> {
+  source: &'t str,
   state: State,
   body_actions: Vec<(TokenType, regex::Regex, Action)>,
   inline_actions: Vec<(TokenType, regex::Regex, Action)>,
@@ -36,7 +36,7 @@ pub struct Lexer {
   col: usize,
 }
 
-impl fmt::Debug for Lexer {
+impl fmt::Debug for Lexer <'_> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
         .field("lexeme_start", &self.lexeme_start)
@@ -45,14 +45,14 @@ impl fmt::Debug for Lexer {
   }
 }
 
-impl fmt::Display for Lexer {
+impl fmt::Display for Lexer <'_> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "Lexer location: row = {}, col = {}", self.row, self.col)
   }
 }
 
 /// Lexer type methods
-impl Lexer {
+impl <'t> Lexer <'t> {
 
   /// ### new
   /// A Lexer constructor
@@ -85,36 +85,27 @@ impl Lexer {
     }
   }
 
-  /// # new_with_pos
-  /// Allows constructing a Lexer with a specific logical position
-  /// in the source code. Mainly useful for generating sub lexers
+  /// # new_from_lexer
+  /// Allows constructing a Lexer from another lexer.
+  /// Mainly useful for generating sub lexers
   /// for inline lexing.
-  pub fn new_with_pos (source: &'static str, state: state::State, pos: &mut usize, row: &mut usize, col: &mut usize) -> Self {
+  pub fn new_from_lexer (lexer: &Lexer, src: &'t str, state: state::State) -> Self {
 
-    let mut body_actions = Vec::new();
-    let mut inline_actions = Vec::new();
-
-    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
-      let r = regex::Regex::new(re).unwrap();
-      body_actions.push((tt.clone(), r, *fun));
-    }
-
-    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
-      let r = regex::Regex::new(re).unwrap();
-      inline_actions.push((tt.clone(), r, *fun));
-    }
+    let pos = lexer.pos;
+    let row = lexer.row;
+    let col = lexer.col;
 
     Lexer {
-      source: source,
+      source: src,
       state: state,
-      body_actions: body_actions,
-      inline_actions: inline_actions,
+      body_actions: lexer.body_actions.clone(),
+      inline_actions: lexer.inline_actions.clone(),
       tokens: Vec::new(),
-      lexeme_start: 0,
-      lookahead: 0,
-      pos: *pos,
-      row: *row,
-      col: *col,
+      lexeme_start: lexer.lexeme_start,
+      lookahead: lexer.lookahead,
+      pos: pos,
+      row: row,
+      col: col,
     }
   }
 
