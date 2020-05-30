@@ -165,61 +165,60 @@ impl <'t> Lexer <'t> {
 
   }
 
-/// ### perform_action
-/// Calls the callback function `a` corresponding to
-/// the detected lexeme.
-fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: &regex::Captures) {
+  /// ### perform_action
+  /// Calls the callback function `a` corresponding to
+  /// the detected lexeme.
+  fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: &regex::Captures) {
 
-  self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
-  self.lookahead = cs.get(0).unwrap().end() + self.pos;
+    self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
+    self.lookahead = cs.get(0).unwrap().end() + self.pos;
 
-  println!("Performing action...");
+    println!("Performing action...");
 
-  a(self, tt.clone(), cs);
+    a(self, tt.clone(), cs);
 
-  self.lexeme_start = self.lookahead;
+    self.lexeme_start = self.lookahead;
 
-  self.update_pos(chars);
-
-}
-
-
-/// ### update_pos
-/// Pushes `pos` to the end
-/// position of the
-/// latest detected lexeme.
-/// If this doesn't succeed, simply
-/// makes sure `self.pos` doesn't
-/// lag behind `self.lexeme_start`.
-fn update_pos(&mut self, chars: &mut str::Chars) {
-  
-  println!("\nUpdating pos...\n");
-
-  while self.pos < self.lexeme_start {
-
-    if let Some(c) = chars.next() {
-
-      println!("Consuming {:?}...", c);
-
-      self.pos += 1;
-      self.col += 1;
-
-      if c == '\n' {
-        self.row += 1;
-        self.col = 0;
-      }
-
-      println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
-        self.pos, self.lexeme_start, self.lookahead, self.row, self.col);
-
-    } else {
-      break
-    }
+    self.update_pos(chars);
 
   }
 
-}
 
+  /// ### update_pos
+  /// Pushes `pos` to the end
+  /// position of the
+  /// latest detected lexeme.
+  /// If this doesn't succeed, simply
+  /// makes sure `self.pos` doesn't
+  /// lag behind `self.lexeme_start`.
+  fn update_pos(&mut self, chars: &mut str::Chars) {
+    
+    println!("\nUpdating pos...\n");
+
+    while self.pos < self.lexeme_start {
+
+      if let Some(c) = chars.next() {
+
+        println!("Consuming {:?}...", c);
+
+        self.pos += 1;
+        self.col += 1;
+
+        if c == '\n' {
+          self.row += 1;
+          self.col = 0;
+        }
+
+        println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
+          self.pos, self.lexeme_start, self.lookahead, self.row, self.col);
+
+      } else {
+        break
+      }
+
+    }
+
+  }
 
 }
 
