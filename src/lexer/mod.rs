@@ -24,8 +24,12 @@ use crate::lexer::error::{TokenizeError, LexError};
 /// A function pointer type alias for a Lexer action
 type Action = fn(&mut Lexer, TokenType, &regex::Captures) -> ();
 
+/// ### Actionvector
+/// Contains tuples `(TokenType, Regex, Action)`
 type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
 
+/// ### ActionMap
+/// Maps Lexer states to suitable `ActionVector`s.
 type ActionMap = collections::HashMap<state::State, ActionVector>;
 
 //#[derive(PartialEq)]
@@ -80,7 +84,7 @@ impl <'t> Lexer <'t> {
     }
   }
 
-  /// # new_from_lexer
+  /// ### new_from_lexer
   /// Allows constructing a Lexer from another lexer.
   /// Mainly useful for generating sub lexers
   /// for inline lexing.
@@ -117,7 +121,9 @@ impl <'t> Lexer <'t> {
     let s = self.source;
     let mut chars = s.chars();
 
-    self.scan_token(&mut chars);
+    if let None = self.scan_token(&mut chars) {
+      eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos, self.row, self.col);
+    }
 
     while let Some(c) = chars.next() {
 
@@ -128,7 +134,9 @@ impl <'t> Lexer <'t> {
         self.col = 0;
       }
 
-      self.scan_token(&mut chars);
+      if let None = self.scan_token(&mut chars) {
+        eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos, self.row, self.col);
+      }
 
       assert!(self.lookahead >= self.lexeme_start);
 
@@ -193,7 +201,7 @@ impl <'t> Lexer <'t> {
   /// lag behind `self.lexeme_start`.
   fn update_pos(&mut self, chars: &mut str::Chars) {
     
-    println!("\nUpdating pos...\n");
+    println!("Updating pos...\n");
 
     while self.pos < self.lexeme_start {
 
