@@ -203,7 +203,7 @@ impl <'t> Lexer <'t> {
     
     println!("Updating pos...\n");
 
-    while self.pos < self.lexeme_start {
+    while self.pos < self.lexeme_start - 1 {
 
       if let Some(c) = chars.next() {
 
