@@ -35,37 +35,37 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Overlined headings
   // ------------------
-  (TokenType::EqualsOverlinedHeading, r"^(?m)^={3,}\n[ \t]*(.+)\n={3,}\n", tokenize_section_title),
-  (TokenType::DashOverlinedHeading, r"^(?m)^-{3,}\n[ \t]*(.+)\n-{3,}\n", tokenize_section_title),
-  (TokenType::BacktickOverlinedHeading, r"^(?m)^`{3,}\n[ \t]*(.+)\n`{3,}\n", tokenize_section_title),
-  (TokenType::ColonOverlinedHeading, r"^(?m)^:{3,}\n[ \t]*(.+)\n:{3,}\n", tokenize_section_title),
-  (TokenType::SquoteOverlinedHeading, r"^(?m)^'{3,}\n[ \t]*(.+)\n'{3,}\n", tokenize_section_title),
-  (TokenType::DquoteOverlinedHeading, r#"^(?m)^"{3,}\n[ \t]*(.+)\n"{3,}\n"#, tokenize_section_title),
-  (TokenType::TildeOverlinedHeading, r"^(?m)^~{3,}\n[ \t]*(.+)\n~{3,}\n", tokenize_section_title),
-  (TokenType::CaretOverlinedHeading, r"^(?m)^\^{3,}\n[ \t]*(.+)\n\^{3,}\n", tokenize_section_title),
-  (TokenType::UnderscoreOverlinedHeading, r"^(?m)^_{3,}\n[ \t]*(.+)\n_{3,}\n", tokenize_section_title),
-  (TokenType::AsteriskOverlinedHeading, r"^(?m)^\*{3,}\n[ \t]*(.+)\n\*{3,}\n", tokenize_section_title),
-  (TokenType::PlusOverlinedHeading, r"^(?m)^\+{3,}\n[ \t]*(.+)\n\+{3,}\n", tokenize_section_title),
-  (TokenType::HashOverlinedHeading, r"^(?m)^\#{3,}\n[ \t]*(.+)\n\#{3,}\n", tokenize_section_title),
-  (TokenType::LessOverlinedHeading, r"^(?m)^<{3,}\n[ \t]*(.+)\n<{3,}\n", tokenize_section_title),
-  (TokenType::MoreOverlinedHeading, r"^(?m)^>{3,}\n[ \t]*(.+)\n>{3,}\n", tokenize_section_title),
+  (TokenType::EqualsOverlinedHeading, r"^(?m)^(\s*)={3,}\n[ \t]*(.+)\n={3,}\n", tokenize_section_title),
+  (TokenType::DashOverlinedHeading, r"^(?m)^(\s*)-{3,}\n[ \t]*(.+)\n-{3,}\n", tokenize_section_title),
+  (TokenType::BacktickOverlinedHeading, r"^(?m)^(\s*)`{3,}\n[ \t]*(.+)\n`{3,}\n", tokenize_section_title),
+  (TokenType::ColonOverlinedHeading, r"^(?m)^(\s*):{3,}\n[ \t]*(.+)\n:{3,}\n", tokenize_section_title),
+  (TokenType::SquoteOverlinedHeading, r"^(?m)^(\s*)'{3,}\n[ \t]*(.+)\n'{3,}\n", tokenize_section_title),
+  (TokenType::DquoteOverlinedHeading, r#"^(?m)^(\s*)"{3,}\n[ \t]*(.+)\n"{3,}\n"#, tokenize_section_title),
+  (TokenType::TildeOverlinedHeading, r"^(?m)^(\s*)~{3,}\n[ \t]*(.+)\n~{3,}\n", tokenize_section_title),
+  (TokenType::CaretOverlinedHeading, r"^(?m)^(\s*)\^{3,}\n[ \t]*(.+)\n\^{3,}\n", tokenize_section_title),
+  (TokenType::UnderscoreOverlinedHeading, r"^(\s*)(?m)^_{3,}\n[ \t]*(.+)\n_{3,}\n", tokenize_section_title),
+  (TokenType::AsteriskOverlinedHeading, r"^(?m)^(\s*)\*{3,}\n[ \t]*(.+)\n\*{3,}\n", tokenize_section_title),
+  (TokenType::PlusOverlinedHeading, r"^(?m)^(\s*)\+{3,}\n[ \t]*(.+)\n\+{3,}\n", tokenize_section_title),
+  (TokenType::HashOverlinedHeading, r"^(?m)^(\s*)\#{3,}\n[ \t]*(.+)\n\#{3,}\n", tokenize_section_title),
+  (TokenType::LessOverlinedHeading, r"^(?m)^(\s*)<{3,}\n[ \t]*(.+)\n<{3,}\n", tokenize_section_title),
+  (TokenType::MoreOverlinedHeading, r"^(?m)^(\s*)>{3,}\n[ \t]*(.+)\n>{3,}\n", tokenize_section_title),
 
   // Normal headings
   // ---------------
-  (TokenType::EqualsHeading, r"^(?m)^(.+)\n={3,}\n", tokenize_section_title),
-  (TokenType::DashHeading, r"^(?m)^(.+)\n-{3,}\n", tokenize_section_title),
-  (TokenType::BacktickHeading, r"^(?m)^(.+)\n`{3,}\n", tokenize_section_title),
-  (TokenType::ColonHeading, r"^(?m)^(.+)\n:{3,}\n", tokenize_section_title),
-  (TokenType::SquoteHeading, r"(?m)^(.+)\n'{3,}\n", tokenize_section_title),
-  (TokenType::DquoteHeading, r#"^(?m)^(.+)\n"{3,}\n"#, tokenize_section_title),
-  (TokenType::TildeHeading, r"^(?m)^(.+)\n~{3,}\n", tokenize_section_title),
-  (TokenType::CaretHeading, r"^(?m)^(.+)\n\^{3,}\n", tokenize_section_title),
-  (TokenType::UnderscoreHeading, r"^(?m)^(.+)\n_{3,}\n", tokenize_section_title),
-  (TokenType::AsteriskHeading, r"^(?m)^(.+)\n\*{3,}\n", tokenize_section_title),
-  (TokenType::PlusHeading, r"^(?m)^(.+)\n\+{3,}\n", tokenize_section_title),
-  (TokenType::HashHeading, r"^(?m)^(.+)\n\#{3,}\n", tokenize_section_title),
-  (TokenType::LessHeading, r"^(?m)^(.+)\n<{3,}\n", tokenize_section_title),
-  (TokenType::MoreHeading, r"^(?m)^(.+)\n>{3,}\n", tokenize_section_title),
+  (TokenType::EqualsHeading, r"^(?m)^(\s*)(.+)\n={3,}\n", tokenize_section_title),
+  (TokenType::DashHeading, r"^(?m)^(\s*)(.+)\n-{3,}\n", tokenize_section_title),
+  (TokenType::BacktickHeading, r"^(?m)^(\s*)(.+)\n`{3,}\n", tokenize_section_title),
+  (TokenType::ColonHeading, r"^(?m)^(\s*)(.+)\n:{3,}\n", tokenize_section_title),
+  (TokenType::SquoteHeading, r"(?m)^(\s*)(.+)\n'{3,}\n", tokenize_section_title),
+  (TokenType::DquoteHeading, r#"^(?m)^(\s*)(.+)\n"{3,}\n"#, tokenize_section_title),
+  (TokenType::TildeHeading, r"^(?m)^(\s*)(.+)\n~{3,}\n", tokenize_section_title),
+  (TokenType::CaretHeading, r"^(?m)^(\s*)(.+)\n\^{3,}\n", tokenize_section_title),
+  (TokenType::UnderscoreHeading, r"^(\s*)(?m)^(.+)\n_{3,}\n", tokenize_section_title),
+  (TokenType::AsteriskHeading, r"^(?m)^(\s*)(.+)\n\*{3,}\n", tokenize_section_title),
+  (TokenType::PlusHeading, r"^(?m)^(\s*)(.+)\n\+{3,}\n", tokenize_section_title),
+  (TokenType::HashHeading, r"^(?m)^(\s*)(.+)\n\#{3,}\n", tokenize_section_title),
+  (TokenType::LessHeading, r"^(?m)^(\s*)(.+)\n<{3,}\n", tokenize_section_title),
+  (TokenType::MoreHeading, r"^(?m)^(\s*)(.+)\n>{3,}\n", tokenize_section_title),
 
   // Lists
   // -----
@@ -84,7 +84,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::LiteralBlock, r"^(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", tokenize_literal_block),
   (TokenType::PerLineLiteralBlock, r"^(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", tokenize_per_line_literal_block),
   (TokenType::LineBlock, r"^(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", tokenize_line_block),
-  (TokenType::Paragraph, r"^(?m)^\s*(?:^.+\n)+\s+", tokenize_paragraph),
+  (TokenType::Paragraph, r"^(?m)^\s*(?:^.+\n)+", tokenize_paragraph),
 
   // // Directives
   // // ----------
@@ -109,7 +109,20 @@ fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) 
 
   println!("Tokenizing {:?}\n", tt);
 
-  let title = cs.get(1).unwrap();
+  let ws = cs.get(1).unwrap();
+  let title = cs.get(2).unwrap();
+
+  lex.tokens.push(
+    Token::new(
+      TokenType::BlankLine,
+      "\n\n".to_string(),
+      // lex.row,
+      // lex.col,
+      ws.start(),
+      ws.end(),
+    )
+  );
+
   lex.tokens.push(
     Token::new(
       tt,
