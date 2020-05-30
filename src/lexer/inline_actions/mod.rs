@@ -12,7 +12,7 @@ use regex;
 
 pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Escape, r"^\\(.)", tokenize_escape),
-  (TokenType::Code, r"^``", tokenize_code),
+  (TokenType::Code, r"^``([^`]+)``", tokenize_code),
   (TokenType::TargetReference, r"^`.+?<.+?>`__?", tokenize_inline_reftarget),
   (TokenType::InlineReference, r"^`.+?`__?", tokenize_inline_ref),
   (TokenType::RoleContent, r"^`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
@@ -49,6 +49,20 @@ fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
+
+  let m = cs.get(0).unwrap();
+  let code = cs.get(1).unwrap();
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      code.as_str().to_string(),
+      m.start(),
+      m.end(),
+    )
+  );
+
+
 
 }
 
