@@ -165,6 +165,7 @@ pub enum TokenType{
   Code,
   InlineReference,
   TargetReference,
+  LinkAlias,
   SubstitutionReference,
   Role,
   RoleContent, // content second
