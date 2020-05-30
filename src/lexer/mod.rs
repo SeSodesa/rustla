@@ -65,25 +65,6 @@ impl <'t> Lexer <'t> {
   /// A Lexer constructor
   pub fn new(source: &'static str, state: state::State) -> Self {
 
-    // let mut action_map = collections::HashMap::new();
-
-    // let mut body_actions = Vec::with_capacity(body_actions::BODY_TRANSITIONS.len());
-    // let mut inline_actions = Vec::with_capacity(inline_actions::INLINE_TRANSITIONS.len());
-
-    // for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
-    //   let r = regex::Regex::new(re).unwrap();
-    //   body_actions.push((tt.clone(), r, *fun));
-    // }
-
-    // action_map.insert(State::Body, body_actions);
-
-    // for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
-    //   let r = regex::Regex::new(re).unwrap();
-    //   inline_actions.push((tt.clone(), r, *fun));
-    // }
-
-    // action_map.insert(State::Inline, inline_actions);
-
     Lexer {
       source: source,
       state: state,
