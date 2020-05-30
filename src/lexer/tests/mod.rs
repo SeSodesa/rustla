@@ -20,7 +20,9 @@ use super::*;
 #[test]
 /// Tests the scanning of the entire source
 fn lex_01() {
-  let src = "=====
+  let src = "
+  
+=====
   tekstiä1
 ========
 
