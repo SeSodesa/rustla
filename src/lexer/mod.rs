@@ -114,7 +114,7 @@ impl <'t> Lexer <'t> {
 
     println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.row, self.col);
 
-    let s = self.source;//.clone();
+    let s = self.source;
     let mut chars = s.chars();
 
     self.scan_token(&mut chars);
@@ -146,24 +146,13 @@ impl <'t> Lexer <'t> {
 
     let s = chars.as_str();
 
-    let av: &ActionVector = &self.actions.get(&self.state).unwrap().clone();
+    let av: &ActionVector = &self.actions.get(&self.state).unwrap();
 
     for (tt, re, a) in av {
 
       if let Some(cs) = re.captures(s) {
 
-        // self.perform_action(a, tt, chars, &cs);
-
-        self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
-        self.lookahead = cs.get(0).unwrap().end() + self.pos;
-      
-        println!("Performing action...");
-      
-        a(self, tt.clone(), &cs);
-      
-        self.lexeme_start = self.lookahead;
-      
-        self.update_pos(chars);
+        self.perform_action(a, tt, chars, &cs);
 
         return Some(cs);
 
