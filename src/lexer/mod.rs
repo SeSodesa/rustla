@@ -12,9 +12,11 @@ mod tests;
 use std::fmt;
 use std::str;
 use regex;
+use lazy_static::lazy_static;
 
 use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::{State};
+use std::collections;
 use crate::lexer::error::{TokenizeError, LexError};
 
 
@@ -22,12 +24,17 @@ use crate::lexer::error::{TokenizeError, LexError};
 /// A function pointer type alias for a Lexer action
 type Action = fn(&mut Lexer, TokenType, &regex::Captures) -> ();
 
+type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
+
+type ActionMap = collections::HashMap<state::State, ActionVector>;
+
 //#[derive(PartialEq)]
 pub struct Lexer <'t> {
   source: &'t str,
   state: State,
-  body_actions: Vec<(TokenType, regex::Regex, Action)>,
-  inline_actions: Vec<(TokenType, regex::Regex, Action)>,
+  actions: &'static ActionMap,
+  // body_actions: Vec<(TokenType, regex::Regex, Action)>,
+  // inline_actions: Vec<(TokenType, regex::Regex, Action)>,
   tokens: Vec<Token>,
   lexeme_start: usize,
   lookahead: usize,
@@ -58,24 +65,31 @@ impl <'t> Lexer <'t> {
   /// A Lexer constructor
   pub fn new(source: &'static str, state: state::State) -> Self {
 
-    let mut body_actions = Vec::new();
-    let mut inline_actions = Vec::new();
+    // let mut action_map = collections::HashMap::new();
 
-    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
-      let r = regex::Regex::new(re).unwrap();
-      body_actions.push((tt.clone(), r, *fun));
-    }
+    // let mut body_actions = Vec::with_capacity(body_actions::BODY_TRANSITIONS.len());
+    // let mut inline_actions = Vec::with_capacity(inline_actions::INLINE_TRANSITIONS.len());
 
-    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
-      let r = regex::Regex::new(re).unwrap();
-      inline_actions.push((tt.clone(), r, *fun));
-    }
+    // for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
+    //   let r = regex::Regex::new(re).unwrap();
+    //   body_actions.push((tt.clone(), r, *fun));
+    // }
+
+    // action_map.insert(State::Body, body_actions);
+
+    // for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
+    //   let r = regex::Regex::new(re).unwrap();
+    //   inline_actions.push((tt.clone(), r, *fun));
+    // }
+
+    // action_map.insert(State::Inline, inline_actions);
 
     Lexer {
       source: source,
       state: state,
-      body_actions: body_actions,
-      inline_actions: inline_actions,
+      actions: &ACTION_MAP,
+      // body_actions: body_actions,
+      // inline_actions: inline_actions,
       tokens: Vec::new(),
       lexeme_start: 0,
       lookahead: 0,
@@ -89,7 +103,7 @@ impl <'t> Lexer <'t> {
   /// Allows constructing a Lexer from another lexer.
   /// Mainly useful for generating sub lexers
   /// for inline lexing.
-  pub fn new_from_lexer (lexer: &Lexer, src: &'t str, state: state::State) -> Self {
+  pub fn new_from_lexer (lexer: &'t Lexer, src: &'t str, state: state::State) -> Lexer<'t> {
 
     let pos = lexer.pos;
     let row = lexer.row;
@@ -98,14 +112,13 @@ impl <'t> Lexer <'t> {
     Lexer {
       source: src,
       state: state,
-      body_actions: lexer.body_actions.clone(),
-      inline_actions: lexer.inline_actions.clone(),
+      actions: &lexer.actions,
       tokens: Vec::new(),
       lexeme_start: lexer.lexeme_start,
       lookahead: lexer.lexeme_start,
       pos: pos,
       row: row,
-      col: col,
+      col: col
     }
 
   }
@@ -152,33 +165,29 @@ impl <'t> Lexer <'t> {
 
     let s = chars.as_str();
 
-    if self.state == State::Body {
-      for (tt, re, a) in self.body_actions.clone().iter() {
+    let av: &ActionVector = &self.actions.get(&self.state).unwrap().clone();
 
-        if let Some(cs) = re.captures(s) {
+    for (tt, re, a) in av {
 
-          self.perform_action(a, tt, chars, &cs);
+      if let Some(cs) = re.captures(s) {
 
-          return Some(cs);
+        // self.perform_action(a, tt, chars, &cs);
 
-        } else {
-          continue
-        }
-      }
-
-    } else if self.state == State::Inline {
+        self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
+        self.lookahead = cs.get(0).unwrap().end() + self.pos;
       
-      for (tt, re, a) in self.inline_actions.clone().iter() {
+        println!("Performing action...");
+      
+        a(self, tt.clone(), &cs);
+      
+        self.lexeme_start = self.lookahead;
+      
+        self.update_pos(chars);
 
-        if let Some(cs) = re.captures(s) {
+        return Some(cs);
 
-          self.perform_action(a, tt, chars, &cs);
-
-          return Some(cs)
-
-        } else {
-          continue
-        }
+      } else {
+        continue
       }
     }
 
@@ -257,5 +266,41 @@ fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)
     return Some(val);
   }
   None
+}
+
+
+
+lazy_static! {
+
+  /// ### ACTION_MAP
+  /// A static map of actions specified for the `Lexer` type.
+  /// This allows for the easy creation of sublexers,
+  /// as with both the parent and child, the type of actions
+  /// can simply be a reference to this map.
+  /// 
+  /// Plus, with this regexes are only compiled into automata once.
+  static ref ACTION_MAP: ActionMap = {
+    let mut action_map = collections::HashMap::new();
+
+    let mut body_actions = Vec::with_capacity(body_actions::BODY_TRANSITIONS.len());
+    let mut inline_actions = Vec::with_capacity(inline_actions::INLINE_TRANSITIONS.len());
+
+    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      body_actions.push((tt.clone(), r, *fun));
+    }
+
+    action_map.insert(State::Body, body_actions);
+
+    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      inline_actions.push((tt.clone(), r, *fun));
+    }
+
+    action_map.insert(State::Inline, inline_actions); 
+    
+    action_map
+
+  };
 }
 

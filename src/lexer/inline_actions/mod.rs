@@ -9,19 +9,19 @@ use crate::lexer::Action;
 use regex;
 
 pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
-  (TokenType::Escape, r"\\(.)", tokenize_escape),
-  (TokenType::Code, r"``", tokenize_code),
-  (TokenType::TargetReference, r"`.+?<.+?>`__?", tokenize_inline_reftarget),
-  (TokenType::InlineReference, r"`.+?`__?", tokenize_inline_ref),
-  (TokenType::RoleContent, r"`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
-  (TokenType::ContentRole, r":[a-zA-Z0-9:-]+?:`.+?`", tokenize_content_role),
-  (TokenType::StrongEmphasis, r"\*\*.+?\*\*", tokenize_strong_emphasis),
-  (TokenType::Emphasis, r"\*.+?\*", tokenize_emphasis),
-  (TokenType::FootnoteOrCitation, r"\[.*?\]_", tokenize_footnote_or_citation),
-  (TokenType::Hyperlink, r"<.+?>", tokenize_hyperlink),
+  (TokenType::Escape, r"^\\(.)", tokenize_escape),
+  (TokenType::Code, r"^``", tokenize_code),
+  (TokenType::TargetReference, r"^`.+?<.+?>`__?", tokenize_inline_reftarget),
+  (TokenType::InlineReference, r"^`.+?`__?", tokenize_inline_ref),
+  (TokenType::RoleContent, r"^`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
+  (TokenType::ContentRole, r"^:[a-zA-Z0-9:-]+?:`.+?`", tokenize_content_role),
+  (TokenType::StrongEmphasis, r"^\*\*.+?\*\*", tokenize_strong_emphasis),
+  (TokenType::Emphasis, r"^\*.+?\*", tokenize_emphasis),
+  (TokenType::FootnoteOrCitation, r"^\[.*?\]_", tokenize_footnote_or_citation),
+  (TokenType::Hyperlink, r"^<.+?>", tokenize_hyperlink),
   //(TokenType::InlineWhitespace, r"[ \t]+", tokenize_inline_whitespace),
-  (TokenType::Text, r"[^\\\n\[*`:]+", tokenize_text_no_ldelim),
-  (TokenType::Text, r"(.)+", tokenize_text),
+  (TokenType::Text, r"^[^\\\n\[*`:]+", tokenize_text_no_ldelim),
+  (TokenType::Text, r"^(.)", tokenize_text),
 ];
 
 fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
