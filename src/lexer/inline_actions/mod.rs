@@ -14,7 +14,7 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Escape, r"^\\(.)", tokenize_escape),
   (TokenType::Code, r"^``([^`]+)``", tokenize_code),
   (TokenType::TargetReference, r"^`(.+?)<(.+?)>`(__?)", tokenize_inline_target_ref),
-  (TokenType::InlineReference, r"^`.+?`__?", tokenize_inline_ref),
+  (TokenType::InlineReference, r"^`(.+?)`__?", tokenize_inline_ref),
   (TokenType::RoleContent, r"^`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
   (TokenType::ContentRole, r"^:[a-zA-Z0-9:-]+?:`.+?`", tokenize_content_role),
   (TokenType::StrongEmphasis, r"^\*\*.+?\*\*", tokenize_strong_emphasis),
@@ -95,6 +95,17 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
 fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
+
+  let target = cs.get(1).unwrap();
+
+  lexer.tokens.push(
+    Token::new(
+    TokenType::TargetReference,
+    target.as_str().to_string(),
+    target.start(),
+    target.end()
+    )
+  );
 
 }
 

@@ -32,3 +32,18 @@ fn phrase_reference_01 () {
   assert_eq!(toks[5].t_type, TokenType::Hyperlink);
 
 }
+
+#[test]
+fn phrase_reference_02 () {
+
+  let src = r"asdsadas ``some code``  
+  asdsadsadsad `target`__ adsadsadsadasds
+  ffasfsa";
+
+  let toks = Lexer::new(src, State::Inline).lex();
+
+  println!("{:?}", toks);
+
+  assert_eq!(toks[4].t_type, TokenType::TargetReference);
+
+}
