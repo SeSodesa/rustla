@@ -19,7 +19,7 @@ use super::*;
 
 #[test]
 /// Tests the scanning of the entire source
-fn lex_01() {
+fn lex_section_titles() {
   let src = "
   
 =====
@@ -39,8 +39,10 @@ tekstiä2
 
   println!("{:?}",tokens);
 
-  assert_eq!(tokens[0].lexeme, "tekstiä1");
-  assert_eq!(tokens[1].lexeme, "tekstiä2");
+  assert_eq!(tokens[0].t_type, TokenType::BlankLine);
+  assert_eq!(tokens[1].t_type, TokenType::EqualsOverlinedHeading);
+  assert_eq!(tokens[2].t_type, TokenType::BlankLine);
+  assert_eq!(tokens[3].t_type, TokenType::CaretHeading);
 
 }
 

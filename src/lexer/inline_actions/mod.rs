@@ -1,6 +1,8 @@
 /// This module contains the inline parts
 /// of the lexer state transitions
 
+mod test;
+
 use crate::lexer::Lexer;
 use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::State;

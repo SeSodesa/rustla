@@ -9,6 +9,8 @@ fn lex_code () {
 
   let toks = Lexer::new(src, State::Inline).lex();
 
+  println!("{:?}", toks);
+
   panic!();
 
 }
