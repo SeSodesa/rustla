@@ -149,8 +149,6 @@ impl <'t> Lexer <'t> {
   /// a token mathcing it. This is the
   /// core of the lexer itself.
   fn scan_token<'t0>(&mut self, chars: &'t0 mut str::Chars) -> Option<regex::Captures<'t0>>{
-    
-    let match_found = false;
 
     let s = chars.as_str();
 
@@ -176,7 +174,7 @@ impl <'t> Lexer <'t> {
 
           self.perform_action(a, tt, chars, &cs);
 
-          break
+          return Some(cs)
 
         } else {
           continue
