@@ -24,7 +24,7 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Text, r"(.)+", tokenize_text),
 ];
 
-fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -44,66 +44,66 @@ fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
   );
 }
 
-fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
 
-fn tokenize_inline_reftarget (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_inline_reftarget (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
 
-fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
-fn tokenize_role_content (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_role_content (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
-fn tokenize_content_role (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
-
-  println!("\nTokenizing {:?}...", tt);
-
-}
-
-
-fn tokenize_strong_emphasis (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_content_role (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
 
-fn tokenize_emphasis (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
-
-  println!("\nTokenizing {:?}...", tt);
-
-}
-
-fn tokenize_footnote_or_citation (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_strong_emphasis (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
 
-fn tokenize_hyperlink (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_emphasis (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
 }
 
-fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_footnote_or_citation (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
+
+  println!("\nTokenizing {:?}...", tt);
+
+}
+
+
+fn tokenize_hyperlink (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
+
+  println!("\nTokenizing {:?}...", tt);
+
+}
+
+fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -123,7 +123,7 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: regex::Capt
 }
 
 
-fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -142,7 +142,7 @@ fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: regex::Capture
 
 }
 
-fn tokenize_text (lexer: &mut Lexer, tt: TokenType, cs: regex::Captures) {
+fn tokenize_text (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
   

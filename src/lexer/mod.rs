@@ -20,7 +20,7 @@ use crate::lexer::error::{TokenizeError, LexError};
 
 /// ### Action
 /// A function pointer type alias for a Lexer action
-type Action = fn(&mut Lexer, TokenType, regex::Captures) -> ();
+type Action = fn(&mut Lexer, TokenType, &regex::Captures) -> ();
 
 //#[derive(PartialEq)]
 pub struct Lexer <'t> {
@@ -148,8 +148,10 @@ impl <'t> Lexer <'t> {
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
   /// core of the lexer itself.
-  fn scan_token(&mut self, chars: &mut str::Chars) {
+  fn scan_token<'t0>(&mut self, chars: &'t0 mut str::Chars) -> Option<regex::Captures<'t0>>{
     
+    let match_found = false;
+
     let s = chars.as_str();
 
     if self.state == State::Body {
@@ -157,9 +159,9 @@ impl <'t> Lexer <'t> {
 
         if let Some(cs) = re.captures(s) {
 
-          self.perform_action(a, tt, chars, cs);
+          self.perform_action(a, tt, chars, &cs);
 
-          break
+          return Some(cs);
 
         } else {
           continue
@@ -172,7 +174,7 @@ impl <'t> Lexer <'t> {
 
         if let Some(cs) = re.captures(s) {
 
-          self.perform_action(a, tt, chars, cs);
+          self.perform_action(a, tt, chars, &cs);
 
           break
 
@@ -182,12 +184,14 @@ impl <'t> Lexer <'t> {
       }
     }
 
+    None
+
   }
 
 /// ### perform_action
 /// Calls the callback function `a` corresponding to
 /// the detected lexeme.
-fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: regex::Captures) {
+fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: &regex::Captures) {
 
   self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
   self.lookahead = cs.get(0).unwrap().end() + self.pos;
