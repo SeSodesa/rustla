@@ -127,6 +127,8 @@ impl <'t> Lexer <'t> {
 
     while let Some(c) = chars.next() {
 
+      println!("Consuming {:?}...", c);
+
       self.pos += 1;
       self.col += 1;
       if c == '\n' {
