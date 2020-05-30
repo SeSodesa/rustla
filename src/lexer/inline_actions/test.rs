@@ -17,3 +17,18 @@ fn lex_code () {
   assert_eq!(toks[1].lexeme, "some code");
 
 }
+
+#[test]
+fn phrase_reference_01 () {
+
+  let src = r"asdsadas ``some code``  
+  asdsadsadsad `alias <link>`__";
+
+  let toks = Lexer::new(src, State::Inline).lex();
+
+  println!("{:?}", toks);
+
+  assert_eq!(toks[4].t_type, TokenType::LinkAlias);
+  assert_eq!(toks[5].t_type, TokenType::Hyperlink);
+
+}

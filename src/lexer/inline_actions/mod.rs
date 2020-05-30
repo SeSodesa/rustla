@@ -13,7 +13,7 @@ use regex;
 pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Escape, r"^\\(.)", tokenize_escape),
   (TokenType::Code, r"^``([^`]+)``", tokenize_code),
-  (TokenType::TargetReference, r"^`.+?<.+?>`__?", tokenize_inline_reftarget),
+  (TokenType::TargetReference, r"^`(.+?)<(.+?)>`(__?)", tokenize_inline_target_ref),
   (TokenType::InlineReference, r"^`.+?`__?", tokenize_inline_ref),
   (TokenType::RoleContent, r"^`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
   (TokenType::ContentRole, r"^:[a-zA-Z0-9:-]+?:`.+?`", tokenize_content_role),
@@ -61,15 +61,33 @@ fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
       m.end(),
     )
   );
-
-
-
 }
 
 
-fn tokenize_inline_reftarget (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
+fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
+
+  let link_alias = cs.get(1).unwrap();
+  let link = cs.get(2).unwrap();
+
+  lexer.tokens.push(
+    Token::new(
+    TokenType::LinkAlias,
+    link_alias.as_str().to_string(),
+    link_alias.start(),
+    link_alias.end()
+    )
+  );
+
+  lexer.tokens.push(
+    Token::new(
+    TokenType::Hyperlink,
+    link.as_str().to_string(),
+    link.start(),
+    link.end()
+    )
+  );
 
 }
 
