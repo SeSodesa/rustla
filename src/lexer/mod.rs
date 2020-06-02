@@ -74,8 +74,6 @@ impl <'t> Lexer <'t> {
       source: source,
       state: state,
       actions: &ACTION_MAP,
-      // body_actions: body_actions,
-      // inline_actions: inline_actions,
       tokens: Vec::new(),
       lexeme_start: 0,
       lookahead: 0,
@@ -287,7 +285,7 @@ lazy_static! {
   /// Holds the position of the lexer in a single static place.
   static ref POS: position::Pos = {
     position::Pos::new (
-      0, 0, 0,
+      0, 0, 0, 0,
     )
   };
 
