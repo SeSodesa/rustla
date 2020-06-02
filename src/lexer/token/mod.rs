@@ -63,6 +63,9 @@ pub enum TokenType{
   // Document root elements
   // ----------------------
   
+  // Empty lines
+  BlankLines,
+
   // Headings
   EqualsOverlinedHeading,
   DashOverlinedHeading,

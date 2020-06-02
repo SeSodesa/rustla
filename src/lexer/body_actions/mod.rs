@@ -33,6 +33,8 @@ use regex;
 /// a function that handles that type of token.
 pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
+  (TokenType::BlankLines, r"^(?m)^(\s*)$", tokenize_blank_lines),
+
   // Overlined headings
   // ------------------
   (TokenType::EqualsOverlinedHeading, r"^(?m)^(\s*)={3,}\n[ \t]*(.+)\n={3,}\n", tokenize_section_title),
@@ -103,25 +105,33 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 ];
 
 
+fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+
+  println!("Tokenizing {:?}", tt);
+
+  let lines = cs.get(0).unwrap();
+
+  lex.tokens.push(
+    Token::new(
+      tt,
+      "\n\n".to_string(),
+      // lex.row,
+      // lex.col,
+      lines.start(),
+      lines.end(),
+    )
+  );
+
+}
+
+
 /// ### tokenize_section_title
 /// Creates the tokens related to overlined titles
 fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
-  let ws = cs.get(1).unwrap();
   let title = cs.get(2).unwrap();
-
-  lex.tokens.push(
-    Token::new(
-      TokenType::BlankLine,
-      "\n\n".to_string(),
-      // lex.row,
-      // lex.col,
-      ws.start(),
-      ws.end(),
-    )
-  );
 
   lex.tokens.push(
     Token::new(
@@ -141,6 +151,19 @@ fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) 
 fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
+
+  let li = cs.get(0).unwrap();
+
+  lex.tokens.push(
+    Token::new(
+      tt,
+      String::from(""),
+      // lex.row,
+      // lex.col,
+      li.start(),
+      li.end()
+    )
+  );
 
   let preceding_ws = cs.get(1).unwrap();
 
