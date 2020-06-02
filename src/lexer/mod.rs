@@ -48,20 +48,6 @@ pub struct Lexer <'t> {
   col: usize,
 }
 
-impl fmt::Debug for Lexer <'_> {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-      f.debug_struct("Lexer")
-        .field("lexeme_start", &self.lexeme_start)
-        .field("lookahead", &self.lookahead)
-        .finish()
-  }
-}
-
-impl fmt::Display for Lexer <'_> {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "Lexer location: row = {}, col = {}", self.row, self.col)
-  }
-}
 
 /// Lexer type methods
 impl <'t> Lexer <'t> {
@@ -289,5 +275,21 @@ lazy_static! {
     )
   };
 
+}
+
+
+impl fmt::Debug for Lexer <'_> {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      f.debug_struct("Lexer")
+        .field("lexeme_start", &self.lexeme_start)
+        .field("lookahead", &self.lookahead)
+        .finish()
+  }
+}
+
+impl fmt::Display for Lexer <'_> {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "Lexer location: row = {}, col = {}", self.row, self.col)
+  }
 }
 
