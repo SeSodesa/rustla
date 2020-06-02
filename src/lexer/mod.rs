@@ -2,6 +2,7 @@
 
 mod token;
 mod state;
+mod position;
 mod body_actions;
 mod inline_actions;
 mod error;
@@ -281,5 +282,14 @@ lazy_static! {
     action_map
 
   };
+
+  /// ### POS
+  /// Holds the position of the lexer in a single static place.
+  static ref POS: position::Pos = {
+    position::Pos::new (
+      0, 0, 0,
+    )
+  };
+
 }
 
