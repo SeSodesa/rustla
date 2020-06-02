@@ -20,10 +20,13 @@ fn new() {
 /// A test for
 /// crate::lexer::error::TokenizeError::fmt
 fn fmt() {
+
+  let pos = &mut Pos::new();
+
   let lex
-    = Lexer::new("abc", State::Body);
+    = Lexer::new("abc", pos, State::Body);
   let tok_err
-    = TokenizeError::new(&lex.row, &lex.col);
+    = TokenizeError::new(&lex.pos.row, &lex.pos.col);
 
   assert_eq!(
     format!(

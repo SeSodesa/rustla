@@ -160,8 +160,8 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
       lexeme: " ".to_string(),
       // row: lexer.row,
       // col: lexer.col,
-      begin: lexer.lexeme_start,
-      end: lexer.lookahead,
+      begin: lexer.pos.pos,
+      end: lexer.pos.lookahead,
     }
   );
 
@@ -180,8 +180,8 @@ fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captur
       lexeme: m.as_str().to_string(),
       // row: lexer.row,
       // col: lexer.col,
-      begin: lexer.lexeme_start,
-      end: lexer.lookahead,
+      begin: lexer.pos.pos,
+      end: lexer.pos.lookahead,
     }
   );
 

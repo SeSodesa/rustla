@@ -15,12 +15,12 @@ impl Pos {
 
   /// ### new
   /// Constructor for a `Lexer` position  object `Pos`.
-  pub fn new (pos: usize, lookahead: usize, row: usize, col: usize) -> Self{
+  pub fn new () -> Self{
     Pos {
-      pos: pos,
-      lookahead: lookahead,
-      row: row,
-      col:col,
+      pos: 0,
+      lookahead: 0,
+      row: 0,
+      col:0,
     }
   }
 

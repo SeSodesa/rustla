@@ -8,12 +8,15 @@ use super::*;
 /// A test for the Lexer constructor
  fn new() {
   let ls = "Aaa!";
-  let lex = Lexer::new(ls, State::Body);
+
+  let pos = &mut Pos::new();
+
+  let lex = Lexer::new(ls, pos, State::Body);
   assert_eq!(lex.tokens, Vec::new());
-  assert_eq!(lex.lexeme_start, 0);
-  assert_eq!(lex.lookahead, 0);
-  assert_eq!(lex.row, 0);
-  assert_eq!(lex.col, 0);
+  assert_eq!(lex.pos.pos, 0);
+  assert_eq!(lex.pos.lookahead, 0);
+  assert_eq!(lex.pos.row, 0);
+  assert_eq!(lex.pos.col, 0);
 }
 
 
@@ -31,7 +34,10 @@ tekstiä2
 ^^^^
   
   ";
-  let lexer = Lexer::new(src, State::Body);
+
+  let pos = &mut Pos::new();
+
+  let lexer = Lexer::new(src, pos, State::Body);
 
   println!("{}",src);
 
@@ -51,11 +57,13 @@ fn lexer_from_another() {
 
   let src = "aaaabbbbcccc";
 
-  let parent = &mut Lexer::new(src, State::Body);
+  let pos = &mut Pos::new();
 
-  parent.lexeme_start += 4;
-  parent.row += 4;
-  parent.col += 5;
+  let parent = &mut Lexer::new(src, pos, State::Body);
+
+  parent.pos.pos += 4;
+  parent.pos.row += 4;
+  parent.pos.col += 5;
 
   // let child = Lexer::new_from_lexer(parent, src, State::Inline);
 
@@ -81,7 +89,9 @@ fn scan_un_list_items () {
 
 ";
 
-  let toks = Lexer::new(src, State::Body).lex();
+  let pos = &mut Pos::new();
+
+  let toks = Lexer::new(src, pos, State::Body).lex();
 
   println!("{:?}",toks);
 
@@ -97,7 +107,8 @@ fn scan_un_list_items () {
 #[test]
 fn scan_token() {
   let src = "========\ntekstiä\n=========\n";
-  let mut lexer = Lexer::new(src, State::Body);
+  let pos = &mut Pos::new();
+  let mut lexer = Lexer::new(src, pos, State::Body);
   let mut chars = src.chars();
   lexer.scan_token(&mut chars);
 

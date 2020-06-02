@@ -17,6 +17,7 @@ use lazy_static::lazy_static;
 
 use crate::lexer::token::{Token, TokenType};
 use crate::lexer::state::{State};
+use crate::lexer::position::Pos;
 use std::collections;
 use crate::lexer::error::{TokenizeError, LexError};
 
@@ -41,11 +42,7 @@ pub struct Lexer <'t> {
   // body_actions: Vec<(TokenType, regex::Regex, Action)>,
   // inline_actions: Vec<(TokenType, regex::Regex, Action)>,
   tokens: Vec<Token>,
-  lexeme_start: usize,
-  lookahead: usize,
-  pos: usize,
-  row: usize,
-  col: usize,
+  pos: &'t mut Pos
 }
 
 
@@ -54,18 +51,14 @@ impl <'t> Lexer <'t> {
 
   /// ### new
   /// A Lexer constructor
-  pub fn new(source: &'static str, state: state::State) -> Self {
+  pub fn new(source: &'static str, pos: &'t mut Pos, state: state::State) -> Self {
 
     Lexer {
       source: source,
       state: state,
       actions: &ACTION_MAP,
       tokens: Vec::new(),
-      lexeme_start: 0,
-      lookahead: 0,
-      pos: 0,
-      row:0,
-      col: 0,
+      pos: pos,
     }
   }
 
@@ -73,22 +66,14 @@ impl <'t> Lexer <'t> {
   /// Allows constructing a Lexer from another lexer.
   /// Mainly useful for generating sub lexers
   /// for inline lexing.
-  pub fn new_from_lexer (lexer: &'t Lexer, src: &'t str, state: state::State) -> Lexer<'t> {
-
-    let pos = lexer.pos;
-    let row = lexer.row;
-    let col = lexer.col;
+  pub fn new_from_lexer (lexer: &'t mut Lexer, src: &'t str, state: state::State) -> Lexer<'t> {
 
     Lexer {
       source: src,
       state: state,
       actions: &lexer.actions,
       tokens: Vec::new(),
-      lexeme_start: lexer.lexeme_start,
-      lookahead: lexer.lexeme_start,
-      pos: pos,
-      row: row,
-      col: col
+      pos: lexer.pos,
     }
 
   }
@@ -101,31 +86,31 @@ impl <'t> Lexer <'t> {
   /// Consumes the Lexer itself as well.
   fn lex(mut self) -> Vec<Token> {
 
-    println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.row, self.col);
+    println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.pos.row, self.pos.col);
 
     let s = self.source;
     let mut chars = s.chars();
 
     if let None = self.scan_token(&mut chars) {
-      eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos, self.row, self.col);
+      eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
     }
 
     while let Some(c) = chars.next() {
 
       println!("Consuming {:?}...", c);
 
-      self.pos += 1;
-      self.col += 1;
+      self.pos.pos += 1;
+      self.pos.col += 1;
       if c == '\n' {
-        self.row += 1;
-        self.col = 0;
+        self.pos.row += 1;
+        self.pos.col = 0;
       }
 
       if let None = self.scan_token(&mut chars) {
-        eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos, self.row, self.col);
+        eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
       }
 
-      assert!(self.lookahead >= self.lexeme_start);
+      assert!(self.pos.lookahead >= self.pos.pos);
 
     }
 
@@ -165,14 +150,13 @@ impl <'t> Lexer <'t> {
   /// the detected lexeme.
   fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: &regex::Captures) {
 
-    self.lexeme_start = cs.get(0).unwrap().start() + self.pos;
-    self.lookahead = cs.get(0).unwrap().end() + self.pos;
+    self.pos.lookahead = cs.get(0).unwrap().end();
 
     println!("Performing action...");
 
     a(self, tt.clone(), cs);
 
-    self.lexeme_start = self.lookahead;
+    self.pos.pos = self.pos.lookahead;
 
     self.update_pos(chars);
 
@@ -190,22 +174,22 @@ impl <'t> Lexer <'t> {
     
     println!("Updating pos...\n");
 
-    while self.pos < self.lexeme_start - 1 {
+    while self.pos.pos < self.pos.lookahead - 1 {
 
       if let Some(c) = chars.next() {
 
         println!("Consuming {:?}...", c);
 
-        self.pos += 1;
-        self.col += 1;
+        self.pos.pos += 1;
+        self.pos.col += 1;
 
         if c == '\n' {
-          self.row += 1;
-          self.col = 0;
+          self.pos.row += 1;
+          self.pos.col = 0;
         }
 
-        println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
-          self.pos, self.lexeme_start, self.lookahead, self.row, self.col);
+        println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {})\n",
+          self.pos.pos, self.pos.lookahead, self.pos.row, self.pos.col);
 
       } else {
         break
@@ -266,30 +250,21 @@ lazy_static! {
     action_map
 
   };
-
-  /// ### POS
-  /// Holds the position of the lexer in a single static place.
-  static ref POS: position::Pos = {
-    position::Pos::new (
-      0, 0, 0, 0,
-    )
-  };
-
 }
 
 
 impl fmt::Debug for Lexer <'_> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
-        .field("lexeme_start", &self.lexeme_start)
-        .field("lookahead", &self.lookahead)
+        .field("lexeme_start", &self.pos.pos)
+        .field("lookahead", &self.pos.lookahead)
         .finish()
   }
 }
 
 impl fmt::Display for Lexer <'_> {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "Lexer location: row = {}, col = {}", self.row, self.col)
+    write!(f, "Lexer location: row = {}, col = {}", self.pos.row, self.pos.col)
   }
 }
 

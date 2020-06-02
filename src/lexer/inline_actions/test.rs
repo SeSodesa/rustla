@@ -1,13 +1,15 @@
 /// This submodule contains tests for the inline actions of the lexer.
 
-use super::*;
+use super::super::*;
 
 #[test]
 fn lex_code () {
 
   let src = r"asdsadas ``some code``  ";
 
-  let toks = Lexer::new(src, State::Inline).lex();
+  let pos = &mut Pos::new();
+
+  let toks = Lexer::new(src, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
@@ -24,7 +26,9 @@ fn phrase_reference_01 () {
   let src = r"asdsadas ``some code``  
   asdsadsadsad `alias <link>`__";
 
-  let toks = Lexer::new(src, State::Inline).lex();
+  let pos = &mut Pos::new();
+
+  let toks = Lexer::new(src, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
@@ -40,7 +44,9 @@ fn phrase_reference_02 () {
   asdsadsadsad `target`__ adsadsadsadasds
   ffasfsa";
 
-  let toks = Lexer::new(src, State::Inline).lex();
+  let pos = &mut Pos::new();
+
+  let toks = Lexer::new(src, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
