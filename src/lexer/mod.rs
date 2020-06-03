@@ -36,7 +36,7 @@ type ActionMap = collections::HashMap<state::State, ActionVector>;
 
 //#[derive(PartialEq)]
 pub struct Lexer <'t> {
-  source: &'t str,
+  src_iter: &'t mut str::Chars<'t>,
   state: State,
   actions: &'static ActionMap,
   // body_actions: Vec<(TokenType, regex::Regex, Action)>,
@@ -51,10 +51,10 @@ impl <'t> Lexer <'t> {
 
   /// ### new
   /// A Lexer constructor
-  pub fn new(source: &'static str, pos: &'t mut Pos, state: state::State) -> Self {
+  pub fn new(src_iter: &'t mut str::Chars<'t>, pos: &'t mut Pos, state: state::State) -> Self {
 
     Lexer {
-      source: source,
+      src_iter: src_iter,
       state: state,
       actions: &ACTION_MAP,
       tokens: Vec::new(),
@@ -66,10 +66,10 @@ impl <'t> Lexer <'t> {
   /// Allows constructing a Lexer from another lexer.
   /// Mainly useful for generating sub lexers
   /// for inline lexing.
-  pub fn new_from_lexer (lexer: &'t mut Lexer, src: &'t str, state: state::State) -> Lexer<'t> {
+  pub fn new_from_lexer (lexer: &'t mut Lexer<'t>, state: state::State) -> Lexer<'t> {
 
     Lexer {
-      source: src,
+      src_iter: lexer.src_iter,
       state: state,
       actions: &lexer.actions,
       tokens: Vec::new(),
@@ -88,14 +88,11 @@ impl <'t> Lexer <'t> {
 
     println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.pos.row, self.pos.col);
 
-    let s = self.source;
-    let mut chars = s.chars();
-
-    if let None = self.scan_token(&mut chars) {
+    if let None = self.scan_token() {
       eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
     }
 
-    while let Some(c) = chars.next() {
+    while let Some(c) = self.src_iter.next() {
 
       println!("Consuming {:?}...", c);
 
@@ -106,7 +103,7 @@ impl <'t> Lexer <'t> {
         self.pos.col = 0;
       }
 
-      if let None = self.scan_token(&mut chars) {
+      if let None = self.scan_token() {
         eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
       }
 
@@ -122,9 +119,9 @@ impl <'t> Lexer <'t> {
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
   /// core of the lexer itself.
-  fn scan_token<'t0>(&mut self, chars: &'t0 mut str::Chars) -> Option<regex::Captures<'t0>>{
+  fn scan_token(&mut self) -> Option<regex::Captures<'t>>{
 
-    let s = chars.as_str();
+    let s = self.src_iter.as_str();
 
     let av: &ActionVector = &self.actions.get(&self.state).unwrap();
 
@@ -132,7 +129,7 @@ impl <'t> Lexer <'t> {
 
       if let Some(cs) = re.captures(s) {
 
-        self.perform_action(a, tt, chars, &cs);
+        self.perform_action(a, tt, &cs);
 
         return Some(cs);
 
@@ -148,7 +145,7 @@ impl <'t> Lexer <'t> {
   /// ### perform_action
   /// Calls the callback function `a` corresponding to
   /// the detected lexeme.
-  fn perform_action(&mut self, a: &Action, tt: &TokenType, chars: &mut str::Chars, cs: &regex::Captures) {
+  fn perform_action(&mut self, a: &Action, tt: &TokenType, cs: &regex::Captures) {
 
     self.pos.lookahead = cs.get(0).unwrap().end();
 
@@ -158,7 +155,7 @@ impl <'t> Lexer <'t> {
 
     self.pos.pos = self.pos.lookahead;
 
-    self.update_pos(chars);
+    self.update_pos();
 
   }
 
@@ -170,13 +167,13 @@ impl <'t> Lexer <'t> {
   /// If this doesn't succeed, simply
   /// makes sure `self.pos` doesn't
   /// lag behind `self.lexeme_start`.
-  fn update_pos(&mut self, chars: &mut str::Chars) {
+  fn update_pos(&mut self) {
     
     println!("Updating pos...\n");
 
     while self.pos.pos < self.pos.lookahead - 1 {
 
-      if let Some(c) = chars.next() {
+      if let Some(c) = self.src_iter.next() {
 
         println!("Consuming {:?}...", c);
 

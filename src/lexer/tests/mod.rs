@@ -7,11 +7,11 @@ use super::*;
 #[test]
 /// A test for the Lexer constructor
  fn new() {
-  let ls = "Aaa!";
+  let mut src_iter = "Aaa!".chars();
 
   let pos = &mut Pos::new();
 
-  let lex = Lexer::new(ls, pos, State::Body);
+  let lex = Lexer::new(&mut src_iter, pos, State::Body);
   assert_eq!(lex.tokens, Vec::new());
   assert_eq!(lex.pos.pos, 0);
   assert_eq!(lex.pos.lookahead, 0);
@@ -23,7 +23,8 @@ use super::*;
 #[test]
 /// Tests the scanning of the entire source
 fn lex_section_titles() {
-  let src = "
+
+  let mut src_iter = "
   
 =====
   tekstiä1
@@ -33,13 +34,11 @@ fn lex_section_titles() {
 tekstiä2
 ^^^^
   
-  ";
+  ".chars();
 
   let pos = &mut Pos::new();
 
-  let lexer = Lexer::new(src, pos, State::Body);
-
-  println!("{}",src);
+  let lexer = Lexer::new(&mut src_iter, pos, State::Body);
 
   let tokens = lexer.lex();
 
@@ -55,11 +54,11 @@ tekstiä2
 #[test]
 fn lexer_from_another() {
 
-  let src = "aaaabbbbcccc";
+  let mut src_iter = "aaaabbbbcccc".chars();
 
   let pos = &mut Pos::new();
 
-  let parent = &mut Lexer::new(src, pos, State::Body);
+  let parent = &mut Lexer::new(&mut src_iter, pos, State::Body);
 
   parent.pos.pos += 4;
   parent.pos.row += 4;
@@ -79,7 +78,7 @@ fn lexer_from_another() {
 
 #[test]
 fn scan_un_list_items () {
-  let src = "  
+  let mut src_iter = "  
   
 * aaaabbbbcccc
   ccccbbbbaaaa
@@ -87,11 +86,11 @@ fn scan_un_list_items () {
 * xxxxyyyy
   yyyyxxxx'
 
-";
+".chars();
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(src, pos, State::Body).lex();
+  let toks = Lexer::new(&mut src_iter, pos, State::Body).lex();
 
   println!("{:?}",toks);
 
@@ -106,11 +105,11 @@ fn scan_un_list_items () {
 
 #[test]
 fn scan_token() {
-  let src = "========\ntekstiä\n=========\n";
+  let mut src_iter = "========\ntekstiä\n=========\n".chars();
+
   let pos = &mut Pos::new();
-  let mut lexer = Lexer::new(src, pos, State::Body);
-  let mut chars = src.chars();
-  lexer.scan_token(&mut chars);
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
+  lexer.scan_token();
 
   println!("{:?}", lexer.tokens);
 

@@ -193,11 +193,15 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
   let inline_src = cs.get(3).unwrap().as_str();
 
-  let inline_toks = &mut Lexer::new_from_lexer(lex, inline_src, State::Inline).lex();
+  // let sublexer = Lexer::new(inline_src, lex.pos, State::Inline);
 
-  println!("Inline tokens: {:?}", inline_toks);
+  // sublexer.lex();
 
-  lex.tokens.append(inline_toks);
+  // let inline_toks = sublexer.tokens;
+
+  // println!("Inline tokens: {:?}", inline_toks);
+
+  // lex.tokens.append(&mut inline_toks);
 
 
 }

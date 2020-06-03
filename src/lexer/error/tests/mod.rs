@@ -23,8 +23,10 @@ fn fmt() {
 
   let pos = &mut Pos::new();
 
+  let mut src_iter = "abc".chars();
+
   let lex
-    = Lexer::new("abc", pos, State::Body);
+    = Lexer::new(&mut src_iter, pos, State::Body);
   let tok_err
     = TokenizeError::new(&lex.pos.row, &lex.pos.col);
 

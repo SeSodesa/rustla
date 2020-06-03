@@ -5,11 +5,11 @@ use super::super::*;
 #[test]
 fn lex_code () {
 
-  let src = r"asdsadas ``some code``  ";
+  let mut src_iter = r"asdsadas ``some code``  ".chars();
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(src, pos, State::Inline).lex();
+  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
@@ -23,12 +23,12 @@ fn lex_code () {
 #[test]
 fn phrase_reference_01 () {
 
-  let src = r"asdsadas ``some code``  
-  asdsadsadsad `alias <link>`__";
+  let mut src_iter = r"asdsadas ``some code``  
+  asdsadsadsad `alias <link>`__".chars();
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(src, pos, State::Inline).lex();
+  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
@@ -40,13 +40,16 @@ fn phrase_reference_01 () {
 #[test]
 fn phrase_reference_02 () {
 
-  let src = r"asdsadas ``some code``  
+  let mut src_iter = r"asdsadas ``some code``  
   asdsadsadsad `target`__ adsadsadsadasds
-  ffasfsa";
+  ffasfsa".chars();
+
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(src, pos, State::Inline).lex();
+
+
+  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
 
   println!("{:?}", toks);
 
