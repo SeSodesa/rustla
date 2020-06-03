@@ -21,9 +21,9 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Emphasis, r"^\*.+?\*", tokenize_emphasis),
   (TokenType::FootnoteOrCitation, r"^\[.*?\]_", tokenize_footnote_or_citation),
   (TokenType::Hyperlink, r"^<.+?>", tokenize_hyperlink),
-  //(TokenType::InlineWhitespace, r"[ \t]+", tokenize_inline_whitespace),
   (TokenType::Text, r"^[^\\\n\[*`:]+", tokenize_text_no_ldelim),
   (TokenType::Text, r"^(.)", tokenize_text),
+  (TokenType::InlineWhitespace, r"[ \t]+", tokenize_inline_whitespace),
 ];
 
 fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
@@ -71,8 +71,22 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
 
   println!("\nTokenizing {:?}...", tt);
 
+  let m = cs.get(0).unwrap();
   let link_alias = cs.get(1).unwrap();
   let link = cs.get(2).unwrap();
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      String::from(""),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos
+    )
+  );
+
+  lexer.set_lexeme_limits(&link_alias);
 
   lexer.tokens.push(
     Token::new(
@@ -83,6 +97,10 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
     )
   );
 
+  lexer.update_pos();
+
+  lexer.set_lexeme_limits(&link);
+
   lexer.tokens.push(
     Token::new(
       TokenType::Hyperlink,
@@ -91,6 +109,10 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
       link.end() + lexer.pos.pos
     )
   );
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.update_pos();
 
 }
 
@@ -156,6 +178,8 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
   println!("\nTokenizing {:?}...", tt);
 
   let m = cs.get(0).unwrap();
+
+  lexer.set_lexeme_limits(&m);
   
   lexer.tokens.push(
     Token::new(
@@ -165,6 +189,8 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
       m.end() + lexer.pos.pos,
     )
   );
+
+  lexer.update_pos();
 
 }
 

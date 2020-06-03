@@ -40,8 +40,14 @@ fn phrase_reference_01 () {
 
   println!("{:?}", toks);
 
-  assert_eq!(toks[4].t_type, TokenType::LinkAlias);
-  assert_eq!(toks[5].t_type, TokenType::Hyperlink);
+  assert_eq!(toks[0].t_type, TokenType::Text);
+  assert_eq!(toks[1].t_type, TokenType::Code);
+  assert_eq!(toks[2].t_type, TokenType::Text);
+  assert_eq!(toks[3].t_type, TokenType::InlineWhitespace);
+  assert_eq!(toks[4].t_type, TokenType::Text);
+  assert_eq!(toks[5].t_type, TokenType::TargetReference);
+  assert_eq!(toks[6].t_type, TokenType::LinkAlias);
+  assert_eq!(toks[7].t_type, TokenType::Hyperlink);
 
 }
 

@@ -181,7 +181,7 @@ pub enum TokenType{
   Literal,
   NoDelimText,
   Text,
-
+  InlineWhitespace,
   // End of file
   EOF,
 }
