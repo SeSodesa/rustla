@@ -102,7 +102,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Blank Lines
   // -----------
-  //(TokenType::BlankLines, r"^(?m)^(\s*)$", tokenize_blank_lines),
+  (TokenType::BlankLines, r"^(?m)^(\s*)$", tokenize_blank_lines),
 
 ];
 
@@ -113,14 +113,18 @@ fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
   let lines = cs.get(0).unwrap();
 
+  lex.set_lexeme_limits(&lines);
+
   lex.tokens.push(
     Token::new(
       tt,
       String::from("\n\n"),
-      lines.start(),
-      lines.end(),
+      lines.start() + lex.pos.pos,
+      lines.end() + lex.pos.pos,
     )
   );
+
+  lex.update_pos();
 
 }
 
