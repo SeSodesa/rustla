@@ -95,3 +95,25 @@ fn role_content_01() {
   assert_eq!(toks[2].t_type, TokenType::Role);
   assert_eq!(toks[3].t_type, TokenType::Content);
 }
+
+
+#[test]
+fn content_role_01() {
+  let mut src_iter = r"asdsadas `tekstiä matikkamoodissa`:math:".chars();
+
+  let pos = &mut Pos::new();
+
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
+
+  for tok in toks.iter() {
+    println!("{:?}", tok);
+  }
+
+  assert_eq!(toks[1].t_type, TokenType::ContentRole);
+  assert_eq!(toks[2].t_type, TokenType::Content);
+  assert_eq!(toks[3].t_type, TokenType::Role);
+}

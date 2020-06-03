@@ -196,6 +196,54 @@ fn tokenize_content_role (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures
 
   println!("\nTokenizing {:?}...", tt);
 
+  let m = cs.get(0).unwrap();
+  let content = cs.get(1).unwrap();
+  let role = cs.get(2).unwrap();
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      String::from(""),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
+  );
+
+  println!("\nTokenizing Content...");
+
+  lexer.set_lexeme_limits(&content);
+
+  lexer.tokens.push(
+    Token::new(
+      TokenType::Content,
+      String::from(role.as_str()),
+      content.start() + lexer.pos.pos,
+      content.end() + lexer.pos.pos,
+    )
+  );
+
+  lexer.update_pos();
+
+  println!("Tokenizing Role...");
+
+  lexer.set_lexeme_limits(&role);
+
+  lexer.tokens.push(
+    Token::new(
+      TokenType::Role,
+      String::from(content.as_str()),
+      role.start() + lexer.pos.pos,
+      role.end() + lexer.pos.pos,
+    )
+  );
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.update_pos();
+
+
 }
 
 
