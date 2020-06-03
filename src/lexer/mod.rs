@@ -92,22 +92,11 @@ impl <'t> Lexer <'t> {
       eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
     }
 
-    while let Some(c) = self.src_iter.next() {
-
-      println!("Consuming {:?}...", c);
-
-      self.pos.pos += 1;
-      self.pos.col += 1;
-      if c == '\n' {
-        self.pos.row += 1;
-        self.pos.col = 0;
-      }
+    while let Some(_c) = self.src_iter.next() {
 
       if let None = self.scan_token() {
         eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
       }
-
-      assert!(self.pos.lookahead >= self.pos.pos);
 
     }
 
@@ -120,6 +109,8 @@ impl <'t> Lexer <'t> {
   fn scan_token(&mut self) -> Option<regex::Captures<'t>>{
 
     let s = self.src_iter.as_str();
+
+    println!("{}", s);
 
     let av: &ActionVector = &self.actions.get(&self.state).unwrap();
 
@@ -145,8 +136,7 @@ impl <'t> Lexer <'t> {
   /// the detected lexeme.
   fn perform_action(&mut self, a: &Action, tt: &TokenType, cs: &regex::Captures) {
 
-    self.pos.lexeme_start = cs.get(0).unwrap().start();
-    self.pos.lookahead = cs.get(0).unwrap().end();
+    //self.set_lexeme_limits(&cs.get(0).unwrap());
 
     println!("Performing action...");
 
@@ -154,11 +144,15 @@ impl <'t> Lexer <'t> {
 
     self.pos.lexeme_start = self.pos.lookahead;
 
-    if self.pos.pos < self.pos.lexeme_start {
-      self.update_pos();
-    }
+  }
 
 
+  /// ### set_lexeme_limits
+  /// Changes the `self.pos.lexeme_start` and `self.pos.lookahead`
+  /// to match the beginning and end of the current lexeme.
+  fn set_lexeme_limits(&mut self, m: &regex::Match) {
+    self.pos.lexeme_start = m.start() + self.pos.pos;
+    self.pos.lookahead = m.end() + self.pos.pos;
   }
 
 
@@ -173,34 +167,30 @@ impl <'t> Lexer <'t> {
     
     println!("Updating pos...\n");
 
-    while self.pos.pos < self.pos.lexeme_start {
+    while self.pos.pos < self.pos.lookahead {
 
       if let Some(c) = self.src_iter.next() {
 
         println!("Consuming {:?}...", c);
 
         self.pos.pos += 1;
-        if self.pos.pos >= self.pos.lexeme_start {
+        self.pos.col += 1;
+        if self.pos.lexeme_start < self.pos.pos {
           self.pos.lexeme_start += 1;
         }
-
-        self.pos.col += 1;
-
         if c == '\n' {
           self.pos.row += 1;
           self.pos.col = 0;
         }
 
-        println!("Updated (pos, begin, lookahead, row, col) -> ({}, {}, {}, {})\n",
-          self.pos.pos, self.pos.lookahead, self.pos.row, self.pos.col);
+        println!("Updated (pos, lexeme_start, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
+          self.pos.pos, self.pos.lexeme_start, self.pos.lookahead, self.pos.row, self.pos.col);
 
       } else {
         break
       }
 
     }
-
-    assert!(self.pos.pos <= self.pos.lexeme_start);
 
   }
 

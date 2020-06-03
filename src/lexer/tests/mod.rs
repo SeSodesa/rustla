@@ -45,9 +45,9 @@ tekstiä2
 
   println!("{:?}",tokens);
 
-  assert_eq!(tokens[0].t_type, TokenType::BlankLine);
+  assert_eq!(tokens[0].t_type, TokenType::BlankLines);
   assert_eq!(tokens[1].t_type, TokenType::EqualsOverlinedHeading);
-  assert_eq!(tokens[2].t_type, TokenType::BlankLine);
+  assert_eq!(tokens[2].t_type, TokenType::BlankLines);
   assert_eq!(tokens[3].t_type, TokenType::CaretHeading);
 
 }
