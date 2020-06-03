@@ -21,7 +21,6 @@ use super::*;
 
 
 #[test]
-/// Tests the scanning of the entire source
 fn lex_section_titles() {
 
   let mut src_iter = "
@@ -100,12 +99,8 @@ fn scan_un_list_items () {
 
   println!("{:?}",toks);
 
-  assert_eq!(TokenType::Text, toks[2].t_type);
-  assert_eq!(TokenType::Text, toks[3].t_type);
-  assert_eq!(TokenType::BlankLine, toks[4].t_type);
-  assert_eq!(TokenType::Bullet, toks[5].t_type);
-  assert_eq!(TokenType::Text, toks[6].t_type);
-  assert_eq!(TokenType::Text, toks[7].t_type);
+  assert_eq!(TokenType::BlankLines, toks[0].t_type);
+
 
 }
 

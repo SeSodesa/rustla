@@ -145,15 +145,19 @@ impl <'t> Lexer <'t> {
   /// the detected lexeme.
   fn perform_action(&mut self, a: &Action, tt: &TokenType, cs: &regex::Captures) {
 
+    self.pos.lexeme_start = cs.get(0).unwrap().start();
     self.pos.lookahead = cs.get(0).unwrap().end();
 
     println!("Performing action...");
 
     a(self, tt.clone(), cs);
 
-    self.pos.pos = self.pos.lookahead;
+    self.pos.lexeme_start = self.pos.lookahead;
 
-    self.update_pos();
+    if self.pos.pos < self.pos.lexeme_start {
+      self.update_pos();
+    }
+
 
   }
 
@@ -169,13 +173,17 @@ impl <'t> Lexer <'t> {
     
     println!("Updating pos...\n");
 
-    while self.pos.pos < self.pos.lookahead - 1 {
+    while self.pos.pos < self.pos.lexeme_start {
 
       if let Some(c) = self.src_iter.next() {
 
         println!("Consuming {:?}...", c);
 
         self.pos.pos += 1;
+        if self.pos.pos >= self.pos.lexeme_start {
+          self.pos.lexeme_start += 1;
+        }
+
         self.pos.col += 1;
 
         if c == '\n' {
@@ -191,6 +199,8 @@ impl <'t> Lexer <'t> {
       }
 
     }
+
+    assert!(self.pos.pos <= self.pos.lexeme_start);
 
   }
 
