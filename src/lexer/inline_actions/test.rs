@@ -69,8 +69,29 @@ fn phrase_reference_02 () {
   for tok in toks.iter() {
     println!("{:?}", tok);
   }
-  println!("{:?}", toks);
 
   assert_eq!(toks[5].t_type, TokenType::TargetReference);
 
+}
+
+
+#[test]
+fn role_content_01() {
+  let mut src_iter = r"asdsadas :math:`tekstiä matikkamoodissa`".chars();
+
+  let pos = &mut Pos::new();
+
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
+
+  for tok in toks.iter() {
+    println!("{:?}", tok);
+  }
+
+  assert_eq!(toks[1].t_type, TokenType::RoleContent);
+  assert_eq!(toks[2].t_type, TokenType::Role);
+  assert_eq!(toks[3].t_type, TokenType::Content);
 }

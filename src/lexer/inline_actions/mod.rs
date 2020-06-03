@@ -15,8 +15,8 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Code, r"^``([^`]+)``", tokenize_code),
   (TokenType::TargetReference, r"^`(.+?)<(.+?)>`(__?)", tokenize_inline_target_ref),
   (TokenType::InlineReference, r"^`(.+?)`__?", tokenize_inline_ref),
-  (TokenType::RoleContent, r"^`.+?`:[a-zA-Z0-9:-]+?:", tokenize_role_content),
-  (TokenType::ContentRole, r"^:[a-zA-Z0-9:-]+?:`.+?`", tokenize_content_role),
+  (TokenType::RoleContent, r"^:([a-zA-Z0-9:-]+?):`(.+?)`", tokenize_role_content),
+  (TokenType::ContentRole, r"^`(.+?)`:([a-zA-Z0-9:-]+?):", tokenize_content_role),
   (TokenType::StrongEmphasis, r"^\*\*.+?\*\*", tokenize_strong_emphasis),
   (TokenType::Emphasis, r"^\*.+?\*", tokenize_emphasis),
   (TokenType::FootnoteOrCitation, r"^\[.*?\]_", tokenize_footnote_or_citation),
@@ -142,6 +142,53 @@ fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) 
 fn tokenize_role_content (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
+
+  let m = cs.get(0).unwrap();
+  let role = cs.get(1).unwrap();
+  let content = cs.get(2).unwrap();
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      String::from(""),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
+  );
+
+  println!("\nTokenizing Role...");
+
+  lexer.set_lexeme_limits(&role);
+
+  lexer.tokens.push(
+    Token::new(
+      TokenType::Role,
+      String::from(role.as_str()),
+      role.start() + lexer.pos.pos,
+      role.end() + lexer.pos.pos,
+    )
+  );
+
+  lexer.update_pos();
+
+  println!("Tokenizing Content...");
+
+  lexer.set_lexeme_limits(&content);
+
+  lexer.tokens.push(
+    Token::new(
+      TokenType::Content,
+      String::from(content.as_str()),
+      content.start() + lexer.pos.pos,
+      content.end() + lexer.pos.pos,
+    )
+  );
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.update_pos();
 
 }
 
