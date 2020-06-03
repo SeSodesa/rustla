@@ -94,17 +94,7 @@ impl <'t> Lexer <'t> {
 
     while let Some(c) = self.src_iter.next() {
 
-      self.pos.pos += 1;
-      self.pos.col += 1;
-      if self.pos.lexeme_start < self.pos.pos {
-        self.pos.lexeme_start += 1;
-      }
-      if c == '\n' {
-        self.pos.row += 1;
-        self.pos.col = 0;
-      }
-
-      println!("Consuming {:?}...\n", c);
+      self.increment_pos(&c);
 
       if let None = self.scan_token() {
         eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
@@ -177,20 +167,7 @@ impl <'t> Lexer <'t> {
 
       if let Some(c) = self.src_iter.next() {
 
-        println!("Consuming {:?}...", c);
-
-        self.pos.pos += 1;
-        self.pos.col += 1;
-        if self.pos.lexeme_start < self.pos.pos {
-          self.pos.lexeme_start += 1;
-        }
-        if c == '\n' {
-          self.pos.row += 1;
-          self.pos.col = 0;
-        }
-
-        println!("Updated (pos, lexeme_start, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
-          self.pos.pos, self.pos.lexeme_start, self.pos.lookahead, self.pos.row, self.pos.col);
+        self.increment_pos(&c);
 
       } else {
         break
@@ -200,7 +177,29 @@ impl <'t> Lexer <'t> {
 
   }
 
+
+  /// ###increment_pos
+  /// Increments the values in Lexer.pos
+  /// based on the next incoming character.
+  fn increment_pos(&mut self, c: &char) {
+    println!("Consuming {:?}...", c);
+
+    self.pos.pos += 1;
+    self.pos.col += 1;
+    if self.pos.lexeme_start < self.pos.pos {
+      self.pos.lexeme_start += 1;
+    }
+    if *c == '\n' {
+      self.pos.row += 1;
+      self.pos.col = 0;
+    }
+
+    println!("Updated (pos, lexeme_start, lookahead, row, col) -> ({}, {}, {}, {}, {})\n",
+      self.pos.pos, self.pos.lexeme_start, self.pos.lookahead, self.pos.row, self.pos.col);
+  }
+
 }
+
 
 /// ### val_from_key
 /// Goes through a given list of tuples
