@@ -38,9 +38,11 @@ tekstiä2
 
   let pos = &mut Pos::new();
 
-  let lexer = Lexer::new(&mut src_iter, pos, State::Body);
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
 
-  let tokens = lexer.lex();
+  lexer.lex();
+
+  let tokens = lexer.tokens;
 
   println!("{:?}",tokens);
 
@@ -90,7 +92,11 @@ fn scan_un_list_items () {
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(&mut src_iter, pos, State::Body).lex();
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
 
   println!("{:?}",toks);
 

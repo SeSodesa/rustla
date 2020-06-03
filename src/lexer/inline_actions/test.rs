@@ -9,7 +9,11 @@ fn lex_code () {
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
 
   println!("{:?}", toks);
 
@@ -28,7 +32,11 @@ fn phrase_reference_01 () {
 
   let pos = &mut Pos::new();
 
-  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
 
   println!("{:?}", toks);
 
@@ -49,7 +57,11 @@ fn phrase_reference_02 () {
 
 
 
-  let toks = Lexer::new(&mut src_iter, pos, State::Inline).lex();
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
 
   println!("{:?}", toks);
 

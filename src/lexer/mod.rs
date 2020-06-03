@@ -84,7 +84,7 @@ impl <'t> Lexer <'t> {
   /// calling `scan_token` to try and match
   /// lexemes at the current position.
   /// Consumes the Lexer itself as well.
-  fn lex(mut self) -> Vec<Token> {
+  fn lex(&mut self) {
 
     println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.pos.row, self.pos.col);
 
@@ -110,8 +110,6 @@ impl <'t> Lexer <'t> {
       assert!(self.pos.lookahead >= self.pos.pos);
 
     }
-
-    self.tokens
 
   }
 
