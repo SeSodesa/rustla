@@ -37,8 +37,6 @@ impl Token {
     Token{
       t_type: t_type,
       lexeme: lexeme,
-      // row: row,
-      // col: col,
       begin: begin,
       end: end
     }
@@ -171,6 +169,7 @@ pub enum TokenType{
   LinkAlias,
   SubstitutionReference,
   Role,
+  Content,
   RoleContent, // content second
   ContentRole, // content first
   StrongEmphasis,
