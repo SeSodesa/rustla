@@ -179,6 +179,7 @@ pub enum TokenType{
   Hyperlink,
   Interpreted,
   Literal,
+  NoDelimText,
   Text,
 
   // End of file

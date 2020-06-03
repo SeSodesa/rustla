@@ -92,7 +92,19 @@ impl <'t> Lexer <'t> {
       eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
     }
 
-    while let Some(_c) = self.src_iter.next() {
+    while let Some(c) = self.src_iter.next() {
+
+      self.pos.pos += 1;
+      self.pos.col += 1;
+      if self.pos.lexeme_start < self.pos.pos {
+        self.pos.lexeme_start += 1;
+      }
+      if c == '\n' {
+        self.pos.row += 1;
+        self.pos.col = 0;
+      }
+
+      println!("Consuming {:?}...\n", c);
 
       if let None = self.scan_token() {
         eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
@@ -109,8 +121,6 @@ impl <'t> Lexer <'t> {
   fn scan_token(&mut self) -> Option<regex::Captures<'t>>{
 
     let s = self.src_iter.as_str();
-
-    println!("{}", s);
 
     let av: &ActionVector = &self.actions.get(&self.state).unwrap();
 
@@ -135,10 +145,6 @@ impl <'t> Lexer <'t> {
   /// Calls the callback function `a` corresponding to
   /// the detected lexeme.
   fn perform_action(&mut self, a: &Action, tt: &TokenType, cs: &regex::Captures) {
-
-    //self.set_lexeme_limits(&cs.get(0).unwrap());
-
-    println!("Performing action...");
 
     a(self, tt.clone(), cs);
 
@@ -165,9 +171,9 @@ impl <'t> Lexer <'t> {
   /// lag behind `self.lexeme_start`.
   fn update_pos(&mut self) {
     
-    println!("Updating pos...\n");
+    //println!("Updating pos...\n");
 
-    while self.pos.pos < self.pos.lookahead {
+    while self.pos.pos < self.pos.lookahead - 1 {
 
       if let Some(c) = self.src_iter.next() {
 

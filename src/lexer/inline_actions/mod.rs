@@ -35,14 +35,12 @@ fn tokenize_escape (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
   let c = cs.get(1).unwrap();
 
   lexer.tokens.push(
-    Token{
-      t_type: TokenType::Escape,
-      lexeme: c.as_str().to_string(),
-      // row: lexer.row,
-      // col: lexer.col,
-      begin: s,
-      end: e,
-    }
+    Token::new(
+      tt,
+      String::from(c.as_str()),
+      s + lexer.pos.pos,
+      e + lexer.pos.pos,
+    )
   );
 }
 
@@ -53,14 +51,19 @@ fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
   let m = cs.get(0).unwrap();
   let code = cs.get(1).unwrap();
 
+  lexer.set_lexeme_limits(&m);
+
   lexer.tokens.push(
     Token::new(
       tt,
-      code.as_str().to_string(),
-      m.start(),
-      m.end(),
+      String::from(code.as_str()),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
     )
   );
+
+  lexer.update_pos();
+
 }
 
 
@@ -73,19 +76,19 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
 
   lexer.tokens.push(
     Token::new(
-    TokenType::LinkAlias,
-    link_alias.as_str().to_string(),
-    link_alias.start(),
-    link_alias.end()
+      TokenType::LinkAlias,
+      String::from(link_alias.as_str()),
+      link_alias.start() + lexer.pos.pos,
+      link_alias.end() + lexer.pos.pos
     )
   );
 
   lexer.tokens.push(
     Token::new(
-    TokenType::Hyperlink,
-    link.as_str().to_string(),
-    link.start(),
-    link.end()
+      TokenType::Hyperlink,
+      String::from(link.as_str()),
+      link.start() + lexer.pos.pos,
+      link.end() + lexer.pos.pos
     )
   );
 
@@ -100,10 +103,10 @@ fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) 
 
   lexer.tokens.push(
     Token::new(
-    TokenType::TargetReference,
-    target.as_str().to_string(),
-    target.start(),
-    target.end()
+      TokenType::TargetReference,
+      String::from(target.as_str()),
+      target.start() + lexer.pos.pos,
+      target.end() + lexer.pos.pos
     )
   );
 
@@ -155,14 +158,12 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
   let m = cs.get(0).unwrap();
   
   lexer.tokens.push(
-    Token {
-      t_type: tt,
-      lexeme: " ".to_string(),
-      // row: lexer.row,
-      // col: lexer.col,
-      begin: lexer.pos.pos,
-      end: lexer.pos.lookahead,
-    }
+    Token::new(
+      tt,
+      String::from(" "),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
   );
 
 }
@@ -173,17 +174,19 @@ fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captur
   println!("\nTokenizing {:?}...", tt);
 
   let m = cs.get(0).unwrap();
+
+  lexer.set_lexeme_limits(&m);
   
   lexer.tokens.push(
-    Token {
-      t_type: tt,
-      lexeme: m.as_str().to_string(),
-      // row: lexer.row,
-      // col: lexer.col,
-      begin: lexer.pos.pos,
-      end: lexer.pos.lookahead,
-    }
+    Token::new(
+      tt,
+      String::from(m.as_str()),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
   );
+
+  lexer.update_pos();
 
 }
 
@@ -193,14 +196,17 @@ fn tokenize_text (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
   
   let m = cs.get(0).unwrap();
   
+  lexer.set_lexeme_limits(&m);
+
   lexer.tokens.push(
-    Token {
-      t_type: tt,
-      lexeme: m.as_str().to_string(),
-      // row: lexer.row,
-      // col: lexer.col,
-      begin: m.start(),
-      end: m.end(),
-    }
+    Token::new(
+      tt,
+      String::from(m.as_str()),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
   );
+
+  lexer.update_pos();
+
 }

@@ -175,22 +175,24 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
   println!("Tokenizing {:?}\n", tt);
 
-  let li = cs.get(0).unwrap();
+  let list_item = cs.get(0).unwrap();
 
-  lex.set_lexeme_limits(&li);
+  println!("Tokenizing preceding whitespace...\n");
+
+  let ws = cs.get(1).unwrap();
+
+  lex.set_lexeme_limits(&ws);
 
   lex.tokens.push(
     Token::new(
       tt,
       String::from(""),
-      li.start() + lex.pos.pos,
-      li.end() + lex.pos.pos
+      ws.start() + lex.pos.pos,
+      ws.end() + lex.pos.pos
     )
   );
 
   lex.update_pos();
-
-  println!("Tokenizing preceding whitespace...\n");
 
   let ws = cs.get(1).unwrap();
 
@@ -220,6 +222,8 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
       bullet.end()
     )
   );
+
+  lex.update_pos();
 
   let mut inline_src = cs.get(3).unwrap().as_str().chars();
 
