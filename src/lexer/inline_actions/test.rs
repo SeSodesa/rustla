@@ -58,10 +58,7 @@ fn phrase_reference_02 () {
   asdsadsadsad `target`__ adsadsadsadasds
   ffasfsa".chars();
 
-
   let pos = &mut Pos::new();
-
-
 
   let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
 
@@ -69,8 +66,11 @@ fn phrase_reference_02 () {
 
   let toks = lexer.tokens;
 
+  for tok in toks.iter() {
+    println!("{:?}", tok);
+  }
   println!("{:?}", toks);
 
-  assert_eq!(toks[4].t_type, TokenType::TargetReference);
+  assert_eq!(toks[5].t_type, TokenType::TargetReference);
 
 }

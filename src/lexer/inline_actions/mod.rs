@@ -121,16 +121,21 @@ fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) 
 
   println!("\nTokenizing {:?}...", tt);
 
+  let m = cs.get(0).unwrap();
   let target = cs.get(1).unwrap();
+
+  lexer.set_lexeme_limits(&m);
 
   lexer.tokens.push(
     Token::new(
       TokenType::TargetReference,
       String::from(target.as_str()),
-      target.start() + lexer.pos.pos,
-      target.end() + lexer.pos.pos
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos
     )
   );
+
+  lexer.update_pos();
 
 }
 
