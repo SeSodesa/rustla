@@ -42,7 +42,8 @@ pub struct Lexer <'t> {
   // body_actions: Vec<(TokenType, regex::Regex, Action)>,
   // inline_actions: Vec<(TokenType, regex::Regex, Action)>,
   tokens: Vec<Token>,
-  pos: &'t mut Pos
+  pos: &'t mut Pos,
+  has_error: bool
 }
 
 
@@ -59,24 +60,10 @@ impl <'t> Lexer <'t> {
       actions: &ACTION_MAP,
       tokens: Vec::new(),
       pos: pos,
+      has_error: false
     }
   }
 
-  /// ### new_from_lexer
-  /// Allows constructing a Lexer from another lexer.
-  /// Mainly useful for generating sub lexers
-  /// for inline lexing.
-  pub fn new_from_lexer (lexer: &'t mut Lexer<'t>, state: state::State) -> Lexer<'t> {
-
-    Lexer {
-      src_iter: lexer.src_iter,
-      state: state,
-      actions: &lexer.actions,
-      tokens: Vec::new(),
-      pos: lexer.pos,
-    }
-
-  }
 
   /// ### lex
   /// Loops over the source string
@@ -90,6 +77,7 @@ impl <'t> Lexer <'t> {
 
     if let None = self.scan_token() {
       eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
+      self.has_error = true;
     }
 
     while let Some(c) = self.src_iter.next() {
@@ -100,9 +88,19 @@ impl <'t> Lexer <'t> {
 
       if let None = self.scan_token() {
         eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
+        self.has_error = true;
       }
 
     }
+
+    self.tokens.push(
+      Token::new(
+        TokenType::EOF,
+        String::from(""),
+        self.pos.pos,
+        self.pos.pos
+      )
+    );
 
   }
 
