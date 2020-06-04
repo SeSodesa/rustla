@@ -94,6 +94,8 @@ impl <'t> Lexer <'t> {
 
     while let Some(c) = self.src_iter.next() {
 
+      println!("Lexing in {:?} mode...\n", self.state);
+
       self.increment_pos(&c);
 
       if let None = self.scan_token() {
