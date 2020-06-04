@@ -67,6 +67,10 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::LessHeading, r"^(?m)^(\s*)((.+)\n<{3,})\n", tokenize_section_title),
   (TokenType::MoreHeading, r"^(?m)^(\s*)((.+)\n>{3,})\n", tokenize_section_title),
 
+  // Blank Lines
+  // -----------
+  (TokenType::BlankLines, r"^(\r?\n[ \t]*\r?\n)+", tokenize_blank_lines),
+
   // Lists
   // -----
   (TokenType::UnnumberedList, r"^(?m)^(\s*)([*\-+])( .+\n(?:^\s*  .+\n)*)", tokenize_unnumbered_list),
@@ -100,10 +104,6 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   // // --------
   (TokenType::Comment, r"(?m)^ *\.\..*\n( +.*\n|\n)+", tokenize_comment),
 
-  // Blank Lines
-  // -----------
-  (TokenType::BlankLines, r"^(?m)^(\s+)$", tokenize_blank_lines),
-
 ];
 
 
@@ -111,16 +111,16 @@ fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}", tt);
 
-  let lines = cs.get(0).unwrap();
+  let m = cs.get(0).unwrap();
 
-  lex.set_lexeme_limits(&lines);
+  lex.set_lexeme_limits(&m);
 
   lex.tokens.push(
     Token::new(
       tt,
       String::from("\n\n"),
-      lines.start() + lex.pos.pos,
-      lines.end() + lex.pos.pos,
+      m.start() + lex.pos.pos,
+      m.end() + lex.pos.pos,
     )
   );
 
@@ -183,32 +183,18 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
   lex.set_lexeme_limits(&ws);
 
+  lex.update_pos();
+
+  lex.set_lexeme_limits(&list_item);
+
   lex.tokens.push(
     Token::new(
       tt,
       String::from(""),
-      ws.start() + lex.pos.pos,
-      ws.end() + lex.pos.pos
+      list_item.start() + lex.pos.pos,
+      list_item.end() + lex.pos.pos
     )
   );
-
-  lex.update_pos();
-
-  let ws = cs.get(1).unwrap();
-
-  lex.set_lexeme_limits(&ws);
-
-    // Whitespace replaced by a single blank line
-  lex.tokens.push(
-    Token::new(
-      TokenType::BlankLines,
-      String::from("\n\n"),
-      ws.start() + lex.pos.pos,
-      ws.end() + lex.pos.pos
-    )
-  );
-
-  println!("Tokenizing preceding bullet...\n");
 
   let bullet = cs.get(2).unwrap();
 
@@ -225,19 +211,7 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
   lex.update_pos();
 
-  let mut inline_src = cs.get(3).unwrap().as_str().chars();
-
-  let mut sublexer = Lexer::new(&mut inline_src, lex.pos, State::Inline);
-
-  sublexer.lex();
-
-
-  let mut inline_toks = sublexer.tokens;
-
-  println!("Inline tokens: {:?}", inline_toks);
-
-  lex.tokens.append(&mut inline_toks);
-
+  lex.state = State::Inline;
 
 }
 
@@ -312,31 +286,31 @@ fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
   let ws = cs.get(1).unwrap();
   let par = cs.get(2).unwrap();
 
-  lex.set_lexeme_limits(&m);
+  lex.set_lexeme_limits(&ws);
+
+  // lex.tokens.push(
+  //   Token::new(
+  //     TokenType::BlankLines,
+  //     String::from("\n\n"),
+  //     ws.start() + lex.pos.pos,
+  //     ws.end() + lex.pos.pos,
+  //   )
+  // );
+
+  lex.update_pos();
+
+  lex.set_lexeme_limits(&par);
 
   lex.tokens.push(
     Token::new(
       tt,
-      String::from(m.as_str()),
-      m.start() + lex.pos.pos,
-      m.end() + lex.pos.pos,
-    )
-  );
-
-  lex.set_lexeme_limits(&ws);
-
-  lex.tokens.push(
-    Token::new(
-      TokenType::BlankLines,
-      String::from("\n\n"),
-      ws.start() + lex.pos.pos,
-      ws.end() + lex.pos.pos,
+      String::from(""),
+      par.start() + lex.pos.pos,
+      par.end() + lex.pos.pos,
     )
   );
 
   lex.state = State::Inline;
-
-  lex.update_pos();
 
 }
 

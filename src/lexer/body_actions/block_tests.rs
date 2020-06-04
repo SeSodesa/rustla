@@ -7,6 +7,7 @@ use regex::Regex;
 
 #[cfg(test)]
 
+
 #[test]
 fn match_literal_block() {
   let list
@@ -98,8 +99,9 @@ fn paragraph_01 () {
   
 asdasdasdasd
 asdasdasdasdasdasd
-asdasdasdasdads
-asdasdasdd
+
+adsadasdad
+asdasdasds
 
 ".chars();
 
@@ -113,14 +115,11 @@ asdasdasdd
 
   println!("{:#?}", toks);
 
-  assert_eq!(toks[1].t_type, TokenType::BlankLines);
+  assert_eq!(toks[0].t_type, TokenType::BlankLines);
+  assert_eq!(toks[1].t_type, TokenType::Paragraph);
   assert_eq!(toks[2].t_type, TokenType::Text);
   assert_eq!(toks[3].t_type, TokenType::Newline);
   assert_eq!(toks[4].t_type, TokenType::Text);
-  assert_eq!(toks[5].t_type, TokenType::Newline);
-  assert_eq!(toks[6].t_type, TokenType::Text);
-  assert_eq!(toks[7].t_type, TokenType::Newline);
-  assert_eq!(toks[8].t_type, TokenType::Text);
-  assert_eq!(toks[9].t_type, TokenType::BlankLines);
-
+  assert_eq!(toks[5].t_type, TokenType::BlankLines);
+  assert_eq!(toks[6].t_type, TokenType::Paragraph);
 }
