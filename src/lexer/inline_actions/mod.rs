@@ -19,7 +19,7 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::ContentRole, r"^`(.+?)`:([a-zA-Z0-9:-]+?):", tokenize_content_role),
   (TokenType::StrongEmphasis, r"^\*\*(.+?)\*\*", tokenize_strong_emphasis),
   (TokenType::Emphasis, r"^\*(.+?)\*", tokenize_emphasis),
-  (TokenType::FootnoteOrCitation, r"^\[.*?\]_", tokenize_footnote_or_citation),
+  (TokenType::FootnoteOrCitation, r"^\[(.+?)\]_", tokenize_footnote_or_citation),
   (TokenType::Hyperlink, r"^<.+?>", tokenize_hyperlink),
   (TokenType::Text, r"^[^\\\n\[*`:]+", tokenize_text_no_ldelim),
   (TokenType::Text, r"^(.)", tokenize_text),
@@ -295,6 +295,22 @@ fn tokenize_emphasis (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 fn tokenize_footnote_or_citation (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
+
+  let m = cs.get(0).unwrap();
+  let target = cs.get(1).unwrap();
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      String::from(target.as_str()),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
+  );
+
+  lexer.update_pos();
 
 }
 

@@ -15,7 +15,7 @@ fn lex_code () {
 
   let toks = lexer.tokens;
 
-  println!("{:?}", toks);
+  println!("{:#?}", toks);
 
   assert_eq!(toks[0].t_type, TokenType::Text);
   assert_eq!(toks[1].t_type, TokenType::Code);
@@ -38,7 +38,7 @@ fn phrase_reference_01 () {
 
   let toks = lexer.tokens;
 
-  println!("{:?}", toks);
+  println!("{:#?}", toks);
 
   assert_eq!(toks[0].t_type, TokenType::Text);
   assert_eq!(toks[1].t_type, TokenType::Code);
@@ -66,9 +66,7 @@ fn phrase_reference_02 () {
 
   let toks = lexer.tokens;
 
-  for tok in toks.iter() {
-    println!("{:?}", tok);
-  }
+  println!("{:#?}", toks);
 
   assert_eq!(toks[5].t_type, TokenType::TargetReference);
 
@@ -87,9 +85,7 @@ fn role_content_01() {
 
   let toks = lexer.tokens;
 
-  for tok in toks.iter() {
-    println!("{:?}", tok);
-  }
+  println!("{:#?}", toks);
 
   assert_eq!(toks[1].t_type, TokenType::RoleContent);
   assert_eq!(toks[2].t_type, TokenType::Role);
@@ -109,9 +105,7 @@ fn content_role_01() {
 
   let toks = lexer.tokens;
 
-  for tok in toks.iter() {
-    println!("{:?}", tok);
-  }
+  println!("{:#?}", toks);
 
   assert_eq!(toks[1].t_type, TokenType::ContentRole);
   assert_eq!(toks[2].t_type, TokenType::Content);
@@ -120,7 +114,7 @@ fn content_role_01() {
 
 
 #[test]
-fn Strong_emphasis_01() {
+fn strong_emphasis_01() {
   let mut src_iter = r"asdsadas **korostettua tekstiä** adasdadsad".chars();
 
   let pos = &mut Pos::new();
@@ -131,9 +125,7 @@ fn Strong_emphasis_01() {
 
   let toks = lexer.tokens;
 
-  for tok in toks.iter() {
-    println!("{:?}", tok);
-  }
+  println!("{:#?}", toks);
 
   assert_eq!(toks[0].t_type, TokenType::Text);
   assert_eq!(toks[1].t_type, TokenType::StrongEmphasis);
@@ -153,11 +145,31 @@ fn emphasis_01() {
 
   let toks = lexer.tokens;
 
-  for tok in toks.iter() {
-    println!("{:?}", tok);
-  }
+  println!("{:#?}", toks);
 
   assert_eq!(toks[0].t_type, TokenType::Text);
   assert_eq!(toks[1].t_type, TokenType::Emphasis);
   assert_eq!(toks[2].t_type, TokenType::Text);
 }
+
+#[test]
+fn footnote_or_citation_01 () {
+
+  let mut src_iter = r"asdsadas [Sod2011]_ adasdadsad".chars();
+
+  let pos = &mut Pos::new();
+
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
+
+  println!("{:#?}", toks);
+
+
+  assert_eq!(toks[0].t_type, TokenType::Text);
+  assert_eq!(toks[1].t_type, TokenType::FootnoteOrCitation);
+  assert_eq!(toks[2].t_type, TokenType::Text);
+}
+
