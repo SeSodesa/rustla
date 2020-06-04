@@ -51,27 +51,3 @@ tekstiä2
   assert_eq!(tokens[3].t_type, TokenType::CaretHeading);
 
 }
-
-#[test]
-fn lexer_from_another() {
-
-  let mut src_iter = "aaaabbbbcccc".chars();
-
-  let pos = &mut Pos::new();
-
-  let parent = &mut Lexer::new(&mut src_iter, pos, State::Body);
-
-  parent.pos.pos += 4;
-  parent.pos.row += 4;
-  parent.pos.col += 5;
-
-  // let child = Lexer::new_from_lexer(parent, src, State::Inline);
-
-  // assert_eq!(4, child.lexeme_start);
-
-  // assert_eq!(TokenType::Escape, child.inline_actions.first().unwrap().0);
-
-  // assert_eq!(4, child.row);
-  // assert_eq!(5, child.col);
-
-}
