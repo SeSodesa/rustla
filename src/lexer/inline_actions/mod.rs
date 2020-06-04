@@ -21,8 +21,10 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Emphasis, r"^\*(.+?)\*", tokenize_emphasis),
   (TokenType::FootnoteOrCitation, r"^\[(.+?)\]_", tokenize_footnote_or_citation),
   (TokenType::URI, r"^<(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?>", tokenize_uri), // Regex taken from https://tools.ietf.org/html/rfc3986#appendix-B
+  (TokenType::BlankLine, r"^(m?)^\s*$", tokenize_blankline),
   (TokenType::Text, r"^[^\\\n\[*`:<>]+", tokenize_text_no_ldelim),
   (TokenType::Text, r"^(.)", tokenize_text),
+  (TokenType::Newline, r"^\n", tokenize_newline),
   (TokenType::InlineWhitespace, r"[ \t]+", tokenize_inline_whitespace),
 ];
 
@@ -511,3 +513,31 @@ fn tokenize_text (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
   lexer.update_pos();
 
 }
+
+
+fn tokenize_newline(lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
+
+  println!("Tokenizing {:?}...\n", tt);
+
+  let m = cs.get(0).unwrap();
+
+  lexer.set_lexeme_limits(&m);
+
+  lexer.tokens.push(
+    Token::new(
+      tt,
+      String::from(m.as_str()),
+      m.start() + lexer.pos.pos,
+      m.end() + lexer.pos.pos,
+    )
+  );
+
+}
+
+fn tokenize_blankline(lexer: &mut Lexer, tt: TokenType, _cs: &regex::Captures) {
+
+  println!("Tokenizing {:?}...\n", tt);
+
+  lexer.state = State::Body
+}
+
