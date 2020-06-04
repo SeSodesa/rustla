@@ -75,17 +75,3 @@ fn lexer_from_another() {
   // assert_eq!(5, child.col);
 
 }
-
-#[test]
-fn scan_token() {
-  let mut src_iter = "========\ntekstiä\n=========\n".chars();
-
-  let pos = &mut Pos::new();
-  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
-  lexer.scan_token();
-
-  println!("{:?}", lexer.tokens);
-
-  assert_eq!(lexer.tokens[0].lexeme, "tekstiä");
-
-}
