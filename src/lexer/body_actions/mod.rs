@@ -84,7 +84,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::LiteralBlock, r"^(?m)::\s*\n[ \t]+.*\n(?:(?:[ \t]+.*)?\n)+", tokenize_literal_block),
   (TokenType::PerLineLiteralBlock, r"^(?m)::\s*\n(>+ .+\n|>+[ \t]*\n)+\s*\n", tokenize_per_line_literal_block),
   (TokenType::LineBlock, r"^(?m)^\s*(?:\|.*\n|\|[ \t]*)+\s*", tokenize_line_block),
-  (TokenType::Paragraph, r"^(?m)^\s*(?:[\n]+\n)+", tokenize_paragraph),
+  (TokenType::Paragraph, r"^(?m)^(\s*)((?:\S.+\n)+)", tokenize_paragraph),
 
   // // Directives
   // // ----------
@@ -102,7 +102,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Blank Lines
   // -----------
-  (TokenType::BlankLines, r"^(?m)^(\s*)$", tokenize_blank_lines),
+  (TokenType::BlankLines, r"^(?m)^(\s+)$", tokenize_blank_lines),
 
 ];
 
@@ -307,6 +307,36 @@ fn tokenize_line_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
+
+  let m = cs.get(0).unwrap();
+  let ws = cs.get(1).unwrap();
+  let par = cs.get(2).unwrap();
+
+  lex.set_lexeme_limits(&m);
+
+  lex.tokens.push(
+    Token::new(
+      tt,
+      String::from(m.as_str()),
+      m.start() + lex.pos.pos,
+      m.end() + lex.pos.pos,
+    )
+  );
+
+  lex.set_lexeme_limits(&ws);
+
+  lex.tokens.push(
+    Token::new(
+      TokenType::BlankLines,
+      String::from("\n\n"),
+      ws.start() + lex.pos.pos,
+      ws.end() + lex.pos.pos,
+    )
+  );
+
+  lex.state = State::Inline;
+
+  lex.update_pos();
 
 }
 
