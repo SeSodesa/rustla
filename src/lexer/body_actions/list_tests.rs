@@ -1,10 +1,39 @@
 /// Tests related to list mappings
 
 use super::*;
+use super::super::*;
 use crate::lexer::val_from_key;
 use regex::Regex;
 
 #[cfg(test)]
+
+
+#[test]
+fn scan_un_list_items () {
+  let mut src_iter = "  
+  
+* aaaabbbbcccc
+  ccccbbbbaaaa
+
+* xxxxyyyy
+  yyyyxxxx'
+
+".chars();
+
+  let pos = &mut Pos::new();
+
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
+
+  println!("{:#?}",toks);
+
+  assert_eq!(TokenType::UnnumberedList, toks[0].t_type);
+
+}
+
 
 #[test]
 fn match_unnumbered_list_() {

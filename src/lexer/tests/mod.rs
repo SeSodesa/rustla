@@ -76,34 +76,6 @@ fn lexer_from_another() {
 
 }
 
-
-#[test]
-fn scan_un_list_items () {
-  let mut src_iter = "  
-  
-* aaaabbbbcccc
-  ccccbbbbaaaa
-
-* xxxxyyyy
-  yyyyxxxx'
-
-".chars();
-
-  let pos = &mut Pos::new();
-
-  let mut lexer = Lexer::new(&mut src_iter, pos, State::Body);
-
-  lexer.lex();
-
-  let toks = lexer.tokens;
-
-  println!("{:?}",toks);
-
-  assert_eq!(TokenType::BlankLines, toks[0].t_type);
-
-
-}
-
 #[test]
 fn scan_token() {
   let mut src_iter = "========\ntekstiä\n=========\n".chars();
