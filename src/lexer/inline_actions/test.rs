@@ -54,9 +54,8 @@ fn phrase_reference_01 () {
 #[test]
 fn phrase_reference_02 () {
 
-  let mut src_iter = r"asdsadas ``some code``  
-  asdsadsadsad `target`__ adsadsadsadasds
-  ffasfsa".chars();
+  let mut src_iter = r"asdsadas   
+  asdsadsadsad `target`__ adsads".chars();
 
   let pos = &mut Pos::new();
 
@@ -68,7 +67,9 @@ fn phrase_reference_02 () {
 
   println!("{:#?}", toks);
 
-  assert_eq!(toks[5].t_type, TokenType::TargetReference);
+  assert_eq!(toks[3].t_type, TokenType::InlineReference);
+  assert_eq!(toks[4].t_type, TokenType::Target);
+  assert_eq!(toks[5].t_type, TokenType::RefAnonOrNot);
 
 }
 
@@ -173,3 +174,25 @@ fn footnote_or_citation_01 () {
   assert_eq!(toks[2].t_type, TokenType::Text);
 }
 
+
+#[test]
+fn hyperlink_01 () {
+
+  let mut src_iter = r"asdsadas <https://www.address.fi/> adasdadsad".chars();
+
+  let pos = &mut Pos::new();
+
+  let mut lexer = Lexer::new(&mut src_iter, pos, State::Inline);
+
+  lexer.lex();
+
+  let toks = lexer.tokens;
+
+  println!("{:#?}", toks);
+
+
+  assert_eq!(toks[1].t_type, TokenType::URI);
+  assert_eq!(toks[2].t_type, TokenType::Scheme);
+  assert_eq!(toks[3].t_type, TokenType::Authority);
+  assert_eq!(toks[4].t_type, TokenType::Path);
+}
