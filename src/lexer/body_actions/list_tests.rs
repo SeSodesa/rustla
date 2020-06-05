@@ -13,10 +13,9 @@ fn scan_un_list_items () {
   let mut src_iter = "  
   
 * aaaabbbbcccc
-  ccccbbbbaaaa
 
-* xxxxyyyy
-  yyyyxxxx'
+  * xxxxyyyy
+    yyyyxxxx'
 
 ".chars();
 
@@ -30,7 +29,8 @@ fn scan_un_list_items () {
 
   println!("{:#?}",toks);
 
-  assert_eq!(TokenType::UnnumberedList, toks[0].t_type);
+  assert_eq!(TokenType::BlankLines, toks[0].t_type);
+  assert_eq!(TokenType::UnnumberedList, toks[1].t_type);
 
 }
 

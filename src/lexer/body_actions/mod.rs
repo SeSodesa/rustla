@@ -69,7 +69,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 
   // Blank Lines
   // -----------
-  (TokenType::BlankLines, r"^(\r?\n[ \t]*\r?\n)+", tokenize_blank_lines),
+  (TokenType::BlankLines, r"^(\s*\r?\n[ \t]*\r?\n)+", tokenize_blank_lines),
 
   // Lists
   // -----
@@ -204,8 +204,8 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
     Token::new(
       TokenType::Bullet,
       bullet.as_str().to_string(),
-      bullet.start(),
-      bullet.end()
+      bullet.start() + lex.pos.pos,
+      bullet.end() + lex.pos.pos
     )
   );
 
