@@ -64,7 +64,7 @@ fn tokenize_code (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -124,7 +124,7 @@ fn tokenize_inline_target_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
 
   lexer.set_lexeme_limits(&m);
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -172,7 +172,7 @@ fn tokenize_inline_ref (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) 
 
   lexer.set_lexeme_limits(&m);
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -208,7 +208,7 @@ fn tokenize_role_content (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
   println!("Tokenizing Content...");
 
@@ -225,7 +225,7 @@ fn tokenize_role_content (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures
 
   lexer.set_lexeme_limits(&m);
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -261,7 +261,7 @@ fn tokenize_content_role (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
   println!("Tokenizing Role...");
 
@@ -278,7 +278,7 @@ fn tokenize_content_role (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures
 
   lexer.set_lexeme_limits(&m);
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 
 }
@@ -302,7 +302,7 @@ fn tokenize_strong_emphasis (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captu
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -325,7 +325,7 @@ fn tokenize_emphasis (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -347,7 +347,7 @@ fn tokenize_footnote_or_citation (lexer: &mut Lexer, tt: TokenType, cs: &regex::
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -446,7 +446,7 @@ fn tokenize_uri (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
 
   lexer.set_lexeme_limits(&m);
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -467,7 +467,7 @@ fn tokenize_inline_whitespace (lexer: &mut Lexer, tt: TokenType, cs: &regex::Cap
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -489,7 +489,7 @@ fn tokenize_text_no_ldelim (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captur
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -510,7 +510,7 @@ fn tokenize_text (lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
 }
 
@@ -549,7 +549,7 @@ fn tokenize_blankline(lexer: &mut Lexer, tt: TokenType, cs: &regex::Captures) {
     )
   );
 
-  lexer.update_pos();
+  // lexer.update_pos();
 
   lexer.state = State::Body
 }

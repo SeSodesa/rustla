@@ -49,6 +49,8 @@ pub enum TokenType{
   // For testing
   Test,
 
+  // opening Symbols
+
   // Closing symbols
   RParenth, RSquareBrack, RWavyBrack, RAngleBrack,
   RSingleQuot, RDoubleQuot, RDoubleAngleBrack,

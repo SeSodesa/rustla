@@ -10,6 +10,9 @@ mod error;
 #[cfg(test)]
 mod tests;
 
+use std::io::{self, BufReader, Lines};
+use std::fs::File;
+
 use std::fmt;
 use std::str;
 use regex;
@@ -35,31 +38,31 @@ type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
 type ActionMap = collections::HashMap<state::State, ActionVector>;
 
 //#[derive(PartialEq)]
-pub struct Lexer <'t> {
-  src_iter: &'t mut str::Chars<'t>,
+pub struct Lexer {
+  line_iter: Lines<BufReader<File>>,
   state: State,
   actions: &'static ActionMap,
   // body_actions: Vec<(TokenType, regex::Regex, Action)>,
   // inline_actions: Vec<(TokenType, regex::Regex, Action)>,
   tokens: Vec<Token>,
-  pos: &'t mut Pos,
+  pos: Pos,
   has_error: bool
 }
 
 
 /// Lexer type methods
-impl <'t> Lexer <'t> {
+impl Lexer {
 
   /// ### new
   /// A Lexer constructor
-  pub fn new(src_iter: &'t mut str::Chars<'t>, pos: &'t mut Pos, state: state::State) -> Self {
+  pub fn new(line_iter: Lines<BufReader<File>>, state: state::State) -> Self {
 
     Lexer {
-      src_iter: src_iter,
+      line_iter: line_iter,
       state: state,
       actions: &ACTION_MAP,
       tokens: Vec::new(),
-      pos: pos,
+      pos: Pos::new(),
       has_error: false
     }
   }
@@ -75,21 +78,14 @@ impl <'t> Lexer <'t> {
 
     println!("\nLexing in {:?} mode...\nstarting from row {:?}, col {:?}", self.state, self.pos.row, self.pos.col);
 
-    if let None = self.scan_token() {
-      eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
-      self.has_error = true;
-    }
+    while let Some(next_line_result) = self.line_iter.next() {
 
-    while let Some(c) = self.src_iter.next() {
-
-      println!("Lexing in {:?} mode...\n", self.state);
-
-      self.increment_pos(&c);
-
-      if let None = self.scan_token() {
-        eprintln!("No lexeme found at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
-        self.has_error = true;
-      }
+      if let Ok(line) = next_line_result {
+        self.scan_line(line)
+      } else {
+        eprintln!("No line to read at (pos, row, col) = ({}, {}, {})", self.pos.pos, self.pos.row, self.pos.col);
+        self.has_error = true; 
+      };
 
     }
 
@@ -104,13 +100,30 @@ impl <'t> Lexer <'t> {
 
   }
 
+
+  /// ### scan_line
+  /// Reads in the next line `from self.line_iter`
+  /// for tokenizing.
+  fn scan_line(&mut self, line: String) {
+
+    let s = line.as_str();
+
+    let mut char_iter = s.chars();
+
+    while let Some(c) = char_iter.next() {
+
+      self.scan_token(&mut char_iter);
+    }
+
+  }
+
   /// ### scan_token
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
   /// core of the lexer itself.
-  fn scan_token(&mut self) -> Option<regex::Captures<'t>>{
+  fn scan_token<'t>(&mut self, char_iter: &'t mut str::Chars ) -> Option<regex::Captures<'t>>{
 
-    let s = self.src_iter.as_str();
+    let s = char_iter.as_str();
 
     let av: &ActionVector = &self.actions.get(&self.state).unwrap();
 
@@ -118,7 +131,9 @@ impl <'t> Lexer <'t> {
 
       if let Some(cs) = re.captures(s) {
 
-        self.perform_action(a, tt, &cs);
+        a(self, tt.clone(), &cs);
+
+        self.pos.lexeme_start = self.pos.lookahead;
 
         return Some(cs);
 
@@ -159,13 +174,13 @@ impl <'t> Lexer <'t> {
   /// If this doesn't succeed, simply
   /// makes sure `self.pos` doesn't
   /// lag behind `self.lexeme_start`.
-  fn update_pos(&mut self) {
+  fn update_pos(&mut self, char_iter: &mut str::Chars) {
     
     //println!("Updating pos...\n");
 
     while self.pos.pos < self.pos.lookahead - 1 {
 
-      if let Some(c) = self.src_iter.next() {
+      if let Some(c) = char_iter.next() {
 
         self.increment_pos(&c);
 
@@ -253,7 +268,7 @@ lazy_static! {
 }
 
 
-impl fmt::Debug for Lexer <'_> {
+impl fmt::Debug for Lexer {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
         .field("lexeme_start", &self.pos.pos)
@@ -262,7 +277,7 @@ impl fmt::Debug for Lexer <'_> {
   }
 }
 
-impl fmt::Display for Lexer <'_> {
+impl fmt::Display for Lexer {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "Lexer location: row = {}, col = {}", self.pos.row, self.pos.col)
   }

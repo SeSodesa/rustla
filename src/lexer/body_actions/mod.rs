@@ -124,7 +124,7 @@ fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
     )
   );
 
-  lex.update_pos();
+  // lex.update_pos();
 
 }
 
@@ -164,7 +164,7 @@ fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) 
     )
   );
 
-  lex.update_pos();
+  // lex.update_pos();
 
 }
 
@@ -183,7 +183,7 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
   lex.set_lexeme_limits(&ws);
 
-  lex.update_pos();
+  // lex.update_pos();
 
   lex.set_lexeme_limits(&list_item);
 
@@ -209,7 +209,7 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
     )
   );
 
-  lex.update_pos();
+  // lex.update_pos();
 
   lex.state = State::Inline;
 
@@ -297,7 +297,7 @@ fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
   //   )
   // );
 
-  lex.update_pos();
+  // lex.update_pos();
 
   lex.set_lexeme_limits(&par);
 

@@ -6,6 +6,7 @@
 mod tests;
 
 use std::{fmt};
+use crate::lexer::position::Pos;
 
 #[derive(Debug)]
 pub struct TokenizeError {
@@ -36,10 +37,10 @@ impl fmt::Display for TokenizeError {
 
 
 impl LexError  {
-  pub fn new(row: &usize, col: &usize) -> LexError {
+  pub fn new(pos: &Pos) -> LexError {
     LexError{
-      row: row.clone(),
-      col: col.clone(),
+      row: pos.row,
+      col: pos.col,
     }
   }
 }
