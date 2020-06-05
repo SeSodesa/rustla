@@ -50,13 +50,7 @@ fn main() {
 
   } else if md.is_file() {
     println!("{:?} is a file.", path);
-    
-    let file = if let Ok(file) = fs::File::open(&path) {
-      file
-    } else {
-      eprintln!("Couldn't open file...\n");
-      process::exit(1);
-    };
+  
 
     let line_iter = match read_lines(path) {
       Ok(lines) => lines,
