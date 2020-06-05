@@ -66,6 +66,27 @@ pub enum TokenType{
   // Empty lines
   BlankLines,
 
+  // Heading lines
+  EqualsLine,
+  DashLine,
+  BacktickLine,
+  ColonLine,
+  SquoteLine,
+  DquoteLine,
+  TildeLine,
+  CaretLine,
+  UnderscoreLine,
+  AsteriskLine,
+  PlusLine,
+  HashLine,
+  LessLine,
+  MoreLine,
+
+  // Transition
+  Transition,
+
+
+
   // Headings
   EqualsOverlinedHeading,
   DashOverlinedHeading,
