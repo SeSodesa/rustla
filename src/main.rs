@@ -5,7 +5,8 @@
 
 pub mod lexer;
 
-use std::{env, process, fs, path};
+use std::io::BufRead;
+use std::{env, process, fs, path, io};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -28,7 +29,7 @@ fn main() {
   let path: path::PathBuf = match fs::canonicalize(&args[1]) {
     Ok(p) => p,
     Err(e) => {
-      println!("Could not resolve file path:\n{}",e);
+      eprintln!("Could not resolve file path:\n{}",e);
       process::exit(1);
     }
   };
@@ -36,7 +37,7 @@ fn main() {
   let md: fs::Metadata = match fs::metadata(&path) {
     Ok(meta) => meta,
     Err(e) => {
-      println!("\nCannot determine the type of input:\n{}", e);
+      eprintln!("\nCannot determine the type of input:\n{}", e);
       process::exit(1);
     }
   };
@@ -50,25 +51,40 @@ fn main() {
   } else if md.is_file() {
     println!("{:?} is a file.", path);
     
-    let fc: String = match fs::read_to_string(path) {
-      Ok(a) => a,
-      Err(b) => {
-        println!("Could not read file:\n{}", b);
+    let file = if let Ok(file) = fs::File::open(&path) {
+      file
+    } else {
+      eprintln!("Couldn't open file...\n");
+      process::exit(1);
+    };
+
+    let line_iter = match read_lines(path) {
+      Ok(lines) => lines,
+      Err(e) => {
+        eprintln!("");
         process::exit(1);
       }
     };
-    let htt: bool = has_toctree(&fc);
 
-    if htt {
-      // Create document tree structure,
-      // then transpile the files
-    } else {
-      // Attempt transpiling a single file
+    for line in line_iter {
+      if let Ok(line_text) = line {
+        println!("{}", line_text);
+      } else {
+        eprintln!("Could not read the line...\n");
+      }
     }
-    
+
   }
+
 }
 
+/// ### read_lines
+/// Read the lines of a given file into a buffer.
+fn read_lines<P>(file_path: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
+where P: AsRef<path::Path> {
+  let file:fs::File = fs::File::open(file_path)?;
+  Ok(io::BufReader::new(file).lines())
+}
 
 /// # `has_toctree`
 /// Checks the file contents `fc`
