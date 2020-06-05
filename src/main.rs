@@ -60,6 +60,8 @@ fn main() {
       }
     };
 
+    // Enter lexer here...
+
     for line in line_iter {
       if let Ok(line_text) = line {
         println!("{}", line_text);
