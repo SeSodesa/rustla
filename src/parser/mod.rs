@@ -1,4 +1,4 @@
-/// This is the `lexer` module of ruSTLa
+/// This is the `parser` module of ruSTLa
 
 mod token;
 mod state;
@@ -18,16 +18,16 @@ use std::str;
 use regex;
 use lazy_static::lazy_static;
 
-use crate::lexer::token::{Token, TokenType};
-use crate::lexer::state::{State};
-use crate::lexer::position::Pos;
+use crate::parser::token::{Token, TokenType};
+use crate::parser::state::{State};
+use crate::parser::position::Pos;
 use std::collections;
-use crate::lexer::error::{TokenizeError, LexError};
+use crate::parser::error::{TokenizeError, ParseError};
 
 
 /// ### Action
 /// A function pointer type alias for a Lexer action
-type Action = fn(&mut Lexer, TokenType, &regex::Captures) -> ();
+type Action = fn(&mut Parser, TokenType, &regex::Captures) -> ();
 
 /// ### Actionvector
 /// Contains tuples `(TokenType, Regex, Action)`
@@ -38,7 +38,7 @@ type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
 type ActionMap = collections::HashMap<state::State, ActionVector>;
 
 //#[derive(PartialEq)]
-pub struct Lexer {
+pub struct Parser {
   line_iter: Lines<BufReader<File>>,
   state: State,
   actions: &'static ActionMap,
@@ -51,13 +51,13 @@ pub struct Lexer {
 
 
 /// Lexer type methods
-impl Lexer {
+impl Parser {
 
   /// ### new
   /// A Lexer constructor
   pub fn new(line_iter: Lines<BufReader<File>>, state: state::State) -> Self {
 
-    Lexer {
+    Parser {
       line_iter: line_iter,
       state: state,
       actions: &ACTION_MAP,
@@ -120,7 +120,7 @@ impl Lexer {
   /// ### scan_token
   /// Reads the next lexeme and produces
   /// a token mathcing it. This is the
-  /// core of the lexer itself.
+  /// core of the parser itself.
   fn scan_token<'t>(&mut self, char_iter: &'t mut str::Chars ) -> Option<regex::Captures<'t>>{
 
     let s = char_iter.as_str();
@@ -268,7 +268,7 @@ lazy_static! {
 }
 
 
-impl fmt::Debug for Lexer {
+impl fmt::Debug for Parser {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       f.debug_struct("Lexer")
         .field("lexeme_start", &self.pos.pos)
@@ -277,7 +277,7 @@ impl fmt::Debug for Lexer {
   }
 }
 
-impl fmt::Display for Lexer {
+impl fmt::Display for Parser {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "Lexer location: row = {}, col = {}", self.pos.row, self.pos.col)
   }

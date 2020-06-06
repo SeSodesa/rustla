@@ -1,5 +1,5 @@
 /// This module contains the body-related
-/// state transitions of the lexer.
+/// state transitions of the parser.
 
 #[cfg(test)]
 mod title_tests;
@@ -14,10 +14,10 @@ mod ref_target_tests;
 #[cfg(test)]
 mod comment_tests;
 
-use crate::lexer::Lexer;
-use crate::lexer::token::{Token, TokenType};
-use crate::lexer::state::State;
-use crate::lexer::Action;
+use crate::parser::Parser;
+use crate::parser::token::{Token, TokenType};
+use crate::parser::state::State;
+use crate::parser::Action;
 
 use regex;
 
@@ -27,7 +27,7 @@ use regex;
 /// (TokenType, regex, Action)
 /// ```
 /// Where the first element is a type of token found in
-/// `crate::lexer::token::TokenType`, the second element
+/// `crate::parser::token::TokenType`, the second element
 /// is a `&'static str` that describes the regex invoved with
 /// the `TokenType` and `Action` is a function pointer to
 /// a function that handles that type of token.
@@ -107,7 +107,7 @@ pub const BODY_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
 ];
 
 
-fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_blank_lines (lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}", tt);
 
@@ -131,7 +131,7 @@ fn tokenize_blank_lines (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### tokenize_section_title
 /// Creates the tokens related to overlined titles
-fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_section_title (lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -171,7 +171,7 @@ fn tokenize_section_title (lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) 
 
 /// ### Tokenize_unnumbered_list
 /// Tokenizes an unnumbered list
-fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_unnumbered_list(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -217,7 +217,7 @@ fn tokenize_unnumbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
 /// ### Tokenize_numbered_list
 /// Tokenizes an unnumbered list
-fn tokenize_numbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_numbered_list(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -226,7 +226,7 @@ fn tokenize_numbered_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### Tokenize_alpha_list
 /// Tokenizes an unnumbered list
-fn tokenize_alpha_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_alpha_list(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -234,7 +234,7 @@ fn tokenize_alpha_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### Tokenize_definition_list
 /// Tokenizes an unnumbered list
-fn tokenize_definition_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_definition_list(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -242,7 +242,7 @@ fn tokenize_definition_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures)
 
 /// ### Tokenize_field_list
 /// Tokenizes an unnumbered list
-fn tokenize_field_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_field_list(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -251,7 +251,7 @@ fn tokenize_field_list(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### tokenize_literal_block
 /// Tokenizes a literal block
-fn tokenize_literal_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_literal_block(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -260,7 +260,7 @@ fn tokenize_literal_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### tokenize_per_line_literal_block
 /// Tokenizes a per-line literal block
-fn tokenize_per_line_literal_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_per_line_literal_block(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -269,7 +269,7 @@ fn tokenize_per_line_literal_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Ca
 
 /// ### tokenize_line_block
 /// Tokenizes a line block
-fn tokenize_line_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_line_block(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -278,7 +278,7 @@ fn tokenize_line_block(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### tokenize_paragraph
 /// Tokenizes a paragraph
-fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_paragraph(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -317,7 +317,7 @@ fn tokenize_paragraph(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
 
 /// ### tokenize_general_directive
 /// Tokenizes a paragraph
-fn tokenize_general_directive(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_general_directive(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -327,7 +327,7 @@ fn tokenize_general_directive(lex: &mut Lexer, tt:TokenType, cs: &regex::Capture
 
 /// ### tokenize_reference_target
 /// Tokenizes a reference target
-fn tokenize_reference_target(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_reference_target(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -336,7 +336,7 @@ fn tokenize_reference_target(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures
 
 /// ### tokenize_footnote_or_citation_target
 /// Tokenizes both footnote and citation targets
-fn tokenize_footnote_or_citation_target(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_footnote_or_citation_target(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -345,7 +345,7 @@ fn tokenize_footnote_or_citation_target(lex: &mut Lexer, tt:TokenType, cs: &rege
 
 /// ### tokenize_substitution_definition
 /// Tokenizes a subsititution definition target
-fn tokenize_substitution_definition(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_substitution_definition(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 
@@ -354,7 +354,7 @@ fn tokenize_substitution_definition(lex: &mut Lexer, tt:TokenType, cs: &regex::C
 
 /// ### tokenize_comment
 /// Tokenizes a comment target
-fn tokenize_comment(lex: &mut Lexer, tt:TokenType, cs: &regex::Captures) {
+fn tokenize_comment(lex: &mut Parser, tt:TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}\n", tt);
 

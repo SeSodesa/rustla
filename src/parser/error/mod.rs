@@ -1,4 +1,4 @@
-/// This is the error module for the Lexer.
+/// This is the error module for the parser.
 /// Implements errors for each lexing function
 /// (where necessary).
 
@@ -6,7 +6,7 @@
 mod tests;
 
 use std::{fmt};
-use crate::lexer::position::Pos;
+use crate::parser::position::Pos;
 
 #[derive(Debug)]
 pub struct TokenizeError {
@@ -14,7 +14,7 @@ pub struct TokenizeError {
   pub col: usize,
 }
 
-pub struct LexError {
+pub struct ParseError {
   row: usize,
   col: usize,
 }
@@ -36,9 +36,9 @@ impl fmt::Display for TokenizeError {
 }
 
 
-impl LexError  {
-  pub fn new(pos: &Pos) -> LexError {
-    LexError{
+impl ParseError  {
+  pub fn new(pos: &Pos) -> Self {
+    ParseError{
       row: pos.row,
       col: pos.col,
     }
@@ -46,9 +46,9 @@ impl LexError  {
 }
 
 
-impl fmt::Display for LexError {
+impl fmt::Display for ParseError {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "LexError: \
+    write!(f, "parserror: \
     something went wrong because of <row, col> = <{}, {}>", self.row, self.col)
   }
 }

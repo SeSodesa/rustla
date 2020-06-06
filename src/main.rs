@@ -3,7 +3,7 @@
 /// author: Santtu Söderholm
 ///  email: santtu.soderholm@tuni.fi
 
-pub mod lexer;
+mod parser;
 
 use std::io::BufRead;
 use std::{env, process, fs, path, io};
