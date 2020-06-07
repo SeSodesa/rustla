@@ -1,19 +1,6 @@
 /// This module contains the body-related
 /// state transitions of the parser.
 
-#[cfg(test)]
-mod title_tests;
-#[cfg(test)]
-mod list_tests;
-#[cfg(test)]
-mod block_tests;
-#[cfg(test)]
-mod directive_tests;
-#[cfg(test)]
-mod ref_target_tests;
-#[cfg(test)]
-mod comment_tests;
-
 use crate::parser::Parser;
 use crate::parser::token::{Token, TokenType};
 use crate::parser::state::State;

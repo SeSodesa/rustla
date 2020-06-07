@@ -1,5 +1,8 @@
 /// This is the `parser` module of ruSTLa
 
+mod state_machine;
+
+
 mod token;
 mod state;
 mod position;
@@ -36,6 +39,7 @@ type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
 /// ### ActionMap
 /// Maps Lexer states to suitable `ActionVector`s.
 type ActionMap = collections::HashMap<state::State, ActionVector>;
+
 
 //#[derive(PartialEq)]
 pub struct Parser {
