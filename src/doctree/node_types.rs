@@ -2,97 +2,25 @@
 /// document tree node types
 
 
-/// ### NodeType
-/// An enumeration of the different possible document
-/// tree node types.
-pub enum NodeType {
-
-  // Root element
-  Document,
-
-  // Structural elements
-  Section,
-  Topic,
-  Transition,
-
-
-  // Body elements
+/// #BranchNodeType
+/// An enumeration fo the different kinds of
+/// branch nodes, as in nodes that can have children.
+/// Taken from https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/nodes.py#l1168
+pub enum BranchNodeType {
+  Root,
+  Titular,
+  PreBibliographic,
+  Bibliographic,
+  Decorative,
+  Structural,
   Body,
-  
-  Paragraph,
-  Compound,
-  Container,
-  BulletList,
-  EnumeratedList,
-  ListItem,
-  DefinitionList,
-  DefinitionListItem,
-  Term,
-  Classifier,
-  Definition,
-  FieldList,
-  Field,
-  FieldName,
-  FieldBody,
-
-  Option,
-  OptionArgument,
-  OptionGroup,
-  OptionList,
-  OptionListItem,
-  OptionString,
-  Description,
-  LiteralBlock,
-  DoctestBlock,
-  MathBlock,
-  LineBlock,
-  Line,
-  BlockQuote,
-  Attribution,
-  Attention,
-  Caution,
-  Danger,
-  Error,
-  Important,
-  Note,
-  Tip,
-  Hint,
-  Warning,
+  Sequential,
   Admonition,
-  Comment,
-  SubsstitutionDefinition,
-  Target,
-  Footnote,
-  Citation,
-  Label,
-  Figure,
-  Caption,
-  Legend,
-  Table,
-  TableGroup,
-  ColSpec,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableEntry,
-
-  // Inline elements
-  Emphasis,
-  StrongEmphasis,
-  Literal,
-  Reference,
-  FootnoteReference,
-  CitationReference,
-  SubstitutionReference,
-  TitleReference,
-  Abbreviation,
-  Acronym,
-  SuperScript,
-  SubScript,
-  Math,
-  Image,
+  Special,
+  Invisible,
+  Part,
   Inline,
-  Problematic,
-  Generated,
-
+  Referenctial,
+  Targetable,
+  Labeled,
 }
