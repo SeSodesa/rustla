@@ -1,4 +1,4 @@
-/// This submodule contains the states and relateed transitions of
+/// This submodule contains the states and related transitions of
 /// the parser state machine.
 
 pub enum State {

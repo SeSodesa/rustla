@@ -1,34 +1,8 @@
-/// This module contains the inline parts
-/// of the parser state transitions
 
-mod test;
+use super::*;
 
-use crate::parser::Parser;
-use crate::parser::token::{Token, TokenType};
-use crate::parser::state::State;
-use crate::parser::Action;
 
-use regex;
-
-pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
-  (TokenType::Escape, r"^\\(.)", tokenize_escape),
-  (TokenType::Code, r"^``([^`]+)``", tokenize_code),
-  (TokenType::TargetReference, r"^`(.+?) <(.+?)>`(__?)", tokenize_inline_target_ref),
-  (TokenType::InlineReference, r"^`(.+?)`(__?)", tokenize_inline_ref),
-  (TokenType::RoleContent, r"^:([a-zA-Z0-9:-]+?):`(.+?)`", tokenize_role_content),
-  (TokenType::ContentRole, r"^`(.+?)`:([a-zA-Z0-9:-]+?):", tokenize_content_role),
-  (TokenType::StrongEmphasis, r"^\*\*(.+?)\*\*", tokenize_strong_emphasis),
-  (TokenType::Emphasis, r"^\*(.+?)\*", tokenize_emphasis),
-  (TokenType::FootnoteOrCitation, r"^\[(.+?)\]_", tokenize_footnote_or_citation),
-  (TokenType::URI, r"^<(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?>", tokenize_uri), // Regex taken from https://tools.ietf.org/html/rfc3986#appendix-B
-  (TokenType::BlankLines, r"^(\r?\n[ \t]*\r?\n)+", tokenize_blankline),
-  (TokenType::Newline, r"^\n", tokenize_newline),
-  (TokenType::Text, r"^[^\\\n\[*`:<>]+", tokenize_text_no_ldelim),
-  (TokenType::Text, r"^(.)", tokenize_text),
-  (TokenType::InlineWhitespace, r"[ \t]+", tokenize_inline_whitespace),
-];
-
-fn tokenize_escape (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_escape (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -46,7 +20,7 @@ fn tokenize_escape (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
   );
 }
 
-fn tokenize_code (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_code (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -69,7 +43,7 @@ fn tokenize_code (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 }
 
 
-fn tokenize_inline_target_ref (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_inline_target_ref (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -129,7 +103,7 @@ fn tokenize_inline_target_ref (parser: &mut Parser, tt: TokenType, cs: &regex::C
 }
 
 
-fn tokenize_inline_ref (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_inline_ref (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -176,7 +150,7 @@ fn tokenize_inline_ref (parser: &mut Parser, tt: TokenType, cs: &regex::Captures
 
 }
 
-fn tokenize_role_content (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_role_content (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -229,7 +203,7 @@ fn tokenize_role_content (parser: &mut Parser, tt: TokenType, cs: &regex::Captur
 
 }
 
-fn tokenize_content_role (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_content_role (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -284,7 +258,7 @@ fn tokenize_content_role (parser: &mut Parser, tt: TokenType, cs: &regex::Captur
 }
 
 
-fn tokenize_strong_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_strong_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -307,7 +281,7 @@ fn tokenize_strong_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Cap
 }
 
 
-fn tokenize_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -329,7 +303,7 @@ fn tokenize_emphasis (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) 
 
 }
 
-fn tokenize_footnote_or_citation (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_footnote_or_citation (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -352,7 +326,7 @@ fn tokenize_footnote_or_citation (parser: &mut Parser, tt: TokenType, cs: &regex
 }
 
 
-fn tokenize_uri (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_uri (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -450,7 +424,7 @@ fn tokenize_uri (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
 }
 
-fn tokenize_inline_whitespace (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_inline_whitespace (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -472,7 +446,7 @@ fn tokenize_inline_whitespace (parser: &mut Parser, tt: TokenType, cs: &regex::C
 }
 
 
-fn tokenize_text_no_ldelim (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_text_no_ldelim (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
 
@@ -493,7 +467,7 @@ fn tokenize_text_no_ldelim (parser: &mut Parser, tt: TokenType, cs: &regex::Capt
 
 }
 
-fn tokenize_text (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_text (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("\nTokenizing {:?}...", tt);
   
@@ -515,7 +489,7 @@ fn tokenize_text (parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 }
 
 
-fn tokenize_newline(parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_newline(parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}...\n", tt);
 
@@ -534,7 +508,7 @@ fn tokenize_newline(parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
 }
 
-fn tokenize_blankline(parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
+pub fn tokenize_blankline(parser: &mut Parser, tt: TokenType, cs: &regex::Captures) {
 
   println!("Tokenizing {:?}...\n", tt);
 

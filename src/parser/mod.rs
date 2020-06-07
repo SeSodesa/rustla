@@ -6,8 +6,6 @@ mod state_machine;
 mod token;
 mod state;
 mod position;
-mod body_actions;
-mod inline_actions;
 mod error;
 
 #[cfg(test)]
@@ -26,19 +24,7 @@ use crate::parser::state::{State};
 use crate::parser::position::Pos;
 use std::collections;
 use crate::parser::error::{TokenizeError, ParseError};
-
-
-/// ### Action
-/// A function pointer type alias for a Lexer action
-type Action = fn(&mut Parser, TokenType, &regex::Captures) -> ();
-
-/// ### Actionvector
-/// Contains tuples `(TokenType, Regex, Action)`
-type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
-
-/// ### ActionMap
-/// Maps Lexer states to suitable `ActionVector`s.
-type ActionMap = collections::HashMap<state::State, ActionVector>;
+use state_machine::transitions::{BODY_TRANSITIONS, INLINE_TRANSITIONS};
 
 
 //#[derive(PartialEq)]
@@ -249,17 +235,17 @@ lazy_static! {
   static ref ACTION_MAP: ActionMap = {
     let mut action_map = collections::HashMap::new();
 
-    let mut body_actions = Vec::with_capacity(body_actions::BODY_TRANSITIONS.len());
-    let mut inline_actions = Vec::with_capacity(inline_actions::INLINE_TRANSITIONS.len());
+    let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
+    let mut inline_actions = Vec::with_capacity(INLINE_TRANSITIONS.len());
 
-    for (tt, re, fun) in body_actions::BODY_TRANSITIONS.iter() {
+    for (tt, re, fun) in BODY_TRANSITIONS.iter() {
       let r = regex::Regex::new(re).unwrap();
       body_actions.push((tt.clone(), r, *fun));
     }
 
     action_map.insert(State::Body, body_actions);
 
-    for (tt, re, fun) in inline_actions::INLINE_TRANSITIONS.iter() {
+    for (tt, re, fun) in INLINE_TRANSITIONS.iter() {
       let r = regex::Regex::new(re).unwrap();
       inline_actions.push((tt.clone(), r, *fun));
     }
@@ -270,6 +256,20 @@ lazy_static! {
 
   };
 }
+
+
+/// ### Action
+/// A function pointer type alias for a Lexer action
+pub type Action = fn(&mut Parser, TokenType, &regex::Captures) -> ();
+
+/// ### Actionvector
+/// Contains tuples `(TokenType, Regex, Action)`
+pub type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
+
+/// ### ActionMap
+/// Maps Lexer states to suitable `ActionVector`s.
+pub type ActionMap = collections::HashMap<state::State, ActionVector>;
+
 
 
 impl fmt::Debug for Parser {
