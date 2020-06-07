@@ -4,6 +4,7 @@
 ///  email: santtu.soderholm@tuni.fi
 
 mod parser;
+mod doctree;
 
 use std::io::BufRead;
 use std::{env, process, fs, path, io};
