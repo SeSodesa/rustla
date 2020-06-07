@@ -33,7 +33,7 @@ pub trait Element: Node {
 
 
 /// ### Parent
-/// A shorthand for am optional (parent might not exist)
+/// A shorthand for an optional (parent might not exist)
 /// weak reference to a parent node.
 type Parent <T> = Option< Weak<RefCell<DocNode<T>>>>;
 
