@@ -5,6 +5,9 @@ pub mod body;
 pub mod inline;
 
 use regex;
+use lazy_static::lazy_static;
+
+use super::*;
 
 use crate::parser::Parser;
 use crate::parser::state_machine::Action;
@@ -116,3 +119,38 @@ pub const INLINE_TRANSITIONS: &[(TokenType, &'static str, Action)] = &[
   (TokenType::Text, r"^(.)", parse_text),
   (TokenType::InlineWhitespace, r"[ \t]+", parse_inline_whitespace),
 ];
+
+
+lazy_static! {
+
+  /// ### ACTION_MAP
+  /// A static map of actions specified for the `Lexer` type.
+  /// This allows for the easy creation of sublexers,
+  /// as with both the parent and child, the type of actions
+  /// can simply be a reference to this map.
+  /// 
+  /// Plus, with this regexes are only compiled into automata once.
+  static ref ACTION_MAP: ActionMap = {
+    let mut action_map = collections::HashMap::new();
+
+    let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
+    let mut inline_actions = Vec::with_capacity(INLINE_TRANSITIONS.len());
+
+    for (tt, re, fun) in BODY_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      body_actions.push((tt.clone(), r, *fun));
+    }
+
+    action_map.insert(State::Body, body_actions);
+
+    for (tt, re, fun) in INLINE_TRANSITIONS.iter() {
+      let r = regex::Regex::new(re).unwrap();
+      inline_actions.push((tt.clone(), r, *fun));
+    }
+
+    action_map.insert(State::Inline, inline_actions); 
+    
+    action_map
+
+  };
+}
