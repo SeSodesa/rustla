@@ -28,6 +28,8 @@ pub struct Document <T: Node> {
   /// Fixed when calling `Document::new`.
   id: usize,
 
+  id_counter: NodeId,
+
   /// #### parent
   /// The document has no parent node.
   parent: Parent<T>,
@@ -81,10 +83,13 @@ impl <T: Node> BranchNode <T> for Document <T> {
   /// ### new
   /// The `Document` constructor. Every value is either empty
   /// or 0 in the beginning.
-  fn new(doc_id: &mut NodeId) -> Self {
+  fn new(_node_id: &mut NodeId) -> Self {
+
+    let mut id_counter = NodeId::new();
 
     Document {
-      id: doc_id.assign(),
+      id: id_counter.assign(),
+      id_counter: id_counter,
       parent: None,
       children: Vec::new(),
       src_line: 0,
@@ -102,11 +107,12 @@ impl <T: Node> BranchNode <T> for Document <T> {
     unimplemented!("fn walk not yet implemented!");
   }
 
+
   fn mut_walk(&mut self) {
-      unimplemented!("fn mut_wal not implemented!");
+      unimplemented!("fn mut_walk not implemented!");
   }
 
-  /// 
+
   fn add_child(&mut self, child: Rc<RefCell<T>>) {
       self.children.push(child);
   }
@@ -116,6 +122,7 @@ impl <T: Node> BranchNode <T> for Document <T> {
 
 /// ### NodeId
 /// A global counter of document nodes
+#[derive(Debug)]
 pub struct NodeId {
   id: usize
 }
@@ -141,7 +148,7 @@ impl NodeId {
   /// Returna copy of the NodeId counter.NodeId
   pub fn assign (&mut self) -> usize{
     let current = self.id;
-    self.id += 1;
+    self.increment();
     current
   }
 

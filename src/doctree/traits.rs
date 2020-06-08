@@ -42,6 +42,14 @@ pub trait BranchNode<T: Node>: Node {
 
 }
 
+pub trait LeafNode: Node {
+
+  /// ### new
+  /// A leaf node constructor.
+  fn new (ID: &mut NodeId) -> Self;
+
+}
+
 /// ### trait InlineBranchNode
 /// Functionality needed by nodes that contain only
 /// nodes representing inline text elements.
