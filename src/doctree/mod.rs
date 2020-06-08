@@ -71,13 +71,13 @@ pub struct Document <T: Node> {
 impl <T: Node> Node for Document <T> {
 
   type ID = usize;
-  type Parent = Parent<T>;
 
 }
 
 
 impl <T: Node> BranchNode <T> for Document <T> {
 
+  type Parent = Parent<T>;
   type Children = Children<T>;
 
   /// ### new

@@ -9,7 +9,6 @@ use super::*;
 pub trait Node {
 
   type ID;
-  type Parent;
 
 }
 
@@ -19,6 +18,7 @@ pub trait Node {
 pub trait BranchNode<T: Node>: Node {
 
   type Children;
+  type Parent;
 
   /// ### new
   /// A `BranchNode` constructor.
@@ -26,7 +26,7 @@ pub trait BranchNode<T: Node>: Node {
   /// vector of children has to be intitialized.
   fn new(id: &mut NodeId) -> Self;
 
-    /// ### walk
+  /// ### walk
   /// Immutably visits each node in a tree.
   /// Mainly for reading or printing purposes.
   fn walk(&self);
@@ -43,6 +43,8 @@ pub trait BranchNode<T: Node>: Node {
 }
 
 pub trait LeafNode: Node {
+
+  type Parent;
 
   /// ### new
   /// A leaf node constructor.
