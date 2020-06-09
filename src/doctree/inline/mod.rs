@@ -1,26 +1,37 @@
 /// This module contains `Inline` level node specifications.
 
+use super::*;
 
-/// ### InlineNode
-/// The set of `Inline` level node structs enclosed
-/// in an enum.
-pub enum InlineNode {
-  Emphasis {},
-  StrongEmphasis {},
-  Literal {},
-  Reference {},
-  FootnoteReference {},
-  CitationReference {},
-  SubstitutionReference {},
-  TitleReference {},
-  Abbreviation {},
-  Acronym {},
-  SuperScript {},
-  SubScript {},
-  Math {},
-  Image {},
-  Inline {},
-  Problematic {},
-  Generated
-}
+pub struct Emphasis {}
+
+pub struct StrongEmphasis {}
+
+pub struct Literal {}
+
+pub struct Reference {}
+
+pub struct FootnoteReference {}
+
+pub struct CitationReference {}
+
+pub struct SubstitutionReference {}
+
+pub struct TitleReference {}
+
+pub struct Abbreviation {}
+
+pub struct Acronym {}
+
+pub struct SuperScript {}
+
+pub struct SubScript {}
+
+pub struct Math {}
+
+pub struct Image {}
+
+pub struct Inline {}
+
+pub struct Problematic {}
+pub struct Generated {}
 

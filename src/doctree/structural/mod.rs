@@ -1,10 +1,16 @@
 /// This module contains sructural level node specifications.
 
+use super::*;
 
-/// ### StructuralNode
-/// An enumeration of the structural node structs.
-pub enum StructuralNode {
-  Section {},
-  Topic{},
-  Transition {},
+pub struct Section {
+
+}
+
+
+pub struct Topic {
+
+}
+
+pub struct Transition {
+
 }
