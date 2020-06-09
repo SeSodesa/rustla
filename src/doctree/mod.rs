@@ -127,6 +127,7 @@ impl TreeNode {
 
 /// ### Root
 /// The root node of the parse tree.
+#[derive(Debug)]
 pub struct Root {
   id: usize,
   doc_name: String
@@ -148,6 +149,7 @@ impl Root {
 /// ### TreeNodeType
 /// An enumaration of the different possible document
 /// node types.
+#[derive(Debug)]
 pub enum TreeNodeType {
 
   // DocTree root node
