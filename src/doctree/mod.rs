@@ -141,15 +141,24 @@ pub enum DocNode {
   TableEntry(body::TableEntry),
 
   // Inline elements
-  Emphasis,                StrongEmphasis,
-  Literal,                 Reference,
-  FootnoteReference,       CitationReference,
-  SubstitutionReference,   TitleReference,
-  Abbreviation,            Acronym,
-  SuperScript,             SubScript,
-  Math,                    Image,
-  Inline,                  Problematic,
-  Generated
+  Text(inline::Text),
+  Emphasis(inline::Emphasis),
+  StrongEmphasis(inline::StrongEmphasis),
+  Literal(inline::Literal),
+  Reference(inline::Reference),
+  FootnoteReference(inline::FootnoteReference),
+  CitationReference(inline::CitationReference),
+  SubstitutionReference(inline::SubstitutionReference),
+  TitleReference(inline::TitleReference),
+  Abbreviation(inline::Abbreviation),
+  Acronym(inline::Acronym),
+  SuperScript(inline::SuperScript),
+  SubScript(inline::SubScript),
+  Math(inline::Math),
+  Image(inline::Image),
+  Inline(inline::Inline),
+  Problematic(inline::Problematic),
+  Generated(inline::Generated)
 
 }
 
