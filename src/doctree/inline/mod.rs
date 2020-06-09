@@ -2,6 +2,11 @@
 
 use super::*;
 
+
+pub struct Text {
+  
+}
+
 pub struct Emphasis {
   text: String,
 
