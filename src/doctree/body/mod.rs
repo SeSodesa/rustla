@@ -163,7 +163,7 @@ pub struct Comment {
   id: usize,
   children: Vec<DocNode>,
 }
-pub struct SubsstitutionDefinition {
+pub struct SubstitutionDefinition {
   id: usize,
   children: Vec<DocNode>,
 }
