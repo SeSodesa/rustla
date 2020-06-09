@@ -2,36 +2,71 @@
 
 use super::*;
 
-pub struct Emphasis {}
+pub struct Emphasis {
+  text: String,
 
-pub struct StrongEmphasis {}
+}
 
-pub struct Literal {}
+pub struct StrongEmphasis {
+  text: String,
+}
 
-pub struct Reference {}
+pub struct Literal {
+  text: String,
+}
 
-pub struct FootnoteReference {}
+pub struct Reference {
+  text: String,
+}
 
-pub struct CitationReference {}
+pub struct FootnoteReference {
+  text: String,
+}
 
-pub struct SubstitutionReference {}
+pub struct CitationReference {
+  text: String,
+}
 
-pub struct TitleReference {}
+pub struct SubstitutionReference {
+  text: String,
+}
 
-pub struct Abbreviation {}
+pub struct TitleReference {
+  text: String,
+}
 
-pub struct Acronym {}
+pub struct Abbreviation {
+  text: String,
+}
 
-pub struct SuperScript {}
+pub struct Acronym {
+  text: String,
+}
 
-pub struct SubScript {}
+pub struct SuperScript {
+  text: String,
+}
 
-pub struct Math {}
+pub struct SubScript {
+  text: String,
+}
 
-pub struct Image {}
+pub struct Math {
+  text: String,
+}
 
-pub struct Inline {}
+pub struct Image {
+  text: String,
+}
 
-pub struct Problematic {}
-pub struct Generated {}
+pub struct Inline {
+  text: String,
+}
+
+pub struct Problematic {
+  text: String,
+}
+pub struct Generated {
+  text: String,
+}
 

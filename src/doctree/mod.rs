@@ -14,18 +14,18 @@ use self::node_types::BranchNodeType;
 use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 
 
-/// ### Document
+/// ### DocTree
 /// A node type representing to document root.
 /// In addition to containing its direct children
 /// (body elements),
-/// `Document` is responsible for keeping track of
+/// `DocTree` is responsible for keeping track of
 /// reference and citation nodes.
 #[derive(Debug)]
-pub struct Document <T: Node> {
+pub struct DocTree <T: Node> {
 
   /// #### id
   /// A copy of the global node counter.
-  /// Fixed when calling `Document::new`.
+  /// Fixed when calling `DocTree::new`.
   id: usize,
 
   id_counter: NodeId,
@@ -72,53 +72,53 @@ pub struct Document <T: Node> {
 /// node types.
 pub enum DocNode {
 
-  // Document root node
+  // DocTree root node
   Root,
 
   // Structural elements
-  Section,
+  Section(structural::Section),
   Topic,
   Transition,
 
   // Body level elements
-  Paragraph {},               Compound {},
-  Container {},               BulletList {},
-  EnumeratedList {},          ListItem {},
-  DefinitionList {},          DefinitionListItem {},
-  Term {},                    Classifier {},
-  Definition {},              FieldList {},
-  Field {},                   FieldName {},
-  FieldBody {},               Option {},
-  OptionArgument {},          OptionGroup {},
-  OptionList {},              OptionListItem {},
-  OptionString {},            Description {},
-  LiteralBlock {},            DoctestBlock {},
-  MathBlock {},               LineBlock {},
-  Line {},                    BlockQuote {},
-  Attribution {},             Attention {},
-  Caution {},                 Danger {},
-  Error {},                   Important {},
-  Note {},                    Tip {},
-  Hint {},                    Warning {},
-  Admonition {},              Comment {},
-  SubstitutionDefinition {},  Target {},
-  Footnote {},                Citation {},
-  Label {},                   Figure {},
-  Caption {},                 Legend {},
-  Table {},                   TableGroup {},
-  ColSpec {},                 TableHead {},
-  TableBody {},               TableRow {},
-  TableEntry {},
+  Paragraph,               Compound,
+  Container,               BulletList,
+  EnumeratedList,          ListItem,
+  DefinitionList,          DefinitionListItem,
+  Term,                    Classifier,
+  Definition,              FieldList,
+  Field,                   FieldName,
+  FieldBody,               Option,
+  OptionArgument,          OptionGroup,
+  OptionList,              OptionListItem,
+  OptionString,            Description,
+  LiteralBlock,            DoctestBlock,
+  MathBlock,               LineBlock,
+  Line,                    BlockQuote,
+  Attribution,             Attention,
+  Caution,                 Danger,
+  Error,                   Important,
+  Note,                    Tip,
+  Hint,                    Warning,
+  Admonition,              Comment,
+  SubstitutionDefinition,  Target,
+  Footnote,                Citation,
+  Label,                   Figure,
+  Caption,                 Legend,
+  Table,                   TableGroup,
+  ColSpec,                 TableHead,
+  TableBody,               TableRow,
+  TableEntry,
 
   // Inline elements
-  Emphasis {},                StrongEmphasis {},
-  Literal {},                 Reference {},
-  FootnoteReference {},       CitationReference {},
-  SubstitutionReference {},   TitleReference {},
-  Abbreviation {},            Acronym {},
-  SuperScript {},             SubScript {},
-  Math {},                    Image {},
-  Inline {},                  Problematic {},
+  Emphasis,                StrongEmphasis,
+  Literal,                 Reference,
+  FootnoteReference,       CitationReference,
+  SubstitutionReference,   TitleReference,
+  Abbreviation,            Acronym,
+  SuperScript,             SubScript,
+  Math,                    Image,
+  Inline,                  Problematic,
   Generated
 
 }
