@@ -67,58 +67,61 @@ pub struct Document <T: Node> {
 
 }
 
+/// ### DocNode
+/// An enumaration of the different possible document
+/// node types.
+pub enum DocNode {
 
-impl <T: Node> Node for Document <T> {
+  // Document root node
+  Root,
 
-  type ID = usize;
+  // Structural elements
+  Section,
+  Topic,
+  Transition,
+
+  // Body level elements
+  Paragraph {},               Compound {},
+  Container {},               BulletList {},
+  EnumeratedList {},          ListItem {},
+  DefinitionList {},          DefinitionListItem {},
+  Term {},                    Classifier {},
+  Definition {},              FieldList {},
+  Field {},                   FieldName {},
+  FieldBody {},               Option {},
+  OptionArgument {},          OptionGroup {},
+  OptionList {},              OptionListItem {},
+  OptionString {},            Description {},
+  LiteralBlock {},            DoctestBlock {},
+  MathBlock {},               LineBlock {},
+  Line {},                    BlockQuote {},
+  Attribution {},             Attention {},
+  Caution {},                 Danger {},
+  Error {},                   Important {},
+  Note {},                    Tip {},
+  Hint {},                    Warning {},
+  Admonition {},              Comment {},
+  SubstitutionDefinition {},  Target {},
+  Footnote {},                Citation {},
+  Label {},                   Figure {},
+  Caption {},                 Legend {},
+  Table {},                   TableGroup {},
+  ColSpec {},                 TableHead {},
+  TableBody {},               TableRow {},
+  TableEntry {},
+
+  // Inline elements
+  Emphasis {},                StrongEmphasis {},
+  Literal {},                 Reference {},
+  FootnoteReference {},       CitationReference {},
+  SubstitutionReference {},   TitleReference {},
+  Abbreviation {},            Acronym {},
+  SuperScript {},             SubScript {},
+  Math {},                    Image {},
+  Inline {},                  Problematic {},
+  Generated
 
 }
-
-
-impl <T: Node> BranchNode <T> for Document <T> {
-
-  type Parent = Parent<T>;
-  type Children = Children<T>;
-
-  /// ### new
-  /// The `Document` constructor. Every value is either empty
-  /// or 0 in the beginning.
-  fn new(_node_id: &mut NodeId) -> Self {
-
-    let mut id_counter = NodeId::new();
-
-    Document {
-      id: id_counter.assign(),
-      id_counter: id_counter,
-      parent: None,
-      children: Vec::new(),
-      src_line: 0,
-      indirect_target_nodes: Vec::new(),
-      substitution_defs: HashMap::new(),
-      substitution_names: HashMap::new(),
-      refs_to_nodes: HashMap::new(),
-      ids_to_nodes: HashMap::new(),
-      names_to_ids: HashMap::new(),
-    }
-  }
-
-
-  fn walk(&self) {
-    unimplemented!("fn walk not yet implemented!");
-  }
-
-
-  fn mut_walk(&mut self) {
-      unimplemented!("fn mut_walk not implemented!");
-  }
-
-
-  fn add_child(&mut self, child: Rc<RefCell<T>>) {
-      self.children.push(child);
-  }
-
-}
-
 
 /// ### NodeId
 /// A global counter of document nodes
