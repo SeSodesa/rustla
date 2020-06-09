@@ -54,7 +54,7 @@ pub trait LeafNode: Node {
 
   /// ### new
   /// A leaf node constructor.
-  fn new (ID: &mut NodeId) -> Self;
+  fn new (id: &mut NodeId) -> Self;
 
 }
 
