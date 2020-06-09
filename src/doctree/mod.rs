@@ -24,7 +24,7 @@ pub struct DocTree {
   /// #### tree_root
   /// Holds on to the tree root node,
   /// providing access to the rest of the tree.
-  tree_root: DocNode,
+  tree_root: TreeNode,
 
   /// ####  id_counter
   /// Keeps track of node ids.
@@ -43,7 +43,7 @@ pub struct DocTree {
 
   /// #### substitutiton_defs
   /// A map of substitution names to nodes containing substitution definitions.
-  substitution_defs: HashMap<String, DocNode>,
+  substitution_defs: HashMap<String, TreeNodeType>,
 
   /// #### substitution_names
   /// A mapping of case-normalized substitution names to the original names.
@@ -68,13 +68,19 @@ pub struct DocTree {
 /// Document tree container methods
 impl DocTree {
 
-  fn new() -> Self {
+  /// ### new
+  /// A `DocTree` constructor.
+  fn new(doc_name: String) -> Self {
 
     let mut idc = NodeId::new();
-    let root = DocNode::Root(Root::new(&mut idc));
+    let root_data = TreeNodeType::Root(
+      Root::new(doc_name, &mut idc)
+    );
+
+    let root_node = TreeNode::new(None, root_data);
 
     DocTree {
-      tree_root: root,
+      tree_root: root_node,
       id_counter: idc,
       src_line: 0,
       indirect_target_nodes: Vec::new(),
@@ -90,21 +96,26 @@ impl DocTree {
 }
 
 
+/// ### TreeNode
+/// A tree node that contains a struct of `TreeNodeType`
+/// plus the information needed t traverse the tree.
+pub struct TreeNode {
+  parent_id: Option<usize>,
+  children: Children,
+  item : TreeNodeType
 
-/// ### Root
-/// The root node of the parse tree.
-pub struct Root {
-  id: usize,
-  children: Vec<DocNode>
 }
 
-impl Root {
+impl TreeNode {
 
-  fn new(id_counter: &mut NodeId) -> Self {
-
-    Root {
-      id: id_counter.assign(),
+  /// ### new
+  /// A `TreeNode` constructor.
+  fn new(parent_id: Option<usize>, data: TreeNodeType) -> Self {
+    
+    TreeNode {
+      parent_id: parent_id,
       children: Vec::new(),
+      item: data
     }
 
   }
@@ -112,11 +123,30 @@ impl Root {
 }
 
 
+/// ### Root
+/// The root node of the parse tree.
+pub struct Root {
+  id: usize,
+  doc_name: String
+}
 
-/// ### DocNode
+impl Root {
+
+  fn new(doc_name: String, id_counter: &mut NodeId) -> Self {
+
+    Root {
+      id: id_counter.assign(),
+      doc_name: doc_name,
+    }
+
+  }
+
+}
+
+/// ### TreeNodeType
 /// An enumaration of the different possible document
 /// node types.
-pub enum DocNode {
+pub enum TreeNodeType {
 
   // DocTree root node
   Root(Root),
@@ -242,14 +272,14 @@ impl NodeId {
 /// ### Parent
 /// A shorthand for an optional (parent might not exist)
 /// weak reference to a parent node.
-type Parent = Option< Weak<RefCell<DocNode>>>;
+type Parent = Option< Weak<RefCell<TreeNode>>>;
 
 /// ### Children
 /// Shorthand for a vector of owned child nodes.
 /// Empty vector indicates no children.
-type Children = Vec<Rc<RefCell<DocNode>>>;
+type Children = Vec<TreeNode>;
 
 
 /// ### NodeRefVec
 /// A vector of weak pointers to internally mutable nodes.
-type NodeRefVec = Vec<Weak<RefCell<DocNode>>>;
+type NodeRefVec = Vec<Weak<RefCell<TreeNode>>>;
