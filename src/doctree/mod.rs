@@ -1,7 +1,7 @@
 /// This module defines the document tree and its nodes
 
 use std::rc::{Rc, Weak};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
 mod node_types;
@@ -28,17 +28,10 @@ pub struct DocTree {
 
   /// ####  id_counter
   /// Keeps track of node ids.
-  /// Knows how to yield a acopy of the value within,
+  /// Knows how to yield a copy of the value within,
   /// incrementing it by one. This should be
   /// called when a new node is created.
   id_counter: NodeId,
-
-  /// #### parent
-  /// The document has no parent node.
-  parent: Parent,
-
-  /// #### children
-  children: Children,
 
   /// #### src_line
   /// The row currently under inspection by the parser.
@@ -70,10 +63,52 @@ pub struct DocTree {
 
 }
 
+
+/// ### DocTree
+/// Document tree container methods
+impl DocTree {
+
+  fn new() -> Self {
+
+    let mut idc = NodeId::new();
+    let root = DocNode::Root(Root::new(&mut idc));
+
+    DocTree {
+      tree_root: root,
+      id_counter: idc,
+      src_line: 0,
+      indirect_target_nodes: Vec::new(),
+      substitution_defs: HashMap::new(),
+      substitution_names: HashMap::new(),
+      refs_to_nodes: HashMap::new(),
+      ids_to_nodes: HashMap::new(),
+      names_to_ids: HashMap::new(),
+    }
+
+  }
+
+}
+
+
+
+/// ### Root
+/// The root node of the parse tree.
 pub struct Root {
   id: usize,
-  document: Weak<DocTree>,
   children: Vec<DocNode>
+}
+
+impl Root {
+
+  fn new(id_counter: &mut NodeId) -> Self {
+
+    Root {
+      id: id_counter.assign(),
+      children: Vec::new(),
+    }
+
+  }
+
 }
 
 
@@ -195,7 +230,7 @@ impl NodeId {
   }
 
   /// ### get
-  /// Returna copy of the NodeId counter.NodeId
+  /// Return a copy of the NodeId counter.NodeId
   pub fn assign (&mut self) -> usize{
     let current = self.id;
     self.increment();

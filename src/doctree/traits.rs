@@ -9,6 +9,12 @@ use super::*;
 pub trait Node {
 
   type ID;
+  type Document;
+  type Children;
+
+  fn new() -> Self;
+
+
 
 }
 
