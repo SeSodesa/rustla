@@ -19,7 +19,7 @@ use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 /// In addition to holding ownership of the
 /// root of the tree, holds metadata related to
 /// the state of the tree.
-pub struct DocTree <T: Node> {
+pub struct DocTree {
 
   /// #### tree_root
   /// Holds on to the tree root node,
@@ -35,10 +35,10 @@ pub struct DocTree <T: Node> {
 
   /// #### parent
   /// The document has no parent node.
-  parent: Parent<T>,
+  parent: Parent,
 
   /// #### children
-  children: Children<T>,
+  children: Children,
 
   /// #### src_line
   /// The row currently under inspection by the parser.
@@ -46,11 +46,11 @@ pub struct DocTree <T: Node> {
 
   /// #### indirect_target_nodes
   /// A vector of indirect target nodes.
-  indirect_target_nodes: NodeRefVec<T>,
+  indirect_target_nodes: NodeRefVec,
 
   /// #### substitutiton_defs
   /// A map of substitution names to nodes containing substitution definitions.
-  substitution_defs: HashMap<String, T>,
+  substitution_defs: HashMap<String, DocNode>,
 
   /// #### substitution_names
   /// A mapping of case-normalized substitution names to the original names.
@@ -58,11 +58,11 @@ pub struct DocTree <T: Node> {
 
   /// #### refs_to_nodes
   /// A mapping of reference names to reference nodes.
-  refs_to_nodes: HashMap<String, NodeRefVec<T>>,
+  refs_to_nodes: HashMap<String, NodeRefVec>,
 
   /// #### ids_to_nodes
   /// A mapping of ids to vectors of reference nodes.
-  ids_to_nodes: HashMap<usize, NodeRefVec<T>>,
+  ids_to_nodes: HashMap<usize, NodeRefVec>,
 
   /// #### names_to_ids
   /// A mapping of node names to their unique ids.
@@ -70,13 +70,21 @@ pub struct DocTree <T: Node> {
 
 }
 
+pub struct Root {
+  id: usize,
+  document: Weak<DocTree>,
+  children: Vec<DocNode>
+}
+
+
+
 /// ### DocNode
 /// An enumaration of the different possible document
 /// node types.
 pub enum DocNode {
 
   // DocTree root node
-  Root,
+  Root(Root),
 
   // Structural elements
   Section(structural::Section),
@@ -199,14 +207,14 @@ impl NodeId {
 /// ### Parent
 /// A shorthand for an optional (parent might not exist)
 /// weak reference to a parent node.
-type Parent <T> = Option< Weak<RefCell<T>>>;
+type Parent = Option< Weak<RefCell<DocNode>>>;
 
 /// ### Children
 /// Shorthand for a vector of owned child nodes.
 /// Empty vector indicates no children.
-type Children <T> = Vec<Rc<RefCell<T>>>;
+type Children = Vec<Rc<RefCell<DocNode>>>;
 
 
 /// ### NodeRefVec
 /// A vector of weak pointers to internally mutable nodes.
-type NodeRefVec <T> = Vec<Weak<RefCell<T>>>;
+type NodeRefVec = Vec<Weak<RefCell<DocNode>>>;

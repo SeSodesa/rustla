@@ -4,8 +4,8 @@
 use super::*;
 
 /// ### trait Node
-/// A trait defining functionality for general document tree nodes.
-/// A `Node` instance has to know how to clone itself via the `Clone` trait.
+/// A trait defining functionality for general document tree nodes,
+/// that every node must implement at the very least.
 pub trait Node {
 
   type ID;
