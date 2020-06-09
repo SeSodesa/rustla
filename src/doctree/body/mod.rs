@@ -2,58 +2,168 @@
 
 use super::*;
   
-pub struct Paragraph {}
-pub struct Compound {}
-pub struct Container {}
-pub struct BulletList {}
-pub struct EnumeratedList {}
-pub struct ListItem {}
-pub struct DefinitionList {}
-pub struct DefinitionListItem {}
-pub struct Term {}
-pub struct Classifier {}
-pub struct Definition {}
-pub struct FieldList {}
-pub struct Field {}
-pub struct FieldName {}
-pub struct FieldBody {}
-pub struct Option {}
-pub struct OptionArgument {}
-pub struct OptionGroup {}
-pub struct OptionList {}
-pub struct OptionListItem {}
-pub struct OptionString {}
-pub struct Description {}
-pub struct LiteralBlock {}
-pub struct DoctestBlock {}
-pub struct MathBlock {}
-pub struct LineBlock {}
-pub struct Line {}
-pub struct BlockQuote {}
-pub struct Attribution {}
-pub struct Attention {}
-pub struct Caution {}
-pub struct Danger {}
-pub struct Error {}
-pub struct Important {}
-pub struct Note {}
-pub struct Tip {}
-pub struct Hint {}
-pub struct Warning {}
-pub struct Admonition {}
-pub struct Comment {}
-pub struct SubsstitutionDefinition {}
-pub struct Target {}
-pub struct Footnote {}
-pub struct Citation {}
-pub struct Label {}
-pub struct Figure {}
-pub struct Caption {}
-pub struct Legend {}
-pub struct Table {}
-pub struct TableGroup {}
-pub struct ColSpec {}
-pub struct TableHead {}
-pub struct TableBody {}
-pub struct TableRow {}
-pub struct TableEntry {}
+pub struct Paragraph {
+  id: usize,
+}
+pub struct Compound {
+  id: usize,
+}
+pub struct Container {
+  id: usize,
+}
+pub struct BulletList {
+  id: usize,
+}
+pub struct EnumeratedList {
+  id: usize,
+}
+
+pub struct ListItem {
+  id: usize,
+}
+pub struct DefinitionList {
+  id: usize,
+}
+pub struct DefinitionListItem {
+  id: usize,
+}
+pub struct Term {
+  id: usize,
+}
+pub struct Classifier {
+  id: usize,
+}
+pub struct Definition {
+  id: usize,
+}
+pub struct FieldList {
+  id: usize,
+}
+pub struct Field {
+  id: usize,
+}
+pub struct FieldName {
+  id: usize,
+}
+pub struct FieldBody {
+  id: usize,
+}
+pub struct Option {
+  id: usize,
+}
+pub struct OptionArgument {
+  id: usize,
+}
+pub struct OptionGroup {
+  id: usize,
+}
+pub struct OptionList {
+  id: usize,
+}
+pub struct OptionListItem {
+  id: usize,
+}
+pub struct OptionString {
+  id: usize,
+}
+pub struct Description {
+  id: usize,
+}
+pub struct LiteralBlock {
+  id: usize,
+}
+pub struct DoctestBlock {
+  id: usize,
+}
+pub struct MathBlock {
+  id: usize,
+}
+pub struct LineBlock {
+  id: usize,
+}
+pub struct Line {
+  id: usize,
+}
+pub struct BlockQuote {
+  id: usize,
+}
+pub struct Attribution {
+  id: usize,
+}
+pub struct Attention {
+  id: usize,
+}
+pub struct Caution {
+  id: usize,
+}
+pub struct Danger {
+  id: usize,
+}
+pub struct Error {
+  id: usize,
+}
+pub struct Important {
+  id: usize,
+}
+pub struct Note {
+  id: usize,
+}
+pub struct Tip {
+  id: usize,
+}
+pub struct Hint {
+  id: usize,
+}
+pub struct Warning {
+  id: usize,
+}
+pub struct Admonition {
+
+  id: usize,
+}
+pub struct Comment {
+  id: usize,
+}
+pub struct SubsstitutionDefinition {
+  id: usize,
+}
+pub struct Target {
+  id: usize,
+}
+pub struct Footnote {
+  id: usize,
+}
+pub struct Citation {
+  id: usize,
+}
+pub struct Label {
+  id: usize,
+}
+pub struct Figure {
+  id: usize,
+}
+pub struct Caption {
+  id: usize,
+}
+pub struct Legend {
+  id: usize,
+}
+pub struct Table {
+  id: usize,
+}
+pub struct TableGroup {
+  id: usize,
+}
+pub struct ColSpec {
+  id: usize,
+}
+pub struct TableHead {
+  id: usize,
+}
+pub struct TableBody {
+  id: usize,
+}
+pub struct TableRow {
+  id: usize,
+}
+pub struct TableEntry {id: usize,}
