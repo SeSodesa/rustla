@@ -15,19 +15,22 @@ use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 
 
 /// ### DocTree
-/// A node type representing to document root.
-/// In addition to containing its direct children
-/// (body elements),
-/// `DocTree` is responsible for keeping track of
-/// reference and citation nodes.
-#[derive(Debug)]
+/// A container for the document tree.
+/// In addition to holding ownership of the
+/// root of the tree, holds metadata related to
+/// the state of the tree.
 pub struct DocTree <T: Node> {
 
-  /// #### id
-  /// A copy of the global node counter.
-  /// Fixed when calling `DocTree::new`.
-  id: usize,
+  /// #### tree_root
+  /// Holds on to the tree root node,
+  /// providing access to the rest of the tree.
+  tree_root: DocNode,
 
+  /// ####  id_counter
+  /// Keeps track of node ids.
+  /// Knows how to yield a acopy of the value within,
+  /// incrementing it by one. This should be
+  /// called when a new node is created.
   id_counter: NodeId,
 
   /// #### parent
