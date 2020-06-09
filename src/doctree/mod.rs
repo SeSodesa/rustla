@@ -4,6 +4,8 @@ use std::rc::{Rc, Weak};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
+mod tests;
+
 mod node_types;
 mod traits;
 mod structural;
