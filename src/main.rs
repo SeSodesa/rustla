@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// This is ruSTLa
 /// 
 /// author: Santtu Söderholm
