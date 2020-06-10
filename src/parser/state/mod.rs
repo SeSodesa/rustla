@@ -22,7 +22,25 @@
 /// a switch to Body is made.
 /// EOF ends lexing.
 pub enum State {
+  General,
   Body,
-  Inline,
+    RFC2822Body,
+      RFC2822List,
+    SpecializedBody,
+      BulletList,
+      DefinitionList,
+      EnumeratedList,
+      FieldList,
+        ExtensionOptions,
+    OptionList,
+    LineBlock,
+    Explicit,
+    SubstitutionDef,
+  Text,
+    SpecializedText,
+      Definition,
+      Line,
+  QuotedLiteralBlock,
+
 }
 

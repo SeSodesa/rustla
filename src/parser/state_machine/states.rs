@@ -1,6 +1,7 @@
 /// This submodule contains the states and related transitions of
 /// the parser state machine.
 
+
 #[derive(Hash, Debug, PartialEq, Eq)]
 /// ### State
 /// An enumeration of the possible states of `StateMachine`.

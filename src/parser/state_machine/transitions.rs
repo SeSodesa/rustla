@@ -148,7 +148,7 @@ lazy_static! {
       inline_actions.push((tt.clone(), r, *fun));
     }
 
-    action_map.insert(State::Inline, inline_actions); 
+    //action_map.insert(State::Inline, inline_actions);
     
     action_map
 
