@@ -6,7 +6,7 @@ use super::*;
 /// ### TreeZipper
 /// A [zipper](https://en.wikipedia.org/wiki/Zipper_%28data_structure%29)
 /// of `TreeNode`s. Makes it possible to traverse the tree and
-/// locate a specific child/parent in constant time.
+/// access a specific child/parent in constant time.
 pub struct TreeZipper {
   node: TreeNode,
   parent: Option<Box<TreeZipper>>,
