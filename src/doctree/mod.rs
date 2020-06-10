@@ -104,7 +104,7 @@ impl DocTree {
 pub struct TreeNode {
   parent_id: Option<usize>,
   children: Children,
-  item : TreeNodeType
+  data : TreeNodeType
 
 }
 
@@ -117,7 +117,7 @@ impl TreeNode {
     TreeNode {
       parent_id: parent_id,
       children: Vec::new(),
-      item: data
+      data: data
     }
 
   }

@@ -12,7 +12,7 @@ fn new_doctree() {
 
   let dt = DocTree::new(src_name);
 
-  let root_is_root:bool = match dt.tree_root.item {
+  let root_is_root:bool = match dt.tree_root.data {
     TreeNodeType::Root(Root{ .. }) => true,
     _ => false
   };
