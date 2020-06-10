@@ -127,8 +127,24 @@ impl TreeNode {
 
   /// ### traverse
   /// Traverses `TreeNode`s recursively.
-  fn traverse() {
+  fn traverse(&mut self) {
 
+    eprintln!("Entering {:?}", self.get_data_type());
+
+    let children = &mut self.children;
+
+    for mut child in children {
+      child.traverse();
+    }
+
+  }
+
+
+  /// ### get_data_type
+  /// For retrieving an immutable reference to the data type of a node.
+  /// Mainly for printing purposes.
+  fn get_data_type (&self) -> &TreeNodeType {
+    &self.data
   }
 
 }
