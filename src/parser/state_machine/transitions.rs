@@ -12,7 +12,7 @@ use super::*;
 use crate::parser::Parser;
 use crate::parser::state_machine::Action;
 use crate::parser::token::{Token, TokenType};
-use crate::parser::state::State;
+use crate::parser::state_machine::states::State;
 use super::transitions::body::*;
 use super::transitions::inline::*;
 
@@ -141,7 +141,7 @@ lazy_static! {
       body_actions.push((tt.clone(), r, *fun));
     }
 
-    action_map.insert(State::Body, body_actions);
+    // action_map.insert(State::Body, body_actions);
 
     for (tt, re, fun) in INLINE_TRANSITIONS.iter() {
       let r = regex::Regex::new(re).unwrap();

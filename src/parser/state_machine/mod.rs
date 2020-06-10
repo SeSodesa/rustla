@@ -29,4 +29,4 @@ pub type ActionVector = Vec<(TokenType, regex::Regex, Action)>;
 
 /// ### ActionMap
 /// Maps Lexer states to suitable `ActionVector`s.
-pub type ActionMap = collections::HashMap<state::State, ActionVector>;
+pub type ActionMap = collections::HashMap<states::State, ActionVector>;

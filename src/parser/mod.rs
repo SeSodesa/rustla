@@ -5,7 +5,6 @@ use state_machine::StateMachine;
 
 
 mod token;
-mod state;
 mod position;
 mod error;
 
@@ -20,7 +19,6 @@ use std::str;
 use regex;
 
 use crate::parser::token::{Token, TokenType};
-use crate::parser::state::{State};
 use crate::parser::position::Pos;
 use std::collections;
 use crate::parser::error::{TokenizeError, ParseError};
@@ -30,7 +28,6 @@ use state_machine::transitions::{BODY_TRANSITIONS, INLINE_TRANSITIONS};
 pub struct Parser {
   line_iter: String,
   machine_stack: Vec<StateMachine>,
-  state: State,
   has_error: bool
 }
 
