@@ -35,7 +35,7 @@ pub struct Parser {
 }
 
 
-/// Lexer type methods
+/// Parser type methods
 impl Parser {
 
 }
