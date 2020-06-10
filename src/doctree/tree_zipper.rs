@@ -44,8 +44,6 @@ impl TreeZipper {
       return Err("This node has no children!");
     }
 
-    
-
     Ok(
       Self {
         node: child,
@@ -55,6 +53,7 @@ impl TreeZipper {
     )
 
   }
+
 
   /// ### assign_parent
   /// The opposite operation to `get_child`.
@@ -97,5 +96,3 @@ impl TreeZipper {
   }
 
 }
-
-
