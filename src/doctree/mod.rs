@@ -76,10 +76,10 @@ impl DocTree {
 
     let mut idc = NodeId::new();
     let root_data = TreeNodeType::Root(
-      Root::new(doc_name, &mut idc)
+      Root::new(doc_name)
     );
 
-    let root_node = TreeNode::new(None, root_data);
+    let root_node = TreeNode::new(None, &mut idc, root_data);
 
     DocTree {
       tree_root: root_node,
@@ -102,6 +102,7 @@ impl DocTree {
 /// A tree node that contains a struct of `TreeNodeType`
 /// plus the information needed t traverse the tree.
 pub struct TreeNode {
+  id: usize,
   parent_id: Option<usize>,
   children: Children,
   data : TreeNodeType
@@ -112,9 +113,10 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  fn new(parent_id: Option<usize>, data: TreeNodeType) -> Self {
+  fn new(parent_id: Option<usize>, id_counter: &mut NodeId, data: TreeNodeType) -> Self {
     
     TreeNode {
+      id: id_counter.assign(),
       parent_id: parent_id,
       children: Vec::new(),
       data: data
@@ -126,19 +128,17 @@ impl TreeNode {
 
 
 /// ### Root
-/// The root node of the parse tree.
+/// The root node data container of the parse tree.
 #[derive(Debug)]
 pub struct Root {
-  id: usize,
   doc_name: String
 }
 
 impl Root {
 
-  fn new(doc_name: String, id_counter: &mut NodeId) -> Self {
+  fn new(doc_name: String) -> Self {
 
     Root {
-      id: id_counter.assign(),
       doc_name: doc_name,
     }
 
