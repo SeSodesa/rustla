@@ -133,7 +133,7 @@ impl TreeNode {
 
     let children = &mut self.children;
 
-    for mut child in children {
+    for child in children {
       child.traverse();
     }
 
