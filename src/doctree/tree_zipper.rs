@@ -1,4 +1,5 @@
 /// A zipper module for accessing `TreeNode`s.
+/// Inspired by https://stackoverflow.com/a/36168919/6449910
 
 use super::*;
 
