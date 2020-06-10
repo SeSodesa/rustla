@@ -125,6 +125,14 @@ impl TreeNode {
 
   }
 
+  /// ### push_child
+  /// Pushes a given child node the the end of `self.children`.
+  fn push_child (&mut self, node : TreeNode) {
+
+    self.children.push(node);
+
+  }
+
   /// ### traverse
   /// Traverses `TreeNode`s recursively.
   fn traverse(&mut self) {
