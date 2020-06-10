@@ -3,6 +3,8 @@
 
 mod body;
 
+use super::*;
+
 #[derive(Debug)]
 /// ### State
 /// An enumeration of the possible states of `StateMachine`.
@@ -38,3 +40,18 @@ pub enum State {
   QuotedLiteralBlock,
 
 }
+
+/// MachineState
+/// Constants and methods common to `StateMachine` state.
+pub trait MachineState {
+
+  /// ### TRANSITIONS
+  /// A list of tuples of state transitions.
+  const TRANSITIONS: [(&'static str, TransitionMethod, Option<State>)];
+
+}
+
+
+/// ### TransitionMethod (TODO)
+/// A function pointer type alias for a State transition method.
+type TransitionMethod = fn() -> ();
