@@ -6,6 +6,7 @@ use std::collections::HashMap;
 
 mod tests;
 
+mod tree_zipper;
 mod node_types;
 mod traits;
 mod structural;
@@ -100,7 +101,7 @@ impl DocTree {
 
 /// ### TreeNode
 /// A tree node that contains a struct of `TreeNodeType`
-/// plus the information needed t traverse the tree.
+/// plus the information needed to traverse the tree.
 pub struct TreeNode {
   id: usize,
   parent_id: Option<usize>,
@@ -121,6 +122,12 @@ impl TreeNode {
       children: Vec::new(),
       data: data
     }
+
+  }
+
+  /// ### traverse
+  /// Traverses `TreeNode`s recursively.
+  fn traverse() {
 
   }
 
