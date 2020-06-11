@@ -8,14 +8,24 @@ use super::*;
 use states::State;
 
 pub struct StateMachine {
-  source_lines: Vec<String>,
+  src_lines: Vec<String>,
+  current_line: usize,
   state: State,
-  transitions: &'static ActionMap,
-  row: usize,
-
 }
 
 impl StateMachine {
+
+  /// ### new
+  /// The `StateMachine` constructor.
+  fn new (src_lines: Vec<String>, current_line: usize, initial_state: State) -> Self {
+
+    StateMachine {
+      src_lines: src_lines,
+      current_line: current_line,
+      state: initial_state,
+    }
+
+  }
 
 }
 
