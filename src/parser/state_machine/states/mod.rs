@@ -42,11 +42,22 @@ pub enum State {
 }
 
 /// MachineState
-/// Constants and methods common to `StateMachine` state.
+/// Constants and methods common to each `StateMachine` state.
 pub trait MachineState {
 
   /// ### TRANSITIONS
   /// A list of tuples of state transitions.
+  /// The stucture of the tuples is as follows:
+  /// ```rust
+  /// (regex_pattern, parsing_method, optional_new_state)
+  /// ```
+  /// When a `State` object is initialized,
+  /// every regex in this list is compiled into a state machine,
+  /// and pushed into a vector of tuples
+  /// ```rust
+  /// (state_machine, parsing_method, next_state)
+  /// ```
+  /// This is the used by the state machine to perform the parsing.
   const TRANSITIONS: [(&'static str, TransitionMethod, Option<State>)];
 
 }
