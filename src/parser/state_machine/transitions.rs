@@ -131,7 +131,7 @@ lazy_static! {
   /// 
   /// Plus, with this regexes are only compiled into automata once.
   static ref ACTION_MAP: ActionMap = {
-    let mut action_map = collections::HashMap::new();
+    let action_map = collections::HashMap::new();
 
     let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
     let mut inline_actions = Vec::with_capacity(INLINE_TRANSITIONS.len());

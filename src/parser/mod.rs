@@ -24,13 +24,12 @@ use crate::parser::token::{Token, TokenType};
 use crate::parser::position::Pos;
 use std::collections;
 use crate::parser::error::{TokenizeError, ParseError};
-use state_machine::transitions::{BODY_TRANSITIONS, INLINE_TRANSITIONS};
+use state_machine::states::{State};
+use state_machine::states::body as body_states;
 
 
 pub struct Parser {
-  line_iter: String,
   machine_stack: Vec<StateMachine>,
-  has_error: bool
 }
 
 
@@ -42,9 +41,21 @@ impl Parser {
   /// of `String`s, generates a `DocTree`, and passes these
   /// to the `StateMachine` at the top of the `Parser` machine stack,
   /// which is initialized in the `Body` `State`.
-  fn new(source_line_iter: Lines<BufReader<File>>) {
+  fn new(source_line_iter: Lines<BufReader<File>>) -> Self{
 
     let src_lines: Vec<String> = source_line_iter.collect::<Result<_, _>>().unwrap();
+
+    let initial_state = State::Body(body_states::Body::new());
+
+    let doctree = DocTree::new();
+
+    let initial_machine = StateMachine::new(src_lines, 0, initial_state, doctree);
+
+    let machine_stack = vec![initial_machine];
+
+    Parser {
+      machine_stack: machine_stack,
+    }
 
   }
 

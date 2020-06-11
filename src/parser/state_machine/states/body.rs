@@ -7,6 +7,14 @@ pub struct Body {
 
 }
 
+impl Body {
+
+  pub fn new() -> Self {
+    Body{}
+  }
+
+}
+
 
 #[derive(Debug)]
 pub struct SpecializedBody {

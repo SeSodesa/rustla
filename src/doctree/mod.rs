@@ -73,11 +73,11 @@ impl DocTree {
 
   /// ### new
   /// A `DocTree` constructor.
-  fn new(doc_name: String) -> Self {
+  pub fn new() -> Self {
 
     let mut idc = NodeId::new();
     let root_data = TreeNodeType::Root(
-      Root::new(doc_name)
+      Root::new()
     );
 
     let root_node = TreeNode::new(None, &mut idc, root_data);
@@ -162,15 +162,15 @@ impl TreeNode {
 /// The root node data container of the parse tree.
 #[derive(Debug)]
 pub struct Root {
-  doc_name: String
+
 }
 
 impl Root {
 
-  fn new(doc_name: String) -> Self {
+  fn new() -> Self {
 
     Root {
-      doc_name: doc_name,
+
     }
 
   }

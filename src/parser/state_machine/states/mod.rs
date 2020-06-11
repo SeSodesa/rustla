@@ -1,7 +1,7 @@
 /// This submodule contains the states and related transitions of
 /// the parser state machine.
 
-mod body;
+pub mod body;
 
 use super::*;
 
