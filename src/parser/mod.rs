@@ -18,6 +18,8 @@ use std::fmt;
 use std::str;
 use regex;
 
+use crate::doctree::DocTree;
+
 use crate::parser::token::{Token, TokenType};
 use crate::parser::position::Pos;
 use std::collections;
@@ -34,6 +36,17 @@ pub struct Parser {
 
 /// Parser type methods
 impl Parser {
+
+  /// ### new
+  /// The `Parser` constructor. Transforms the given source into a vector
+  /// of `String`s, generates a `DocTree`, and passes these
+  /// to the `StateMachine` at the top of the `Parser` machine stack,
+  /// which is initialized in the `Body` `State`.
+  fn new(source_line_iter: Lines<BufReader<File>>) {
+
+    let src_lines: Vec<String> = source_line_iter.collect::<Result<_, _>>().unwrap();
+
+  }
 
 }
 
