@@ -37,6 +37,56 @@ impl StateMachine {
 
   }
 
+  /// ### run
+  /// Starts the processing of the given source.
+  /// Returns a modified `DocTree`.
+  /// This function is called
+  pub fn run (&mut self) -> Option<DocTree>{
+
+    unimplemented!();
+
+  }
+
+  /// ### nth_next_line
+  /// Attempts to increment `self.current_line` by `n`.
+  /// Returns nothing if successful, otherwise returns `Err(&str)`.
+  /// The called must handle the `Err` case.
+  fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
+    self.current_line = match self.current_line.checked_add(n) {
+      Some(value) => value,
+      None =>
+        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+    };
+
+    if self.current_line > self.src_lines.len() {
+      return Err("No such line number.\nComputer says no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
+  /// ### nth_previous_line
+  /// Attempts to decrement `self.current_line` by `n`.
+  /// Returns nothing if successful, otherwise returns `Err(&str)`.
+  /// The called must handle the `Err` case.
+  fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
+    self.current_line = match self.current_line.checked_sub(n) {
+      Some(value) => value,
+      None =>
+        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+    };
+
+    if self.current_line > self.src_lines.len() {
+      return Err("No such line number.\nComputer says no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
 }
 
 /// ### Action
