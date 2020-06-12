@@ -4,6 +4,8 @@
 pub mod states;
 pub mod transitions;
 
+use std::cmp;
+
 use super::*;
 use states::State;
 
@@ -114,10 +116,135 @@ impl StateMachine {
   /// ### read_indented_block
   /// Reads in a block of indented lines text.
   /// Determines the minimum level of indentation
-  /// and uses it as a reference
-  fn read_indented_block () {
+  /// and uses it as a reference for ending the block.
+  ///
+  /// Returns a tuple
+  /// ```rust
+  /// {block: Vec<String>, min_indent<u32>, finished_with_blank: bool}
+  /// ```
+  /// if successful.
+  fn read_indented_block (&self, start_line:usize, until_blank: bool,
+    strip_indent: bool, block_indent: Option<usize>, first_indent: Option<usize>)
+  -> Result<(Vec<String>, usize, bool), String> {
 
-    unimplemented!();
+    let mut line_num = start_line;
+
+    let mut indent = match block_indent {
+      Some(indent) => Some(indent),
+      None => None
+    };
+
+    let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
+      Some(block_indent)
+    } else {
+      None
+    };
+
+    if !first_indent.is_none() {
+      line_num += 1;
+    }
+
+    let last_line_num = self.src_lines.len();
+
+    let mut blank_finish: bool = false;
+
+    let mut loop_broken = false;
+
+    let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
+
+    while line_num < last_line_num {
+
+      let line: String = match self.src_lines.get(line_num) {
+        Some(line) => line.clone(),
+        None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
+      };
+
+      // Check for sufficient indentation
+      for (i, c) in line.chars().enumerate() {
+
+        // No need to keep looping if we have reached a
+        // sufficient level of indentation
+        if !block_indent.is_none() && i == block_indent.unwrap() {
+          break
+        }
+
+        if !c.is_whitespace() && i == 0 // No indentation
+          || (i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
+        {
+
+          // Block is valid, iff the last indented line is blank
+          blank_finish = (line_num > start_line) &&
+            self.src_lines
+              .get(line_num - 1)
+              .unwrap()
+              .trim()
+              .is_empty();
+
+          // end while iteration
+          line_num = last_line_num;
+          break
+
+        }
+
+      }
+
+      if line_num >= last_line_num {
+        loop_broken = true;
+        break
+      }
+
+      // Trim beginning whitespace
+      let no_indent_line = line.trim_start();
+
+      let line_indent: usize;
+
+      if no_indent_line.is_empty() {
+
+        if until_blank {
+          blank_finish = true;
+          break
+        }
+
+      } else if block_indent.is_none() {
+
+        line_indent = line.chars().count() - no_indent_line.chars().count();
+
+        if indent.is_none() {
+          indent = Some(line_indent);
+        } else {
+          indent = Some(cmp::min(indent.unwrap(), line_indent));
+        }
+
+      }
+
+      block_lines.push(line);
+
+      line_num += 1;
+
+    }
+
+    if !loop_broken {
+      blank_finish = true;
+    }
+
+    // If indentation was expected on the first line, remove it
+    if !first_indent.is_none() && !block_lines.is_empty() {
+      if let Some(first_line) = block_lines.first_mut() {
+        first_line.drain(..first_indent.unwrap());
+      }
+    }
+
+    // Strip all minimal indentation from each line
+    if let Some(indent) = indent {
+      if strip_indent {
+        for line in block_lines.iter_mut() {
+          let _ = line.drain(..indent);
+        }
+      }
+    }
+
+
+    Ok((block_lines, indent.unwrap(), blank_finish))
 
   }
 
