@@ -69,6 +69,7 @@ impl StateMachine {
   /// Returns nothing if successful, otherwise returns `Err(&str)`.
   /// The called must handle the `Err` case.
   fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
+    
     self.current_line = match self.current_line.checked_add(n) {
       Some(value) => value,
       None =>
@@ -89,6 +90,7 @@ impl StateMachine {
   /// Returns nothing if successful, otherwise returns `Err(&str)`.
   /// The called must handle the `Err` case.
   fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
+    
     self.current_line = match self.current_line.checked_sub(n) {
       Some(value) => value,
       None =>
