@@ -40,8 +40,82 @@ impl StateMachine {
   /// ### run
   /// Starts the processing of the given source.
   /// Returns a modified `DocTree`.
-  /// This function is called
+  /// This function is initially called by the parser,
+  /// but subsequent calls can be made by the state
+  /// machines on the top of the parser stack.
   pub fn run (&mut self) -> Option<DocTree>{
+
+    unimplemented!();
+
+  }
+
+
+  /// ### match_line
+  /// Attempts to match the current line to each pattern
+  /// in the list of transitions in the current `State`.
+  /// If no match is found, the current line number
+  /// is returned in and `Err`. If a line is matched,
+  /// attempts to run the transition|parsing method
+  /// related to the matched pattern.
+  fn match_line(&mut self) -> Result<(), String>{
+
+    unimplemented!();
+
+  }
+
+
+  /// ### read_text_block
+  /// Reads in an contiguous set of lines of text.
+  /// A text block in rST terms is a set of lines
+  /// separated from other elements by empty lines above and below.
+  /// Checks for indentation:
+  /// if indentation is not allowed but indentation is found,
+  /// returns an error message in an `Err`.
+  fn read_text_block(&self, start_line: usize, indent_allowed: bool) -> Result<Vec<String>, String> {
+
+    let mut line_num = start_line;
+    let last_line = self.src_lines.len();
+
+    let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
+
+    while line_num < last_line {
+
+      let line: String = match self.src_lines.get(line_num) {
+        Some(line) => line.chars().filter(|c| !c.is_whitespace()).collect(),
+        None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
+      };
+
+      let has_indent: bool = match line.get(0..1) {
+        Some(line) => {
+          line.chars().next().unwrap().is_whitespace()
+        },
+        None => return Err(String::from("The first character of a line could not be read."))
+      };
+
+      if !indent_allowed && has_indent {
+        return Err(format!("No indent allowed but indent found on line {}!\nComputer says no...\n", line_num))
+      }
+
+      if !line.is_empty() {
+        lines.push(line.clone());
+      } else {
+        break
+      }
+
+      line_num += 1;
+
+    }
+
+    Ok(lines)
+
+  }
+
+
+  /// ### read_indented_block
+  /// Reads in a block of indented lines text.
+  /// Determines the minimum level of indentation
+  /// and uses it as a reference
+  fn read_indented_block () {
 
     unimplemented!();
 
@@ -105,6 +179,11 @@ impl StateMachine {
 
   }
 
+
+  /// ### DEFAULT_LINE_STEP
+  /// The default step used by the functions
+  /// `nth_{previous|next}_line`.
+  const DEFAULT_LINE_STEP: usize = 1;
 
 }
 
