@@ -47,6 +47,23 @@ impl StateMachine {
 
   }
 
+
+  /// ### jump_to_line
+  /// Attempts to move `self.current_line` to the given index.
+  /// Return an `Err` if not successful.
+  fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
+
+    if line < self.src_lines.len() {
+      self.current_line = line;
+    } else {
+      return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
   /// ### nth_next_line
   /// Attempts to increment `self.current_line` by `n`.
   /// Returns nothing if successful, otherwise returns `Err(&str)`.
