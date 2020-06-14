@@ -108,6 +108,8 @@ impl StateMachine {
 
     }
 
+    lines.shrink_to_fit();
+
     Ok(lines)
 
   }
@@ -129,11 +131,14 @@ impl StateMachine {
 
     let mut line_num = start_line;
 
+    // Setting the initial level of minimal indentation
     let mut indent = match block_indent {
       Some(indent) => Some(indent),
       None => None
     };
 
+    // If there is block indentation but no predetermined indentation for the first line,
+    // set the indentation of the first line equal to block indentation.
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
       Some(block_indent)
     } else {
@@ -148,7 +153,7 @@ impl StateMachine {
 
     let mut blank_finish: bool = false;
 
-    let mut loop_broken = false;
+    let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
 
     let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
 
@@ -168,7 +173,7 @@ impl StateMachine {
           break
         }
 
-        if !c.is_whitespace() && i == 0 // No indentation
+        if !c.is_whitespace() && i == 0 // No indentation at all
           || (i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
         {
 
@@ -193,17 +198,17 @@ impl StateMachine {
         break
       }
 
-      // Trim beginning whitespace
+      // Trim beginning whitespace from line under observation
+      // for blank line check
       let no_indent_line = line.trim_start();
 
       let line_indent: usize;
 
-      if no_indent_line.is_empty() {
+      // Updating the minimal level of indentation, if line isn't blank
+      if no_indent_line.is_empty() && until_blank {
 
-        if until_blank {
-          blank_finish = true;
-          break
-        }
+        blank_finish = true;
+        break
 
       } else if block_indent.is_none() {
 
@@ -243,6 +248,7 @@ impl StateMachine {
       }
     }
 
+    block_lines.shrink_to_fit(); // Free unnecessary used memory
 
     Ok((block_lines, indent.unwrap(), blank_finish))
 
