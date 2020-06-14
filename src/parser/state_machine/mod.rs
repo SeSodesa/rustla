@@ -91,7 +91,7 @@ impl StateMachine {
         Some(line) => {
           line.chars().next().unwrap().is_whitespace()
         },
-        None => return Err(String::from("The first character of a line could not be read."))
+        None => return Err(format!("The first character of line {} could not be read.", line_num))
       };
 
       if !indent_allowed && has_indent {
@@ -205,6 +205,7 @@ impl StateMachine {
       let line_indent: usize;
 
       // Updating the minimal level of indentation, if line isn't blank
+      // and there isn't predetermined block indentation
       if no_indent_line.is_empty() && until_blank {
 
         blank_finish = true;
