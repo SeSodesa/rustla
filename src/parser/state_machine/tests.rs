@@ -70,10 +70,53 @@ asdfsdafasdfasdfa
   match StateMachine::read_text_block(&lines, 2, None) {
     Ok(_) => panic!("There was indent where one was not allowed..."),
     Err(e) => {
+      eprintln!("{:#?}", e);
       assert_eq!(
         "No indent allowed but indent found on line 4!\nComputer says no...\n",
         e
       )
+    }
+  };
+
+}
+
+
+#[test]
+fn read_text_block_03 () {
+
+  let src = "
+  
+  asdsafasfgasf  fwsdaf
+  asfsdafasdfffasfsdfsaf
+  asfdfasdfasdfafasdfasdf
+  asdfsdafasdfsdafadsfsdf
+
+asdfdsfsdafsadfaf
+asfsffdsfasfasdf
+asdfsdafasdfasdfa
+    
+";
+
+  let lines = utils::str_to_lines(src);
+
+  eprintln!("{:#?}", lines);
+
+  match StateMachine::read_text_block(&lines, 2, Some(true)) {
+    Ok(block) => {
+
+      eprintln!("{:#?}", block);
+
+      assert_eq!(
+        block.join("\n"),
+"  asdsafasfgasf  fwsdaf
+  asfsdafasdfffasfsdfsaf
+  asfdfasdfasdfafasdfasdf
+  asdfsdafasdfsdafadsfsdf"        
+      );
+    },
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
     }
   };
 
