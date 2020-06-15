@@ -16,6 +16,10 @@ pub struct StateMachine {
   doctree: DocTree
 }
 
+
+/// ====================
+/// StateMachine methods
+/// ====================
 impl StateMachine {
 
   /// ### new
@@ -66,6 +70,77 @@ impl StateMachine {
   }
 
 
+  /// ### jump_to_line
+  /// Attempts to move `self.current_line` to the given index.
+  /// Return an `Err` if not successful.
+  fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
+
+    if line < self.src_lines.len() {
+      self.current_line = line;
+    } else {
+      return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
+  /// ### nth_next_line
+  /// Attempts to increment `self.current_line` by `n`.
+  /// Returns nothing if successful, otherwise returns `Err(&str)`.
+  /// The called must handle the `Err` case.
+  fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
+    
+    self.current_line = match self.current_line.checked_add(n) {
+      Some(value) => value,
+      None =>
+        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+    };
+
+    if self.current_line > self.src_lines.len() {
+      return Err("No such line number.\nComputer says no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
+  /// ### nth_previous_line
+  /// Attempts to decrement `self.current_line` by `n`.
+  /// Returns nothing if successful, otherwise returns `Err(&str)`.
+  /// The called must handle the `Err` case.
+  fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
+    
+    self.current_line = match self.current_line.checked_sub(n) {
+      Some(value) => value,
+      None =>
+        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+    };
+
+    if self.current_line > self.src_lines.len() {
+      return Err("No such line number.\nComputer says no...\n")
+    }
+
+    Ok(())
+
+  }
+
+
+  /// ### DEFAULT_LINE_STEP
+  /// The default step used by the functions
+  /// `nth_{previous|next}_line`.
+  const DEFAULT_LINE_STEP: usize = 1;
+
+}
+
+/// =================================
+/// StateMachine associated functions
+/// =================================
+impl StateMachine {
+
+
   /// ### read_text_block
   /// Reads in an contiguous set of lines of text.
   /// A text block in rST terms is a set of lines
@@ -73,16 +148,16 @@ impl StateMachine {
   /// Checks for indentation:
   /// if indentation is not allowed but indentation is found,
   /// returns an error message in an `Err`.
-  fn read_text_block(&self, start_line: usize, indent_allowed: bool) -> Result<Vec<String>, String> {
+  fn read_text_block(sm: &StateMachine, start_line: usize, indent_allowed: bool) -> Result<Vec<String>, String> {
 
     let mut line_num = start_line;
-    let last_line = self.src_lines.len();
+    let last_line = sm.src_lines.len();
 
     let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
 
     while line_num < last_line {
 
-      let line: String = match self.src_lines.get(line_num) {
+      let line: String = match sm.src_lines.get(line_num) {
         Some(line) => line.chars().filter(|c| !c.is_whitespace()).collect(),
         None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
       };
@@ -125,7 +200,7 @@ impl StateMachine {
   /// {block: Vec<String>, min_indent<u32>, finished_with_blank: bool}
   /// ```
   /// if successful.
-  fn read_indented_block (&self, start_line:usize, until_blank: bool,
+  fn read_indented_block (sm: &StateMachine, start_line:usize, until_blank: bool,
     strip_indent: bool, block_indent: Option<usize>, first_indent: Option<usize>)
   -> Result<(Vec<String>, usize, bool), String> {
 
@@ -149,7 +224,7 @@ impl StateMachine {
       line_num += 1;
     }
 
-    let last_line_num = self.src_lines.len();
+    let last_line_num = sm.src_lines.len();
 
     let mut blank_finish: bool = false;
 
@@ -159,7 +234,7 @@ impl StateMachine {
 
     while line_num < last_line_num {
 
-      let line: String = match self.src_lines.get(line_num) {
+      let line: String = match sm.src_lines.get(line_num) {
         Some(line) => line.clone(),
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
@@ -179,7 +254,7 @@ impl StateMachine {
 
           // Block is valid, iff the last indented line is blank
           blank_finish = (line_num > start_line) &&
-            self.src_lines
+            sm.src_lines
               .get(line_num - 1)
               .unwrap()
               .trim()
@@ -255,71 +330,8 @@ impl StateMachine {
 
   }
 
-
-  /// ### jump_to_line
-  /// Attempts to move `self.current_line` to the given index.
-  /// Return an `Err` if not successful.
-  fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
-
-    if line < self.src_lines.len() {
-      self.current_line = line;
-    } else {
-      return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### nth_next_line
-  /// Attempts to increment `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
-    
-    self.current_line = match self.current_line.checked_add(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.current_line > self.src_lines.len() {
-      return Err("No such line number.\nComputer says no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### nth_previous_line
-  /// Attempts to decrement `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
-    
-    self.current_line = match self.current_line.checked_sub(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.current_line > self.src_lines.len() {
-      return Err("No such line number.\nComputer says no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### DEFAULT_LINE_STEP
-  /// The default step used by the functions
-  /// `nth_{previous|next}_line`.
-  const DEFAULT_LINE_STEP: usize = 1;
-
 }
+
 
 /// ### Action
 /// A function pointer type alias for a Lexer action
