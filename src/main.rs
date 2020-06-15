@@ -7,6 +7,7 @@
 
 mod parser;
 mod doctree;
+mod utils;
 
 use std::io::BufRead;
 use std::{env, process, fs, path, io};
@@ -55,7 +56,7 @@ fn main() {
     println!("{:?} is a file.", path);
   
 
-    let line_iter = match read_lines(path) {
+    let line_iter = match utils::read_path_lines(path) {
       Ok(lines) => lines,
       Err(e) => {
         eprintln!("");
@@ -75,14 +76,6 @@ fn main() {
 
   }
 
-}
-
-/// ### read_lines
-/// Read the lines of a given file into a buffer.
-fn read_lines<P>(file_path: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
-where P: AsRef<path::Path> {
-  let file:fs::File = fs::File::open(file_path)?;
-  Ok(io::BufReader::new(file).lines())
 }
 
 /// # `has_toctree`
