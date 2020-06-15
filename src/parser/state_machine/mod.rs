@@ -214,14 +214,15 @@ impl StateMachine {
     let until_blank = until_blank.unwrap_or(false);
     let strip_indent = strip_indent.unwrap_or(true);
 
-
     let mut line_num = start_line;
 
     // Setting the initial level of minimal indentation
-    let mut indent = match block_indent {
+    let mut minimal_indent = match block_indent {
       Some(indent) => Some(indent),
       None => None
     };
+
+    eprintln!("Indent after block assignment: {:?}", minimal_indent);
 
     // If there is block indentation but no predetermined indentation for the first line,
     // set the indentation of the first line equal to block indentation.
@@ -243,7 +244,7 @@ impl StateMachine {
 
     let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
 
-    while line_num < last_line_num {
+    while line_num < last_line_num - 1 {
 
       let line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
@@ -263,6 +264,8 @@ impl StateMachine {
           || (!block_indent.is_none() && i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
         {
 
+          eprintln!("Not enough indentation!");
+
           // Block is valid, iff the last indented line is blank
           blank_finish = (line_num > start_line) &&
             src_lines
@@ -270,6 +273,8 @@ impl StateMachine {
               .unwrap()
               .trim()
               .is_empty();
+
+          eprintln!("Blank finish: {:?}", blank_finish);
 
           // end while iteration
           line_num = last_line_num;
@@ -280,6 +285,7 @@ impl StateMachine {
       }
 
       if line_num >= last_line_num {
+        eprintln!("Breaking out of while loop\n");
         loop_broken = true;
         break
       }
@@ -301,19 +307,27 @@ impl StateMachine {
 
         line_indent = line.chars().count() - no_indent_line.chars().count();
 
-        if indent.is_none() {
-          indent = Some(line_indent);
-        } else {
-          indent = Some(cmp::min(indent.unwrap(), line_indent));
-        }
+        eprintln!("Line indent: {:?} on line {:?}", line_indent, line_num);
+
+        if minimal_indent.is_none() {
+          minimal_indent = Some(line_indent);
+        } else if line_indent > minimal_indent.unwrap(){
+          minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
+        } 
 
       }
 
-      block_lines.push(line);
+      eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
+
+      if !line.trim().is_empty() {
+        block_lines.push(line);
+      }
 
       line_num += 1;
 
     }
+
+    eprintln!("Loop broken: {:?}", loop_broken);
 
     if !loop_broken {
       blank_finish = true;
@@ -322,22 +336,45 @@ impl StateMachine {
     // If indentation was expected on the first line, remove it
     if !first_indent.is_none() && !block_lines.is_empty() {
       if let Some(first_line) = block_lines.first_mut() {
-        first_line.drain(..first_indent.unwrap());
+        
+        let mut cs = first_line.chars();
+
+        for _i in 0..first_indent.unwrap() {
+          cs.next();
+        }
+
+        let trunc_line = cs.as_str().to_string();
+
+          *first_line = trunc_line;
+
       }
     }
 
     // Strip all minimal indentation from each line
-    if let Some(indent) = indent {
+    if let Some(indent) = minimal_indent {
       if strip_indent {
-        for line in block_lines.iter_mut() {
-          let _ = line.drain(..indent);
+        for (_index, line) in block_lines.iter_mut().enumerate() {
+
+          eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
+
+          let mut cs = line.chars();
+
+          for _i in 0..indent {
+            cs.next();
+          }
+
+          let trunc_line = cs.as_str().to_string();
+
+          *line = trunc_line;
+
+          eprintln!("Line after drain: {:?}\n", line);
         }
       }
     }
 
     block_lines.shrink_to_fit(); // Free unnecessary used memory
 
-    Ok((block_lines, indent.unwrap(), blank_finish))
+    Ok((block_lines, minimal_indent.unwrap(), blank_finish))
 
   }
 
