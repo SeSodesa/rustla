@@ -58,13 +58,13 @@ fn main() {
 
     let line_iter = match utils::read_path_lines(path) {
       Ok(lines) => lines,
-      Err(e) => {
-        eprintln!("");
+      Err(_e) => {
+        eprintln!("File could not be opened");
         process::exit(1);
       }
     };
 
-    // Enter lexer here...
+    // Enter parser here...
 
     for line in line_iter {
       if let Ok(line_text) = line {
