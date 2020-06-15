@@ -67,8 +67,8 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  let block = match StateMachine::read_text_block(&lines, 2, None) {
-    Ok(block) => panic!("There was indent where one was not allowed..."),
+  match StateMachine::read_text_block(&lines, 2, None) {
+    Ok(_) => panic!("There was indent where one was not allowed..."),
     Err(e) => {
       assert_eq!(
         "No indent allowed but indent found on line 4!\nComputer says no...\n",
