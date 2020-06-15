@@ -7,7 +7,7 @@ use std::io::BufRead;
 /// ### str_to_lines
 /// Returns a `Vec<String>` from a given `&str`,
 /// split at new lines `\n` or `\r\n`.
-pub fn str_to_lines<'t, T>(string: &str) -> Vec<String> {
+pub fn str_to_lines(string: &str) -> Vec<String> {
 
   let line_vec = string
     .lines()
