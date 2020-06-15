@@ -258,7 +258,7 @@ impl StateMachine {
         }
 
         if !c.is_whitespace() && i == 0 // No indentation at all
-          || (i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
+          || (!block_indent.is_none() && i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
         {
 
           // Block is valid, iff the last indented line is blank
