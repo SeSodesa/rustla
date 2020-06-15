@@ -163,7 +163,7 @@ impl StateMachine {
     while line_num < last_line - 1 {
 
       let line: String = match src_lines.get(line_num) {
-        Some(line) => line.chars().filter(|c| !c.is_whitespace()).collect(),
+        Some(line) => line.clone(),
         None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
       };
 

@@ -10,22 +10,22 @@ use crate::utils;
 #[test]
 fn read_text_block_01 () {
 
-  let src = "\n\
-  \n\
-  asdsafasfgasffwsdaf\n\
-  asfsdafasdfffasfsdfsaf\n\
-  asfdfasdfasdfafasdfasdf\n\
-  asdfsdafasdfsdafadsfsdf\n\
-  \n\
-  asdfdsfsdafsadfaf\n\
-  asfsffdsfasfasdf\n\
-  asdfsdafasdfasdfa\n\
-    
-  ";
+  let src = "
+
+asdsafasfga  sffwsdaf
+asfsdafasdfffasfsdfsaf
+asfdfasdfasdfafasdfasdf
+asdfsdafasdfsdafadsfsdf
+
+asdfdsfsdafsadfaf
+asfsffdsfasfasdf
+asdfsdafasdfasdfa
+
+";
 
   let lines = utils::str_to_lines(src);
 
-  println!("{:#?}", lines);
+  eprintln!("{:#?}", lines);
 
   let block = match StateMachine::read_text_block(&lines, 2, None) {
     Ok(block) => block,
@@ -34,13 +34,47 @@ fn read_text_block_01 () {
       panic!();
     }
   };
-  println!("{:#?}", block);
+  
+  eprintln!("{:#?}", block);
 
   let block_str = block.join("\n");
 
-  assert_eq!("asdsafasfgasffwsdaf\n\
-  asfsdafasdfffasfsdfsaf\n\
-  asfdfasdfasdfafasdfasdf\n\
-  asdfsdafasdfsdafadsfsdf", block_str);
+  assert_eq!("asdsafasfga  sffwsdaf
+asfsdafasdfffasfsdfsaf
+asfdfasdfasdfafasdfasdf
+asdfsdafasdfsdafadsfsdf", block_str);
+
+}
+
+
+#[test]
+fn read_text_block_02 () {
+
+  let src = "
+  
+asdsafasfgasf  fwsdaf
+asfsdafasdfffasfsdfsaf
+  asfdfasdfasdfafasdfasdf
+asdfsdafasdfsdafadsfsdf
+
+asdfdsfsdafsadfaf
+asfsffdsfasfasdf
+asdfsdafasdfasdfa
+    
+";
+
+  let lines = utils::str_to_lines(src);
+
+  eprintln!("{:#?}", lines);
+
+  let block = match StateMachine::read_text_block(&lines, 2, None) {
+    Ok(block) => panic!("There was indent where one was not allowed..."),
+    Err(e) => {
+      assert_eq!(
+        "No indent allowed but indent found on line 4!\nComputer says no...\n",
+        e
+      )
+    }
+  };
 
 }
