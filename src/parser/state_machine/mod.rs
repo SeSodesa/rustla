@@ -4,6 +4,8 @@
 pub mod states;
 pub mod transitions;
 
+mod tests;
+
 use std::cmp;
 
 use super::*;
@@ -158,12 +160,16 @@ impl StateMachine {
 
     let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
 
-    while line_num < last_line {
+    while line_num < last_line - 1 {
 
       let line: String = match src_lines.get(line_num) {
         Some(line) => line.chars().filter(|c| !c.is_whitespace()).collect(),
         None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
       };
+
+      if line.is_empty() {
+        break
+      }
 
       let has_indent: bool = match line.get(0..1) {
         Some(line) => {
@@ -176,11 +182,7 @@ impl StateMachine {
         return Err(format!("No indent allowed but indent found on line {}!\nComputer says no...\n", line_num))
       }
 
-      if !line.is_empty() {
-        lines.push(line.clone());
-      } else {
-        break
-      }
+      lines.push(line.clone());
 
       line_num += 1;
 
