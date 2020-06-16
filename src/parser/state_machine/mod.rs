@@ -313,7 +313,7 @@ impl StateMachine {
 
         if minimal_indent.is_none() {
           minimal_indent = Some(line_indent);
-        } else if line_indent > minimal_indent.unwrap(){
+        } else if line_indent > 0 {
           minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
         } 
 
@@ -363,7 +363,7 @@ impl StateMachine {
             Ok(line) => line,
             Err(e) => {
               eprintln!("{}", e);
-              return Err(format!("Indentation error on line {} of block under inspection", index));
+              return Err(format!("Indentation removal error on line {} of block under inspection\n", index));
             }
           };
 
