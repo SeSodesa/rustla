@@ -232,9 +232,10 @@ impl StateMachine {
       None
     };
 
-    if !first_indent.is_none() {
-      line_num += 1;
-    }
+    // First line is ignored if `first_indent` was set
+    // if !first_indent.is_none() {
+    //   line_num += 1;
+    // }
 
     let last_line_num = src_lines.len();
 
@@ -244,7 +245,7 @@ impl StateMachine {
 
     let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
 
-    while line_num < last_line_num - 1 {
+    while line_num < last_line_num {
 
       let line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
@@ -264,7 +265,7 @@ impl StateMachine {
           || (!block_indent.is_none() && i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
         {
 
-          eprintln!("Not enough indentation!");
+          eprintln!("Not enough indentation!\n");
 
           // Block is valid, iff the last indented line is blank
           blank_finish = (line_num > start_line) &&
@@ -334,21 +335,21 @@ impl StateMachine {
     }
 
     // If indentation was expected on the first line, remove it
-    if !first_indent.is_none() && !block_lines.is_empty() {
-      if let Some(first_line) = block_lines.first_mut() {
+    // if !first_indent.is_none() && !block_lines.is_empty() {
+    //   if let Some(first_line) = block_lines.first_mut() {
         
-        let mut cs = first_line.chars();
+    //     let mut cs = first_line.chars();
 
-        for _i in 0..first_indent.unwrap() {
-          cs.next();
-        }
+    //     for _i in 0..first_indent.unwrap() {
+    //       cs.next();
+    //     }
 
-        let trunc_line = cs.as_str().to_string();
+    //     let trunc_line = cs.as_str().to_string();
 
-          *first_line = trunc_line;
+    //       *first_line = trunc_line;
 
-      }
-    }
+    //   }
+    // }
 
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
