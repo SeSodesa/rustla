@@ -9,6 +9,7 @@ mod tests;
 use std::cmp;
 
 use super::*;
+use crate::utils;
 use states::State;
 
 pub struct StateMachine {
@@ -354,17 +355,17 @@ impl StateMachine {
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
       if strip_indent {
-        for (_index, line) in block_lines.iter_mut().enumerate() {
+        for (index, line) in block_lines.iter_mut().enumerate() {
 
           eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
 
-          let mut cs = line.chars();
-
-          for _i in 0..indent {
-            cs.next();
-          }
-
-          let trunc_line = cs.as_str().to_string();
+          let trunc_line = match utils::strip_indent(line.clone(), indent) {
+            Ok(line) => line,
+            Err(e) => {
+              eprintln!("{}", e);
+              return Err(format!("Indentation error on line {} of block under inspection", index));
+            }
+          };
 
           *line = trunc_line;
 
