@@ -73,6 +73,24 @@ impl StateMachine {
   }
 
 
+  /// ### get_source_from_line
+  /// Attempts to retrieve the source from a given line number.
+  /// Returns an `Ok` clone of it if successful, else
+  /// returns and `Err` with a message.
+  fn get_source_from_line (&self, line_num: Option<usize>) -> Result <String, String> {
+
+    let line = line_num.unwrap_or(self.current_line);
+
+    let src = match self.src_lines.get(line) {
+      Some(line) => line.clone(),
+      None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line))
+    };
+
+    Ok(src)
+
+  }
+
+
   /// ### jump_to_line
   /// Attempts to move `self.current_line` to the given index.
   /// Return an `Err` if not successful.
