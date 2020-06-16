@@ -47,7 +47,7 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
     let c = chars.next().unwrap();
 
     if !c.is_whitespace() && i < amount {
-      return Err("Non-whitespace character encountered before supposed indentation level reached.\n");
+      return Err("\nNon-whitespace character encountered before supposed indentation level reached.\n");
     }
 
   }
