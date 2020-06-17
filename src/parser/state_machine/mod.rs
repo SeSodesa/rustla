@@ -21,7 +21,6 @@ use states::*;
 /// article.
 #[derive(Debug)]
 pub enum StateMachine {
-  Start,
   Body(MachineWithState<Body>),
   BulletList(MachineWithState<BulletList>),
   DefinitionList(MachineWithState<DefinitionList>),
@@ -38,6 +37,11 @@ pub enum StateMachine {
   RFC2822Body(MachineWithState<RFC2822Body>),
   RFC2822List(MachineWithState<RFC2822List>),
 }
+
+impl StateMachine {
+
+}
+
 
 
 /// ### MachineWithState
@@ -62,7 +66,7 @@ impl MachineWithState<Body> {
   /// comes to rST parsing. Transitions to and creation of
   /// other states is handled by implementing the `From`
   /// trait (the `from` function) for those states.
-  fn new(src_lines: Option<Vec<String>>, current_line: usize, doctree: Option<DocTree>) -> Result<Self, &'static str> {
+  pub fn new(src_lines: Option<Vec<String>>, current_line: usize, doctree: Option<DocTree>) -> Result<Self, &'static str> {
 
     if src_lines.is_some() && doctree.is_some()  {
 
