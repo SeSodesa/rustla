@@ -42,7 +42,7 @@ impl StateMachine {
 
   /// ### get_transitions
   /// Retrives the list of transitions from a `StateMachine` variant.
-  fn get_transitions (&self) ->  {
+  fn get_transitions (&self) {
     todo!();
   }
 
