@@ -29,7 +29,7 @@ pub enum StateMachine {
   OptionList(MachineWithState<OptionList>),
   LineBlock(MachineWithState<LineBlock>),
   ExtensionOptions(MachineWithState<ExtensionOptions>),
-  Explicit(MachineWithState<Explicit>),
+  ExplicitMarkup(MachineWithState<ExplicitMarkup>),
   Text(MachineWithState<Text>),
   Definition(MachineWithState<Definition>),
   Line(MachineWithState<Line>),

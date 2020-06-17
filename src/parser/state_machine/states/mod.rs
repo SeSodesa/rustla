@@ -14,6 +14,151 @@ use super::*;
 /// in this state.
 pub struct Body;
 
+
+impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<BulletList> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: BulletList,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<DefinitionList> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<DefinitionList> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: DefinitionList,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<EnumeratedList> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<EnumeratedList> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: EnumeratedList,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<FieldList> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<FieldList> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: FieldList,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<OptionList> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<OptionList> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: OptionList,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<LineBlock> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<LineBlock> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: LineBlock,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<ExplicitMarkup> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<ExplicitMarkup> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: ExplicitMarkup,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
+impl From<MachineWithState<Body>> for MachineWithState<Text> {
+
+  fn from(machine: MachineWithState<Body>) -> MachineWithState<Text> {
+
+    // parsing before transition
+
+    MachineWithState {
+      src_lines: machine.src_lines,
+      current_line: machine.current_line,
+      state: Text,
+      doctree: machine.doctree
+    }
+
+  }
+
+}
+
+
 #[derive(Debug)]
 /// ### BulletList
 /// A transition to this state is made if a `BulletList`
@@ -40,10 +185,10 @@ pub struct DefinitionList;
 pub struct EnumeratedList;
 
 #[derive(Debug)]
-/// ### Explicit
+/// ### ExplicitMarkup
 /// A state for parsing explicit markup followed by the detection
 /// of a first such item.
-pub struct Explicit;
+pub struct ExplicitMarkup;
 
 #[derive(Debug)]
 /// ### ExtensionOptions
@@ -108,7 +253,7 @@ pub trait MachineState <S> {
   /// (state_machine, parsing_method, next_state)
   /// ```
   /// This is the used by the state machine to perform the parsing.
-  const TRANSITIONS: [(&'static str, TransitionMethod, Option<S>)];
+  const TRANSITIONS: [(&'static str, TransitionMethod)];
 
 }
 
