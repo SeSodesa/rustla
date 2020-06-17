@@ -21,6 +21,7 @@ use states::*;
 /// article.
 #[derive(Debug)]
 pub enum StateMachine {
+  Start,
   Body(MachineWithState<Body>),
   BulletList(MachineWithState<BulletList>),
   DefinitionList(MachineWithState<DefinitionList>),
@@ -35,7 +36,7 @@ pub enum StateMachine {
   Line(MachineWithState<Line>),
   SubstitutionDef(MachineWithState<SubstitutionDef>),
   RFC2822Body(MachineWithState<RFC2822Body>),
-  RFC2822List(MachineWithState<RFC2822List>)
+  RFC2822List(MachineWithState<RFC2822List>),
 }
 
 
@@ -53,27 +54,33 @@ pub struct MachineWithState <S> {
   doctree: DocTree
 }
 
+impl MachineWithState<Body> {
+
+  /// ### new
+  /// A state machine constructor. This is only implemented for
+  /// the `Body` state, as it is the starting state when it
+  /// comes to rST parsing. Transitions to and creation of
+  /// other states is handled by implementing the `From`
+  /// trait (the `from function`) for those states.
+  fn new(src_lines: Vec<String>, doctree: DocTree) -> Self{
+
+    Self {
+      src_lines: src_lines,
+      current_line: 0,
+      state: Body,
+      doctree: doctree,
+    }
+
+  }
+
+}
+
+
 
 /// ====================
 /// MachineWithState methods
 /// ====================
 impl <S> MachineWithState <S> {
-
-  /// ### new
-  /// The `StateMachine` constructor.
-  /// A state machine holds a mutable reference to the
-  /// doctree owned by the parent `Parser`. If any new machines are
-  /// pushed onto the `Parser` machine stack, ownership of this
-  /// reference is passed to the
-  /// new machine, which upon termination returns it back
-  /// to the preceding machine, if there is one.
-  /// Also, an immutable reference is held to the source files,
-  /// to allow reading and creation of nodes out of it.
-  pub fn new (src_lines: Vec<String>, current_line: usize, initial_state: S, doctree: DocTree) -> Self {
-
-    unimplemented!();
-
-  }
 
   /// ### run
   /// Starts the processing of the given source.
