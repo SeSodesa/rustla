@@ -48,10 +48,10 @@ pub enum StateMachine {
 /// own specific fields like transition tables.
 #[derive(Debug)]
 pub struct MachineWithState <S> {
-  src_lines: Vec<String>,
+  src_lines: Option<Vec<String>>,
   current_line: usize,
   state: S,
-  doctree: DocTree
+  doctree: Option<DocTree>
 }
 
 impl MachineWithState<Body> {
@@ -62,13 +62,26 @@ impl MachineWithState<Body> {
   /// comes to rST parsing. Transitions to and creation of
   /// other states is handled by implementing the `From`
   /// trait (the `from` function) for those states.
-  fn new(src_lines: Vec<String>, doctree: DocTree) -> Self{
+  fn new(src_lines: Option<Vec<String>>, current_line: usize, doctree: Option<DocTree>) -> Result<Self, &'static str> {
 
-    Self {
-      src_lines: src_lines,
-      current_line: 0,
-      state: Body,
-      doctree: doctree,
+    if src_lines.is_some() && doctree.is_some()  {
+
+      if current_line < src_lines.as_ref().unwrap().len() {
+        Ok(
+          Self {
+            src_lines: src_lines,
+            current_line: current_line,
+            state: Body,
+            doctree: doctree,
+          }
+        )
+
+      } else {
+        Err("The given starting line number is too large.\nState machine says no...\n")
+      }
+
+    } else {
+      Err("Either the source or doctree was not provided.\nState machine says no...\n")
     }
 
   }
@@ -117,7 +130,7 @@ impl <S> MachineWithState <S> {
 
     let line = line_num.unwrap_or(self.current_line);
 
-    let src = match self.src_lines.get(line) {
+    let src = match self.src_lines.as_ref().unwrap().get(line) {
       Some(line) => line.clone(),
       None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line))
     };
@@ -132,7 +145,7 @@ impl <S> MachineWithState <S> {
   /// Return an `Err` if not successful.
   fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
 
-    if line < self.src_lines.len() {
+    if line < self.src_lines.as_ref().unwrap().len() {
       self.current_line = line;
     } else {
       return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
@@ -155,7 +168,7 @@ impl <S> MachineWithState <S> {
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.current_line > self.src_lines.len() {
+    if self.current_line > self.src_lines.as_ref().unwrap().len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
@@ -176,7 +189,7 @@ impl <S> MachineWithState <S> {
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.current_line > self.src_lines.len() {
+    if self.current_line > self.src_lines.as_ref().unwrap().len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
