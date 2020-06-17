@@ -11,18 +11,65 @@ use super::*;
 use crate::utils;
 use states::State;
 
-pub struct StateMachine {
-  src_lines: Vec<String>,
-  current_line: usize,
-  state: State,
-  doctree: DocTree
+
+/// ### StateMachine
+/// An enum of `MachineWithState`s.
+/// Enclosing machine variants with different states in an enum allows us
+/// to give ownership of a generic machine to an arbitrary structure,
+/// as enums are only as large as their largest variant.
+/// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
+/// article.
+pub enum StateMachine {
+  Body(MachineWithState<Body>),
+  BulletList(MachineWithState<BulletList>),
+  DefinitionList(MachineWithState<DefinitionList>),
+  EnumeratedList(MachineWithState<EnumeratedList>),
+  FieldList(MachineWithState<FieldList>),
+  OptionList(MachineWithState<OptionList>),
+  LineBlock(MachineWithState<LineBlock>),
+  ExtensionOptions(MachineWithState<ExtensionOptions>),
+  Explicit(MachineWithState<Explicit>),
+  Text(MachineWithState<Text>),
+  Definition(MachineWithState<Definition>),
+  Line(MachineWithState<Line>),
+  SubstitutionDef(MachineWithState<SubstitutionDef>),
+  RFC2822Body(MachineWithState<RFC2822Body>),
+  RFC2822List(MachineWithState<RFC2822List>)
 }
 
 
+/// ### MachineWithState
+/// A state machine in a state `S`,
+/// which is its own type.
+pub struct MachineWithState <S> {
+  src_lines: Vec<String>,
+  current_line: usize,
+  state: S,
+  doctree: DocTree
+}
+
+pub struct Body;
+pub struct BulletList;
+pub struct Definition;
+pub struct DefinitionList;
+pub struct EnumeratedList;
+pub struct Explicit;
+pub struct ExtensionOptions;
+pub struct FieldList;
+pub struct Line;
+pub struct LineBlock;
+pub struct OptionList;
+pub struct RFC2822Body;
+pub struct RFC2822List;
+pub struct SubstitutionDef;
+pub struct Text;
+
+
+
 /// ====================
-/// StateMachine methods
+/// MachineWithState methods
 /// ====================
-impl StateMachine {
+impl <S> MachineWithState <S> {
 
   /// ### new
   /// The `StateMachine` constructor.
