@@ -61,7 +61,7 @@ impl MachineWithState<Body> {
   /// the `Body` state, as it is the starting state when it
   /// comes to rST parsing. Transitions to and creation of
   /// other states is handled by implementing the `From`
-  /// trait (the `from function`) for those states.
+  /// trait (the `from` function) for those states.
   fn new(src_lines: Vec<String>, doctree: DocTree) -> Self{
 
     Self {
