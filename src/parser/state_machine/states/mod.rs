@@ -238,21 +238,15 @@ pub struct Text;
 
 /// MachineState
 /// Constants and methods common to each `StateMachine` state.
-pub trait MachineState <S> {
+pub trait Transitions <S> {
 
   /// ### TRANSITIONS
   /// A list of tuples of state transitions.
-  /// The stucture of the tuples is as follows:
-  /// ```rust
-  /// (regex_pattern, parsing_method, optional_new_state)
+  /// Needs to be imple,ented for each state.
+  /// A transition list consists of tuples
   /// ```
-  /// When a `State` object is initialized,
-  /// every regex in this list is compiled into a state machine,
-  /// and pushed into a vector of tuples
-  /// ```rust
-  /// (state_machine, parsing_method, next_state)
+  /// (regex_pattern, transition_method)
   /// ```
-  /// This is the used by the state machine to perform the parsing.
   const TRANSITIONS: [(&'static str, TransitionMethod)];
 
 }
