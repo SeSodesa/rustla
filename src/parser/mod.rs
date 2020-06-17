@@ -3,29 +3,19 @@
 mod state_machine;
 use state_machine::StateMachine;
 
-
-mod token;
-mod position;
-mod error;
-
 #[cfg(test)]
 mod tests;
 
-use std::io::{self, BufReader, Lines};
+use std::io::{BufReader, Lines};
 use std::fs::File;
 
-use std::fmt;
 use std::str;
 use regex;
 
 use crate::doctree::DocTree;
 
-use crate::parser::token::{Token, TokenType};
-use crate::parser::position::Pos;
 use std::collections;
-use crate::parser::error::{TokenizeError, ParseError};
 use state_machine::states::{State};
-use state_machine::states::body as body_states;
 
 
 pub struct Parser {
@@ -41,21 +31,9 @@ impl Parser {
   /// of `String`s, generates a `DocTree`, and passes these
   /// to the `StateMachine` at the top of the `Parser` machine stack,
   /// which is initialized in the `Body` `State`.
-  fn new(source_line_iter: Lines<BufReader<File>>) -> Self{
+  fn new(source_line_iter: Lines<BufReader<File>>) -> Self {
 
-    let src_lines: Vec<String> = source_line_iter.collect::<Result<_, _>>().unwrap();
-
-    let initial_state = State::Body(body_states::Body::new());
-
-    let doctree = DocTree::new();
-
-    let initial_machine = StateMachine::new(src_lines, 0, initial_state, doctree);
-
-    let machine_stack = vec![initial_machine];
-
-    Parser {
-      machine_stack: machine_stack,
-    }
+    unimplemented!();
 
   }
 

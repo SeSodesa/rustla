@@ -11,7 +11,6 @@ use super::*;
 
 use crate::parser::Parser;
 use crate::parser::state_machine::Action;
-use crate::parser::token::{Token, TokenType};
 use crate::parser::state_machine::states::State;
 use super::transitions::body::*;
 use super::transitions::inline::*;
