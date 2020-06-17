@@ -6,44 +6,53 @@ pub mod body;
 use super::*;
 
 #[derive(Debug)]
-/// ### State
-/// An enumeration of the possible states of `StateMachine`.
-/// The indentations present here are an attempt to reflect
-/// the class hierarchy found in the docutils rST parser
-/// [States module](https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/parsers/rst/states.py#l202).
-/// 
-/// Each type stored within the corresponding variant
-/// has methods to handle the parsing and possible state transition
-/// of the patterns it recognizes. Pointers to these methods are stored
-/// in an associated constant, a list of tuples of the form
-/// ```rust
-/// (regex, match_method, Option<next_state>)
-/// ```
-/// 
-pub enum State {
-  Body(body::Body),
-    SpecializedBody(body::SpecializedBody),
-      BulletList(body::BulletList),
-      DefinitionList(body::DefinitionList),
-      EnumeratedList(body::EnumeratedList),
-      FieldList(body::FieldList),
-        ExtensionOptions,
-      OptionList(body::OptionList),
-      RFC2822List(body::RFC2822List),
-      LineBlock(body::LineBlock),
-      Explicit(body::Explicit),
-    SubstitutionDefinition(body::SubstitutionDefinition),
-  Text,
-    SpecializedText,
-      Definition,
-      Line,
-  QuotedLiteralBlock,
+pub struct Body;
 
-}
+#[derive(Debug)]
+pub struct BulletList;
+
+#[derive(Debug)]
+pub struct Definition;
+
+#[derive(Debug)]
+pub struct DefinitionList;
+
+#[derive(Debug)]
+pub struct EnumeratedList;
+
+#[derive(Debug)]
+pub struct Explicit;
+
+#[derive(Debug)]
+pub struct ExtensionOptions;
+
+#[derive(Debug)]
+pub struct FieldList;
+
+#[derive(Debug)]
+pub struct Line;
+
+#[derive(Debug)]
+pub struct LineBlock;
+
+#[derive(Debug)]
+pub struct OptionList;
+
+#[derive(Debug)]
+pub struct RFC2822Body;
+
+#[derive(Debug)]
+pub struct RFC2822List;
+
+#[derive(Debug)]
+pub struct SubstitutionDef;
+
+#[derive(Debug)]
+pub struct Text;
 
 /// MachineState
 /// Constants and methods common to each `StateMachine` state.
-pub trait MachineState {
+pub trait MachineState <S> {
 
   /// ### TRANSITIONS
   /// A list of tuples of state transitions.
@@ -58,7 +67,7 @@ pub trait MachineState {
   /// (state_machine, parsing_method, next_state)
   /// ```
   /// This is the used by the state machine to perform the parsing.
-  const TRANSITIONS: [(&'static str, TransitionMethod, Option<State>)];
+  const TRANSITIONS: [(&'static str, TransitionMethod, Option<S>)];
 
 }
 

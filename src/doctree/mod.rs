@@ -22,6 +22,7 @@ use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 /// In addition to holding ownership of the
 /// root of the tree, holds metadata related to
 /// the state of the tree.
+#[derive(Debug)]
 pub struct DocTree {
 
   /// #### tree_root
@@ -102,6 +103,7 @@ impl DocTree {
 /// ### TreeNode
 /// A tree node that contains a struct of `TreeNodeType`
 /// plus the information needed to traverse the tree.
+#[derive(Debug)]
 pub struct TreeNode {
   id: usize,
   parent_id: Option<usize>,

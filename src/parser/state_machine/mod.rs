@@ -9,7 +9,7 @@ use std::cmp;
 
 use super::*;
 use crate::utils;
-use states::State;
+use states::*;
 
 
 /// ### StateMachine
@@ -19,6 +19,7 @@ use states::State;
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
+#[derive(Debug)]
 pub enum StateMachine {
   Body(MachineWithState<Body>),
   BulletList(MachineWithState<BulletList>),
@@ -40,30 +41,17 @@ pub enum StateMachine {
 
 /// ### MachineWithState
 /// A state machine in a state `S`,
-/// which is its own type.
+/// which is its own type. This allows different
+/// state machines to hold common fields,
+/// while the embedded state types can hold their
+/// own specific fields like transition tables.
+#[derive(Debug)]
 pub struct MachineWithState <S> {
   src_lines: Vec<String>,
   current_line: usize,
   state: S,
   doctree: DocTree
 }
-
-pub struct Body;
-pub struct BulletList;
-pub struct Definition;
-pub struct DefinitionList;
-pub struct EnumeratedList;
-pub struct Explicit;
-pub struct ExtensionOptions;
-pub struct FieldList;
-pub struct Line;
-pub struct LineBlock;
-pub struct OptionList;
-pub struct RFC2822Body;
-pub struct RFC2822List;
-pub struct SubstitutionDef;
-pub struct Text;
-
 
 
 /// ====================
@@ -81,7 +69,7 @@ impl <S> MachineWithState <S> {
   /// to the preceding machine, if there is one.
   /// Also, an immutable reference is held to the source files,
   /// to allow reading and creation of nodes out of it.
-  pub fn new (src_lines: Vec<String>, current_line: usize, initial_state: State, doctree: DocTree) -> Self {
+  pub fn new (src_lines: Vec<String>, current_line: usize, initial_state: S, doctree: DocTree) -> Self {
 
     unimplemented!();
 

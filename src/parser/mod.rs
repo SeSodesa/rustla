@@ -15,7 +15,6 @@ use regex;
 use crate::doctree::DocTree;
 
 use std::collections;
-use state_machine::states::{State};
 
 
 pub struct Parser {
