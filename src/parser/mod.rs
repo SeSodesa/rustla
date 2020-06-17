@@ -16,7 +16,13 @@ use crate::doctree::DocTree;
 
 use std::collections;
 
-
+/// ### Parser
+/// The parser type. Contains an optional
+/// source line vector and a document tree.
+/// These are optional to facilitate their passing
+/// to any state machine in `machine_stack` via
+/// `std::option::Option::take`
+/// without invalidating the fields.
 pub struct Parser {
   src_lines: Option<Vec<String>>,
   doctree: Option<DocTree>,
