@@ -15,6 +15,15 @@ use super::*;
 pub struct Body;
 
 
+impl Body {
+
+  pub fn bullet (parser: &mut Parser) {}
+
+  pub fn enumerator (parser: &mut Parser) {}
+
+}
+
+
 impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
 
   fn from(machine: MachineWithState<Body>) -> MachineWithState<BulletList> {
