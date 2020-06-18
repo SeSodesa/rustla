@@ -5,17 +5,24 @@ pub mod body;
 
 use super::*;
 
-#[derive(Debug)]
 /// ### Body
 /// A state for detecting and parsing the first lines
 /// of different types of rST text blocks. Transitions to
 /// other states for handling the following lines
 /// of the block are handled by the `TransitionMethod`s
 /// in this state.
-pub struct Body;
+pub struct Body {
+  transitions: &'static Vec<Transition>
+}
 
 
 impl Body {
+
+  pub fn new() -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("Body").unwrap()
+    }
+  }
 
   pub fn bullet (parser: &mut Parser) {}
 

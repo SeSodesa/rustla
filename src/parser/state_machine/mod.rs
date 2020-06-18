@@ -10,7 +10,7 @@ use std::cmp;
 use super::*;
 use crate::utils;
 use states::*;
-use transitions::*;
+use transitions::{TRANSITION_MAP, *};
 
 /// ### TransitionMethod (TODO)
 /// A function pointer type alias for a State transition method.
@@ -27,7 +27,6 @@ type Transition = (PatternName, regex::Regex, TransitionMethod);
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
-#[derive(Debug)]
 pub enum StateMachine {
   Body(MachineWithState<Body>),
   BulletList(MachineWithState<BulletList>),
@@ -47,6 +46,8 @@ pub enum StateMachine {
 }
 
 impl StateMachine {
+
+
 
   /// ### get_transitions
   /// Retrives the list of transitions from a `StateMachine` variant.
@@ -89,7 +90,7 @@ impl MachineWithState<Body> {
           Self {
             src_lines: src_lines,
             current_line: current_line,
-            state: Body,
+            state: Body::new(),
             doctree: doctree,
           }
         )
