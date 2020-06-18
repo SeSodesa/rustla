@@ -2,7 +2,7 @@
 /// of state machines used by the parser.
 
 pub mod states;
-
+mod transitions;
 mod tests;
 
 use std::cmp;
@@ -11,6 +11,9 @@ use super::*;
 use crate::utils;
 use states::*;
 
+/// ### TransitionMethod (TODO)
+/// A function pointer type alias for a State transition method.
+type TransitionMethod = fn() -> ();
 
 /// ### StateMachine
 /// An enum of `MachineWithState`s.

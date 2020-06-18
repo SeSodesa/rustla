@@ -250,8 +250,3 @@ pub trait Transitions <S> {
   const TRANSITIONS: [(&'static str, TransitionMethod)];
 
 }
-
-
-/// ### TransitionMethod (TODO)
-/// A function pointer type alias for a State transition method.
-type TransitionMethod = fn() -> ();
