@@ -47,12 +47,32 @@ pub enum StateMachine {
 
 impl StateMachine {
 
-
-
   /// ### get_transitions
-  /// Retrives the list of transitions from a `StateMachine` variant.
-  fn get_transitions (&self) {
-    todo!();
+  /// Retrives the list of transitions from a `StateMachine` variant
+  /// using a `match` statement. This seems like a lot of repetition,
+  /// but this is the only way of doing this when wrapping each
+  /// different state machine type in an enum.
+  fn get_transitions (&self) -> &Vec<Transition> {
+
+    match self {
+      StateMachine::Body(val) => val.state.transitions,
+      StateMachine::BulletList(val) => val.state.transitions,
+      StateMachine::DefinitionList(val) => val.state.transitions,
+      StateMachine::EnumeratedList(val) => val.state.transitions,
+      StateMachine::FieldList(val) => val.state.transitions,
+      StateMachine::OptionList(val) => val.state.transitions,
+      StateMachine::LineBlock(val) => val.state.transitions,
+      StateMachine::ExtensionOptions(val) => val.state.transitions,
+      StateMachine::ExplicitMarkup(val) => val.state.transitions,
+      StateMachine::Text(val) => val.state.transitions,
+      StateMachine::Definition(val) => val.state.transitions,
+      StateMachine::Line(val) => val.state.transitions,
+      StateMachine::SubstitutionDef(val) => val.state.transitions,
+      StateMachine::RFC2822Body(val) => val.state.transitions,
+      StateMachine::RFC2822List(val) => val.state.transitions,
+
+    }
+
   }
 
 }

@@ -12,7 +12,7 @@ use super::*;
 /// of the block are handled by the `TransitionMethod`s
 /// in this state.
 pub struct Body {
-  transitions: &'static Vec<Transition>
+  pub transitions: &'static Vec<Transition>
 }
 
 
@@ -40,7 +40,7 @@ impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
     MachineWithState {
       src_lines: machine.src_lines,
       current_line: machine.current_line,
-      state: BulletList,
+      state: BulletList { transitions: TRANSITION_MAP.get("Bullet").unwrap() },
       doctree: machine.doctree
     }
 
@@ -49,207 +49,103 @@ impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
 }
 
 
-impl From<MachineWithState<Body>> for MachineWithState<DefinitionList> {
 
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<DefinitionList> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: DefinitionList,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<EnumeratedList> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<EnumeratedList> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: EnumeratedList,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<FieldList> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<FieldList> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: FieldList,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<OptionList> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<OptionList> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: OptionList,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<LineBlock> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<LineBlock> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: LineBlock,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<ExplicitMarkup> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<ExplicitMarkup> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: ExplicitMarkup,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-impl From<MachineWithState<Body>> for MachineWithState<Text> {
-
-  fn from(machine: MachineWithState<Body>) -> MachineWithState<Text> {
-
-    // parsing before transition
-
-    MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
-      state: Text,
-      doctree: machine.doctree
-    }
-
-  }
-
-}
-
-
-#[derive(Debug)]
 /// ### BulletList
 /// A transition to this state is made if a `BulletList`
 /// is detected in state `Body`. Handles subsequent
 /// `BulletList` items.
-pub struct BulletList;
+pub struct BulletList {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### Definition
 /// A state for handling the second line of a possible
 /// `DefinitionList` items.
-pub struct Definition;
+pub struct Definition {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### DefinitionList
 /// This state is transitioned to if a first line of `DefinitionList`
 /// is detected. Handles the subsequent lines.
-pub struct DefinitionList;
+pub struct DefinitionList {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### EnumeratedList
 /// A state that parses the lines followed by the detection of
 /// the first line of a possibly detected `EnumeratedList`.
-pub struct EnumeratedList;
+pub struct EnumeratedList {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### ExplicitMarkup
 /// A state for parsing explicit markup followed by the detection
 /// of a first such item.
-pub struct ExplicitMarkup;
+pub struct ExplicitMarkup {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### ExtensionOptions
 /// A state for parsing directive option fields.
-pub struct ExtensionOptions;
+pub struct ExtensionOptions {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### FieldList
 /// A state for parsing subsequent fields in a field list.
-pub struct FieldList;
+pub struct FieldList {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### Line
 /// A state for parsing a detected `Line` (section titles and such).
-pub struct Line;
+pub struct Line {
+  pub transitions: &'static Vec<Transition>
+}
 
 
-#[derive(Debug)]
+
 /// ### LineBlock
 /// A state for parsing subsequent lines of a line block.
-pub struct LineBlock;
+pub struct LineBlock {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### A state for  parsing subsequent option list items.
-pub struct OptionList;
+pub struct OptionList {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
+
 /// ### RFC2822Body
 /// A state for parsing body items that follow the RFC2822 specification.
-pub struct RFC2822Body;
+pub struct RFC2822Body {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### RFC2822List
 /// A state for parsing list items that follow the RFC2822 specification.
-pub struct RFC2822List;
+pub struct RFC2822List {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### SubstitutionDef
 /// A state for parsing substitution definitions
-pub struct SubstitutionDef;
+pub struct SubstitutionDef {
+  pub transitions: &'static Vec<Transition>
+}
 
-#[derive(Debug)]
 /// ### Text
 /// A state for parsing generic text.
-pub struct Text;
+pub struct Text {
+  pub transitions: &'static Vec<Transition>
+}
 
 
 /// MachineState
