@@ -52,7 +52,7 @@ impl StateMachine {
   /// using a `match` statement. This seems like a lot of repetition,
   /// but this is the only way of doing this when wrapping each
   /// different state machine type in an enum.
-  fn get_transitions (&self) -> &Vec<Transition> {
+  pub fn get_transitions (&self) -> &Vec<Transition> {
 
     match self {
       StateMachine::Body(val) => val.state.transitions,

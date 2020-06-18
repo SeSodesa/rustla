@@ -68,6 +68,13 @@ impl Parser {
 
     // The parsing loop
     let dt = loop {
+
+      for (name, regex, method) in self.machine_stack.last().unwrap().get_transitions() {
+
+        // Try to match current line against the patterns in current state
+        todo!();
+      }
+
       todo!();
     };
 
