@@ -10,10 +10,15 @@ use std::cmp;
 use super::*;
 use crate::utils;
 use states::*;
+use transitions::*;
 
 /// ### TransitionMethod (TODO)
 /// A function pointer type alias for a State transition method.
-type TransitionMethod = fn() -> ();
+type TransitionMethod = fn(&mut Parser) -> ();
+
+/// ### Transition
+/// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
+type Transition = (PatternName, regex::Regex, TransitionMethod);
 
 /// ### StateMachine
 /// An enum of `MachineWithState`s.
