@@ -31,7 +31,7 @@ impl TreeZipper {
 
   /// ### focus_on_child
   /// Moves focus to a specific child of a node.
-  /// Returns the `Ok(TreeZipper)` focused
+  /// Returns `Ok(TreeZipper)` focused
   /// on the child, if successful. Otherwise
   /// returns with `Err(message: &str)`
   fn focus_on_child (mut self, index: usize) -> Result<Self, &'static str> {
