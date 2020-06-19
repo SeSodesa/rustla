@@ -100,11 +100,13 @@ impl Parser {
           };
         }
 
+        if match_found {
+          break
+        }
+
       }
 
-      if match_found {
-        break
-      }
+      break
 
     };
 
