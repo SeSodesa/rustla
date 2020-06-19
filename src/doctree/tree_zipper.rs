@@ -8,9 +8,9 @@ use super::*;
 /// of `TreeNode`s. Makes it possible to traverse the tree and
 /// access a specific child/parent in constant time.
 pub struct TreeZipper {
-  node: TreeNode,
-  parent: Option<Box<TreeZipper>>,
-  index_in_parent: Option<usize>,
+  pub node: TreeNode,
+  pub parent: Option<Box<TreeZipper>>,
+  pub index_in_parent: Option<usize>,
 }
 
 
@@ -19,7 +19,7 @@ impl TreeZipper {
   /// ### new
   /// A `TreeZipper` constructor. A new `TreeZipper`
   /// consists of nothing but the root node.
-  fn new(node: TreeNode) -> Self {
+  pub fn new(node: TreeNode) -> Self {
 
     Self {
       node: node,

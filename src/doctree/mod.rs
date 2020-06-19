@@ -7,6 +7,8 @@ use std::collections::HashMap;
 mod tests;
 
 mod tree_zipper;
+  use tree_zipper::TreeZipper;
+
 mod node_types;
 mod traits;
 mod structural;
@@ -20,22 +22,13 @@ use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 /// ### DocTree
 /// A container for the document tree.
 /// In addition to holding ownership of the
-/// root of the tree, holds metadata related to
-/// the state of the tree.
-#[derive(Debug)]
+/// tree (stored in a zipper), also contains
+/// metadata about the tree.
 pub struct DocTree {
 
-  /// #### tree_root
-  /// Holds on to the tree root node,
-  /// providing access to the rest of the tree.
-  tree_root: TreeNode,
-
-  /// ####  id_counter
-  /// Keeps track of node ids.
-  /// Knows how to yield a copy of the value within,
-  /// incrementing it by one. This should be
-  /// called when a new node is created.
-  id_counter: NodeId,
+  /// #### tree
+  /// Holds the tree focused on a specific node.
+  tree: TreeZipper,
 
   /// #### src_line
   /// The row currently under inspection by the parser.
@@ -76,16 +69,14 @@ impl DocTree {
   /// A `DocTree` constructor.
   pub fn new() -> Self {
 
-    let mut idc = NodeId::new();
-    let root_data = TreeNodeType::Root(
-      Root::new()
-    );
+    let root_data = TreeNodeType::Root;
 
-    let root_node = TreeNode::new(None, &mut idc, root_data);
+    let root_node = TreeNode::new(None, root_data);
+
+    let zipper = TreeZipper::new(root_node);
 
     DocTree {
-      tree_root: root_node,
-      id_counter: idc,
+      tree: zipper,
       src_line: 0,
       indirect_target_nodes: Vec::new(),
       substitution_defs: HashMap::new(),
@@ -105,8 +96,6 @@ impl DocTree {
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
 pub struct TreeNode {
-  id: usize,
-  parent_id: Option<usize>,
   children: Children,
   data : TreeNodeType
 
@@ -116,11 +105,9 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  fn new(parent_id: Option<usize>, id_counter: &mut NodeId, data: TreeNodeType) -> Self {
+  fn new(parent_id: Option<usize>, data: TreeNodeType) -> Self {
     
     TreeNode {
-      id: id_counter.assign(),
-      parent_id: parent_id,
       children: Vec::new(),
       data: data
     }
@@ -186,7 +173,7 @@ impl Root {
 pub enum TreeNodeType {
 
   // DocTree root node
-  Root(Root),
+  Root,
 
   // Structural elements
   Section(structural::Section),
