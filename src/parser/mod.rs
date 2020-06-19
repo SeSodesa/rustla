@@ -7,15 +7,17 @@ use state_machine::{StateMachine, MachineWithState};
 #[cfg(test)]
 mod tests;
 
+use std::cmp;
 use std::io::{BufReader, Lines};
 use std::fs::File;
 
 use std::str;
+use std::collections;
+
 use regex;
 
 use crate::doctree::DocTree;
-
-use std::collections;
+use crate::utils;
 
 /// ### Parser
 /// The parser type. Contains an optional
@@ -191,6 +193,251 @@ impl Parser {
   /// `nth_{previous|next}_line`.
   const DEFAULT_LINE_STEP: usize = 1;
 
+
+}
+
+
+
+/// ===========================
+/// Parser associated functions
+/// ===========================
+impl Parser {
+
+  /// ### read_text_block
+  /// Reads in an contiguous set of lines of text.
+  /// A text block in rST terms is a set of lines
+  /// separated from other elements by empty lines above and below.
+  /// Checks for indentation:
+  /// if indentation is not allowed but indentation is found,
+  /// returns an error message in an `Err`.
+  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: Option<bool>) -> Result<Vec<String>, String> {
+
+    // Default parameter for allowed indentation
+    let indent_allowed = indent_allowed.unwrap_or(false);
+
+    let mut line_num = start_line;
+    let last_line = src_lines.len();
+
+    let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
+
+    while line_num < last_line - 1 {
+
+      let line: String = match src_lines.get(line_num) {
+        Some(line) => line.clone(),
+        None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
+      };
+
+      if line.is_empty() {
+        break
+      }
+
+      let has_indent: bool = match line.get(0..1) {
+        Some(line) => {
+          line.chars().next().unwrap().is_whitespace()
+        },
+        None => return Err(format!("The first character of line {} could not be read.", line_num))
+      };
+
+      if !indent_allowed && has_indent {
+        return Err(format!("No indent allowed but indent found on line {}!\nComputer says no...\n", line_num))
+      }
+
+      lines.push(line.clone());
+
+      line_num += 1;
+
+    }
+
+    lines.shrink_to_fit();
+
+    Ok(lines)
+
+  }
+
+
+  /// ### read_indented_block
+  /// Reads in a block of indented lines text.
+  /// Determines the minimum level of indentation
+  /// and uses it as a reference for ending the block.
+  ///
+  /// Returns a tuple
+  /// ```rust
+  /// {block: Vec<String>, min_indent<u32>, finished_with_blank: bool}
+  /// ```
+  /// if successful.
+  fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
+    strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>)
+  -> Result<(Vec<String>, usize, bool), String> {
+
+    // Default function parameters
+    let start_line = start_line.unwrap_or(0);
+    let until_blank = until_blank.unwrap_or(false);
+    let strip_indent = strip_indent.unwrap_or(true);
+
+    let mut line_num = start_line;
+
+    // Setting the initial level of minimal indentation
+    let mut minimal_indent = match block_indent {
+      Some(indent) => Some(indent),
+      None => None
+    };
+
+    eprintln!("Indent after block assignment: {:?}", minimal_indent);
+
+    // If there is block indentation but no predetermined indentation for the first line,
+    // set the indentation of the first line equal to block indentation.
+    let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
+      Some(block_indent)
+    } else {
+      None
+    };
+
+    // First line is ignored if `first_indent` was set
+    // if !first_indent.is_none() {
+    //   line_num += 1;
+    // }
+
+    let last_line_num = src_lines.len();
+
+    let mut blank_finish: bool = false;
+
+    let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
+
+    let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
+
+    while line_num < last_line_num {
+
+      let line: String = match src_lines.get(line_num) {
+        Some(line) => line.clone(),
+        None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
+      };
+
+      // Check for sufficient indentation
+      for (i, c) in line.chars().enumerate() {
+
+        // No need to keep looping if we have reached a
+        // sufficient level of indentation
+        if !block_indent.is_none() && i == block_indent.unwrap() {
+          break
+        }
+
+        if !c.is_whitespace() && i == 0 // No indentation at all
+          || (!block_indent.is_none() && i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
+        {
+
+          eprintln!("Not enough indentation!\n");
+
+          // Block is valid, iff the last indented line is blank
+          blank_finish = (line_num > start_line) &&
+            src_lines
+              .get(line_num - 1)
+              .unwrap()
+              .trim()
+              .is_empty();
+
+          eprintln!("Blank finish: {:?}", blank_finish);
+
+          // end while iteration
+          line_num = last_line_num;
+          break
+
+        }
+
+      }
+
+      if line_num >= last_line_num {
+        eprintln!("Breaking out of while loop\n");
+        loop_broken = true;
+        break
+      }
+
+      // Trim beginning whitespace from line under observation
+      // for blank line check
+      let no_indent_line = line.trim_start();
+
+      let line_indent: usize;
+
+      // Updating the minimal level of indentation, if line isn't blank
+      // and there isn't predetermined block indentation
+      if no_indent_line.is_empty() && until_blank {
+
+        blank_finish = true;
+        break
+
+      } else if block_indent.is_none() {
+
+        line_indent = line.chars().count() - no_indent_line.chars().count();
+
+        eprintln!("Line indent: {:?} on line {:?}", line_indent, line_num);
+
+        if minimal_indent.is_none() {
+          minimal_indent = Some(line_indent);
+        } else if line_indent > 0 {
+          minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
+        } 
+
+      }
+
+      eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
+
+      if !line.trim().is_empty() {
+        block_lines.push(line);
+      }
+
+      line_num += 1;
+
+    }
+
+    eprintln!("Loop broken: {:?}", loop_broken);
+
+    if !loop_broken {
+      blank_finish = true;
+    }
+
+    // If indentation was expected on the first line, remove it
+    // if !first_indent.is_none() && !block_lines.is_empty() {
+    //   if let Some(first_line) = block_lines.first_mut() {
+        
+    //     let mut cs = first_line.chars();
+
+    //     for _i in 0..first_indent.unwrap() {
+    //       cs.next();
+    //     }
+
+    //     let trunc_line = cs.as_str().to_string();
+
+    //       *first_line = trunc_line;
+
+    //   }
+    // }
+
+    // Strip all minimal indentation from each line
+    if let Some(indent) = minimal_indent {
+      if strip_indent {
+        for (index, line) in block_lines.iter_mut().enumerate() {
+
+          eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
+
+          let trunc_line = match utils::strip_indent(line.clone(), indent) {
+            Ok(line) => line,
+            Err(e) => {
+              eprintln!("{}", e);
+              return Err(format!("Indentation removal error on line {} of block under inspection\n", index));
+            }
+          };
+
+          *line = trunc_line;
+
+          eprintln!("Line after drain: {:?}\n", line);
+        }
+      }
+    }
+
+    block_lines.shrink_to_fit(); // Free unnecessary used memory
+
+    Ok((block_lines, minimal_indent.unwrap(), blank_finish))
+
+  }
 
 }
 

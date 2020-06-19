@@ -27,7 +27,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  let block = match StateMachine::read_text_block(&lines, 2, None) {
+  let block = match Parser::read_text_block(&lines, 2, None) {
     Ok(block) => block,
     Err(e) => {
       eprintln!("{}", e);
@@ -67,7 +67,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  match StateMachine::read_text_block(&lines, 2, None) {
+  match Parser::read_text_block(&lines, 2, None) {
     Ok(_) => panic!("There was indent where one was not allowed..."),
     Err(e) => {
       eprintln!("{:#?}", e);
@@ -101,7 +101,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  match StateMachine::read_text_block(&lines, 2, Some(true)) {
+  match Parser::read_text_block(&lines, 2, Some(true)) {
     Ok(block) => {
 
       eprintln!("{:#?}", block);
@@ -142,7 +142,7 @@ asdfsdafasdfasdfa
 
   let lines = utils::str_to_lines(src);
 
-  match StateMachine::read_indented_block(&lines, Some(2), None, Some(true), None, None) {
+  match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None) {
     Ok((lines, _indent, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
@@ -182,7 +182,7 @@ asdfsdafasdfasdfa
 
   let lines = utils::str_to_lines(src);
 
-  match StateMachine::read_indented_block(&lines, Some(2), None, None, Some(2), None) {
+  match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None) {
     Ok((lines, _indent, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
@@ -221,7 +221,7 @@ asdfsdafasdfasdfa
 
   let lines = utils::str_to_lines(src);
 
-  match StateMachine::read_indented_block(&lines, Some(2), None, None, None, None) {
+  match Parser::read_indented_block(&lines, Some(2), None, None, None, None) {
     Ok((lines, _indent, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
