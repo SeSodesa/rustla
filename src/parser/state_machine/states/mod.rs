@@ -24,9 +24,13 @@ impl Body {
     }
   }
 
-  pub fn bullet (parser: &mut Parser) {}
+  pub fn bullet (parser: Option<DocTree>) -> Result<Option<DocTree>, &'static str> {
+    todo!();
+  }
 
-  pub fn enumerator (parser: &mut Parser) {}
+  pub fn enumerator (parser: Option<DocTree>) -> Result<Option<DocTree>, &'static str> {
+    todo!();
+  }
 
 }
 
@@ -38,10 +42,7 @@ impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
     // parsing before transition
 
     MachineWithState {
-      src_lines: machine.src_lines,
-      current_line: machine.current_line,
       state: BulletList { transitions: TRANSITION_MAP.get("Bullet").unwrap() },
-      doctree: machine.doctree
     }
 
   }

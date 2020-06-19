@@ -14,7 +14,7 @@ use transitions::{TRANSITION_MAP, *};
 
 /// ### TransitionMethod (TODO)
 /// A function pointer type alias for a State transition method.
-type TransitionMethod = fn(&mut Parser) -> ();
+type TransitionMethod = fn(Option<DocTree>) -> Result<Option<DocTree>, &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
@@ -87,11 +87,9 @@ impl StateMachine {
 /// own specific fields like transition tables.
 #[derive(Debug)]
 pub struct MachineWithState <S> {
-  src_lines: Option<Vec<String>>,
-  current_line: usize,
   state: S,
-  doctree: Option<DocTree>
 }
+
 
 impl MachineWithState<Body> {
 
@@ -101,28 +99,11 @@ impl MachineWithState<Body> {
   /// comes to rST parsing. Transitions to and creation of
   /// other states is handled by implementing the `From`
   /// trait (the `from` function) for those states.
-  pub fn new(src_lines: Option<Vec<String>>, current_line: usize, doctree: Option<DocTree>) -> Result<Self, &'static str> {
+  pub fn new() -> Self {
 
-    if src_lines.is_some() && doctree.is_some()  {
-
-      if current_line < src_lines.as_ref().unwrap().len() {
-        Ok(
-          Self {
-            src_lines: src_lines,
-            current_line: current_line,
-            state: Body::new(),
-            doctree: doctree,
-          }
-        )
-
-      } else {
-        Err("The given starting line number is too large.\nState machine says no...\n")
-      }
-
-    } else {
-      Err("Either the source or doctree was not provided.\nState machine says no...\n")
+    Self {
+      state: Body::new(),
     }
-
   }
 
 }
@@ -145,102 +126,6 @@ impl <S> MachineWithState <S> {
     unimplemented!();
 
   }
-
-
-  /// ### match_line
-  /// Attempts to match the current line to each pattern
-  /// in the list of transitions in the current `State`.
-  /// If no match is found, the current line number
-  /// is returned in and `Err`. If a line is matched,
-  /// attempts to run the transition|parsing method
-  /// related to the matched pattern.
-  fn match_line(&mut self) -> Result<(), String>{
-
-    unimplemented!();
-
-  }
-
-
-  /// ### get_source_from_line
-  /// Attempts to retrieve the source from a given line number.
-  /// Returns an `Ok` clone of it if successful, else
-  /// returns and `Err` with a message.
-  fn get_source_from_line (&self, line_num: Option<usize>) -> Result <String, String> {
-
-    let line = line_num.unwrap_or(self.current_line);
-
-    let src = match self.src_lines.as_ref().unwrap().get(line) {
-      Some(line) => line.clone(),
-      None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line))
-    };
-
-    Ok(src)
-
-  }
-
-
-  /// ### jump_to_line
-  /// Attempts to move `self.current_line` to the given index.
-  /// Return an `Err` if not successful.
-  fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
-
-    if line < self.src_lines.as_ref().unwrap().len() {
-      self.current_line = line;
-    } else {
-      return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### nth_next_line
-  /// Attempts to increment `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
-    
-    self.current_line = match self.current_line.checked_add(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.current_line > self.src_lines.as_ref().unwrap().len() {
-      return Err("No such line number.\nComputer says no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### nth_previous_line
-  /// Attempts to decrement `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
-    
-    self.current_line = match self.current_line.checked_sub(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.current_line > self.src_lines.as_ref().unwrap().len() {
-      return Err("No such line number.\nComputer says no...\n")
-    }
-
-    Ok(())
-
-  }
-
-
-  /// ### DEFAULT_LINE_STEP
-  /// The default step used by the functions
-  /// `nth_{previous|next}_line`.
-  const DEFAULT_LINE_STEP: usize = 1;
 
 }
 
