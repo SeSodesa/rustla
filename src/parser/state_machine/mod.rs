@@ -48,7 +48,7 @@ pub enum StateMachine {
 impl StateMachine {
 
   /// ### get_transitions
-  /// Retrives the list of transitions from a `StateMachine` variant
+  /// Retrieves the list of transitions from a `StateMachine` variant
   /// using a `match` statement. This seems like a lot of repetition,
   /// but this is the only way of doing this when wrapping each
   /// different state machine type in an enum.
