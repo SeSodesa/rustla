@@ -70,9 +70,13 @@ impl Parser {
     // The parsing loop
     let dt = loop {
 
+      let mut match_found = false;
+
+      // Iterating over the patterns in current state.
       for (name, regex, method) in self.machine_stack.last().unwrap().get_transitions().iter() {
 
-        let src_line: &str = match self.get_source_from_line(None) {
+        // Fetching a reference to current line
+        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.current_line) {
           Ok(line) => line,
           Err(e) => {
             eprintln!("{}", e);
@@ -80,8 +84,14 @@ impl Parser {
           }
         };
 
+        // Running the current line of text through a DFA compiled from a regex
         if regex.is_match(src_line) {
-          self.doctree = match method(self.doctree.take()) {
+
+          match_found = true;
+
+          let captures = regex.captures(src_line).unwrap();
+
+          self.doctree = match method(self.doctree.take(), captures) {
             Ok(opt_doctree) => opt_doctree,
             Err(e) => {
               eprintln!("{}", e);
@@ -92,7 +102,9 @@ impl Parser {
 
       }
 
-      break
+      if match_found {
+        break
+      }
 
     };
 
@@ -110,24 +122,6 @@ impl Parser {
   fn match_line(&mut self) -> Result<(), String>{
 
     unimplemented!();
-
-  }
-
-
-  /// ### get_source_from_line
-  /// Attempts to retrieve the source from a given line number.
-  /// Returns an `Ok` clone of it if successful, else
-  /// returns and `Err` with a message.
-  fn get_source_from_line (&self, line_num: Option<usize>) -> Result <&str, String> {
-
-    let line = line_num.unwrap_or(self.current_line);
-
-    let src = match self.src_lines.get(line) {
-      Some(line) => line.as_str(),
-      None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line))
-    };
-
-    Ok(src)
 
   }
 
@@ -204,6 +198,23 @@ impl Parser {
 /// Parser associated functions
 /// ===========================
 impl Parser {
+
+  /// ### get_source_from_line
+  /// Attempts to retrieve the source from a given line number.
+  /// Returns an `Ok` clone of it if successful, else
+  /// returns and `Err` with a message.
+  fn get_source_from_line (src_lines: &Vec<String>, line_num: usize) -> Result <&str, String> {
+
+    let src = match src_lines.get(line_num) {
+      Some(line) => line.as_str(),
+      None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line_num))
+    };
+
+    Ok(src)
+
+  }
+
+
 
   /// ### read_text_block
   /// Reads in an contiguous set of lines of text.

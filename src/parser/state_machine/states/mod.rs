@@ -24,11 +24,11 @@ impl Body {
     }
   }
 
-  pub fn bullet (parser: Option<DocTree>) -> Result<Option<DocTree>, &'static str> {
+  pub fn bullet (parser: Option<DocTree>, captures: regex::Captures) -> Result<Option<DocTree>, &'static str> {
     todo!();
   }
 
-  pub fn enumerator (parser: Option<DocTree>) -> Result<Option<DocTree>, &'static str> {
+  pub fn enumerator (parser: Option<DocTree>, captures: regex::Captures) -> Result<Option<DocTree>, &'static str> {
     todo!();
   }
 

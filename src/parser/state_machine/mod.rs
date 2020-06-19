@@ -13,7 +13,7 @@ use transitions::{TRANSITION_MAP, *};
 
 /// ### TransitionMethod (TODO)
 /// A function pointer type alias for a State transition method.
-type TransitionMethod = fn(Option<DocTree>) -> Result<Option<DocTree>, &'static str>;
+type TransitionMethod = fn(Option<DocTree>, regex::Captures) -> Result<Option<DocTree>, &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
