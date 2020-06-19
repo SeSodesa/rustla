@@ -34,7 +34,9 @@ pub struct Parser {
 }
 
 
-/// Parser type methods
+/// ==============
+/// Parser Methods
+/// ==============
 impl Parser {
 
   /// ### new
