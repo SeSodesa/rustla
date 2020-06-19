@@ -17,31 +17,35 @@ pub struct TreeZipper {
 impl TreeZipper {
 
   /// ### new
-  /// A `TreeZipper` constructor.
-  fn new(node: TreeNode, parent: Option<Box<TreeZipper>>, index_in_parent: usize) -> Self {
+  /// A `TreeZipper` constructor. A new `TreeZipper`
+  /// consists of nothing but the root node.
+  fn new(node: TreeNode) -> Self {
 
     Self {
       node: node,
-      parent: parent,
-      index_in_parent: Some(index_in_parent),
+      parent: None,
+      index_in_parent: None,
     }
 
   }
 
-  /// ### get_child
-  /// Provides access to a child with a specific index in the
-  /// parent node `children` vector. Returns and *owned* instance of
-  /// the child that later needs to be inserted back into the parent
-  /// node via `assign_parent`. This combination maintains the order
-  /// of the children.
-  fn get_child (mut self, index: usize) -> Result<Self, &'static str> {
+  /// ### focus_on_child
+  /// Moves focus to a specific child of a node.
+  /// Returns the `Ok(TreeZipper)` focused
+  /// on the child, if successful. Otherwise
+  /// returns with `Err(message: &str)`
+  fn focus_on_child (mut self, index: usize) -> Result<Self, &'static str> {
 
     let child: TreeNode;
 
-    if !self.node.children.is_empty() {
+    if !self.node.children.is_empty() && !index >= self.node.children.len() {
+
       child = self.node.children.swap_remove(index);
+
     } else {
-      return Err("This node has no children!");
+
+      return Err("This node has less children than the given index implies!\n");
+
     }
 
     Ok(
@@ -55,12 +59,11 @@ impl TreeZipper {
   }
 
 
-  /// ### assign_parent
-  /// The opposite operation to `get_child`.
-  /// Inserts the child returned by it back into the
-  /// parent `TreeZipper` node `children`,
-  /// maintaining order (assuming `Vec::swap_remove` was used).
-  fn assign_parent(self) -> Result<Self, &'static str> {
+  /// ### focus_on_parent
+  /// Moves focus to the parent of the current node,
+  /// or at least tries to. Returns with `Ok(TreeZipper)`
+  /// if successful and `Err(message: &str)` if not.
+  fn focus_on_parent(self) -> Result<Self, &'static str> {
 
     // Destructuring the provided TreeZipper
     let Self { node, parent, index_in_parent } = self;
