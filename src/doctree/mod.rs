@@ -10,13 +10,10 @@ mod tree_zipper;
   use tree_zipper::TreeZipper;
 
 mod node_types;
-mod traits;
 mod structural;
 mod body;
 mod inline;
 use self::node_types::BranchNodeType;
-
-use self::traits::{Node, BranchNode, InlineBranchNode, TextNode};
 
 
 /// ### DocTree
