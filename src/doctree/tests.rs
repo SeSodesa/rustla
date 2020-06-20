@@ -8,10 +8,12 @@ use super::*;
 #[test]
 fn new_doctree() {
 
-  let dt = DocTree::new();
+  let doc_name = String::from("abc");
+
+  let dt = DocTree::new(doc_name);
 
   let root_is_root:bool = match dt.tree.node.data {
-    TreeNodeType::Root => true,
+    TreeNodeType::Root( .. ) => true,
     _ => false
   };
 

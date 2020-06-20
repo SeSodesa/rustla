@@ -16,7 +16,6 @@ pub struct Container {
 }
 #[derive(Debug)]
 pub struct BulletList {
-  
 
 }
 #[derive(Debug)]
