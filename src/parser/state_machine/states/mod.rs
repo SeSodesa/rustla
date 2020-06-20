@@ -11,12 +11,12 @@ use super::*;
 /// other states for handling the following lines
 /// of the block are handled by the `TransitionMethod`s
 /// in this state.
-pub struct Body {
+pub struct Body  {
   pub transitions: &'static Vec<Transition>
 }
 
 
-impl Body {
+impl Body  {
 
   pub fn new() -> Self {
     Self {
@@ -24,11 +24,11 @@ impl Body {
     }
   }
 
-  pub fn bullet (parser: Option<DocTree>, captures: regex::Captures) -> Result<Option<DocTree>, &'static str> {
+  pub fn bullet (parser: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
     todo!();
   }
 
-  pub fn enumerator (parser: Option<DocTree>, captures: regex::Captures) -> Result<Option<DocTree>, &'static str> {
+  pub fn enumerator (parser: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
     todo!();
   }
 
@@ -146,20 +146,4 @@ pub struct SubstitutionDef {
 /// A state for parsing generic text.
 pub struct Text {
   pub transitions: &'static Vec<Transition>
-}
-
-
-/// MachineState
-/// Constants and methods common to each `StateMachine` state.
-pub trait Transitions <S> {
-
-  /// ### TRANSITIONS
-  /// A list of tuples of state transitions.
-  /// Needs to be imple,ented for each state.
-  /// A transition list consists of tuples
-  /// ```
-  /// (regex_pattern, transition_method)
-  /// ```
-  const TRANSITIONS: [(&'static str, TransitionMethod)];
-
 }

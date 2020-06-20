@@ -11,9 +11,15 @@ use crate::utils;
 use states::*;
 use transitions::{TRANSITION_MAP, *};
 
-/// ### TransitionMethod (TODO)
+/// ### TransitionMethod
 /// A function pointer type alias for a State transition method.
-type TransitionMethod = fn(Option<DocTree>, regex::Captures) -> Result<Option<DocTree>, &'static str>;
+/// `TransitionMethod`s take in the document tree and regex captures
+/// for doctree modifications. Unless errors occur,
+/// they return an `Ok`-wrapped tuple of optional doctree and a possible next state for the parser.
+/// If the optional next state is *not* `None`, a new state machine
+/// in the new state is pushed on top of the machine stack of the parser and parsing proceeds
+/// in that state from the current line.
+type TransitionMethod = fn(Option<DocTree>, regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`

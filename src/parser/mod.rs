@@ -72,8 +72,18 @@ impl Parser {
 
       let mut match_found = false;
 
-      // Iterating over the patterns in current state.
-      for (name, regex, method) in self.machine_stack.last().unwrap().get_transitions().iter() {
+      // Retrieving a clone of the transitions stored in the latest state
+      // A clone is needed because the below for loop takes
+      // ownership of a reference given to it, which would prevent us from
+      // modifying the machine stack.
+      let latest_state_transitions = if let Some(machine) = self.machine_stack.last() {
+        machine.get_transitions().clone()
+      } else {
+        break
+      };
+
+      // Iterating overa clone of the transitions
+      for (name, regex, method) in latest_state_transitions.iter() {
 
         // Fetching a reference to current line
         let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.current_line) {
@@ -92,7 +102,12 @@ impl Parser {
           let captures = regex.captures(src_line).unwrap();
 
           self.doctree = match method(self.doctree.take(), captures) {
-            Ok(opt_doctree) => opt_doctree,
+            Ok((opt_doctree, opt_next_state, )) => {
+              if let Some(next_state) = opt_next_state {
+                self.machine_stack.push(next_state);
+              }
+              opt_doctree
+            }
             Err(e) => {
               eprintln!("{}", e);
               return Err("An error was encountered while executing a transition method.\n");
@@ -106,7 +121,12 @@ impl Parser {
 
       }
 
-      break
+      // Attempt at parsing in the previous state if no match found.
+      // This should probably be a transition to a general
+      // failure state, but we'll go with this for now...
+      if !match_found {
+        self.machine_stack.pop();
+      }
 
     };
 

@@ -10,7 +10,7 @@ use super::*;
 
 #[derive(Copy, Clone)]
 pub enum PatternName {
-  Bullet,
+  BulletList,
 
 
 }
@@ -19,12 +19,12 @@ pub enum PatternName {
 /// ### UncompiledTransition
 /// A type alias for a transition `(PatternName, regex_pattern, TransitionMethod)`, whose regex pattern has not
 /// been compiled into a DFA yet.
-type UncompiledTransition = (PatternName, &'static str, TransitionMethod);
+type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 
 
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^[+-*\u{2022}]( +|$)", Body::bullet),
+  (PatternName::BulletList, r"^[+-*\u{2022}]( +|$)", Body::bullet),
 ];
 
 
