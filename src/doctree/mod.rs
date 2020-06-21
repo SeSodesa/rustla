@@ -25,7 +25,7 @@ pub struct DocTree {
 
   /// #### tree
   /// Holds the tree focused on a specific node.
-  tree: TreeZipper,
+  pub tree: TreeZipper,
 
   /// #### src_line
   /// The row currently under inspection by the parser.
