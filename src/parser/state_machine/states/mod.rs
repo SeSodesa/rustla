@@ -19,12 +19,16 @@ pub struct Body  {
 
 impl Body  {
 
+  /// ### new
+  /// A `Body` state constructor.
   pub fn new() -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("Body").unwrap()
     }
   }
 
+  /// ### bullet
+  /// The transition method for matching bullets in `Body` state.
   pub fn bullet (doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
 
     let mut tree_container = doctree.unwrap();
@@ -82,6 +86,18 @@ impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
 /// `BulletList` items.
 pub struct BulletList {
   pub transitions: &'static Vec<Transition>
+}
+
+impl BulletList {
+
+  /// ### new
+  /// A `BulletList` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("Bullet").unwrap()
+    }
+  }
+
 }
 
 /// ### Definition
