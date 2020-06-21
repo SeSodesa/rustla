@@ -10,9 +10,9 @@ mod tree_zipper;
   use tree_zipper::TreeZipper;
 
 mod node_types;
-mod structural;
-mod body;
-mod inline;
+pub mod structural;
+pub mod body;
+pub mod inline;
 use self::node_types::BranchNodeType;
 
 
