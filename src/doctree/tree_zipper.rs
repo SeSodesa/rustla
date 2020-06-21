@@ -98,4 +98,23 @@ impl TreeZipper {
 
   }
 
+
+  /// ### focus_on_last_child
+  /// Moves the focus to the last child of the current focus.
+  fn focus_on_last_child (self) -> Result<Self, &'static str> {
+
+    let children_len = self.node.children.len();
+
+    let with_focus_on_latest_child = match self.focus_on_child(children_len - 1) {
+      Ok(tree_zipper) => tree_zipper,
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("Couldn't access last child.")
+      }
+    };
+
+    Ok(with_focus_on_latest_child)
+
+  }
+
 }
