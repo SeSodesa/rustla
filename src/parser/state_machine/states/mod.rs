@@ -109,6 +109,8 @@ pub struct Definition {
 
 impl Definition {
 
+  /// ### new
+  /// A `Definition` state constructor
   fn new () -> Self {
     Self{
       transitions: transitions::TRANSITION_MAP.get("Definition").unwrap()
@@ -125,6 +127,16 @@ pub struct DefinitionList {
   pub transitions: &'static Vec<Transition>
 }
 
+impl DefinitionList {
+
+  /// ### new
+  /// A `DefinitionList` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("DefinitionList").unwrap()
+    }
+  }
+}
 
 /// ### EnumeratedList
 /// A state that parses the lines followed by the detection of
