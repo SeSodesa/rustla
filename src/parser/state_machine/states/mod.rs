@@ -145,6 +145,18 @@ pub struct EnumeratedList {
   pub transitions: &'static Vec<Transition>
 }
 
+impl EnumeratedList {
+
+  /// ### new
+  /// An `EnumeratedList` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("EnumeratedList").unwrap()
+    }
+  }
+
+}
+
 /// ### ExplicitMarkup
 /// A state for parsing explicit markup followed by the detection
 /// of a first such item.
@@ -152,6 +164,17 @@ pub struct ExplicitMarkup {
   pub transitions: &'static Vec<Transition>
 }
 
+impl ExplicitMarkup {
+
+  /// ### new
+  /// An `ExplicitMarkup` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("ExplicitMarkup").unwrap()
+    }
+  }
+
+}
 
 /// ### ExtensionOptions
 /// A state for parsing directive option fields.
@@ -159,12 +182,36 @@ pub struct ExtensionOptions {
   pub transitions: &'static Vec<Transition>
 }
 
+impl ExtensionOptions {
+
+  /// ### new
+  /// An `ExtenstionOptions` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("ExtenstionOptions").unwrap()
+    }
+  }
+
+}
 
 /// ### FieldList
 /// A state for parsing subsequent fields in a field list.
 pub struct FieldList {
   pub transitions: &'static Vec<Transition>
 }
+
+impl FieldList {
+
+  /// ### new
+  /// An `FieldList` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("FieldList").unwrap()
+    }
+  }
+
+}
+
 
 
 /// ### Line
@@ -173,12 +220,34 @@ pub struct Line {
   pub transitions: &'static Vec<Transition>
 }
 
+impl Line {
 
+  /// ### new
+  /// An `Line` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("Line").unwrap()
+    }
+  }
+
+}
 
 /// ### LineBlock
 /// A state for parsing subsequent lines of a line block.
 pub struct LineBlock {
   pub transitions: &'static Vec<Transition>
+}
+
+impl LineBlock{
+
+  /// ### new
+  /// An `LineBlock` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("LineBlock").unwrap()
+    }
+  }
+
 }
 
 
@@ -187,6 +256,17 @@ pub struct OptionList {
   pub transitions: &'static Vec<Transition>
 }
 
+impl OptionList {
+
+  /// ### new
+  /// An `OptionList` state constructor.
+  fn new () -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("OptionList").unwrap()
+    }
+  }
+
+}
 
 /// ### RFC2822Body
 /// A state for parsing body items that follow the RFC2822 specification.
