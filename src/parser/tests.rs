@@ -242,3 +242,44 @@ asdfsdafasdfasdfa
   };
 
 }
+
+#[test]
+fn read_indented_block_04 () {
+
+  let src = "    
+
+* asdsafasfgasf  fwsdaf
+  asfsdafasdfffas  fsdfsaf
+  asfdfasd  fasdfafasdfasdf
+  asdfsdafasdfsda  fadsfsdf
+  asdfdsfsdafsadfaf
+  asfsffdsfasfasdf
+
+asdfsdafasdfasdfa
+
+";
+
+  let lines = utils::str_to_lines(src);
+
+  match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2)) {
+    Ok((lines, _indent, _empty_finish)) => {
+
+      eprintln!("{:#?}", lines);
+
+      assert_eq!(
+        lines.join("\n"),
+"asdsafasfgasf  fwsdaf
+asfsdafasdfffas  fsdfsaf
+asfdfasd  fasdfafasdfasdf
+asdfsdafasdfsda  fadsfsdf
+asdfdsfsdafsadfaf
+asfsffdsfasfasdf"
+      );
+    },
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+}

@@ -304,12 +304,19 @@ impl Parser {
     strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>)
   -> Result<(Vec<String>, usize, bool), String> {
 
+    if src_lines.is_empty() {
+      return Err(String::from("An empty block of text was handed for parsing.\nComputer says no...\n"))
+    }
+
     // Default function parameters
     let start_line = start_line.unwrap_or(0);
     let until_blank = until_blank.unwrap_or(false);
     let strip_indent = strip_indent.unwrap_or(true);
 
     let mut line_num = start_line;
+    let last_line_num = src_lines.len();
+
+    let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
 
     // Setting the initial level of minimal indentation
     let mut minimal_indent = match block_indent {
@@ -324,21 +331,23 @@ impl Parser {
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
       Some(block_indent)
     } else {
-      None
+      first_indent
     };
 
-    // First line is ignored if `first_indent` was set
-    // if !first_indent.is_none() {
-    //   line_num += 1;
-    // }
+    eprintln!("First indent set to {:?}", first_indent);
 
-    let last_line_num = src_lines.len();
+    // Push first line into `block_lines` and increment
+    // line number to ignore indentation (for now) if first_indent was set
+    if !first_indent.is_none() {
+      eprintln!("Pushing line {} to block_lines", line_num);
+      let line = src_lines.get(line_num).unwrap().to_owned();
+      block_lines.push(line);
+      line_num += 1;
+    }
 
     let mut blank_finish: bool = false;
 
     let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
-
-    let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
 
     while line_num < last_line_num {
 
@@ -423,33 +432,38 @@ impl Parser {
 
     }
 
-    eprintln!("Loop broken: {:?}", loop_broken);
+    eprintln!("Loop broken: {:?}\n", loop_broken);
 
     if !loop_broken {
       blank_finish = true;
     }
 
     // If indentation was expected on the first line, remove it
-    // if !first_indent.is_none() && !block_lines.is_empty() {
-    //   if let Some(first_line) = block_lines.first_mut() {
+    if !first_indent.is_none() && !block_lines.is_empty() {
+      if let Some(first_line) = block_lines.first_mut() {
         
-    //     let mut cs = first_line.chars();
+        let mut cs = first_line.chars();
 
-    //     for _i in 0..first_indent.unwrap() {
-    //       cs.next();
-    //     }
+        for _i in 0..first_indent.unwrap() {
+          cs.next();
+        }
 
-    //     let trunc_line = cs.as_str().to_string();
+        let trunc_line = cs.as_str().to_string();
 
-    //       *first_line = trunc_line;
+          *first_line = trunc_line;
 
-    //   }
-    // }
+      }
+    }
 
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
       if strip_indent {
         for (index, line) in block_lines.iter_mut().enumerate() {
+
+          if first_indent.is_some() && index == 0 {
+            eprintln!("Cursor currently on the first line of block and \nfirst line had own indentation.\nContinuing...\n");
+            continue
+          }
 
           eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
 
@@ -457,7 +471,7 @@ impl Parser {
             Ok(line) => line,
             Err(e) => {
               eprintln!("{}", e);
-              return Err(format!("Indentation removal error on line {} of block under inspection\n", index));
+              return Err(format!("Indentation removal error on line {} of block under inspection\n", index));              
             }
           };
 
