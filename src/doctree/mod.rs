@@ -115,7 +115,7 @@ impl TreeNode {
 
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
-  fn push_child (&mut self, node : TreeNode) {
+  pub fn push_child (&mut self, node : TreeNode) {
 
     self.children.push(node);
 
