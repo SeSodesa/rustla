@@ -4,6 +4,7 @@
 pub mod body;
 
 use super::*;
+use crate::doctree;
 
 /// ### Body
 /// A state for detecting and parsing the first lines
@@ -25,7 +26,31 @@ impl Body  {
   }
 
   pub fn bullet (doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+
+    let mut tree_container = doctree.unwrap();
+
+    let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
+    let indent = captures.get(0).unwrap().end();
+    let nesting_level: usize = 0;
+
+    let bullet_list_data = doctree::TreeNodeType::BulletList(doctree::body::BulletList::new(bullet, indent, nesting_level));
+
+    let list_node = doctree::TreeNode::new(bullet_list_data);
+
+    tree_container.tree.node.push_child(list_node);
+
+    tree_container.tree = match tree_container.tree.focus_on_last_child() {
+      Ok(child_zipper) => child_zipper,
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("An error occurred when adding a child to the current node.\n");
+      }
+    };
+
+    // Create logic for building the next BulletList state.
+
     todo!();
+
   }
 
   pub fn enumerator (doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
