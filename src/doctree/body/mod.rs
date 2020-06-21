@@ -25,7 +25,7 @@ impl BulletList {
 
   /// ### bew
   /// BulletList node type constructor
-  fn new (bullet: char, indent: usize, nesting_level: usize) -> Self {
+  pub fn new (bullet: char, indent: usize, nesting_level: usize) -> Self {
     Self {
       bullet: bullet,
       indent: indent,
