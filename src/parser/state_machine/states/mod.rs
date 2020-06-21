@@ -92,7 +92,7 @@ impl BulletList {
 
   /// ### new
   /// A `BulletList` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("Bullet").unwrap()
     }
@@ -111,7 +111,7 @@ impl Definition {
 
   /// ### new
   /// A `Definition` state constructor
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self{
       transitions: transitions::TRANSITION_MAP.get("Definition").unwrap()
     }
@@ -131,7 +131,7 @@ impl DefinitionList {
 
   /// ### new
   /// A `DefinitionList` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("DefinitionList").unwrap()
     }
@@ -149,7 +149,7 @@ impl EnumeratedList {
 
   /// ### new
   /// An `EnumeratedList` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("EnumeratedList").unwrap()
     }
@@ -168,7 +168,7 @@ impl ExplicitMarkup {
 
   /// ### new
   /// An `ExplicitMarkup` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("ExplicitMarkup").unwrap()
     }
@@ -186,7 +186,7 @@ impl ExtensionOptions {
 
   /// ### new
   /// An `ExtenstionOptions` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("ExtenstionOptions").unwrap()
     }
@@ -204,7 +204,7 @@ impl FieldList {
 
   /// ### new
   /// An `FieldList` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("FieldList").unwrap()
     }
@@ -224,7 +224,7 @@ impl Line {
 
   /// ### new
   /// An `Line` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("Line").unwrap()
     }
@@ -242,7 +242,7 @@ impl LineBlock{
 
   /// ### new
   /// An `LineBlock` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("LineBlock").unwrap()
     }
@@ -260,7 +260,7 @@ impl OptionList {
 
   /// ### new
   /// An `OptionList` state constructor.
-  fn new () -> Self {
+  pub fn new () -> Self {
     Self {
       transitions: transitions::TRANSITION_MAP.get("OptionList").unwrap()
     }
@@ -286,8 +286,32 @@ pub struct SubstitutionDef {
   pub transitions: &'static Vec<Transition>
 }
 
+impl SubstitutionDef {
+
+  /// ### new
+  /// A `SubstitutioDef` state constructor
+  pub fn new() -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("SubstitutionDef").unwrap()
+    }
+  }
+
+}
+
 /// ### Text
 /// A state for parsing generic text.
 pub struct Text {
   pub transitions: &'static Vec<Transition>
+}
+
+impl Text {
+
+  /// ### new
+  /// A `Text` state constructor
+  pub fn new() -> Self {
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("Text").unwrap()
+    }
+  }
+
 }
