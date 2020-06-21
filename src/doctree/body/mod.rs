@@ -16,7 +16,9 @@ pub struct Container {
 }
 #[derive(Debug)]
 pub struct BulletList {
-
+  bullet: char, // might need to be changed to a grapheme (needs external crate)
+  indent: usize,
+  nesting_level: usize,
 }
 #[derive(Debug)]
 pub struct EnumeratedList {
