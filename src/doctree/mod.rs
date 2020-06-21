@@ -104,7 +104,7 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  fn new(data: TreeNodeType) -> Self {
+  pub fn new(data: TreeNodeType) -> Self {
     
     TreeNode {
       children: Vec::new(),
