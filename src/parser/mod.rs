@@ -82,7 +82,7 @@ impl Parser {
         break
       };
 
-      // Iterating overa clone of the transitions
+      // Iterating over a clone of the transitions
       for (name, regex, method) in latest_state_transitions.iter() {
 
         // Fetching a reference to current line
