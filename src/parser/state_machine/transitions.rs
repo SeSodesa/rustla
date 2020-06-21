@@ -136,7 +136,7 @@ lazy_static! {
       enumerated_actions.push((*pat_name, r, *fun));
     }
 
-    action_map.insert("Definition", enumerated_actions);
+    action_map.insert("Enumerated", enumerated_actions);
 
 
     let mut field_actions = Vec::with_capacity(FIELD_LIST_TRANSITIONS.len());
