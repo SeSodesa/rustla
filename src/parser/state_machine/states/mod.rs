@@ -107,6 +107,17 @@ pub struct Definition {
   pub transitions: &'static Vec<Transition>
 }
 
+impl Definition {
+
+  fn new () -> Self {
+    Self{
+      transitions: transitions::TRANSITION_MAP.get("Definition").unwrap()
+    }
+  }
+
+}
+
+
 /// ### DefinitionList
 /// This state is transitioned to if a first line of `DefinitionList`
 /// is detected. Handles the subsequent lines.
