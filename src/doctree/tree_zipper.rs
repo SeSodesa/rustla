@@ -101,7 +101,7 @@ impl TreeZipper {
 
   /// ### focus_on_last_child
   /// Moves the focus to the last child of the current focus.
-  fn focus_on_last_child (self) -> Result<Self, &'static str> {
+  pub fn focus_on_last_child (self) -> Result<Self, &'static str> {
 
     let children_len = self.node.children.len();
 
