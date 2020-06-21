@@ -70,7 +70,7 @@ impl DocTree {
       Root::new(doc_name)
     );
 
-    let root_node = TreeNode::new(None, root_data);
+    let root_node = TreeNode::new(root_data);
 
     let zipper = TreeZipper::new(root_node);
 
@@ -104,7 +104,7 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  fn new(parent_id: Option<usize>, data: TreeNodeType) -> Self {
+  fn new(data: TreeNodeType) -> Self {
     
     TreeNode {
       children: Vec::new(),
