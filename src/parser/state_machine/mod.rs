@@ -46,11 +46,30 @@ pub enum StateMachine {
   Definition(MachineWithState<Definition>),
   Line(MachineWithState<Line>),
   SubstitutionDef(MachineWithState<SubstitutionDef>),
-  RFC2822Body(MachineWithState<RFC2822Body>),
-  RFC2822List(MachineWithState<RFC2822List>),
 }
 
 impl StateMachine {
+
+  /// ### new
+  /// A `StateMachine` enum constructor
+  fn new (state_type_name: &str) -> Self {
+    match state_type_name {
+      "Body" => StateMachine::Body( MachineWithState::<Body> { state: Body::new() } ),
+      "BulletList" => StateMachine::BulletList( MachineWithState::<BulletList> { state: BulletList::new() } ),
+      "DefinitionList" => StateMachine::DefinitionList( MachineWithState::<DefinitionList> { state: DefinitionList::new() } ),
+      "EnumeratedList" => StateMachine::EnumeratedList( MachineWithState::<EnumeratedList> { state: EnumeratedList::new() } ),
+      "FieldList" => StateMachine::FieldList( MachineWithState::<FieldList> { state: FieldList::new() } ),
+      "OptionList" => StateMachine::OptionList( MachineWithState::<OptionList> { state: OptionList::new() } ),
+      "LineBlock" => StateMachine::LineBlock( MachineWithState::<LineBlock> { state: LineBlock::new() } ),
+      "ExtensionOptions" => StateMachine::ExtensionOptions( MachineWithState::<ExtensionOptions> { state: ExtensionOptions::new() } ),
+      "ExplicitMarkup" => StateMachine::ExplicitMarkup( MachineWithState::<ExplicitMarkup> { state: ExplicitMarkup::new() } ),
+      "Text" => StateMachine::Text( MachineWithState::<Text> { state: Text::new() } ),
+      "Definition" => StateMachine::Definition( MachineWithState::<Definition> { state: Definition::new() } ),
+      "Line" => StateMachine::Line( MachineWithState::<Line> { state: Line::new() } ),
+      "SubstitutionDef" => StateMachine::SubstitutionDef( MachineWithState::<SubstitutionDef> { state: SubstitutionDef::new() } ),
+      _ => unreachable!()
+    }
+  }
 
   /// ### get_transitions
   /// Retrieves the list of transitions from a `StateMachine` variant
@@ -73,9 +92,6 @@ impl StateMachine {
       StateMachine::Definition(machine) => machine.state.transitions,
       StateMachine::Line(machine) => machine.state.transitions,
       StateMachine::SubstitutionDef(machine) => machine.state.transitions,
-      StateMachine::RFC2822Body(machine) => machine.state.transitions,
-      StateMachine::RFC2822List(machine) => machine.state.transitions,
-
     }
 
   }

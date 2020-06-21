@@ -29,6 +29,8 @@ impl Body  {
 
   /// ### bullet
   /// The transition method for matching bullets in `Body` state.
+  /// Causes the parser to push a new machine in the state
+  /// `BulletList` on top of its machine stack.
   pub fn bullet (doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
 
     let mut tree_container = doctree.unwrap();
@@ -51,9 +53,9 @@ impl Body  {
       }
     };
 
-    // Create logic for building the next BulletList state.
+    let next_state = StateMachine::new("BulletList");
 
-    todo!();
+    Ok( ( Some(tree_container), Some(next_state) ) )
 
   }
 
