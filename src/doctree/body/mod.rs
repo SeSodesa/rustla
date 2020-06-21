@@ -20,6 +20,22 @@ pub struct BulletList {
   indent: usize,
   nesting_level: usize,
 }
+
+impl BulletList {
+
+  /// ### bew
+  /// BulletList node type constructor
+  fn new (bullet: char, indent: usize, nesting_level: usize) -> Self {
+    Self {
+      bullet: bullet,
+      indent: indent,
+      nesting_level: nesting_level
+    }
+  }
+
+}
+
+
 #[derive(Debug)]
 pub struct EnumeratedList {
   
