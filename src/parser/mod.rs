@@ -101,7 +101,7 @@ impl Parser {
 
           let captures = regex.captures(src_line).unwrap();
 
-          self.doctree = match method(self.doctree.take(), captures) {
+          self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures) {
             Ok((opt_doctree, opt_next_state, )) => {
               if let Some(next_state) = opt_next_state {
                 self.machine_stack.push(next_state);

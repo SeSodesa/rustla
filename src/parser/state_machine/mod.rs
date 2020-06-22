@@ -19,7 +19,7 @@ use transitions::{TRANSITION_MAP, *};
 /// If the optional next state is *not* `None`, a new state machine
 /// in the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-type TransitionMethod = fn(Option<DocTree>, regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
+type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, Option<DocTree>, regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
