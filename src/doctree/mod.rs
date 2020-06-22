@@ -72,7 +72,7 @@ impl DocTree {
 
     let root_node = TreeNode::new(root_data);
 
-    let zipper = TreeZipper::new(root_node);
+    let zipper = TreeZipper::new(root_node, None, None);
 
     DocTree {
       tree: zipper,

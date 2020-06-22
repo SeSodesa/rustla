@@ -19,12 +19,12 @@ impl TreeZipper {
   /// ### new
   /// A `TreeZipper` constructor. A new `TreeZipper`
   /// consists of nothing but the root node.
-  pub fn new(node: TreeNode) -> Self {
+  pub fn new(node: TreeNode, parent: Option<Box<TreeZipper>>, index_in_parent: Option<usize>) -> Self {
 
     Self {
       node: node,
-      parent: None,
-      index_in_parent: None,
+      parent: parent,
+      index_in_parent: index_in_parent,
     }
 
   }
