@@ -117,4 +117,33 @@ impl TreeZipper {
 
   }
 
+
+  /// ### focus_on_sibling
+  /// Moves focus to the given nth sibling.
+  pub fn focus_on_sibling (self, sibling_index: usize) -> Result<Self, &'static str> {
+
+    let parent = if let Some(parent) = &self.parent {
+      match self.focus_on_parent() {
+        Ok(parent) => parent,
+        Err(e) => {
+          eprintln!("{}", e);
+          return Err("Could not focus on sibling because of missing parent.")
+        }
+      }
+    } else {
+      return Err("Parent missing...\n")
+    };
+
+    let sibling = match parent.focus_on_child(sibling_index) {
+      Ok(child) => child,
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("Could not access child\n")
+      }
+    };
+
+    Ok(sibling)
+
+  }
+
 }
