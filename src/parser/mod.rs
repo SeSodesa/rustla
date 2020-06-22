@@ -30,7 +30,7 @@ pub struct Parser {
   src_lines: Vec<String>,
   current_line: usize,
   doctree: Option<DocTree>,
-  machine_stack: Vec<StateMachine>,
+  machine_stack: Vec<Option<StateMachine>>,
 }
 
 
@@ -65,7 +65,7 @@ impl Parser {
 
     let init_machine = StateMachine::Body(init_state);
 
-    self.machine_stack.push(init_machine);
+    self.machine_stack.push(Some(init_machine));
 
     // The parsing loop
     let dt = loop {
@@ -77,7 +77,12 @@ impl Parser {
       // ownership of a reference given to it, which would prevent us from
       // modifying the machine stack.
       let latest_state_transitions = if let Some(machine) = self.machine_stack.last() {
-        machine.get_transitions().clone()
+        // We need as_ref(), as unwrap() returns a reference to an Option and not the StateMachine itself
+        machine
+          .as_ref()
+          .unwrap()
+          .get_transitions()
+          .clone()
       } else {
         break
       };
@@ -104,7 +109,7 @@ impl Parser {
           self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
             Ok((opt_doctree, opt_next_state, )) => {
               if let Some(next_state) = opt_next_state {
-                self.machine_stack.push(next_state);
+                self.machine_stack.push(Some(next_state));
               }
               opt_doctree
             }
@@ -121,11 +126,11 @@ impl Parser {
 
       }
 
-      // Attempt at parsing in the previous state if no match found.
-      // This should probably be a transition to a general
-      // failure state, but we'll go with this for now...
+      // Transtition the latest machine to a general failure state if no match found...
       if !match_found {
-        self.machine_stack.pop();
+        let mut last_machine = self.machine_stack.last_mut().unwrap().take(); // Take ownership of the Option-wrapped StateMachine for modification purposes
+        last_machine = Some(last_machine.unwrap().to_failure()); // Transition the machine to a failure state
+        self.machine_stack.last_mut().replace(&mut last_machine); // Place it back into the machine stack. The variable last_machine now contains None, which can be dropped
       }
 
       self.current_line += 1;

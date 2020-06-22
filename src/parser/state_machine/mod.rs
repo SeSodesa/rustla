@@ -76,7 +76,7 @@ impl StateMachine {
   /// ### to_failure
   /// Transitions a `StateMachine` into a `Failure` state using the From trait,
   /// the implementation of which automatically implements the Into trait.
-  fn to_failure (self) -> Self {
+  pub fn to_failure (self) -> Self {
     match self {
       StateMachine::Body(machine) => StateMachine::Failure(machine.into()),
       StateMachine::BulletList(machine) => StateMachine::Failure(machine.into()),
