@@ -354,3 +354,108 @@ impl Text {
 /// ### Failure
 /// A failure state, which is entered if no match in current state is found.
 pub struct Failure;
+
+
+impl From<MachineWithState<Body>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<Body>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<BulletList>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<BulletList>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<Definition>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<Definition>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<DefinitionList>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<DefinitionList>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<EnumeratedList>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<EnumeratedList>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<ExplicitMarkup>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<ExplicitMarkup>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<ExtensionOptions>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<ExtensionOptions>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<FieldList>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<FieldList>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<Line>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<Line>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<LineBlock>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<LineBlock>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<OptionList>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<OptionList>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<SubstitutionDef>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<SubstitutionDef>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
+
+impl From<MachineWithState<Text>> for MachineWithState<Failure> {
+  fn from(machine: MachineWithState<Text>) -> Self {
+    MachineWithState {
+      state: Failure
+    }
+  }
+}
