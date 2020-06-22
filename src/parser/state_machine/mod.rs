@@ -72,6 +72,29 @@ impl StateMachine {
     }
   }
 
+
+  /// ### to_failure
+  /// Transitions a `StateMachine` into a `Failure` state using the From trait,
+  /// the implementation of which automatically implements the Into trait.
+  fn to_failure (self) -> Self {
+    match self {
+      StateMachine::Body(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::BulletList(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::DefinitionList(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::EnumeratedList(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::FieldList(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::OptionList(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::LineBlock(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::ExtensionOptions(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::ExplicitMarkup(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::Text(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::Definition(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::Line(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::SubstitutionDef(machine) => StateMachine::Failure(machine.into()),
+      _ => unreachable!()
+    }
+  }
+
   /// ### get_transitions
   /// Retrieves the list of transitions from a `StateMachine` variant
   /// using a `match` statement. This seems like a lot of repetition,
