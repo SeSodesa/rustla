@@ -19,7 +19,7 @@ use transitions::{TRANSITION_MAP, *};
 /// If the optional next state is *not* `None`, a new state machine
 /// in the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, Option<DocTree>, regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
+type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
@@ -52,21 +52,21 @@ impl StateMachine {
 
   /// ### new
   /// A `StateMachine` enum constructor
-  fn new (state_type_name: &str) -> Self {
+  fn new (state_type_name: &PatternName) -> Self {
     match state_type_name {
-      "Body" => StateMachine::Body( MachineWithState::<Body> { state: Body::new() } ),
-      "BulletList" => StateMachine::BulletList( MachineWithState::<BulletList> { state: BulletList::new() } ),
-      "DefinitionList" => StateMachine::DefinitionList( MachineWithState::<DefinitionList> { state: DefinitionList::new() } ),
-      "EnumeratedList" => StateMachine::EnumeratedList( MachineWithState::<EnumeratedList> { state: EnumeratedList::new() } ),
-      "FieldList" => StateMachine::FieldList( MachineWithState::<FieldList> { state: FieldList::new() } ),
-      "OptionList" => StateMachine::OptionList( MachineWithState::<OptionList> { state: OptionList::new() } ),
-      "LineBlock" => StateMachine::LineBlock( MachineWithState::<LineBlock> { state: LineBlock::new() } ),
-      "ExtensionOptions" => StateMachine::ExtensionOptions( MachineWithState::<ExtensionOptions> { state: ExtensionOptions::new() } ),
-      "ExplicitMarkup" => StateMachine::ExplicitMarkup( MachineWithState::<ExplicitMarkup> { state: ExplicitMarkup::new() } ),
-      "Text" => StateMachine::Text( MachineWithState::<Text> { state: Text::new() } ),
-      "Definition" => StateMachine::Definition( MachineWithState::<Definition> { state: Definition::new() } ),
-      "Line" => StateMachine::Line( MachineWithState::<Line> { state: Line::new() } ),
-      "SubstitutionDef" => StateMachine::SubstitutionDef( MachineWithState::<SubstitutionDef> { state: SubstitutionDef::new() } ),
+      //"Body" => StateMachine::Body( MachineWithState::<Body> { state: Body::new() } ),
+      PatternName::Bullet => StateMachine::BulletList( MachineWithState::<BulletList> { state: BulletList::new() } ),
+      PatternName::Enumerator => StateMachine::EnumeratedList( MachineWithState::<EnumeratedList> { state: EnumeratedList::new() } ),
+      PatternName::FieldMarker => StateMachine::FieldList( MachineWithState::<FieldList> { state: FieldList::new() } ),
+      PatternName::OptionMarker => StateMachine::OptionList( MachineWithState::<OptionList> { state: OptionList::new() } ),
+      PatternName::LineBlock => StateMachine::LineBlock( MachineWithState::<LineBlock> { state: LineBlock::new() } ),
+      PatternName::ExplicitMarkup => StateMachine::ExplicitMarkup( MachineWithState::<ExplicitMarkup> { state: ExplicitMarkup::new() } ),
+      //"DefinitionList" => StateMachine::DefinitionList( MachineWithState::<DefinitionList> { state: DefinitionList::new() } ),
+      //"ExtensionOptions" => StateMachine::ExtensionOptions( MachineWithState::<ExtensionOptions> { state: ExtensionOptions::new() } ),
+      //"Definition" => StateMachine::Definition( MachineWithState::<Definition> { state: Definition::new() } ),
+      PatternName::Line => StateMachine::Line( MachineWithState::<Line> { state: Line::new() } ),
+      //"SubstitutionDef" => StateMachine::SubstitutionDef( MachineWithState::<SubstitutionDef> { state: SubstitutionDef::new() } ),
+      PatternName::Text => StateMachine::Text( MachineWithState::<Text> { state: Text::new() } ),
       _ => unreachable!()
     }
   }

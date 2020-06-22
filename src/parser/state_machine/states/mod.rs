@@ -31,7 +31,7 @@ impl Body  {
   /// The transition method for matching bullets in `Body` state.
   /// Causes the parser to push a new machine in the state
   /// `BulletList` on top of its machine stack.
-  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
 
     let mut tree_container = doctree.unwrap();
 
@@ -53,7 +53,7 @@ impl Body  {
       }
     };
 
-    let next_state = StateMachine::new("BulletList");
+    let next_state = StateMachine::new(pattern_name);
 
     Ok( ( Some(tree_container), Some(next_state) ) )
 
@@ -98,6 +98,16 @@ impl BulletList {
     Self {
       transitions: transitions::TRANSITION_MAP.get("Bullet").unwrap()
     }
+  }
+
+
+  /// ### bullet
+  /// A `BulletList` version of the bullet list related
+  /// transition method. Differs from the `Body` state version
+  /// in that this detects whether a list of a different type has started
+  /// and acts accordingly.
+  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+    todo!();
   }
 
 }

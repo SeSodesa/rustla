@@ -83,7 +83,7 @@ impl Parser {
       };
 
       // Iterating over a clone of the transitions
-      for (name, regex, method) in latest_state_transitions.iter() {
+      for (pattern_name, regex, method) in latest_state_transitions.iter() {
 
         // Fetching a reference to current line
         let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.current_line) {
@@ -101,7 +101,7 @@ impl Parser {
 
           let captures = regex.captures(src_line).unwrap();
 
-          self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures) {
+          self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
             Ok((opt_doctree, opt_next_state, )) => {
               if let Some(next_state) = opt_next_state {
                 self.machine_stack.push(next_state);

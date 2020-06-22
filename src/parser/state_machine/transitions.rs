@@ -10,9 +10,16 @@ use super::*;
 
 #[derive(Copy, Clone)]
 pub enum PatternName {
-  BulletList,
-
-
+  Bullet,
+  Enumerator,
+  FieldMarker,
+  OptionMarker,
+  DocTest,
+  LineBlock,
+  ExplicitMarkup,
+  Anonymous,
+  Line,
+  Text,
 }
 
 
@@ -24,12 +31,12 @@ type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::BulletList, r"^[+-*\u{2022}]( +|$)", Body::bullet),
+  (PatternName::Bullet, r"^[+-*\u{2022}]( +|$)", Body::bullet),
 ];
 
 
 pub const BULLET_LIST_TRANSITIONS: &[UncompiledTransition] = &[
-
+  (PatternName::Bullet, r"^[+-*\u{2022}]( +|$)", BulletList::bullet)
 ];
 
 pub const DEFINITION_LIST_TRANSITIONS: &[UncompiledTransition] = &[
