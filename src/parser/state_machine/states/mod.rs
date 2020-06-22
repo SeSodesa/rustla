@@ -108,7 +108,25 @@ impl BulletList {
   /// and acts accordingly.
   pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
 
-    let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
+    let tree_wrapper = doctree.unwrap();
+
+    let list_item_bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
+
+    let parent_ref = match &tree_wrapper.tree.parent {
+      Some(parent) => parent,
+      None => return Err("A bullet list has no parent?\nThis should not be happening...\n")
+    };
+
+    let parent_list_bullet = match &parent_ref.node.data {
+      doctree::TreeNodeType::BulletList(bullet_list_node) => bullet_list_node.bullet,
+      _ => return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
+    };
+
+    // A different bullet indicates a different type of list
+    // => either a different list on the same level or a sublist.
+    if list_item_bullet != parent_list_bullet {
+      todo!("Create a failure state instance and return with it.");
+    }
 
     todo!();
 
