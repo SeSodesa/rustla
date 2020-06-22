@@ -107,7 +107,11 @@ impl BulletList {
   /// in that this detects whether a list of a different type has started
   /// and acts accordingly.
   pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+
+    let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
+
     todo!();
+
   }
 
 }
