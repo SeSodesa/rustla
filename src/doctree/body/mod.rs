@@ -16,14 +16,14 @@ pub struct Container {
 }
 #[derive(Debug)]
 pub struct BulletList {
-  bullet: char, // might need to be changed to a grapheme (needs external crate)
-  indent: usize,
-  nesting_level: usize,
+  pub bullet: char, // might need to be changed to a grapheme (needs external crate)
+  pub indent: usize,
+  pub nesting_level: usize,
 }
 
 impl BulletList {
 
-  /// ### bew
+  /// ### new
   /// BulletList node type constructor
   pub fn new (bullet: char, indent: usize, nesting_level: usize) -> Self {
     Self {
