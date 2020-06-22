@@ -109,7 +109,7 @@ impl Parser {
               opt_doctree
             }
             Err(e) => {
-              eprintln!("{}", e);
+              eprintln!("{} on line {}", e, self.current_line);
               return Err("An error was encountered while executing a transition method.\n");
             }
           };
@@ -127,6 +127,8 @@ impl Parser {
       if !match_found {
         self.machine_stack.pop();
       }
+
+      self.current_line += 1;
 
     };
 
