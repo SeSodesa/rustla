@@ -78,11 +78,14 @@ impl Parser {
       // modifying the machine stack.
       let latest_state_transitions = if let Some(machine) = self.machine_stack.last() {
         // We need as_ref(), as unwrap() returns a reference to an Option and not the StateMachine itself
-        machine
-          .as_ref()
-          .unwrap()
-          .get_transitions()
-          .clone()
+        let latest_state_transitions = if let Ok(transitions_ref) = machine.as_ref().unwrap().get_transitions(){
+          transitions_ref.clone()
+        } else {
+          return Err("Parsing ended in Failure state.\n")
+        };
+
+        latest_state_transitions
+
       } else {
         break
       };

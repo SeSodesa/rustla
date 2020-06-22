@@ -100,23 +100,23 @@ impl StateMachine {
   /// using a `match` statement. This seems like a lot of repetition,
   /// but this is the only way of doing this when wrapping each
   /// different state machine type in an enum.
-  pub fn get_transitions (&self) -> &Vec<Transition> {
+  pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
-      StateMachine::Body(machine) => machine.state.transitions,
-      StateMachine::BulletList(machine) => machine.state.transitions,
-      StateMachine::DefinitionList(machine) => machine.state.transitions,
-      StateMachine::EnumeratedList(machine) => machine.state.transitions,
-      StateMachine::FieldList(machine) => machine.state.transitions,
-      StateMachine::OptionList(machine) => machine.state.transitions,
-      StateMachine::LineBlock(machine) => machine.state.transitions,
-      StateMachine::ExtensionOptions(machine) => machine.state.transitions,
-      StateMachine::ExplicitMarkup(machine) => machine.state.transitions,
-      StateMachine::Text(machine) => machine.state.transitions,
-      StateMachine::Definition(machine) => machine.state.transitions,
-      StateMachine::Line(machine) => machine.state.transitions,
-      StateMachine::SubstitutionDef(machine) => machine.state.transitions,
-      StateMachine::Failure( .. ) => unreachable!()
+      StateMachine::Body(machine) => Ok(machine.state.transitions),
+      StateMachine::BulletList(machine) => Ok(machine.state.transitions),
+      StateMachine::DefinitionList(machine) => Ok(machine.state.transitions),
+      StateMachine::EnumeratedList(machine) => Ok(machine.state.transitions),
+      StateMachine::FieldList(machine) => Ok(machine.state.transitions),
+      StateMachine::OptionList(machine) => Ok(machine.state.transitions),
+      StateMachine::LineBlock(machine) => Ok(machine.state.transitions),
+      StateMachine::ExtensionOptions(machine) => Ok(machine.state.transitions),
+      StateMachine::ExplicitMarkup(machine) => Ok(machine.state.transitions),
+      StateMachine::Text(machine) => Ok(machine.state.transitions),
+      StateMachine::Definition(machine) => Ok(machine.state.transitions),
+      StateMachine::Line(machine) => Ok(machine.state.transitions),
+      StateMachine::SubstitutionDef(machine) => Ok(machine.state.transitions),
+      StateMachine::Failure( .. ) => Err("Failure state has no transitions\n")
     }
 
   }
