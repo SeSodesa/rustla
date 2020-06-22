@@ -46,6 +46,7 @@ pub enum StateMachine {
   Definition(MachineWithState<Definition>),
   Line(MachineWithState<Line>),
   SubstitutionDef(MachineWithState<SubstitutionDef>),
+  Failure(MachineWithState<Failure>)
 }
 
 impl StateMachine {
@@ -92,6 +93,7 @@ impl StateMachine {
       StateMachine::Definition(machine) => machine.state.transitions,
       StateMachine::Line(machine) => machine.state.transitions,
       StateMachine::SubstitutionDef(machine) => machine.state.transitions,
+      StateMachine::Failure( .. ) => unreachable!()
     }
 
   }

@@ -349,3 +349,8 @@ impl Text {
   }
 
 }
+
+
+/// ### Failure
+/// A failure state, which is entered if no match in current state is found.
+pub struct Failure;
