@@ -324,11 +324,12 @@ impl Parser {
       None => None
     };
 
-    eprintln!("Indent after block assignment: {:?}", minimal_indent);
+    eprintln!("Minimal indent after block assignment: {:?}", minimal_indent);
 
     // If there is block indentation but no predetermined indentation for the first line,
     // set the indentation of the first line equal to block indentation.
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
+      eprintln!("Setting first line indentation equal to block indentation: {}...\n", block_indent);
       Some(block_indent)
     } else {
       first_indent
@@ -440,6 +441,9 @@ impl Parser {
 
     // If indentation was expected on the first line, remove it
     if !first_indent.is_none() && !block_lines.is_empty() {
+
+      eprintln!("Removing first line indentation...\n");
+
       if let Some(first_line) = block_lines.first_mut() {
         
         let mut cs = first_line.chars();
@@ -458,6 +462,9 @@ impl Parser {
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
       if strip_indent {
+
+        eprintln!("Removing indentation from lines...\n");
+
         for (index, line) in block_lines.iter_mut().enumerate() {
 
           if first_indent.is_some() && index == 0 {
