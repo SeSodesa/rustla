@@ -355,7 +355,10 @@ impl Text {
 
 
 /// ### Inline
-/// A state for inline parsing
+/// A state for inline parsing. This state is different from the other ones,
+/// as it is not used at the `Parser` level. Instead,
+/// individual transition methods may initiate a
+/// `MachineWithState<Inline>` for parsing an inline block of text.
 pub struct Inline {
   transitions: &'static Vec<Transition>
 }
@@ -368,6 +371,13 @@ impl Inline {
     Self {
       transitions: transitions::TRANSITION_MAP.get("Inline").unwrap()
     }
+  }
+
+
+  /// ### escape
+  /// A function fopr parsing an escaped character
+  pub fn escape () {
+
   }
 
 

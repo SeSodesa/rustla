@@ -154,6 +154,10 @@ impl MachineWithState<Body> {
 
 }
 
+impl MachineWithState<Inline> {
+  
+}
+
 
 
 /// ====================
