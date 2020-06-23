@@ -10,6 +10,8 @@ use super::*;
 
 #[derive(Copy, Clone)]
 pub enum PatternName {
+
+  // Body elements, possibly nested
   Bullet,
   Enumerator,
   FieldMarker,
@@ -17,9 +19,20 @@ pub enum PatternName {
   DocTest,
   LineBlock,
   ExplicitMarkup,
-  Anonymous,
+  AnonymousTarget,
   Line,
   Text,
+
+  // Inline Elements for parsing Strings
+  StrongEmphasis,
+  Emphasis,
+  Interpreted,
+  PhraseRef,
+  SimpleRef,
+  Literal,
+  InlineTarget,
+  SubstitutionRef,
+  ImplicitURL,
 }
 
 
