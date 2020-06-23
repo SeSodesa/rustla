@@ -113,12 +113,7 @@ impl BulletList {
     let list_item_bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let list_item_indent = captures.get(0).unwrap().end();
 
-    let parent_ref = match &tree_wrapper.tree.parent {
-      Some(parent) => parent,
-      None => return Err("A bullet list has no parent?\nThis should not be happening...\n")
-    };
-
-    let (parent_list_bullet, parent_list_indent) = match &parent_ref.node.data {
+    let (list_bullet, list_indent) = match &tree_wrapper.tree.node.data {
       doctree::TreeNodeType::BulletList(bullet_list_node) => (bullet_list_node.bullet, bullet_list_node.indent),
       _ => return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
     };
@@ -126,7 +121,11 @@ impl BulletList {
     // If bullet and indentation match with current list node, continue with current list.
     // Else check for possible sublist or need to break out of current list and act accordingly.
     match (list_item_bullet, list_item_indent) {
-      (bullet, indent) if bullet == parent_list_bullet && indent == parent_list_indent => {
+      (bullet, indent) if bullet == list_bullet && indent == list_indent => {
+
+        // Create new ListItem node, read in the next block of text with known
+        // indent with Parser::read_indented_block and parse it for inline elements,
+        // feeding those to the ListItem node.
         todo!();
       },
       _ => {
