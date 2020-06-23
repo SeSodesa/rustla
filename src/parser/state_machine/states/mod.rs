@@ -354,6 +354,33 @@ impl Text {
 }
 
 
+/// ### Inline
+/// A state for inline parsing
+pub struct Inline {
+  transitions: &'static Vec<Transition>
+}
+
+impl Inline {
+
+  /// ### new
+  /// An `Inline` state constructor
+  pub fn new() -> Self{
+    Self {
+      transitions: transitions::TRANSITION_MAP.get("Inline").unwrap()
+    }
+  }
+
+
+  /// ### paired_delimiter
+  /// Parses inline text elements that have simple opening
+  /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
+  pub fn paired_delimiter (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+    todo!();
+  }
+
+}
+
+
 /// ### Failure
 /// A failure state, which is entered if no match in current state is found.
 pub struct Failure;
