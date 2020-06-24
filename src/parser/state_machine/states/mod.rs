@@ -108,7 +108,7 @@ impl BulletList {
   /// and acts accordingly.
   pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
 
-    let tree_wrapper = doctree.unwrap();
+    let mut tree_wrapper = doctree.unwrap();
 
     let list_item_bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let list_item_indent = captures.get(0).unwrap().end();
@@ -128,6 +128,41 @@ impl BulletList {
         // feeding those to the ListItem node.
 
         let item_node = doctree::TreeNode::new(TreeNodeType::ListItem(body_nodes::ListItem{}));
+
+        tree_wrapper.tree.push_child(item_node);
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
+          Ok(tree_zipper) => tree_zipper,
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("No child of type ListItem to be focused on.\n")
+          }
+        };
+
+        // Read indented block here
+        let block = match Parser::read_indented_block(src_lines, Some(*current_line), None, None, Some(indent), Some(indent)) {
+          Ok((lines, min_indent, line_offset, blank_finish)) => {
+
+            if min_indent == indent {
+              return Err("Indent of list item block was less than given.")
+            }
+
+            *current_line += line_offset; // update current line after reading block
+
+            lines.join("\n")
+
+          }
+
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Error when reading list item block.\n")
+          }
+
+        };
+
+
+        // Pass text to inline parser as a string
+
+        let inline_parser = MachineWithState::<Inline>::new();
 
         todo!();
       },
