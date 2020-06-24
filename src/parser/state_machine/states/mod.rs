@@ -4,7 +4,7 @@
 //pub mod body;
 
 use super::*;
-use crate::doctree;
+use crate::doctree::{self, TreeNode, TreeNodeType, structural_nodes, body_nodes, inline_nodes};
 
 /// ### Body
 /// A state for detecting and parsing the first lines
@@ -39,9 +39,9 @@ impl Body  {
     let indent = captures.get(0).unwrap().end();
     let nesting_level: usize = 0;
 
-    let bullet_list_data = doctree::TreeNodeType::BulletList(doctree::body::BulletList::new(bullet, indent, nesting_level));
+    let bullet_list_data = TreeNodeType::BulletList(doctree::body_nodes::BulletList::new(bullet, indent, nesting_level));
 
-    let list_node = doctree::TreeNode::new(bullet_list_data);
+    let list_node = TreeNode::new(bullet_list_data);
 
     tree_container.tree.node.push_child(list_node);
 
@@ -126,6 +126,9 @@ impl BulletList {
         // Create new ListItem node, read in the next block of text with known
         // indent with Parser::read_indented_block and parse it for inline elements,
         // feeding those to the ListItem node.
+
+        let item_node = doctree::TreeNode::new(TreeNodeType::ListItem(body_nodes::ListItem{}));
+
         todo!();
       },
       _ => {
