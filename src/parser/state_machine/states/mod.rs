@@ -412,13 +412,6 @@ impl Inline {
   }
 
 
-  /// ### escape
-  /// A function for parsing an escaped character
-  pub fn escape (captures: regex::Captures) -> TreeNode {
-    todo!();
-  }
-
-
   /// ### paired_delimiter
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
