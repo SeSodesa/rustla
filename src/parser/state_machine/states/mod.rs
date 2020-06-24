@@ -398,7 +398,7 @@ impl Text {
 /// individual transition methods may initiate a
 /// `MachineWithState<Inline>` for parsing an inline block of text.
 pub struct Inline {
-  pub transitions: &'static Vec<(PatternName, regex::Regex, InlineTransitionMethod)>
+  pub transitions: &'static Vec<(PatternName, regex::Regex, InlineParsingMethod)>
 }
 
 impl Inline {
@@ -413,8 +413,8 @@ impl Inline {
 
 
   /// ### escape
-  /// A function fo parsing an escaped character
-  pub fn escape () {
+  /// A function for parsing an escaped character
+  pub fn escape (captures: regex::Captures) -> TreeNode {
     todo!();
   }
 
@@ -422,7 +422,7 @@ impl Inline {
   /// ### paired_delimiter
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-  pub fn paired_delimiter () {
+  pub fn paired_delimiter (captures: regex::Captures) -> TreeNode {
     todo!();
   }
 

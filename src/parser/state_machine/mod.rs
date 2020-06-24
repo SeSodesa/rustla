@@ -30,12 +30,12 @@ type Transition = (PatternName, regex::Regex, TransitionMethod);
 
 /// ### InlineTransitionMethod
 /// A type alias for a function describing an inline transition.
-type InlineTransitionMethod = fn ();
+type InlineParsingMethod = fn (captures: regex::Captures) -> TreeNode;
 
 
 /// ### InlineTransition
 /// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
-type InlineTransition = (PatternName, &'static str, InlineTransitionMethod);
+type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 
 
 /// ### StateMachine
@@ -196,10 +196,10 @@ impl MachineWithState<Inline> {
 
             let full_match = capts.get(0).unwrap();
 
-            let node = parsing_function();
+            let node = parsing_function(capts);
 
             // match found => advance chars iterator to end of match, as
-            // inline patterns match at the start of the give source
+            // inline patterns match at the start of the given source
             let capt_len = full_match.end() - full_match.start();
 
             for _ in 0..capt_len - 1 {
