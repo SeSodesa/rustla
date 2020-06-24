@@ -9,7 +9,7 @@ use std::cmp;
 use super::*;
 use crate::utils;
 use states::*;
-use transitions::{TRANSITION_MAP, *};
+use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, *};
 
 /// ### TransitionMethod
 /// A function pointer type alias for a State transition method.
@@ -24,6 +24,17 @@ type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, do
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
 type Transition = (PatternName, regex::Regex, TransitionMethod);
+
+
+/// ### InlineTransitionMethod
+/// A type alias for a function describing an inline transition.
+type InlineTransitionMethod = fn ();
+
+
+/// ### InlineTransition
+/// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
+type InlineTransition = (PatternName, &'static str, InlineTransitionMethod);
+
 
 /// ### StateMachine
 /// An enum of `MachineWithState`s.
@@ -155,7 +166,14 @@ impl MachineWithState<Body> {
 }
 
 impl MachineWithState<Inline> {
-  
+
+
+  fn new() -> Self {
+    Self {
+      state: Inline::new(),
+    }
+  }
+
 }
 
 

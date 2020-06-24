@@ -360,7 +360,7 @@ impl Text {
 /// individual transition methods may initiate a
 /// `MachineWithState<Inline>` for parsing an inline block of text.
 pub struct Inline {
-  transitions: &'static Vec<Transition>
+  transitions: &'static Vec<(PatternName, regex::Regex, InlineTransitionMethod)>
 }
 
 impl Inline {
@@ -369,22 +369,22 @@ impl Inline {
   /// An `Inline` state constructor
   pub fn new() -> Self{
     Self {
-      transitions: transitions::TRANSITION_MAP.get("Inline").unwrap()
+      transitions: &COMPILED_INLINE_TRANSITIONS
     }
   }
 
 
   /// ### escape
-  /// A function fopr parsing an escaped character
+  /// A function fo parsing an escaped character
   pub fn escape () {
-
+    todo!();
   }
 
 
   /// ### paired_delimiter
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-  pub fn paired_delimiter (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
+  pub fn paired_delimiter () {
     todo!();
   }
 

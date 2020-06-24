@@ -9,6 +9,8 @@ use super::*;
 
 
 #[derive(Copy, Clone)]
+/// ### PatternName
+/// An enum of transition regex pattern names, both for body and inline level elements.
 pub enum PatternName {
 
   // Body elements, possibly nested
@@ -105,7 +107,7 @@ pub const SUBSTITUTION_DEF_TRANSITIONS: &[UncompiledTransition] = &[
 ];
 
 
-pub const INLINE_TRANSITIONS: &[UncompiledTransition] = &[
+pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   //(PatternName::Emphasis, r"\\(.)", Inline::escape),
   (PatternName::StrongEmphasis, r"^\*\*.+[^\\]\*\*", Inline::paired_delimiter),
   (PatternName::Emphasis, r"^\*.+[^\\*]\*", Inline::paired_delimiter)
@@ -254,17 +256,36 @@ lazy_static! {
     action_map.insert("Line", subst_def_actions);    
 
 
-    let mut inline_actions = Vec::with_capacity(INLINE_TRANSITIONS.len());
+    // let mut inline_actions = Vec::with_capacity(INLINE_TRANSITIONS.len());
 
-    for (pat_name, expr, fun) in INLINE_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      inline_actions.push((*pat_name, r, *fun));
-    }
+    // for (pat_name, expr, fun) in INLINE_TRANSITIONS.iter() {
+    //   let r = regex::Regex::new(expr).unwrap();
+    //   inline_actions.push((*pat_name, r, *fun));
+    // }
 
-    action_map.insert("Inline", inline_actions);
+    // action_map.insert("Inline", inline_actions);
 
     action_map
 
   };
+
+  /// ### COMPILED_INLINE_TRANSITIONS
+  /// A vector of transitions specific to MachineWithState<Inline>.
+  /// Inline text has different parsing requirements than (nested)
+  /// `Body` elements as they do not form blocks of text,
+  /// making detecting by source line impractical.
+  pub static ref COMPILED_INLINE_TRANSITIONS: Vec<(PatternName, regex::Regex, InlineTransitionMethod)> = {
+
+    let mut inline_transitions = Vec::with_capacity(INLINE_TRANSITIONS.len());
+
+    for (pat_name, expr, fun) in INLINE_TRANSITIONS.iter() {
+      let r = regex::Regex::new(expr).unwrap();
+      inline_transitions.push((*pat_name, r, *fun));
+    }
+
+    inline_transitions
+
+  };
+
 
 }
