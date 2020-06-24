@@ -29,6 +29,12 @@ impl TreeZipper {
 
   }
 
+  /// ### push child
+  /// Adds a child node to the contained node.
+  pub fn push_child (&mut self, tree_node: TreeNode) {
+    self.node.push_child(tree_node)
+  }
+
 
   /// ### focus_on_child
   /// Moves focus to a specific child of a node.
