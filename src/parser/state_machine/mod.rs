@@ -182,7 +182,7 @@ impl MachineWithState<Inline> {
   /// A function that parses inline text. Returns the tokens generated.
   fn parse (&self, inline_src_block: String) -> Vec<TreeNode> {
 
-    let nodes: Vec<TreeNode> = Vec::new();
+    let mut nodes: Vec<TreeNode> = Vec::new();
 
     // Remove backslashes
     let src_without_escapes = inline_src_block.replace("\\", "");
@@ -195,7 +195,7 @@ impl MachineWithState<Inline> {
 
       for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
 
-        let captures = match regexp.captures(remaining) {
+        match regexp.captures(remaining) {
 
           Some(capts) => {
 
@@ -211,18 +211,19 @@ impl MachineWithState<Inline> {
               src_chars.next();
             }
 
-            todo!();
+            nodes.push(node);
 
           },
+
           None => continue // no match, do nothing
+
         };
 
       }
 
     }
 
-    todo!();
-
+    nodes
 
   }
 
