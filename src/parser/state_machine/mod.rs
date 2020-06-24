@@ -10,6 +10,8 @@ use super::*;
 use crate::utils;
 use states::*;
 use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, *};
+use crate::doctree::{self, TreeNode};
+
 
 /// ### TransitionMethod
 /// A function pointer type alias for a State transition method.
@@ -172,6 +174,16 @@ impl MachineWithState<Inline> {
     Self {
       state: Inline::new(),
     }
+  }
+
+}
+
+impl MachineWithState<Inline> {
+
+  /// ### parse
+  /// A function that parses inline text. Returns the tokens generated.
+  fn parse () -> Vec<TreeNode> {
+    todo!();
   }
 
 }
