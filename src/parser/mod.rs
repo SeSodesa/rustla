@@ -311,7 +311,7 @@ impl Parser {
   /// if successful.
   fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
     strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>)
-  -> Result<(Vec<String>, usize, bool), String> {
+  -> Result<(Vec<String>, usize, usize, bool), String> {
 
     if src_lines.is_empty() {
       return Err(String::from("An empty block of text was handed for parsing.\nComputer says no...\n"))
@@ -500,7 +500,9 @@ impl Parser {
 
     block_lines.shrink_to_fit(); // Free unnecessary used memory
 
-    Ok((block_lines, minimal_indent.unwrap(), blank_finish))
+    let line_diff = block_lines.len();
+
+    Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
 
   }
 

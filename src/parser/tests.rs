@@ -143,7 +143,7 @@ asdfsdafasdfasdfa
   let lines = utils::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None) {
-    Ok((lines, _indent, _empty_finish)) => {
+    Ok((lines, _indent, line_diff, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
 
@@ -183,7 +183,7 @@ asdfsdafasdfasdfa
   let lines = utils::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None) {
-    Ok((lines, _indent, _empty_finish)) => {
+    Ok((lines, _indent, line_diff, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
 
@@ -222,7 +222,7 @@ asdfsdafasdfasdfa
   let lines = utils::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, None, None) {
-    Ok((lines, _indent, _empty_finish)) => {
+    Ok((lines, _indent, line_diff, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
 
@@ -262,9 +262,11 @@ asdfsdafasdfasdfa
   let lines = utils::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2)) {
-    Ok((lines, _indent, _empty_finish)) => {
+    Ok((lines, _indent, line_diff, _empty_finish)) => {
 
       eprintln!("{:#?}", lines);
+
+      assert_eq!(line_diff, 6);
 
       assert_eq!(
         lines.join("\n"),
