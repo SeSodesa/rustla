@@ -142,7 +142,7 @@ impl BulletList {
         let block = match Parser::read_indented_block(src_lines, Some(*current_line), None, None, Some(indent), Some(indent)) {
           Ok((lines, min_indent, line_offset, blank_finish)) => {
 
-            if min_indent == indent {
+            if min_indent != indent {
               return Err("Indent of list item block was less than given.")
             }
 
