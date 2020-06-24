@@ -169,21 +169,56 @@ impl MachineWithState<Body> {
 
 impl MachineWithState<Inline> {
 
-
+  /// ### new
+  /// MachineWithState<Inline> constructor.
   fn new() -> Self {
     Self {
       state: Inline::new(),
     }
   }
 
-}
-
-impl MachineWithState<Inline> {
 
   /// ### parse
   /// A function that parses inline text. Returns the tokens generated.
-  fn parse () -> Vec<TreeNode> {
+  fn parse (&self, inline_src_block: String) -> Vec<TreeNode> {
+
+    let nodes: Vec<TreeNode> = Vec::new();
+
+    let mut src_chars = inline_src_block.chars();
+
+    while let Some(c) = src_chars.next() {
+      let remaining = src_chars.as_str();
+
+      for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
+
+        let captures = match regexp.captures(remaining) {
+          Some(capts) => {
+
+            let full_match = capts.get(0).unwrap();
+
+            let node = parsing_function();
+
+            // match found => advance chars iterator to end of match, as
+            // inline patterns match at the start of the give source
+            let capt_len = full_match.end() - full_match.start();
+
+            for _ in 0..capt_len - 1 {
+              src_chars.next();
+            }
+
+            capts
+
+          },
+          None => continue // no match, do nothing
+        };
+
+      }
+
+    }
+
     todo!();
+
+
   }
 
 }

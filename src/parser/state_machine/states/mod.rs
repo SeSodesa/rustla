@@ -398,7 +398,7 @@ impl Text {
 /// individual transition methods may initiate a
 /// `MachineWithState<Inline>` for parsing an inline block of text.
 pub struct Inline {
-  transitions: &'static Vec<(PatternName, regex::Regex, InlineTransitionMethod)>
+  pub transitions: &'static Vec<(PatternName, regex::Regex, InlineTransitionMethod)>
 }
 
 impl Inline {
