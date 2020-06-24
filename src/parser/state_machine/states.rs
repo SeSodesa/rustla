@@ -416,7 +416,17 @@ impl Inline {
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
   pub fn paired_delimiter (captures: regex::Captures) -> TreeNode {
-    todo!();
+    
+    let content = captures.get(1).unwrap();
+
+    let data = String::from(content.as_str());
+
+    let node = TreeNode::new(TreeNodeType::StrongEmphasis(inline_nodes::StrongEmphasis{text: data}));
+
+    assert!(node.children.is_empty());
+
+    node
+
   }
 
 }

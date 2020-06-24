@@ -16,13 +16,11 @@ pub struct Emphasis {
 
 #[derive(Debug)]
 pub struct StrongEmphasis {
-
-  text: String,
+  pub text: String,
 }
 
 #[derive(Debug)]
 pub struct Literal {
-
   text: String,
 }
 

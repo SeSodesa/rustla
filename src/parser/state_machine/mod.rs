@@ -184,14 +184,19 @@ impl MachineWithState<Inline> {
 
     let nodes: Vec<TreeNode> = Vec::new();
 
-    let mut src_chars = inline_src_block.chars();
+    // Remove backslashes
+    let src_without_escapes = inline_src_block.replace("\\", "");
+
+    let mut src_chars = src_without_escapes.chars();
 
     while let Some(c) = src_chars.next() {
+
       let remaining = src_chars.as_str();
 
       for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
 
         let captures = match regexp.captures(remaining) {
+
           Some(capts) => {
 
             let full_match = capts.get(0).unwrap();
