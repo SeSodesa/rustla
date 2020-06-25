@@ -109,7 +109,8 @@ pub const SUBSTITUTION_DEF_TRANSITIONS: &[UncompiledTransition] = &[
 
 pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::StrongEmphasis, r"^\*\*(.+[^\\])\*\*", Inline::paired_delimiter),
-  (PatternName::Emphasis, r"^\*(.+[^\\])\*", Inline::paired_delimiter)
+  (PatternName::Emphasis, r"^\*(.+[^\\])\*", Inline::paired_delimiter),
+  (PatternName::Text, r".+", Inline::text)
 ];
 
 

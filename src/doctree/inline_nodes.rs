@@ -4,8 +4,7 @@ use super::*;
 
 #[derive(Debug)]
 pub struct Text {
-
-  text: String
+  pub text: String
 }
 
 #[derive(Debug)]
