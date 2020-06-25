@@ -31,7 +31,7 @@ type Transition = (PatternName, regex::Regex, TransitionMethod);
 
 /// ### InlineTransitionMethod
 /// A type alias for a function describing an inline transition.
-type InlineParsingMethod = fn (captures: &regex::Captures) -> TreeNode;
+type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures) -> TreeNode;
 
 
 /// ### InlineTransition
@@ -274,7 +274,7 @@ impl MachineWithState<Inline> {
 
           eprintln!("Match found for {:#?}\n", pattern_name);
 
-          let node = parsing_function(&capts);
+          let node = parsing_function(*pattern_name, &capts);
 
           eprintln!("{:#?}", node);
 

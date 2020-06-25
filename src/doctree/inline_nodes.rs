@@ -9,8 +9,7 @@ pub struct Text {
 
 #[derive(Debug, PartialEq)]
 pub struct Emphasis {
-
-  text: String,
+  pub text: String,
 }
 
 #[derive(Debug, PartialEq)]
