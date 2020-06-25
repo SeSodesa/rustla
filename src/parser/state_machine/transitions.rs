@@ -8,7 +8,7 @@ use lazy_static::lazy_static;
 use super::*;
 
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 /// ### PatternName
 /// An enum of transition regex pattern names, both for body and inline level elements.
 pub enum PatternName {
@@ -49,12 +49,12 @@ type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^([+-*\u{2022}])( +|$)", Body::bullet),
+  (PatternName::Bullet, r"^([+\-*\u{2022}])( +|$)", Body::bullet),
 ];
 
 
 pub const BULLET_LIST_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^([+-*\u{2022}])( +|$)", BulletList::bullet)
+  (PatternName::Bullet, r"^([+\-*\u{2022}])( +|$)", BulletList::bullet)
 ];
 
 pub const DEFINITION_LIST_TRANSITIONS: &[UncompiledTransition] = &[
@@ -110,7 +110,8 @@ pub const SUBSTITUTION_DEF_TRANSITIONS: &[UncompiledTransition] = &[
 pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::StrongEmphasis, r"^\*\*(.+[^\\])\*\*", Inline::paired_delimiter),
   (PatternName::Emphasis, r"^\*(.+[^\\])\*", Inline::paired_delimiter),
-  (PatternName::Text, r".+", Inline::text)
+  (PatternName::Text, r"^[^\\\n\[*`:]+", Inline::text),
+  (PatternName::Text, r"^[\s\S]", Inline::text)
 ];
 
 

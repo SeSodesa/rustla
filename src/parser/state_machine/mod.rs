@@ -3,6 +3,7 @@
 
 pub mod states;
 mod transitions;
+mod tests;
 
 use std::cmp;
 
@@ -167,15 +168,18 @@ impl MachineWithState<Body> {
 
 }
 
-impl MachineWithState<Inline> {
 
-  /// ### new
-  /// MachineWithState<Inline> constructor.
-  fn new() -> Self {
+impl From<MachineWithState<Body>> for MachineWithState<Inline> {
+
+  fn from (machine: MachineWithState<Body>) -> Self {
     Self {
-      state: Inline::new(),
+      state: Inline::new()
     }
   }
+
+}
+
+impl MachineWithState<Inline> {
 
 
   /// ### parse
@@ -199,7 +203,8 @@ impl MachineWithState<Inline> {
         let full_match = captures.get(0).unwrap();
         let match_len = full_match.end() - full_match.start();
         for _ in 0..match_len - 1 {
-          src_chars.next();
+          let c = src_chars.next().unwrap();
+          eprintln!("Consuming {:#?}", c);
         }
 
       },
@@ -211,6 +216,8 @@ impl MachineWithState<Inline> {
     }
 
     while let Some(c) = src_chars.next() {
+
+      eprintln!("Consuming {:#?}\n...", c);
 
       let remaining = src_chars.as_str();
 
@@ -225,8 +232,10 @@ impl MachineWithState<Inline> {
             // Move iterator to start of next possible match
             let full_match = captures.get(0).unwrap();
             let match_len = full_match.end() - full_match.start();
-            for _ in 0..match_len - 1 {
-              src_chars.next();
+
+            for _ in 0..match_len {
+              let c = src_chars.next().unwrap();
+              eprintln!("Consuming {:#?}...\n", c);
             }
     
           },
@@ -255,19 +264,28 @@ impl MachineWithState<Inline> {
 
     let src_str = chars_iter.as_str();
 
+    eprintln!("Matching against {:#?}\n", src_str);
+
     for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
 
       match regexp.captures(src_str) {
 
         Some(capts) => {
 
+          eprintln!("Match found for {:#?}\n", pattern_name);
+
           let node = parsing_function(&capts);
+
+          eprintln!("{:#?}", node);
 
           return Some((node, capts));
 
         },
 
-        None => continue // no match, do nothing
+        None => {
+          eprintln!("No match for {:#?}", pattern_name);
+          continue // no match, do nothing
+        }
 
       };
     }

@@ -162,7 +162,7 @@ impl BulletList {
 
         // Pass text to inline parser as a string
 
-        let inline_parser = MachineWithState::<Inline>::new();
+        let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
 
         todo!();
       },
@@ -430,7 +430,7 @@ impl Inline {
   }
 
 
-  /// ### paired_delimiter
+  /// ### text
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
   pub fn text (captures: &regex::Captures) -> TreeNode {
