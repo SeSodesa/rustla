@@ -415,7 +415,7 @@ impl Inline {
   /// ### paired_delimiter
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-  pub fn paired_delimiter (captures: regex::Captures) -> TreeNode {
+  pub fn paired_delimiter (captures: &regex::Captures) -> TreeNode {
     
     let content = captures.get(1).unwrap();
 

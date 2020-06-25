@@ -30,7 +30,7 @@ type Transition = (PatternName, regex::Regex, TransitionMethod);
 
 /// ### InlineTransitionMethod
 /// A type alias for a function describing an inline transition.
-type InlineParsingMethod = fn (captures: regex::Captures) -> TreeNode;
+type InlineParsingMethod = fn (captures: &regex::Captures) -> TreeNode;
 
 
 /// ### InlineTransition
@@ -180,7 +180,7 @@ impl MachineWithState<Inline> {
 
   /// ### parse
   /// A function that parses inline text. Returns the tokens generated.
-  fn parse (&self, inline_src_block: String) -> Vec<TreeNode> {
+  fn parse (&self, inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 
@@ -189,41 +189,93 @@ impl MachineWithState<Inline> {
 
     let mut src_chars = src_without_escapes.chars();
 
+    match self.match_iter(&src_chars) {
+      Some((node, captures)) => {
+
+        nodes.push(node);
+
+
+        // Move iterator to start of next possible match
+        let full_match = captures.get(0).unwrap();
+        let match_len = full_match.end() - full_match.start();
+        for _ in 0..match_len - 1 {
+          src_chars.next();
+        }
+
+      },
+
+      None => {
+        eprintln!("No match on line {}.\nProceeding to consume next character...\n", current_line);
+      }
+
+    }
+
     while let Some(c) = src_chars.next() {
 
       let remaining = src_chars.as_str();
 
       for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
 
-        match regexp.captures(remaining) {
+        match self.match_iter(&src_chars) {
 
-          Some(capts) => {
-
-            let full_match = capts.get(0).unwrap();
-
-            let node = parsing_function(capts);
-
-            // match found => advance chars iterator to end of match, as
-            // inline patterns match at the start of the given source
-            let capt_len = full_match.end() - full_match.start();
-
-            for _ in 0..capt_len - 1 {
-              src_chars.next();
-            }
+          Some((node, captures)) => {
 
             nodes.push(node);
 
+            // Move iterator to start of next possible match
+            let full_match = captures.get(0).unwrap();
+            let match_len = full_match.end() - full_match.start();
+            for _ in 0..match_len - 1 {
+              src_chars.next();
+            }
+    
           },
-
-          None => continue // no match, do nothing
-
-        };
-
+    
+          None => {
+            eprintln!("No match on line {}.\nProceeding to consume next character...\n", current_line);
+          }
+    
+        }
+        
       }
+    }
+
+    if nodes.is_empty() {
+      return None
+    }
+
+    Some(nodes)
+
+  }
+
+  /// ### match_iter
+  /// A function for checking the string representation of
+  /// a given `Chars` iterator for a regex match and executing
+  /// the corresponding parsing method. Returns the `Option`al
+  /// generated node if successful, otherwise returns with `None`.
+  fn match_iter <'machine, 'chars> (&'machine self, chars_iter: &'chars str::Chars) -> Option<(TreeNode, regex::Captures<'chars>)> {
+
+    let src_str = chars_iter.as_str();
+
+    for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
+
+      match regexp.captures(src_str) {
+
+        Some(capts) => {
+
+          let node = parsing_function(&capts);
+
+          return Some((node, capts));
+
+        },
+
+        None => continue // no match, do nothing
+
+      };
 
     }
 
-    nodes
+    None
 
   }
 
