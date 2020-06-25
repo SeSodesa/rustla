@@ -2,17 +2,17 @@
 
 use super::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Section {
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Topic {
 
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Transition {
 
 }

@@ -2,106 +2,106 @@
 
 use super::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Text {
   pub text: String
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Emphasis {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct StrongEmphasis {
   pub text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Literal {
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Reference {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FootnoteReference {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct CitationReference {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SubstitutionReference {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TitleReference {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Abbreviation {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Acronym {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SuperScript {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SubScript {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Math {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Image {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Inline {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Problematic {
 
   text: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Generated {
 
   text: String,

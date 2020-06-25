@@ -148,7 +148,7 @@ impl TreeNode {
 
 /// ### Root
 /// The root node data container of the parse tree.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Root {
   doc_name: String
 }
@@ -168,7 +168,7 @@ impl Root {
 /// ### TreeNodeType
 /// An enumaration of the different possible document
 /// node types.
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum TreeNodeType {
 
   // DocTree root node

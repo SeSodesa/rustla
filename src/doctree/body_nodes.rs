@@ -2,19 +2,19 @@
 
 use super::*;
   
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Paragraph {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Compound {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Container {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BulletList {
   pub bullet: char, // might need to be changed to a grapheme (needs external crate)
   pub indent: usize,
@@ -36,225 +36,225 @@ impl BulletList {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct EnumeratedList {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ListItem {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DefinitionList {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DefinitionListItem {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Term {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Classifier {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Definition {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FieldList {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Field {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FieldName {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct FieldBody {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Option {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OptionArgument {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OptionGroup {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OptionList {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OptionListItem {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct OptionString {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Description {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LiteralBlock {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct DoctestBlock {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct MathBlock {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LineBlock {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Line {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct BlockQuote {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Attribution {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Attention {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Caution {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Danger {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Error {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Important {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Note {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Tip {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Hint {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Warning {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Admonition {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Comment {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct SubstitutionDefinition {
   
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Target {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Footnote {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Citation {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Label {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Figure {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Caption {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Legend {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Table {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TableGroup {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ColSpec {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TableHead {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TableBody {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TableRow {
   
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct TableEntry {
   
 }
