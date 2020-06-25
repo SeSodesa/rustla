@@ -19,7 +19,7 @@ pub struct StrongEmphasis {
 
 #[derive(Debug, PartialEq)]
 pub struct Literal {
-  text: String,
+  pub text: String,
 }
 
 #[derive(Debug, PartialEq)]

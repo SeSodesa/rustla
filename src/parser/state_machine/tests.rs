@@ -7,7 +7,7 @@ use crate::doctree::TreeNodeType;
 #[test]
 fn inline_parse_01 () {
 
-  let src = String::from("This is a string with\n **strong emphasis** and normal text");
+  let src = String::from("This is a string with\n a ``literal``, **strong emphasis** and normal text");
 
   let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
 
@@ -33,7 +33,14 @@ fn inline_parse_01 () {
   );
 
   assert_eq!(
-    if let TreeNodeType::StrongEmphasis(data) = &nodes[3].data {
+    if let TreeNodeType::Literal(data) = &nodes[3].data {
+      data.text.as_str()
+    } else {panic!()},
+    "literal"
+  );
+
+  assert_eq!(
+    if let TreeNodeType::StrongEmphasis(data) = &nodes[5].data {
       data.text.as_str()
     } else {panic!()},
     "strong emphasis"
