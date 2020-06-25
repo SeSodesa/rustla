@@ -179,7 +179,8 @@ impl MachineWithState<Inline> {
 
 
   /// ### parse
-  /// A function that parses inline text. Returns the tokens generated.
+  /// A function that parses inline text. Returns the nodes generated,
+  /// if there are any.
   fn parse (&self, inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
@@ -193,7 +194,6 @@ impl MachineWithState<Inline> {
       Some((node, captures)) => {
 
         nodes.push(node);
-
 
         // Move iterator to start of next possible match
         let full_match = captures.get(0).unwrap();
@@ -234,9 +234,7 @@ impl MachineWithState<Inline> {
           None => {
             eprintln!("No match on line {}.\nProceeding to consume next character...\n", current_line);
           }
-    
         }
-        
       }
     }
 
@@ -272,13 +270,11 @@ impl MachineWithState<Inline> {
         None => continue // no match, do nothing
 
       };
-
     }
 
     None
 
   }
-
 }
 
 
