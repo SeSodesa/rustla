@@ -22,7 +22,7 @@ use crate::doctree::{self, TreeNode};
 /// If the optional next state is *not* `None`, a new state machine
 /// in the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str>;
+type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`

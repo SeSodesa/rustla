@@ -33,6 +33,15 @@ pub struct Parser {
   machine_stack: Vec<Option<StateMachine>>,
 }
 
+/// ### PushOrPop
+/// An enum for manipulating the machine stack. Transition methods should return this information
+/// with a possible next state, so the parser knows how to proceed. The `Push` variant signifies
+/// a state should be pushed on top of the stack, `Pop` tells of the need to pop from the stack
+/// and `Neither` initiates a transition of the current state into another one.
+pub enum PushOrPop {
+  Push, Pop, Neither
+}
+
 
 /// ==============
 /// Parser Methods
@@ -109,16 +118,41 @@ impl Parser {
           let captures = regex.captures(src_line).unwrap();
 
           self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
-            Ok((opt_doctree, opt_next_state, )) => {
+
+            Ok((opt_doctree, opt_next_state, push_or_pop)) => {
+
+              // If a transition method returns a state, check whether we should transition to it or
+              // push it on top of the stack...
               if let Some(next_state) = opt_next_state {
-                self.machine_stack.push(Some(next_state));
+                match push_or_pop {
+                  PushOrPop::Push => self.machine_stack.push(Some(next_state)),
+                  PushOrPop::Pop => {
+                    match self.machine_stack.pop() {
+                      Some(machine) => (),
+                      None => {
+                        return Err("Can't pop from empty stack.\n")
+                      }
+                    };
+                  }
+                  PushOrPop::Neither => {
+
+                    let machine = match self.machine_stack.last_mut() {
+                      Some(opt_machine) => opt_machine.replace(next_state),
+                      None => return Err("No machine on top of stack.\nCan't perform transition after executing transition method.\n")
+                    };
+                  }
+                };
               }
+
               opt_doctree
+
             }
+
             Err(e) => {
               eprintln!("{} on line {}", e, self.current_line);
               return Err("An error was encountered while executing a transition method.\n");
             }
+
           };
         }
 
