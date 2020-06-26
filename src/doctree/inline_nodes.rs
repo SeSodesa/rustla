@@ -23,7 +23,7 @@ pub struct Literal {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct SimpleReference {
+pub struct Reference {
   pub target_label: String,
 }
 

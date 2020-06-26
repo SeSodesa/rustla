@@ -442,13 +442,14 @@ impl Inline {
 
   /// ### simple_reference
   /// Parses a simple reference.
-  pub fn simple_reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+  pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
 
     let whole_match = captures.get(0).unwrap();
 
     let target_label = captures.get(1).unwrap();
 
-    let data = TreeNodeType::SimpleReference(inline_nodes::SimpleReference{target_label: String::from(target_label.as_str())});
+    let data = TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())});
+
 
     let node = TreeNode::new(data);
 
