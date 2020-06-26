@@ -38,7 +38,7 @@ fn inline_parse_01 () {
 #[test]
 fn inline_parse_02 () {
 
-  let src = String::from("This is a string with a reference_");
+  let src = String::from("This is a string with a simple-reference+with:punctuation_");
 
   let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
 
@@ -53,7 +53,7 @@ fn inline_parse_02 () {
     if let TreeNodeType::SimpleReference(data) = &nodes[12].data {
       data.target_label.as_str()
     } else {panic!()},
-    "reference"
+    "simple-reference+with:punctuation"
   );
 
 }
