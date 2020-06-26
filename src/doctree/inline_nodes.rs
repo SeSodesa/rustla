@@ -23,20 +23,22 @@ pub struct Literal {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Reference {
+pub struct SimpleReference {
+  pub target_label: String,
+}
 
-  text: String,
+#[derive(Debug, PartialEq)]
+pub struct WhiteSpace {
+  pub text: String
 }
 
 #[derive(Debug, PartialEq)]
 pub struct FootnoteReference {
-
   text: String,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct CitationReference {
-
   text: String,
 }
 

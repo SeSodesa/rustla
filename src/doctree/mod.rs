@@ -241,7 +241,7 @@ pub enum TreeNodeType {
   Emphasis(inline_nodes::Emphasis),
   StrongEmphasis(inline_nodes::StrongEmphasis),
   Literal(inline_nodes::Literal),
-  Reference(inline_nodes::Reference),
+  SimpleReference(inline_nodes::SimpleReference),
   FootnoteReference(inline_nodes::FootnoteReference),
   CitationReference(inline_nodes::CitationReference),
   SubstitutionReference(inline_nodes::SubstitutionReference),
@@ -254,7 +254,8 @@ pub enum TreeNodeType {
   Image(inline_nodes::Image),
   Inline(inline_nodes::Inline),
   Problematic(inline_nodes::Problematic),
-  Generated(inline_nodes::Generated)
+  Generated(inline_nodes::Generated),
+  WhiteSpace(inline_nodes::WhiteSpace),
 
 }
 

@@ -31,7 +31,10 @@ type Transition = (PatternName, regex::Regex, TransitionMethod);
 
 /// ### InlineTransitionMethod
 /// A type alias for a function describing an inline transition.
-type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures) -> TreeNode;
+/// Returns a node a length of the match, so that the inline parser
+/// could determine how many characters to eat off the start of the
+/// source string.
+type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize);
 
 
 /// ### InlineTransition
@@ -189,60 +192,72 @@ impl MachineWithState<Inline> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 
+    let mut col: usize = 0;
+
     // Remove backslashes
     let src_without_escapes = inline_src_block.replace("\\", "");
 
-    let mut src_chars = src_without_escapes.chars();
+    let src_chars = &mut src_without_escapes.chars();
 
     match self.match_iter(&src_chars) {
-      Some((node, captures)) => {
+      Some((node, offset)) => {
 
         nodes.push(node);
 
         // Move iterator to start of next possible match
-        let full_match = captures.get(0).unwrap();
-        let match_len = full_match.end() - full_match.start();
-        for _ in 0..match_len - 1 {
+        for _ in 0..offset - 1 {
           let c = src_chars.next().unwrap();
-          eprintln!("Consuming {:#?}", c);
-        }
+          eprintln!("Consuming {:#?}...", c);
 
+          col += 1;
+
+          if c == '\n' {
+            eprintln!("Detected newline...\n");
+            *current_line += 1;
+            col = 0;
+          }
+        }
       },
 
       None => {
-        eprintln!("No match on line {}.\nProceeding to consume next character...\n", current_line);
+        eprintln!("No match on line {}, col {}.\nProceeding to consume next character...\n", current_line, col);
       }
-
     }
 
     while let Some(c) = src_chars.next() {
 
-      eprintln!("Consuming {:#?}\n...", c);
+      eprintln!("Consuming {:#?}...\n", c);
 
-      let remaining = src_chars.as_str();
+      col += 1;
 
-      for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
+      if c == '\n' {
+        eprintln!("Detected newline...\n");
+        *current_line += 1;
+        col = 0;
+      }
 
-        match self.match_iter(&src_chars) {
+      match self.match_iter(&src_chars) {
+        Some((node, offset)) => {
 
-          Some((node, captures)) => {
+          nodes.push(node);
 
-            nodes.push(node);
+          // Move iterator to start of next possible match
+          for _ in 0..offset - 1 {
+            let c = src_chars.next().unwrap();
+            eprintln!("Consuming {:#?}", c);
 
-            // Move iterator to start of next possible match
-            let full_match = captures.get(0).unwrap();
-            let match_len = full_match.end() - full_match.start();
+            col += 1;
 
-            for _ in 0..match_len {
-              let c = src_chars.next().unwrap();
-              eprintln!("Consuming {:#?}...\n", c);
+            if c == '\n' {
+              eprintln!("Detected newline...\n");
+              *current_line += 1;
+              col = 0;
             }
-    
-          },
-    
-          None => {
-            eprintln!("No match on line {}.\nProceeding to consume next character...\n", current_line);
           }
+        },
+
+        None => {
+          eprintln!("No match on line {}, col {}.\n", current_line, col);
         }
       }
     }
@@ -260,9 +275,14 @@ impl MachineWithState<Inline> {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_iter <'machine, 'chars> (&'machine self, chars_iter: &'chars str::Chars) -> Option<(TreeNode, regex::Captures<'chars>)> {
+  fn match_iter <'machine, 'chars> (&'machine self, chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
 
     let src_str = chars_iter.as_str();
+
+    if src_str.is_empty() {
+      eprintln!("Source has been drained of characters.\n");
+      return None
+    }
 
     eprintln!("Matching against {:#?}\n", src_str);
 
@@ -274,11 +294,11 @@ impl MachineWithState<Inline> {
 
           eprintln!("Match found for {:#?}\n", pattern_name);
 
-          let node = parsing_function(*pattern_name, &capts);
+          let (node, offset) = parsing_function(*pattern_name, &capts);
 
           eprintln!("{:#?}", node);
 
-          return Some((node, capts));
+          return Some((node, offset));
 
         },
 

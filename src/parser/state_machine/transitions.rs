@@ -38,6 +38,7 @@ pub enum PatternName {
   InlineTarget, // Reference target in inline text: _`target label`
   SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
   ImplicitURL,
+  WhiteSpace,
 }
 
 
@@ -108,11 +109,14 @@ pub const SUBSTITUTION_DEF_TRANSITIONS: &[UncompiledTransition] = &[
 
 
 pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
-  (PatternName::StrongEmphasis, r"^\*\*(.+)\*\*", Inline::paired_delimiter),
-  (PatternName::Emphasis, r"^\*(.+)\*", Inline::paired_delimiter),
-  (PatternName::Literal, r"^``(.+)``", Inline::paired_delimiter),
-  (PatternName::Text, r"^[^\\\n\[*`:]+", Inline::text),
-  (PatternName::Text, r"^[\s\S]", Inline::text)
+  (PatternName::WhiteSpace, r"^\s+", Inline::whitespace),
+  (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", Inline::paired_delimiter),
+  (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", Inline::paired_delimiter),
+  (PatternName::Literal, r"^``(\S|\S.*\S)``", Inline::paired_delimiter),
+  (PatternName::Interpreted, r"^`(\S|\S.*\S)`", Inline::paired_delimiter),
+  (PatternName::SimpleRef, r"^([\p{L}0-9]+)__?", Inline::simple_reference),
+  (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
+  (PatternName::Text, r"^([\s\S])", Inline::text)
 ];
 
 

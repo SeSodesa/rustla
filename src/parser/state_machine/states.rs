@@ -134,7 +134,7 @@ impl BulletList {
 
             let src_block = lines.join("\n");
 
-            
+
 
           }
 
@@ -401,7 +401,7 @@ impl Inline {
   /// ### paired_delimiter
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-  pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) -> TreeNode {
+  pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
     
     let content = captures.get(1).unwrap();
 
@@ -416,17 +416,56 @@ impl Inline {
 
     assert!(node.children.is_empty());
 
-    node
+    let match_len = captures.get(0).unwrap().as_str().chars().count();
 
+    (node, match_len)
+
+  }
+
+
+  /// ### whitespace
+  /// Parses inline whitespace
+  pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+
+    let content = captures.get(0).unwrap();
+
+    let data = TreeNodeType::WhiteSpace(inline_nodes::WhiteSpace{text: String::from(content.as_str())});
+
+    let node = TreeNode::new(data);
+
+    let match_len = content.as_str().chars().count();
+
+    (node, match_len)
+
+  }
+
+
+  /// ### simple_reference
+  /// Parses a simple reference.
+  pub fn simple_reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+
+    let whole_match = captures.get(0).unwrap();
+
+    let target_label = captures.get(1).unwrap();
+
+    let data = TreeNodeType::SimpleReference(inline_nodes::SimpleReference{target_label: String::from(target_label.as_str())});
+
+    let node = TreeNode::new(data);
+
+    let match_len = whole_match.as_str().chars().count();
+
+    (node, match_len)
   }
 
 
   /// ### text
   /// Parses inline text elements that have simple opening
   /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-  pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> TreeNode {
-    
-    let content = captures.get(0).unwrap();
+  pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+
+    let content = captures.get(1).unwrap();
+
+    let match_len = content.as_str().chars().count();
 
     let data = String::from(content.as_str());
 
@@ -434,7 +473,7 @@ impl Inline {
 
     assert!(node.children.is_empty());
 
-    node
+    (node, match_len)
 
   }
 
