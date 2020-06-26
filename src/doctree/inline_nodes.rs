@@ -28,6 +28,11 @@ pub struct Reference {
 }
 
 #[derive(Debug, PartialEq)]
+pub struct InlineTarget {
+  pub target_label: String,
+}
+
+#[derive(Debug, PartialEq)]
 pub struct WhiteSpace {
   pub text: String
 }

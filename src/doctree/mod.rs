@@ -241,6 +241,7 @@ pub enum TreeNodeType {
   Emphasis(inline_nodes::Emphasis),
   StrongEmphasis(inline_nodes::StrongEmphasis),
   Literal(inline_nodes::Literal),
+  InlineTarget(inline_nodes::InlineTarget),
   Reference(inline_nodes::Reference),
   FootnoteReference(inline_nodes::FootnoteReference),
   CitationReference(inline_nodes::CitationReference),

@@ -411,6 +411,7 @@ impl Inline {
       PatternName::StrongEmphasis => TreeNode::new(TreeNodeType::StrongEmphasis(inline_nodes::StrongEmphasis{text: data})),
       PatternName::Emphasis => TreeNode::new(TreeNodeType::Emphasis(inline_nodes::Emphasis{text: data})),
       PatternName::Literal => TreeNode::new(TreeNodeType::Literal(inline_nodes::Literal{text: data})),
+      PatternName::InlineTarget => TreeNode::new(TreeNodeType::InlineTarget(inline_nodes::InlineTarget{target_label: data})),
       _ => panic!("No such paired delimiter type!")
     };
 
