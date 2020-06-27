@@ -452,6 +452,7 @@ impl Inline {
     let data = match pattern_name {
       PatternName::SimpleRef | PatternName::PhraseRef => TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())}),
       PatternName::FootNoteRef => TreeNodeType::FootnoteReference(inline_nodes::FootnoteReference{target_label: String::from(target_label.as_str())}),
+      PatternName::SubstitutionRef => TreeNodeType::SubstitutionReference(inline_nodes::SubstitutionReference{text: String::from(target_label.as_str())}),
       _ => panic!("No such pattern.")
     };
 

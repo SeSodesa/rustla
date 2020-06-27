@@ -49,8 +49,7 @@ pub struct CitationReference {
 
 #[derive(Debug, PartialEq)]
 pub struct SubstitutionReference {
-
-  text: String,
+  pub text: String,
 }
 
 #[derive(Debug, PartialEq)]

@@ -119,6 +119,7 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::Interpreted, r"^`(\S|\S.*\S)`", Inline::paired_delimiter),
   (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", Inline::reference),
   (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", Inline::reference),
+  (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", Inline::reference),
   (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
   (PatternName::Text, r"^([\s\S])", Inline::text)
 ];
