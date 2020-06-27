@@ -35,6 +35,7 @@ pub enum PatternName {
   PhraseRef, // A reference in the form `text with spaces`__?
   SimpleRef, // A reference that doesn't need backticks: reference__?
   Literal, // Code
+  FootNoteRef,
   InlineTarget, // Reference target in inline text: _`target label`
   SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
   ImplicitURL,
@@ -114,8 +115,9 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", Inline::paired_delimiter),
   (PatternName::Literal, r"^``(\S|\S.*\S)``", Inline::paired_delimiter),
   (PatternName::InlineTarget, r"^_`([\w .]+)`", Inline::paired_delimiter),
-  (PatternName::PhraseRef, r"^`([\w ]+)`__?", Inline::reference),
+  (PatternName::PhraseRef, r"^`(\S|\S.*\S)`__?", Inline::reference),
   (PatternName::Interpreted, r"^`(\S|\S.*\S)`", Inline::paired_delimiter),
+  (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", Inline::reference),
   (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", Inline::reference),
   (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
   (PatternName::Text, r"^([\s\S])", Inline::text)

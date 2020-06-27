@@ -449,7 +449,12 @@ impl Inline {
 
     let target_label = captures.get(1).unwrap();
 
-    let data = TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())});
+    let data = match pattern_name {
+      PatternName::SimpleRef | PatternName::PhraseRef => TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())}),
+      PatternName::FootNoteRef => TreeNodeType::FootnoteReference(inline_nodes::FootnoteReference{target_label: String::from(target_label.as_str())}),
+      _ => panic!("No such pattern.")
+    };
+
 
 
     let node = TreeNode::new(data);

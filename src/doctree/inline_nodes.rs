@@ -39,7 +39,7 @@ pub struct WhiteSpace {
 
 #[derive(Debug, PartialEq)]
 pub struct FootnoteReference {
-  text: String,
+  pub target_label: String,
 }
 
 #[derive(Debug, PartialEq)]

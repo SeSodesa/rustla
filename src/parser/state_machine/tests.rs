@@ -96,3 +96,28 @@ fn inline_parse_03 () {
   );
 
 }
+
+
+
+#[test]
+fn inline_parse_04 () {
+
+  let src = String::from("Here is a [simple-reference]_ to an _`inline target.`");
+
+  let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
+
+  let nodes = match in_machine.parse(src, &mut 0) {
+    Some(nodes) => nodes,
+    None => panic!("No nodes to be found!")
+  };
+
+  eprintln!("{:#?}", nodes);
+
+  // assert_eq!(
+  //   if let TreeNodeType::Reference(data) = &nodes[6].data {
+  //     data.target_label.as_str()
+  //   } else {panic!()},
+  //   "simple-reference"
+  // );
+
+}
