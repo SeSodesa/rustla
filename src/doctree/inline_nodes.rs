@@ -54,13 +54,24 @@ pub struct SubstitutionReference {
 
 #[derive(Debug, PartialEq)]
 pub struct TitleReference {
-
   text: String,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Abbreviation {
 
+  text: String,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub struct AbsoluteURI {
+  text: String,
+}
+
+
+#[derive(Debug, PartialEq)]
+pub struct StandaloneEmail {
   text: String,
 }
 

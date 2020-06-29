@@ -441,19 +441,142 @@ impl Inline {
   }
 
 
-  /// ### simple_reference
-  /// Parses a simple reference.
+  /// ### reference
+  /// Parses reference type inline elements based on their pattern name.
   pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
 
     let whole_match = captures.get(0).unwrap();
 
-    let target_label = captures.get(1).unwrap();
 
     let data = match pattern_name {
-      PatternName::SimpleRef | PatternName::PhraseRef => TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())}),
-      PatternName::FootNoteRef => TreeNodeType::FootnoteReference(inline_nodes::FootnoteReference{target_label: String::from(target_label.as_str())}),
-      PatternName::SubstitutionRef => TreeNodeType::SubstitutionReference(inline_nodes::SubstitutionReference{text: String::from(target_label.as_str())}),
-      _ => panic!("No such pattern.")
+      PatternName::SimpleRef | PatternName::PhraseRef => {
+        let target_label = captures.get(1).unwrap();
+        TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())})
+      },
+      PatternName::FootNoteRef => {
+        let target_label = captures.get(1).unwrap();
+        TreeNodeType::FootnoteReference(inline_nodes::FootnoteReference{target_label: String::from(target_label.as_str())})
+      },
+      PatternName::SubstitutionRef => {
+        let target_label = captures.get(1).unwrap();
+        TreeNodeType::SubstitutionReference(inline_nodes::SubstitutionReference{text: String::from(target_label.as_str())})
+      },
+      PatternName::StandaloneHyperlink => {
+
+        let mut is_valid = true;
+
+        const MISSING: &str = "!!missing!!";
+
+        // Retrieving the relevant parts of the URI as &str
+        let scheme = if let Some(scheme) = captures.name("scheme") {
+          scheme.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("Scheme: {:#?}", scheme);
+
+        let authority = if let Some(authority) = captures.name("authority") {
+          authority.as_str()
+        } else {
+          MISSING
+        };
+        let userinfo = if let Some(userinfo) = captures.name("userinfo") {
+          userinfo.as_str()
+        } else {
+          MISSING
+        };
+        let host = if let Some(host) = captures.name("host") {
+          host.as_str()
+        } else {
+          MISSING
+        };
+        let port = if let Some(port) = captures.name("port") {
+          port.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("Authority: {:#?}", authority);
+        eprintln!("  userinfo: {:#?}", userinfo);
+        eprintln!("  host: {:#?}", host);
+        eprintln!("  port: {:#?}", port);
+
+        let path = if let Some(path) = captures.name("path")  {
+          path.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("path: {:#?}", path);
+
+        let query = if let Some(query) = captures.name("query") {
+          query.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("query: {:#?}", query);
+
+        let fragment = if let Some(fragment) = captures.name("fragment") {
+          fragment.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("fragment: {:#?}", fragment);
+
+        let email = if let Some(email) = captures.name("email") {
+          email.as_str()
+        } else {
+          MISSING
+        };
+
+        eprintln!("Email: {:#?}", email);
+
+        // Some validity checks, such as path being empty or beginning with a slash,
+        // if authority is present
+
+        if scheme != MISSING && scheme != "mailto" && email != MISSING {
+          eprintln!("Found email with conflicting scheme\n  => invalid URI...\n");
+          is_valid = false;
+        }
+
+        if authority != MISSING {
+          if !path.is_empty() || path.chars().next().unwrap() != '/' {
+            eprintln!("Non-empty path or missing '/' with non-empty authority\n  => invalid URI...\n");
+            is_valid = false;
+          }
+        }
+
+        if authority.is_empty() {
+          if path.starts_with("//") {
+            eprintln!("Empty path start segment with empty authority\n  => invalid URI...\n");
+            is_valid = false;
+          }
+        }
+
+        // If URI isn't valid, it is returned as normal text.
+        if !is_valid {
+          let match_as_str = whole_match.as_str();
+          let text_data = TreeNodeType::Text(inline_nodes::Text{text: String::from(match_as_str)});
+          let node = TreeNode::new(text_data);
+          return (node, match_as_str.len())
+        };
+
+
+        match scheme {
+          "http" | "https" | "ftp" | "telnet" => {
+            todo!()
+          }
+          "" | "mailto" => {
+            todo!()
+          }
+          _ => todo!(),
+        }
+
+      }
+      _ => panic!("No such reference pattern.\n")
     };
 
 

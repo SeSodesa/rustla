@@ -39,6 +39,7 @@ pub enum PatternName {
   InlineTarget, // Reference target in inline text: _`target label`
   SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
   ImplicitURL,
+  StandaloneHyperlink,
   WhiteSpace,
 }
 
@@ -108,6 +109,8 @@ pub const SUBSTITUTION_DEF_TRANSITIONS: &[UncompiledTransition] = &[
 
 ];
 
+const URI_SCHEME: &'static str = "(https?|mailto|ftp)";
+
 
 pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::WhiteSpace, r"^\s+", Inline::whitespace),
@@ -120,6 +123,72 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", Inline::reference),
   (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", Inline::reference),
   (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", Inline::reference),
+
+  // ### StandaloneHyperlink
+  //
+  // source: https://www.rfc-editor.org/rfc/rfc2396.txt, appendix B
+  //
+  // The capturing groups correspond to the following constructs:
+  //   $1 = http:
+  //   $2 = http
+  //   $3 = //www.ics.uci.edu
+  //   $4 = www.ics.uci.edu
+  //   $5 = /pub/ietf/uri/
+  //   $6 = <undefined>
+  //   $7 = <undefined>
+  //   $8 = #Related
+  //   $9 = Related
+  //
+  // where <undefined> indicates that the component is not present, as is
+  // the case for the query component in the above example.  Therefore, we
+  // can determine the value of the four components and fragment as
+  //
+  //   scheme    = $2
+  //   authority = $4
+  //   path      = $5
+  //   query     = $7
+  //   fragment  = $9
+  //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
+  (PatternName::StandaloneHyperlink, r"(?x)^
+    (?P<absolute>
+      (?P<scheme> # 😵
+        about|acap|addbook|afp|afs|aim|callto|castanet|chttp|cid|crid|data|dav|dict|dns|eid|fax|feed|file|finger|freenet|ftp|go|gopher|
+        gsm-sms|h323|h324|hdl|hnews|http|https|hydra|iioploc|ilu|im|imap|info|ior|ipp|irc|iris.beep|iseek|jar|javascript|jdbc|ldap|lifn|
+        livescript|lrq|mailbox|mailserver|mailto|md5|mid|mocha|modem|mtqp|mupdate|news|nfs|nntp|opaquelocktoken|phone|pop|pop3|pres|printer|
+        prospero|rdar|res|rtsp|rvp|rwhois|rx|sdp|service|shttp|sip|sips|smb|snews|snmp|soap.beep|soap.beeps|ssh|t120|tag|tcp|tel|telephone|
+        telnet|tftp|tip|tn3270|tv|urn|uuid|vemmi|videotex|view-source|wais|whodp|whois++|x-man-page|xmlrpc.beep|xmlrpc.beeps|z39.50r|z39.50s
+      )
+      :
+      (?://
+        (?P<authority>
+          (?:(?P<userinfo>[A-Za-z0-9]+(?:.[A-Za-z0-9]+)*)@)?
+          (?P<host>[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*)
+          (?::(?P<port>[0-9]+))?
+        )
+      )?
+      (?P<path>
+        [A-Za-z0-9]+(?:/[A-Za-z0-9]+)*/?
+      )
+      (?:\?
+        (?P<query>
+          [A-Za-z!$&'()*+,;=:@?/]
+        )
+      )?
+      (?:\#
+        (?P<fragment>
+          [A-Za-z!$&'()*+,;=:@?/]
+        )
+      )?
+    )
+    | # if not absolute uri, then email
+    (?P<email>
+      [-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+
+      (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
+      @
+      [-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+
+      (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
+    )
+    ", Inline::reference),
   (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
   (PatternName::Text, r"^([\s\S])", Inline::text)
 ];
@@ -136,7 +205,6 @@ lazy_static! {
 
     let mut action_map = collections::HashMap::new();
 
-    
     let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
 
     for (pat_name, expr, fun) in BODY_TRANSITIONS.iter() {

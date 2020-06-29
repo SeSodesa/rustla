@@ -121,3 +121,29 @@ fn inline_parse_04 () {
   );
 
 }
+
+
+#[test]
+fn inline_parse_05 () {
+
+  //let src = String::from("ftp:John.Doe@example.com");
+
+  let src = String::from("https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top");
+
+  let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
+
+  let nodes = match in_machine.parse(src, &mut 0) {
+    Some(nodes) => nodes,
+    None => panic!("No nodes to be found!")
+  };
+
+  //eprintln!("{:#?}", nodes);
+
+  // assert_eq!(
+  //   if let TreeNodeType::SubstitutionReference(data) = &nodes[6].data {
+  //     data.text.as_str()
+  //   } else {panic!()},
+  //   "substitution reference"
+  // );
+
+}

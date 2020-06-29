@@ -247,6 +247,8 @@ pub enum TreeNodeType {
   CitationReference(inline_nodes::CitationReference),
   SubstitutionReference(inline_nodes::SubstitutionReference),
   TitleReference(inline_nodes::TitleReference),
+  AbsoluteURI(inline_nodes::AbsoluteURI),
+  StandaloneEmail(inline_nodes::StandaloneEmail),
   Abbreviation(inline_nodes::Abbreviation),
   Acronym(inline_nodes::Acronym),
   SuperScript(inline_nodes::SuperScript),
