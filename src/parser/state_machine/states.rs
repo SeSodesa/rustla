@@ -132,9 +132,7 @@ impl BulletList {
 
             *current_line += line_offset; // update current line after reading block
 
-            let src_block = lines.join("\n");
-
-
+            lines.join("\n")
 
           }
 
@@ -150,10 +148,19 @@ impl BulletList {
 
         let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
 
+        let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
+          children
+        } else {
+          Vec::new()
+        };
+
+        tree_wrapper.tree.append_children(&mut inline_nodes);
+        
         todo!();
+
       },
       _ => {
-        return Err("No action for this  type of bullet--indent combination")
+        return Err("No action for this type of bullet--indent combination")
       }
     }
 

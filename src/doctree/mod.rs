@@ -121,6 +121,13 @@ impl TreeNode {
 
   }
 
+
+  /// ### append_children
+  /// Appends multiple children to `self.children`.
+  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
+    self.children.append(children);
+  }
+
   /// ### traverse
   /// Traverses `TreeNode`s recursively.
   fn traverse(&mut self) {

@@ -36,6 +36,13 @@ impl TreeZipper {
   }
 
 
+  /// ### append_children
+  /// Adds a sequence of children to `self.node.children`.
+  pub fn append_children (&mut self, children: &mut Vec<TreeNode>) {
+    self.node.append_children(children);
+  }
+
+
   /// ### focus_on_child
   /// Moves focus to a specific child of a node.
   /// Returns `Ok(TreeZipper)` focused
