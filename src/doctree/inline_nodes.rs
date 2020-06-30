@@ -66,13 +66,13 @@ pub struct Abbreviation {
 
 #[derive(Debug, PartialEq)]
 pub struct AbsoluteURI {
-  text: String,
+  pub text: String,
 }
 
 
 #[derive(Debug, PartialEq)]
 pub struct StandaloneEmail {
-  text: String,
+  pub text: String,
 }
 
 #[derive(Debug, PartialEq)]

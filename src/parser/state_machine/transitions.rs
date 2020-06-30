@@ -151,14 +151,16 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
   //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
   (PatternName::StandaloneHyperlink, r"(?x)^
     (?P<absolute>
-      (?P<scheme> # 😵
-        about|acap|addbook|afp|afs|aim|callto|castanet|chttp|cid|crid|data|dav|dict|dns|eid|fax|feed|file|finger|freenet|ftp|go|gopher|
-        gsm-sms|h323|h324|hdl|hnews|http|https|hydra|iioploc|ilu|im|imap|info|ior|ipp|irc|iris.beep|iseek|jar|javascript|jdbc|ldap|lifn|
-        livescript|lrq|mailbox|mailserver|mailto|md5|mid|mocha|modem|mtqp|mupdate|news|nfs|nntp|opaquelocktoken|phone|pop|pop3|pres|printer|
-        prospero|rdar|res|rtsp|rvp|rwhois|rx|sdp|service|shttp|sip|sips|smb|snews|snmp|soap.beep|soap.beeps|ssh|t120|tag|tcp|tel|telephone|
-        telnet|tftp|tip|tn3270|tv|urn|uuid|vemmi|videotex|view-source|wais|whodp|whois++|x-man-page|xmlrpc.beep|xmlrpc.beeps|z39.50r|z39.50s
+      (?:
+        (?P<scheme> # 😵
+          about|acap|addbook|afp|afs|aim|callto|castanet|chttp|cid|crid|data|dav|dict|dns|eid|fax|feed|file|finger|freenet|ftp|go|gopher|
+          gsm-sms|h323|h324|hdl|hnews|http|https|hydra|iioploc|ilu|im|imap|info|ior|ipp|irc|iris.beep|iseek|jar|javascript|jdbc|ldap|lifn|
+          livescript|lrq|mailbox|mailserver|mailto|md5|mid|mocha|modem|mtqp|mupdate|news|nfs|nntp|opaquelocktoken|phone|pop|pop3|pres|printer|
+          prospero|rdar|res|rtsp|rvp|rwhois|rx|sdp|service|shttp|sip|sips|smb|snews|snmp|soap.beep|soap.beeps|ssh|t120|tag|tcp|tel|telephone|
+          telnet|tftp|tip|tn3270|tv|urn|uuid|vemmi|videotex|view-source|wais|whodp|whois++|x-man-page|xmlrpc.beep|xmlrpc.beeps|z39.50r|z39.50s
+        )
+        :
       )
-      :
       (?://
         (?P<authority>
           (?:(?P<userinfo>[A-Za-z0-9]+(?:.[A-Za-z0-9]+)*)@)?
@@ -181,16 +183,16 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
       )?
     )
     | # if not absolute uri, then email
-    (?P<email>
+    ^(?P<email>
       [-_a-zA-Z0-9]+
       (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
       @
       [-_a-zA-Z0-9]+
-      (?:a-zA-Z0-9]+)*
+      (?:[.-][a-zA-Z0-9]+)*
     )
     ", Inline::reference),
-  (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
-  (PatternName::Text, r"^([\s\S]+)", Inline::text)
+  (PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
+  (PatternName::Text, r"^([\S]+)", Inline::text)
 ];
 
 

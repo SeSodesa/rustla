@@ -465,7 +465,7 @@ impl Inline {
 
         let mut is_valid = true;
 
-        const MISSING: &str = "!!missing!!";
+        const MISSING: &str = "!!!MISSING!!!";
 
         // Retrieving the relevant parts of the URI as &str
         let scheme = if let Some(scheme) = captures.name("scheme") {
@@ -476,110 +476,117 @@ impl Inline {
 
         eprintln!("Scheme: {:#?}", scheme);
 
-        let authority = if let Some(authority) = captures.name("authority") {
-          authority.as_str()
-        } else {
-          MISSING
-        };
-        let userinfo = if let Some(userinfo) = captures.name("userinfo") {
-          userinfo.as_str()
-        } else {
-          MISSING
-        };
-        let host = if let Some(host) = captures.name("host") {
-          host.as_str()
-        } else {
-          MISSING
-        };
-        let port = if let Some(port) = captures.name("port") {
-          port.as_str()
-        } else {
-          MISSING
-        };
-
-        eprintln!("Authority: {:#?}", authority);
-        eprintln!("  userinfo: {:#?}", userinfo);
-        eprintln!("  host: {:#?}", host);
-        eprintln!("  port: {:#?}", port);
-
-        let path = if let Some(path) = captures.name("path")  {
-          path.as_str()
-        } else {
-          MISSING
-        };
-
-        eprintln!("path: {:#?}", path);
-
-        let query = if let Some(query) = captures.name("query") {
-          query.as_str()
-        } else {
-          MISSING
-        };
-
-        eprintln!("query: {:#?}", query);
-
-        let fragment = if let Some(fragment) = captures.name("fragment") {
-          fragment.as_str()
-        } else {
-          MISSING
-        };
-
-        eprintln!("fragment: {:#?}", fragment);
-
-        let email = if let Some(email) = captures.name("email") {
-          email.as_str()
-        } else {
-          MISSING
-        };
-
-        eprintln!("Email: {:#?}", email);
-
-        // Some validity checks, such as path being empty or beginning with a slash,
-        // if authority is present
-
-        if scheme != MISSING && scheme != "mailto" && email != MISSING {
-          eprintln!("Found email with conflicting scheme\n  => invalid URI...\n");
-          is_valid = false;
-        }
-
-        if authority != MISSING {
-          if !path.is_empty() || path.chars().next().unwrap() != '/' {
-            eprintln!("Non-empty path or missing '/' with non-empty authority\n  => invalid URI...\n");
-            is_valid = false;
-          }
-        }
-
-        if authority.is_empty() {
-          if path.starts_with("//") {
-            eprintln!("Empty path start segment with empty authority\n  => invalid URI...\n");
-            is_valid = false;
-          }
-        }
-
-        // If URI isn't valid, it is returned as normal text.
-        if !is_valid {
-          let match_as_str = whole_match.as_str();
-          let text_data = TreeNodeType::Text(inline_nodes::Text{text: String::from(match_as_str)});
-          let node = TreeNode::new(text_data);
-          return (node, match_as_str.len())
-        };
-
-
         match scheme {
-          "http" | "https" | "ftp" | "telnet" => {
-            todo!()
-          }
-          "" | "mailto" => {
-            todo!()
-          }
-          _ => todo!(),
-        }
+          MISSING => {
+            let email = if let Some(email) = captures.name("email") {
+              email.as_str()
+            } else {
+              MISSING
+            };
+    
+            eprintln!("Email: {:#?}", email);
 
+            // If no email when missing a scheme, simply return match as string
+            if email == MISSING {
+              let match_str = whole_match.as_str();
+              let data = TreeNodeType::Text(inline_nodes::Text{text: String::from(whole_match.as_str())});
+              let text_node = TreeNode::new(data);
+              return (text_node, match_str.chars().count())
+            }
+
+            let match_str = whole_match.as_str();
+
+            // If a successful email recognition, prepend a mailto scheme to email.
+            TreeNodeType::StandaloneEmail(inline_nodes::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)})
+
+          }
+
+          _ => {
+
+            let authority = if let Some(authority) = captures.name("authority") {
+              authority.as_str()
+            } else {
+              MISSING
+            };
+            let userinfo = if let Some(userinfo) = captures.name("userinfo") {
+              userinfo.as_str()
+            } else {
+              MISSING
+            };
+            let host = if let Some(host) = captures.name("host") {
+              host.as_str()
+            } else {
+              MISSING
+            };
+            let port = if let Some(port) = captures.name("port") {
+              port.as_str()
+            } else {
+              MISSING
+            };
+    
+            eprintln!("Authority: {:#?}", authority);
+            eprintln!("  userinfo: {:#?}", userinfo);
+            eprintln!("  host: {:#?}", host);
+            eprintln!("  port: {:#?}", port);
+    
+            let path = if let Some(path) = captures.name("path")  {
+              path.as_str()
+            } else {
+              MISSING
+            };
+    
+            eprintln!("path: {:#?}", path);
+    
+            let query = if let Some(query) = captures.name("query") {
+              query.as_str()
+            } else {
+              MISSING
+            };
+    
+            eprintln!("query: {:#?}", query);
+    
+            let fragment = if let Some(fragment) = captures.name("fragment") {
+              fragment.as_str()
+            } else {
+              MISSING
+            };
+    
+            eprintln!("fragment: {:#?}", fragment);
+
+            // Validity checks
+
+            if authority != MISSING  {
+              let has_slash = if let Some(c) = path.chars().next() {
+                eprintln!("First char of path is {}\n", c);
+                
+                let mut has_slash: bool = false;
+                if c == '/' {
+                  has_slash = true;
+                }
+                has_slash
+
+              } else {
+                false
+              };
+
+              if !has_slash {
+                eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match.as_str());
+                is_valid = false;
+              }
+            }
+
+            // If URI is valid, return it as URI, else as text
+            if is_valid {
+              TreeNodeType::AbsoluteURI(inline_nodes::AbsoluteURI{text: String::from(whole_match.as_str())})
+            } else {
+              TreeNodeType::Text(inline_nodes::Text{text: String::from(whole_match.as_str())})
+            }
+
+          }
+        }
       }
       _ => panic!("No such reference pattern.\n")
     };
-
-
 
     let node = TreeNode::new(data);
 

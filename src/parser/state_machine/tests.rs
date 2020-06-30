@@ -126,7 +126,7 @@ fn inline_parse_04 () {
 #[test]
 fn inline_parse_05 () {
 
-  let src = String::from("https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top");
+  let src = String::from("This is an absolute URI: https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top");
 
   let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
 
@@ -137,11 +137,35 @@ fn inline_parse_05 () {
 
   //eprintln!("{:#?}", nodes);
 
-  // assert_eq!(
-  //   if let TreeNodeType::SubstitutionReference(data) = &nodes[6].data {
-  //     data.text.as_str()
-  //   } else {panic!()},
-  //   "substitution reference"
-  // );
+  assert_eq!(
+    if let TreeNodeType::AbsoluteURI(data) = &nodes[3].data {
+      data.text.as_str()
+    } else {panic!()},
+    "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top"
+  );
+
+}
+
+
+#[test]
+fn inline_parse_06 () {
+
+  let src = String::from("This is an email address: john.harry.doe@www.example.com");
+
+  let in_machine = MachineWithState::<Inline>::from(MachineWithState::new());
+
+  let nodes = match in_machine.parse(src, &mut 0) {
+    Some(nodes) => nodes,
+    None => panic!("No nodes to be found!")
+  };
+
+  //eprintln!("{:#?}", nodes);
+
+  assert_eq!(
+    if let TreeNodeType::StandaloneEmail(data) = &nodes[3].data {
+      data.text.as_str()
+    } else {panic!()},
+    "mailto:john.harry.doe@www.example.com"
+  );
 
 }
