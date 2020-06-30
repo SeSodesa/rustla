@@ -167,30 +167,30 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
         )
       )?
       (?P<path>
-        [A-Za-z0-9]+(?:/[A-Za-z0-9]+)*/?
+        /?[a-zA-Z0-9]+(?:/[A-Za-z0-9]+)*/?
       )
       (?:\?
         (?P<query>
-          [A-Za-z!$&'()*+,;=:@?/]
+          [=&a-zA-Z0-9]+
         )
       )?
       (?:\#
         (?P<fragment>
-          [A-Za-z!$&'()*+,;=:@?/]
+          [a-zA-Z0-9]+
         )
       )?
     )
     | # if not absolute uri, then email
     (?P<email>
-      [-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+
+      [-_a-zA-Z0-9]+
       (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
       @
-      [-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+
-      (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
+      [-_a-zA-Z0-9]+
+      (?:a-zA-Z0-9]+)*
     )
     ", Inline::reference),
   (PatternName::Text, r"^([^\\\n\[*`:_\s]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
-  (PatternName::Text, r"^([\s\S])", Inline::text)
+  (PatternName::Text, r"^([\s\S]+)", Inline::text)
 ];
 
 
