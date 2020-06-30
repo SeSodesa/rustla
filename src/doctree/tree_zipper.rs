@@ -48,7 +48,7 @@ impl TreeZipper {
   /// Returns `Ok(TreeZipper)` focused
   /// on the child, if successful. Otherwise
   /// returns with `Err(message: &str)`
-  fn focus_on_child (mut self, index: usize) -> Result<Self, &'static str> {
+  pub fn focus_on_child (mut self, index: usize) -> Result<Self, &'static str> {
 
     let child: TreeNode;
 
@@ -77,7 +77,7 @@ impl TreeZipper {
   /// Moves focus to the parent of the current node,
   /// or at least tries to. Returns with `Ok(TreeZipper)`
   /// if successful and `Err(message: &str)` if not.
-  fn focus_on_parent(self) -> Result<Self, &'static str> {
+  pub fn focus_on_parent(self) -> Result<Self, &'static str> {
 
     // Destructuring the provided TreeZipper
     let Self { node, parent, index_in_parent } = self;
