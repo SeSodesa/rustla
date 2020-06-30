@@ -18,18 +18,16 @@ pub struct Container {
 pub struct BulletList {
   pub bullet: char, // might need to be changed to a grapheme (needs external crate)
   pub indent: usize,
-  pub nesting_level: usize,
 }
 
 impl BulletList {
 
   /// ### new
   /// BulletList node type constructor
-  pub fn new (bullet: char, indent: usize, nesting_level: usize) -> Self {
+  pub fn new (bullet: char, indent: usize) -> Self {
     Self {
       bullet: bullet,
       indent: indent,
-      nesting_level: nesting_level
     }
   }
 

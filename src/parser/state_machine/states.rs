@@ -39,7 +39,7 @@ impl Body  {
     let indent = captures.get(0).unwrap().end();
     let nesting_level: usize = 0;
 
-    let bullet_list_data = TreeNodeType::BulletList(doctree::body_nodes::BulletList::new(bullet, indent, nesting_level));
+    let bullet_list_data = TreeNodeType::BulletList(doctree::body_nodes::BulletList::new(bullet, indent));
 
     let list_node = TreeNode::new(bullet_list_data);
 
@@ -65,6 +65,13 @@ impl Body  {
 
 }
 
+impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
+  fn from(machine: MachineWithState<Body>) -> Self {
+    MachineWithState {
+      state: BulletList::new()
+    }
+  }
+}
 
 /// ### BulletList
 /// A transition to this state is made if a `BulletList`
@@ -107,6 +114,7 @@ impl BulletList {
     match (list_item_bullet, list_item_indent) {
       (bullet, indent) if bullet == list_bullet && indent == list_indent => {
 
+        // Still within same list based on indentation an bullet.
         // Create new ListItem node, read in the next block of text with known
         // indent with Parser::read_indented_block and parse it for inline elements,
         // feeding those to the ListItem node.
@@ -154,11 +162,77 @@ impl BulletList {
           Vec::new()
         };
 
+        // Add inline nodes to list item node
         tree_wrapper.tree.append_children(&mut inline_nodes);
         
-        todo!();
+        // Move focus back to parent list so new list items might be appended
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(parent) => parent,
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Cannot focus on parent bullet list\n...")
+          }
+        };
+
+        return Ok((Some(tree_wrapper), None, PushOrPop::Neither))
 
       },
+
+      (bullet, indent) if bullet != list_bullet && indent == list_indent => {
+
+        // If bullet doesn't match but indent is the same, we have another list on the same level
+        //   => simply move focus back to parent so the new list might be appended to it
+
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(parent) => parent,
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Encountered list on same level but couldn't focus on list parent.\n")
+          }
+        };
+
+        return Ok((Some(tree_wrapper), None, PushOrPop::Neither))
+
+      },
+
+      (bullet, indent) if indent < list_indent => {
+
+        // Less indent after discovering a bullet means a sublist has ended,
+        // regardless of bullet type.
+        // Move focus back to parent and pop from machine stack.
+
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(parent) => parent,
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Encountered a list item with less indent but couldn't focus on list parent.\n")
+          }
+        };
+
+        return Ok((Some(tree_wrapper), None, PushOrPop::Pop))
+
+      },
+
+      (bullet, indent) if indent > list_indent => {
+
+        // More indent after discovering a bullet means a sublist has started,
+        // regardless of bullet type.
+        // Create an entirely new list nodem add it to the children of the current list item
+        // and push a new bullet machine on top of the
+        // parser stack to signify an increase in nesting level.
+
+        let bullet_list_data = TreeNodeType::BulletList(body_nodes::BulletList::new(bullet, indent));
+
+        let list_node = TreeNode::new(bullet_list_data);
+
+        let new_machine = StateMachine::BulletList(MachineWithState::<BulletList>::from(MachineWithState::new()));
+
+
+
+        todo!();
+
+      }
+
       _ => {
         return Err("No action for this type of bullet--indent combination")
       }
