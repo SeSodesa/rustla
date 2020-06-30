@@ -135,12 +135,12 @@ fn inline_parse_05 () {
     None => panic!("No nodes to be found!")
   };
 
-  //eprintln!("{:#?}", nodes);
+  eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::AbsoluteURI(data) = &nodes[3].data {
+    if let TreeNodeType::AbsoluteURI(data) = &nodes[10].data {
       data.text.as_str()
-    } else {panic!()},
+    } else {panic!("Absolute URI not found!")},
     "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top"
   );
 
@@ -159,10 +159,10 @@ fn inline_parse_06 () {
     None => panic!("No nodes to be found!")
   };
 
-  //eprintln!("{:#?}", nodes);
+  eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::StandaloneEmail(data) = &nodes[3].data {
+    if let TreeNodeType::StandaloneEmail(data) = &nodes[10].data {
       data.text.as_str()
     } else {panic!()},
     "mailto:john.harry.doe@www.example.com"

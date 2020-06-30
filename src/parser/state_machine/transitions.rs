@@ -191,7 +191,7 @@ pub const INLINE_TRANSITIONS: &[InlineTransition] = &[
       (?:[.-][a-zA-Z0-9]+)*
     )
     ", Inline::reference),
-  (PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
+  //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
   (PatternName::Text, r"^([\S]+)", Inline::text)
 ];
 
