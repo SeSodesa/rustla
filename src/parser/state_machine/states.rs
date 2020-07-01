@@ -114,7 +114,7 @@ impl BulletList {
     match (list_item_bullet, list_item_indent) {
       (bullet, indent) if bullet == list_bullet && indent == list_indent => {
 
-        // Still within same list based on indentation an bullet.
+        // Still within same list based on indentation and bullet.
         // Create new ListItem node, read in the next block of text with known
         // indent with Parser::read_indented_block and parse it for inline elements,
         // feeding those to the ListItem node.
@@ -181,7 +181,7 @@ impl BulletList {
       (bullet, indent) if bullet != list_bullet && indent == list_indent => {
 
         // If bullet doesn't match but indent is the same, we have another list on the same level
-        //   => simply move focus back to parent so the new list might be appended to it
+        //   => simply move focus back to parent (body or another list) so the new list might be appended to it
 
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
           Ok(parent) => parent,
@@ -217,19 +217,29 @@ impl BulletList {
 
         // More indent after discovering a bullet means a sublist has started,
         // regardless of bullet type.
-        // Create an entirely new list nodem add it to the children of the current list item
-        // and push a new bullet machine on top of the
+        // Create an entirely new bullet list node, focus on it, add it to the children of the current list
+        // and have the parser push a new bullet machine on top of the
         // parser stack to signify an increase in nesting level.
 
         let bullet_list_data = TreeNodeType::BulletList(body_nodes::BulletList::new(bullet, indent));
 
         let list_node = TreeNode::new(bullet_list_data);
 
-        let new_machine = StateMachine::BulletList(MachineWithState::<BulletList>::from(MachineWithState::new()));
+        let list_machine = StateMachine::BulletList(MachineWithState::<BulletList>::from(MachineWithState::new()));
 
+        // Move focus to the nested list node
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
+          Ok(child_zipper) => child_zipper,
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("An error occurred when shifting focus to list item.\n");
+          }
+        };
 
+        // Push nested list to latest list
+        tree_wrapper.tree.push_child(list_node);
 
-        todo!();
+        return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push));
 
       }
 
