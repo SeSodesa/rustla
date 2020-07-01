@@ -239,7 +239,7 @@ impl BulletList {
         // Push nested list to latest list
         tree_wrapper.tree.push_child(list_node);
 
-        return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push));
+        return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push))
 
       }
 
