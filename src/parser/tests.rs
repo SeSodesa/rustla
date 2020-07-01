@@ -285,3 +285,28 @@ asfsffdsfasfasdf"
   };
 
 }
+
+#[test]
+fn bullet_list_01 () {
+
+  let src = String::from("- This is the first bullet list item.  The blank line above the
+  first list item is required; blank lines between list items
+  (such as below this paragraph) are optional.");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  todo!();
+
+}

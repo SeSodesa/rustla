@@ -16,6 +16,12 @@ pub struct Body  {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for Body {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("Body").finish()
+  }
+}
+
 
 impl Body  {
 
@@ -33,7 +39,7 @@ impl Body  {
   /// `BulletList` on top of its machine stack.
   pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str> {
 
-    let mut tree_container = doctree.unwrap();
+    let mut tree_wrapper = doctree.unwrap();
 
     let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let indent = captures.get(0).unwrap().end();
@@ -43,9 +49,9 @@ impl Body  {
 
     let list_node = TreeNode::new(bullet_list_data);
 
-    tree_container.tree.node.push_child(list_node);
+    tree_wrapper.tree.node.push_child(list_node);
 
-    tree_container.tree = match tree_container.tree.focus_on_last_child() {
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
       Ok(child_zipper) => child_zipper,
       Err(e) => {
         eprintln!("{}", e);
@@ -53,9 +59,60 @@ impl Body  {
       }
     };
 
+    let item_node = doctree::TreeNode::new(TreeNodeType::ListItem(body_nodes::ListItem{}));
+
+    tree_wrapper.tree.push_child(item_node);
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
+      Ok(tree_zipper) => tree_zipper,
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("No child of type ListItem to be focused on.\n")
+      }
+    };
+
+    // Read indented block here
+    let block = match Parser::read_indented_block(src_lines, Some(*current_line), None, None, Some(indent), Some(indent)) {
+      Ok((lines, min_indent, line_offset, blank_finish)) => {
+
+        if min_indent != indent {
+          return Err("Indent of list item block was less than given.")
+        }
+
+        lines.join("\n")
+
+      }
+
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("Error when reading list item block.\n")
+      }
+
+    };
+
+    // Pass text to inline parser as a string
+    let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
+
+    let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
+      children
+    } else {
+      Vec::new()
+    };
+
+    // Add inline nodes to list item node
+    tree_wrapper.tree.append_children(&mut inline_nodes);
+    
+    // Move focus back to parent list so new list items might be appended
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+      Ok(parent) => parent,
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("Cannot focus on parent bullet list\n...")
+      }
+    };
+
     let next_state = StateMachine::new(pattern_name);
 
-    Ok( ( Some(tree_container), Some(next_state), PushOrPop::Push ) )
+    Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push ) )
 
   }
 
@@ -80,6 +137,14 @@ impl From<MachineWithState<Body>> for MachineWithState<BulletList> {
 pub struct BulletList {
   pub transitions: &'static Vec<Transition>
 }
+
+
+impl std::fmt::Debug for BulletList {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("BulletList").finish()
+  }
+}
+
 
 impl BulletList {
 
@@ -138,8 +203,6 @@ impl BulletList {
               return Err("Indent of list item block was less than given.")
             }
 
-            *current_line += line_offset; // update current line after reading block
-
             lines.join("\n")
 
           }
@@ -151,9 +214,7 @@ impl BulletList {
 
         };
 
-
         // Pass text to inline parser as a string
-
         let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
 
         let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
@@ -259,6 +320,13 @@ pub struct Definition {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for Definition {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("Definition").finish()
+  }
+}
+
+
 impl Definition {
 
   /// ### new
@@ -279,6 +347,13 @@ pub struct DefinitionList {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for DefinitionList {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("DefinitionList").finish()
+  }
+}
+
+
 impl DefinitionList {
 
   /// ### new
@@ -296,6 +371,13 @@ impl DefinitionList {
 pub struct EnumeratedList {
   pub transitions: &'static Vec<Transition>
 }
+
+impl std::fmt::Debug for EnumeratedList {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("EnumeratedList").finish()
+  }
+}
+
 
 impl EnumeratedList {
 
@@ -316,6 +398,13 @@ pub struct ExplicitMarkup {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for ExplicitMarkup {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("ExplicitMarkup").finish()
+  }
+}
+
+
 impl ExplicitMarkup {
 
   /// ### new
@@ -334,6 +423,13 @@ pub struct ExtensionOptions {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for ExtensionOptions {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("ExtensionOptions").finish()
+  }
+}
+
+
 impl ExtensionOptions {
 
   /// ### new
@@ -350,6 +446,12 @@ impl ExtensionOptions {
 /// A state for parsing subsequent fields in a field list.
 pub struct FieldList {
   pub transitions: &'static Vec<Transition>
+}
+
+impl std::fmt::Debug for FieldList {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("FieldList").finish()
+  }
 }
 
 impl FieldList {
@@ -372,6 +474,13 @@ pub struct Line {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for Line {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("Line").finish()
+  }
+}
+
+
 impl Line {
 
   /// ### new
@@ -390,6 +499,12 @@ pub struct LineBlock {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for LineBlock {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("LineBlock").finish()
+  }
+}
+
 impl LineBlock{
 
   /// ### new
@@ -406,6 +521,12 @@ impl LineBlock{
 /// ### A state for  parsing subsequent option list items.
 pub struct OptionList {
   pub transitions: &'static Vec<Transition>
+}
+
+impl std::fmt::Debug for OptionList {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("OptionList").finish()
+  }
 }
 
 impl OptionList {
@@ -438,6 +559,12 @@ pub struct SubstitutionDef {
   pub transitions: &'static Vec<Transition>
 }
 
+impl std::fmt::Debug for SubstitutionDef {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("SubstitutionDef").finish()
+  }
+}
+
 impl SubstitutionDef {
 
   /// ### new
@@ -454,6 +581,12 @@ impl SubstitutionDef {
 /// A state for parsing generic text.
 pub struct Text {
   pub transitions: &'static Vec<Transition>
+}
+
+impl std::fmt::Debug for Text {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("Text").finish()
+  }
 }
 
 impl Text {
@@ -476,6 +609,12 @@ impl Text {
 /// `MachineWithState<Inline>` for parsing an inline block of text.
 pub struct Inline {
   pub transitions: &'static Vec<(PatternName, regex::Regex, InlineParsingMethod)>
+}
+
+impl std::fmt::Debug for Inline {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("Inline").finish()
+  }
 }
 
 impl Inline {
@@ -711,7 +850,9 @@ impl Inline {
 
 /// ### Failure
 /// A failure state, which is entered if no match in current state is found.
+#[derive(Debug)]
 pub struct Failure;
+
 
 
 impl From<MachineWithState<Body>> for MachineWithState<Failure> {

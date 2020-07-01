@@ -95,8 +95,8 @@ impl DocTree {
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
 pub struct TreeNode {
+  pub data : TreeNodeType,
   pub children: Children,
-  pub data : TreeNodeType
 
 }
 

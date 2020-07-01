@@ -49,6 +49,7 @@ type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
+#[derive(Debug)]
 pub enum StateMachine {
   Body(MachineWithState<Body>),
   BulletList(MachineWithState<BulletList>),
@@ -63,7 +64,8 @@ pub enum StateMachine {
   Definition(MachineWithState<Definition>),
   Line(MachineWithState<Line>),
   SubstitutionDef(MachineWithState<SubstitutionDef>),
-  Failure(MachineWithState<Failure>)
+  Failure(MachineWithState<Failure>),
+  EOF
 }
 
 impl StateMachine {
@@ -133,11 +135,10 @@ impl StateMachine {
       StateMachine::Definition(machine) => Ok(machine.state.transitions),
       StateMachine::Line(machine) => Ok(machine.state.transitions),
       StateMachine::SubstitutionDef(machine) => Ok(machine.state.transitions),
+      StateMachine::EOF => Err("Already moved past EOF. No transitions to perform.\n"),
       StateMachine::Failure( .. ) => Err("Failure state has no transitions\n")
     }
-
   }
-
 }
 
 
@@ -183,7 +184,6 @@ impl From<MachineWithState<Body>> for MachineWithState<Inline> {
 }
 
 impl MachineWithState<Inline> {
-
 
   /// ### parse
   /// A function that parses inline text. Returns the nodes generated,
