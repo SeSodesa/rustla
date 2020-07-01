@@ -232,7 +232,7 @@ impl BulletList {
           Ok(child_zipper) => child_zipper,
           Err(e) => {
             eprintln!("{}", e);
-            return Err("An error occurred when shifting focus to list item.\n");
+            return Err("An error occurred when shifting focus to sublist.\n");
           }
         };
 
