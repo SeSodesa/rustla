@@ -16,7 +16,7 @@ use std::collections;
 
 use regex;
 
-use crate::doctree::DocTree;
+use crate::doctree::{DocTree, TreeNode, TreeNodeType};
 use crate::utils;
 
 /// ### Parser

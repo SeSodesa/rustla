@@ -305,8 +305,11 @@ fn bullet_list_01 () {
     }
   };
 
-  //eprintln!("{:#?}", doctree.tree);
+  eprintln!("{:#?}", doctree.tree);
 
-  todo!();
+  match doctree.tree.node.children[0].data {
+    TreeNodeType::BulletList(..) => (),
+    _ => panic!("No bullet list node where one was expected!\n")
+  }
 
 }
