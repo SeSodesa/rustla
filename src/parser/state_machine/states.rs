@@ -43,7 +43,6 @@ impl Body  {
 
     let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let indent = captures.get(0).unwrap().end();
-    let nesting_level: usize = 0;
 
     let bullet_list_data = TreeNodeType::BulletList(doctree::body_nodes::BulletList::new(bullet, indent));
 
