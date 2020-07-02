@@ -462,6 +462,13 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
+      if line.trim().is_empty() {
+        eprintln!("Ran into empty line => end of block\n");
+        blank_finish = true;
+        loop_broken = true;
+        break
+      }
+
       // Check for sufficient indentation
       for (i, c) in line.chars().enumerate() {
 
