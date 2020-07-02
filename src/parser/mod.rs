@@ -101,6 +101,17 @@ impl Parser {
           match machine {
             StateMachine::EOF => {
               eprintln!("Moved past EOF...\n");
+
+              // Walk to doctree root before returning it
+              match self.doctree.take() {
+                Some(mut tree_wrapper) => {
+                  tree_wrapper.tree = tree_wrapper.tree.walk_to_root();
+                  self.doctree.replace(tree_wrapper);
+                }
+                None => {
+                  return Err("Tree should not be in the possession of a transition method after moving past EOF...\n")
+                }
+              };
               break
             }
             StateMachine::Failure{ .. } => {

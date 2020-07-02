@@ -305,7 +305,7 @@ fn bullet_list_01 () {
     }
   };
 
-  eprintln!("{:#?}", doctree.tree);
+  //eprintln!("{:#?}", doctree.tree);
 
   todo!();
 
