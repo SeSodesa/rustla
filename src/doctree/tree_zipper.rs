@@ -49,7 +49,7 @@ impl TreeZipper {
   /// Returns `Ok(TreeZipper)` focused
   /// on the child, if successful. Otherwise
   /// returns with `Err(message: &str)`
-  pub fn focus_on_child (mut self, index: usize) -> Result<Self, &'static str> {
+  pub fn focus_on_child (mut self, index: usize) -> Result<Self, Self> {
 
     let child: TreeNode;
 
@@ -58,8 +58,8 @@ impl TreeZipper {
       child = self.node.children.swap_remove(index);
 
     } else {
-
-      return Err("This node has less children than the given index implies!\n");
+      eprintln!("Child with given index does not exist.\nReturning parent...\n");
+      return Err(self);
 
     }
 
@@ -78,7 +78,7 @@ impl TreeZipper {
   /// Moves focus to the parent of the current node,
   /// or at least tries to. Returns with `Ok(TreeZipper)`
   /// if successful and `Err(message: &str)` if not.
-  pub fn focus_on_parent(self) -> Result<Self, &'static str> {
+  pub fn focus_on_parent(self) -> Result<Self, Self> {
 
     // Destructuring the provided TreeZipper
     let Self { node, parent, index_in_parent } = self;
@@ -90,12 +90,18 @@ impl TreeZipper {
       index_in_parent: parent_index_in_parent,
     } = match parent {
       Some(parent) => *parent,
-      None => return Err("This node has no parent!")
+      None => {
+        eprintln!("No parent, returning unmodified zipper...\n");
+        return Err(Self{node: node, parent: parent, index_in_parent: index_in_parent})
+      }
     };
 
     let index = match index_in_parent {
       Some(index) => index,
-      None => return Err("No index in parent!")
+      None => {
+        eprintln!("Parent found but something funky going on with index in parent...\n");
+        return Err(Self{node: node, parent: parent_parent, index_in_parent: index_in_parent})
+      }
     };
 
     // Perform the opposite of Vec::swap_remove
@@ -105,7 +111,7 @@ impl TreeZipper {
 
     Ok(
       Self {
-        node:parent_node,
+        node: parent_node,
         parent: parent_parent,
         index_in_parent: parent_index_in_parent,
       }
@@ -114,17 +120,34 @@ impl TreeZipper {
   }
 
 
+  /// ### walk_to_root
+  /// A function that walks up the tree (zipper) until no more parents are encountered.
+  pub fn walk_to_root (mut self) -> Self {
+
+    loop {
+      self = match self.focus_on_parent() {
+        Ok(parent) => parent,
+        Err(self_unchanged) => {
+          self = self_unchanged;
+          break
+        }
+      };
+    };
+
+    self
+  }
+
   /// ### focus_on_last_child
   /// Moves the focus to the last child of the current focus.
-  pub fn focus_on_last_child (self) -> Result<Self, &'static str> {
+  pub fn focus_on_last_child (self) -> Result<Self, Self> {
 
     let children_len = self.node.children.len();
 
     let with_focus_on_latest_child = match self.focus_on_child(children_len - 1) {
       Ok(tree_zipper) => tree_zipper,
-      Err(e) => {
-        eprintln!("{}", e);
-        return Err("Couldn't access last child.")
+      Err(parent) => {
+        
+        return Err(parent)
       }
     };
 
@@ -135,25 +158,24 @@ impl TreeZipper {
 
   /// ### focus_on_sibling
   /// Moves focus to the given nth sibling.
-  pub fn focus_on_sibling (self, sibling_index: usize) -> Result<Self, &'static str> {
+  pub fn focus_on_sibling (self, sibling_index: usize) -> Result<Self, Self> {
 
     let parent = if let Some(parent) = &self.parent {
       match self.focus_on_parent() {
         Ok(parent) => parent,
-        Err(e) => {
-          eprintln!("{}", e);
-          return Err("Could not focus on sibling because of missing parent.")
+        Err(unmodified_self) => {
+          return Err(unmodified_self)
         }
       }
     } else {
-      return Err("Parent missing...\n")
+      return Err(self)
     };
 
     let sibling = match parent.focus_on_child(sibling_index) {
       Ok(child) => child,
-      Err(e) => {
-        eprintln!("{}", e);
-        return Err("Could not access child\n")
+      Err(parent_itself) => {
+        eprintln!("No such sibling.\nReturning parent...\n");
+        return Err(parent_itself)
       }
     };
 

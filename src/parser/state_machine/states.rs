@@ -52,8 +52,7 @@ impl Body  {
 
     tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
       Ok(child_zipper) => child_zipper,
-      Err(e) => {
-        eprintln!("{}", e);
+      Err(node_itself) => {
         return Err("An error occurred when adding a child to the current node.\n");
       }
     };
@@ -63,8 +62,7 @@ impl Body  {
     tree_wrapper.tree.push_child(item_node);
     tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
       Ok(tree_zipper) => tree_zipper,
-      Err(e) => {
-        eprintln!("{}", e);
+      Err(node_itself) => {
         return Err("No child of type ListItem to be focused on.\n")
       }
     };
@@ -103,8 +101,7 @@ impl Body  {
     // Move focus back to parent list so new list items might be appended
     tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
       Ok(parent) => parent,
-      Err(e) => {
-        eprintln!("{}", e);
+      Err(node_itself) => {
         return Err("Cannot focus on parent bullet list\n...")
       }
     };
@@ -188,8 +185,7 @@ impl BulletList {
         tree_wrapper.tree.push_child(item_node);
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
           Ok(tree_zipper) => tree_zipper,
-          Err(e) => {
-            eprintln!("{}", e);
+          Err(node_itself) => {
             return Err("No child of type ListItem to be focused on.\n")
           }
         };
@@ -228,8 +224,7 @@ impl BulletList {
         // Move focus back to parent list so new list items might be appended
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
           Ok(parent) => parent,
-          Err(e) => {
-            eprintln!("{}", e);
+          Err(node_itself) => {
             return Err("Cannot focus on parent bullet list\n...")
           }
         };
@@ -245,8 +240,7 @@ impl BulletList {
 
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
           Ok(parent) => parent,
-          Err(e) => {
-            eprintln!("{}", e);
+          Err(node_itself) => {
             return Err("Encountered list on same level but couldn't focus on list parent.\n")
           }
         };
@@ -263,8 +257,7 @@ impl BulletList {
 
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
           Ok(parent) => parent,
-          Err(e) => {
-            eprintln!("{}", e);
+          Err(node_itself) => {
             return Err("Encountered a list item with less indent but couldn't focus on list parent.\n")
           }
         };
@@ -290,8 +283,7 @@ impl BulletList {
         // Move focus to the nested list node
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
           Ok(child_zipper) => child_zipper,
-          Err(e) => {
-            eprintln!("{}", e);
+          Err(node_itself) => {
             return Err("An error occurred when shifting focus to sublist.\n");
           }
         };
