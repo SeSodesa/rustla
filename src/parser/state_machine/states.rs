@@ -6,6 +6,7 @@
 use super::*;
 use crate::doctree::{self, TreeNode, TreeNodeType, structural_nodes, body_nodes, inline_nodes};
 
+
 /// ### Body
 /// A state for detecting and parsing the first lines
 /// of different types of rST text blocks. Transitions to
@@ -32,6 +33,22 @@ impl Body  {
       transitions: transitions::TRANSITION_MAP.get("Body").unwrap()
     }
   }
+
+
+  /// ### empty_line
+  /// Simply adds an empty line to the children of the curren node.
+  pub fn empty_line (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str>  {
+
+    let mut tree_wrapper = doctree.unwrap();
+
+    let node = TreeNode::new(TreeNodeType::EmptyLine);
+
+    tree_wrapper.tree.push_child(node);
+
+    Ok((Some(tree_wrapper), None, PushOrPop::Neither))
+
+  }
+
 
   /// ### bullet
   /// The transition method for matching bullets in `Body` state.

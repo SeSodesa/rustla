@@ -181,6 +181,9 @@ pub enum TreeNodeType {
   // DocTree root node
   Root(Root),
 
+  // Simple empty line with no additional data
+  EmptyLine,
+
   // Structural elements
   Section(structural_nodes::Section),
   Topic(structural_nodes::Topic),

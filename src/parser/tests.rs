@@ -289,7 +289,8 @@ asfsffdsfasfasdf"
 #[test]
 fn bullet_list_01 () {
 
-  let src = String::from("- This is the first bullet list item.  The blank line above the
+  let src = String::from("
+- This is the first bullet list item.  The blank line above the
   first list item is required; blank lines between list items
   (such as below this paragraph) are optional.");
 
@@ -307,7 +308,7 @@ fn bullet_list_01 () {
 
   eprintln!("{:#?}", doctree.tree);
 
-  match doctree.tree.node.children[0].data {
+  match doctree.tree.node.children[1].data {
     TreeNodeType::BulletList(..) => (),
     _ => panic!("No bullet list node where one was expected!\n")
   }
