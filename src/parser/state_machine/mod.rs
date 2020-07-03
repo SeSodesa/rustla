@@ -316,14 +316,14 @@ impl MachineWithState<Inline> {
 
           let (node, offset) = parsing_function(*pattern_name, &capts);
 
-          eprintln!("{:#?}", node);
+          //eprintln!("{:#?}", node);
 
           return Some((node, offset));
 
         },
 
         None => {
-          eprintln!("No match for {:#?}", pattern_name);
+          //eprintln!("No match for {:#?}", pattern_name);
           continue // no match, do nothing
         }
 

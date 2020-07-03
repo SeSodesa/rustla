@@ -81,8 +81,58 @@ impl Body  {
 
   }
 
+
   pub fn enumerator (doctree: Option<DocTree>, captures: regex::Captures) -> Result<(Option<DocTree>, Option<StateMachine>), &'static str> {
     todo!();
+  }
+
+
+  pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+
+    let mut tree_wrapper = doctree.unwrap();
+    let indent = captures.get(1).unwrap().as_str().chars().count();
+
+    let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(indent), None) {
+      Ok((lines, min_indent, line_offset, blank_finish)) => {
+        lines.join("\n")
+      }
+      Err(e) => {
+        eprintln!("{}", e);
+        return Err("Error when reading paragraph block in Body.\n")
+      }
+    };
+
+    // Pass text to inline parser as a string
+    let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
+
+    let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
+      children
+    } else {
+      return Err("Couldn't parse paragraph for inline nodes\n")
+    };
+
+    let data = TreeNodeType::Paragraph(body_nodes::Paragraph{});
+
+    let paragraph_node = TreeNode::new(data);
+
+    tree_wrapper.tree.push_child(paragraph_node);
+
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
+      Ok(child) => child,
+      Err(node_itself) => return Err("Couldn't focus on child paragraph\n")
+    };
+
+    tree_wrapper.tree.append_children(&mut inline_nodes);
+
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+      Ok(parent) => parent,
+      Err(node_self) => return Err("Couldn't move focus to paragraph parent...\n")
+    };
+
+    eprintln!("{:#?}\n", tree_wrapper.tree.walk_to_root());
+
+    todo!();
+
   }
 
 }
@@ -160,7 +210,7 @@ impl BulletList {
         };
 
         // Read indented block here
-        let block = match Parser::read_indented_block(src_lines, Some(*current_line), None, None, Some(indent), Some(indent)) {
+        let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(indent), Some(indent)) {
           Ok((lines, min_indent, line_offset, blank_finish)) => {
 
             if min_indent != indent {
@@ -268,6 +318,13 @@ impl BulletList {
         return Err("No action for this type of bullet--indent combination")
       }
     }
+
+  }
+
+
+  pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+
+    todo!();
 
   }
 

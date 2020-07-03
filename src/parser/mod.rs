@@ -210,6 +210,16 @@ impl Parser {
       if !match_found {
 
         eprintln!("No match found.\nPopping from machine stack...\n");
+
+        let mut doctree = self.doctree.take().unwrap();
+
+        doctree.tree = match doctree.tree.focus_on_parent() {
+          Ok(parent) => parent,
+          Err(root_node) => return Err("No node parent when reducing nesting level...\n")
+        };
+
+        self.doctree.replace(doctree);
+
         let _ = match self.machine_stack.pop() {
           Some(machine) => machine,
           None => return Err("Cannot pop from an empty stack.\n")

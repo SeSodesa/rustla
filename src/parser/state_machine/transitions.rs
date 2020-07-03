@@ -56,6 +56,7 @@ pub const COMMON_TRANSITIONS: &[UncompiledTransition] = &[
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
   (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", Body::bullet),
+  (PatternName::Text, r"(\s*)\S", Body::paragraph)
 ];
 
 
