@@ -152,8 +152,8 @@ asdfsdafasdfasdfa
 "asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
-asdfsdafasdfsda  fadsfsdf"        
-      );
+asdfsdafasdfsda  fadsfsdf
+");
     },
     Err(e) => {
       eprintln!("{}", e);
@@ -192,7 +192,8 @@ asdfsdafasdfasdfa
 "  asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
-asdfsdafasdfsda  fadsfsdf"
+asdfsdafasdfsda  fadsfsdf
+"
       );
     },
     Err(e) => {
@@ -266,7 +267,7 @@ asdfsdafasdfasdfa
 
       eprintln!("{:#?}", lines);
 
-      assert_eq!(line_diff, 6);
+      assert_eq!(line_diff, 7);
 
       assert_eq!(
         lines.join("\n"),
@@ -275,7 +276,8 @@ asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
 asdfdsfsdafsadfaf
-asfsffdsfasfasdf"
+asfsffdsfasfasdf
+"
       );
     },
     Err(e) => {
@@ -300,7 +302,11 @@ fn read_indented_block_05 () {
   asfsffdsfasfasdf
 
   asdfsdafasdfasdfa
+  adasdsafasfasf
+  dfasfsdfaff
 
+
+asfsadfasdfsad
 ";
 
   let lines = utils::str_to_lines(src);
@@ -310,7 +316,7 @@ fn read_indented_block_05 () {
 
       eprintln!("{:#?}", lines);
 
-      assert_eq!(line_diff, 6);
+      assert_eq!(line_diff, 12);
 
       assert_eq!(
         lines.join("\n"),
@@ -319,7 +325,13 @@ asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
 asdfdsfsdafsadfaf
-asfsffdsfasfasdf"
+asfsffdsfasfasdf
+
+asdfsdafasdfasdfa
+adasdsafasfasf
+dfasfsdfaff
+
+"
       );
     },
     Err(e) => {
@@ -357,5 +369,37 @@ fn bullet_list_01 () {
     TreeNodeType::BulletList(..) => (),
     _ => panic!("No bullet list node where one was expected!\n")
   }
+
+}
+
+
+#[test]
+fn bullet_list_02 () {
+
+  let src = String::from("
+  - List item 1
+
+  Second paragraph of the list item.");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::BulletList(..) => (),
+    _ => panic!("No bullet list node where one was expected!\n")
+  }
+
+  todo!()
 
 }

@@ -402,7 +402,7 @@ impl Parser {
   ///
   /// Returns a tuple
   /// ```rust
-  /// {block: Vec<String>, min_indent<u32>, finished_with_blank: bool}
+  /// {block: Vec<String>, min_indent<usize>, finished_with_blank: bool}
   /// ```
   /// if successful.
   fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
@@ -462,12 +462,12 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
-      if line.trim().is_empty() {
-        eprintln!("Ran into empty line => end of block\n");
-        blank_finish = true;
-        loop_broken = true;
-        break
-      }
+      // if line.trim().is_empty() && until_blank {
+      //   eprintln!("Ran into empty line => end of block\n");
+      //   blank_finish = true;
+      //   loop_broken = true;
+      //   break
+      // }
 
       // Check for sufficient indentation
       for (i, c) in line.chars().enumerate() {
@@ -537,9 +537,9 @@ impl Parser {
 
       eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
 
-      if !line.trim().is_empty() {
+      // if !line.trim().is_empty() {
         block_lines.push(line);
-      }
+      // }
 
       line_num += 1;
 
