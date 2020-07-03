@@ -153,35 +153,40 @@ impl Parser {
 
             Ok((opt_doctree, opt_next_state, push_or_pop, opt_line_advance)) => {
 
-              // If a transition method returns a state, check whether we should transition to it or
-              // push it on top of the stack...
-              if let Some(next_state) = opt_next_state {
-                match push_or_pop {
-                  PushOrPop::Push => {
+              match push_or_pop {
+                PushOrPop::Push => {
+                  // If a transition method returns a state, check whether we should transition to it or
+                  // push it on top of the stack...
+                  if let Some(next_state) = opt_next_state {
                     eprintln!("Pushing {:#?} on top of stack...\n", next_state);
                     self.machine_stack.push(Some(next_state))
-                  },
-                  PushOrPop::Pop => {
-
-                    eprintln!("Received POP instruction");
-
-                    match self.machine_stack.pop() {
-                      Some(machine) => (),
-                      None => {
-                        return Err("Can't pop from empty stack.\n")
-                      }
-                    };
                   }
-                  PushOrPop::Neither => {
-
-                    eprintln!("{:#?}", push_or_pop);
-
+                },
+                PushOrPop::Pop => {
+                  eprintln!("Received POP instruction");
+                  match self.machine_stack.pop() {
+                    Some(machine) => (),
+                    None => {
+                      return Err("Can't pop from empty stack.\n")
+                    }
+                  };
+                }
+                PushOrPop::Neither => {
+                  eprintln!("{:#?}", push_or_pop);
+                  if let Some(next_state) = opt_next_state {
                     let machine = match self.machine_stack.last_mut() {
                       Some(opt_machine) => opt_machine.replace(next_state),
                       None => return Err("No machine on top of stack.\nCan't perform transition after executing transition method.\n")
                     };
                   }
-                };
+                }
+              };
+
+              match opt_line_advance {
+                LineAdvance::Some(offset) => {
+                  self.current_line += offset;
+                }
+                _ => ()
               }
 
               opt_doctree
@@ -211,7 +216,7 @@ impl Parser {
         };
       }
 
-      self.current_line += 1;
+      //self.current_line += 1;
 
       if self.current_line >= self.src_lines.len() {
 

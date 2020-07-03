@@ -339,7 +339,6 @@ dfasfsdfaff
       panic!();
     }
   };
-
 }
 
 
@@ -379,7 +378,7 @@ fn bullet_list_02 () {
   let src = String::from("
   - List item 1
 
-  Second paragraph of the list item.");
+    Second paragraph of the list item.");
 
   let mut doctree = DocTree::new(String::from("test"));
 

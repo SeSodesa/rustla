@@ -53,7 +53,8 @@ impl Body  {
   /// ### bullet
   /// The transition method for matching bullets in `Body` state.
   /// Causes the parser to push a new machine in the state
-  /// `BulletList` on top of its machine stack.
+  /// `BulletList` on top of its machine stack. Leaves the reponsibility
+  /// of the actual parsing to that state.
   pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
 
     let mut tree_wrapper = doctree.unwrap();
@@ -74,58 +75,9 @@ impl Body  {
       }
     };
 
-    let item_node = doctree::TreeNode::new(TreeNodeType::ListItem(body_nodes::ListItem{}));
-
-    tree_wrapper.tree.push_child(item_node);
-    tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-      Ok(tree_zipper) => tree_zipper,
-      Err(node_itself) => {
-        return Err("No child of type ListItem to be focused on.\n")
-      }
-    };
-
-    // Read indented block here
-    let block = match Parser::read_indented_block(src_lines, Some(*current_line), None, None, Some(indent), Some(indent)) {
-      Ok((lines, min_indent, line_offset, blank_finish)) => {
-
-        if min_indent != indent {
-          return Err("Indent of list item block was less than given.")
-        }
-
-        lines.join("\n")
-
-      }
-
-      Err(e) => {
-        eprintln!("{}", e);
-        return Err("Error when reading list item block.\n")
-      }
-
-    };
-
-    // Pass text to inline parser as a string
-    let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
-
-    let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
-      children
-    } else {
-      Vec::new()
-    };
-
-    // Add inline nodes to list item node
-    tree_wrapper.tree.append_children(&mut inline_nodes);
-    
-    // Move focus back to parent list so new list items might be appended
-    tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-      Ok(parent) => parent,
-      Err(node_itself) => {
-        return Err("Cannot focus on parent bullet list\n...")
-      }
-    };
-
     let next_state = StateMachine::new(pattern_name);
 
-    Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None) )
+    Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None))
 
   }
 
