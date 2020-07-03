@@ -55,12 +55,12 @@ pub const COMMON_TRANSITIONS: &[UncompiledTransition] = &[
 ];
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^([+\-*\u{2022}])( +|$)", Body::bullet),
+  (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", Body::bullet),
 ];
 
 
 pub const BULLET_LIST_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^([+\-*\u{2022}])( +|$)", BulletList::bullet)
+  (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", BulletList::bullet)
 ];
 
 pub const DEFINITION_LIST_TRANSITIONS: &[UncompiledTransition] = &[
