@@ -2,7 +2,7 @@
 
 mod state_machine;
 
-use state_machine::{StateMachine, MachineWithState};
+use state_machine::{StateMachine, MachineWithState, PushOrPop, LineAdvance};
 
 #[cfg(test)]
 mod tests;
@@ -31,16 +31,6 @@ pub struct Parser {
   current_line: usize,
   doctree: Option<DocTree>,
   machine_stack: Vec<Option<StateMachine>>,
-}
-
-/// ### PushOrPop
-/// An enum for manipulating the machine stack. Transition methods should return this information
-/// with a possible next state, so the parser knows how to proceed. The `Push` variant signifies
-/// a state should be pushed on top of the stack, `Pop` tells of the need to pop from the stack
-/// and `Neither` initiates a transition of the current state into another one.
-#[derive(Debug)]
-pub enum PushOrPop {
-  Push, Pop, Neither
 }
 
 
@@ -161,7 +151,7 @@ impl Parser {
 
           self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
 
-            Ok((opt_doctree, opt_next_state, push_or_pop)) => {
+            Ok((opt_doctree, opt_next_state, push_or_pop, opt_line_advance)) => {
 
               // If a transition method returns a state, check whether we should transition to it or
               // push it on top of the stack...

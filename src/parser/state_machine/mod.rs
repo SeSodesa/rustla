@@ -18,11 +18,12 @@ use crate::doctree::{self, TreeNode};
 /// A function pointer type alias for a State transition method.
 /// `TransitionMethod`s take in the document tree and regex captures
 /// for doctree modifications. Unless errors occur,
-/// they return an `Ok`-wrapped tuple of optional doctree and a possible next state for the parser.
-/// If the optional next state is *not* `None`, a new state machine
-/// in the new state is pushed on top of the machine stack of the parser and parsing proceeds
+/// they return an `Ok`-wrapped tuple of optional doctree (because the parser contains an `Option`al doctree and not just a doctree),
+/// a possible next state for the parser, information about manipulating the machine stack and whether to advance the parser line cursor.
+/// If the optional next state is *not* `None`, the current state is either replaced with the new state or
+/// the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str>;
+type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str>;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
@@ -40,6 +41,25 @@ type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Capt
 /// ### InlineTransition
 /// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
 type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
+
+
+/// ### PushOrPop
+/// An enum for manipulating the machine stack. Transition methods should return this information
+/// with a possible next state, so the parser knows how to proceed. The `Push` variant signifies
+/// a state should be pushed on top of the stack, `Pop` tells of the need to pop from the stack
+/// and `Neither` initiates a transition of the current state into another one.
+#[derive(Debug)]
+pub enum PushOrPop {
+  Push, Pop, Neither
+}
+
+/// ### LineAdvance
+/// An enum returned by the transition methods to tell the parser whether
+/// it needs to advance it line cursor after the method execution or not.
+pub enum LineAdvance {
+  Some(usize),
+  None
+}
 
 
 /// ### StateMachine

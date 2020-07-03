@@ -37,7 +37,7 @@ impl Body  {
 
   /// ### empty_line
   /// Simply adds an empty line to the children of the curren node.
-  pub fn empty_line (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str>  {
+  pub fn empty_line (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str>  {
 
     let mut tree_wrapper = doctree.unwrap();
 
@@ -45,7 +45,7 @@ impl Body  {
 
     tree_wrapper.tree.push_child(node);
 
-    Ok((Some(tree_wrapper), None, PushOrPop::Neither))
+    Ok((Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::Some(1)))
 
   }
 
@@ -54,7 +54,7 @@ impl Body  {
   /// The transition method for matching bullets in `Body` state.
   /// Causes the parser to push a new machine in the state
   /// `BulletList` on top of its machine stack.
-  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str> {
+  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
 
     let mut tree_wrapper = doctree.unwrap();
 
@@ -125,7 +125,7 @@ impl Body  {
 
     let next_state = StateMachine::new(pattern_name);
 
-    Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push ) )
+    Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None) )
 
   }
 
@@ -175,7 +175,7 @@ impl BulletList {
   /// transition method. Differs from the `Body` state version
   /// in that this detects whether a list of a different type has started
   /// and acts accordingly.
-  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop), &'static str> {
+  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
 
     let mut tree_wrapper = doctree.unwrap();
 
@@ -246,7 +246,7 @@ impl BulletList {
           }
         };
 
-        return Ok((Some(tree_wrapper), None, PushOrPop::Neither))
+        return Ok((Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::Some(1)))
 
       },
 
@@ -262,7 +262,7 @@ impl BulletList {
           }
         };
 
-        return Ok((Some(tree_wrapper), None, PushOrPop::Neither))
+        return Ok((Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::None))
 
       },
 
@@ -279,7 +279,7 @@ impl BulletList {
           }
         };
 
-        return Ok((Some(tree_wrapper), None, PushOrPop::Pop))
+        return Ok((Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None))
 
       },
 
@@ -308,7 +308,7 @@ impl BulletList {
         // Push nested list to latest list
         tree_wrapper.tree.push_child(list_node);
 
-        return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push))
+        return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push, LineAdvance::None))
 
       }
 
