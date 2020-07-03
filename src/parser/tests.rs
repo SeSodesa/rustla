@@ -301,10 +301,10 @@ fn read_indented_block_05 () {
   asdfdsfsdafsadfaf
   asfsffdsfasfasdf
 
-  asdfsdafasdfasdfa
-  adasdsafasfasf
-  dfasfsdfaff
 
+  adasdasdasdasdfasd
+  <sdfasdfadsffafs
+  sadfdfdsasfasff
 
 asfsadfasdfsad
 ";
@@ -327,10 +327,10 @@ asdfsdafasdfsda  fadsfsdf
 asdfdsfsdafsadfaf
 asfsffdsfasfasdf
 
-asdfsdafasdfasdfa
-adasdsafasfasf
-dfasfsdfaff
 
+adasdasdasdasdfasd
+<sdfasdfadsffafs
+sadfdfdsasfasff
 "
       );
     },

@@ -467,68 +467,27 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
-      // if line.trim().is_empty() && until_blank {
-      //   eprintln!("Ran into empty line => end of block\n");
-      //   blank_finish = true;
-      //   loop_broken = true;
-      //   break
-      // }
+      // Check for sufficient indentation if line isn't empty
 
-      // Check for sufficient indentation
-      for (i, c) in line.chars().enumerate() {
+      let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
-        // No need to keep looping if we have reached a
-        // sufficient level of indentation
-        if !block_indent.is_none() && i == block_indent.unwrap() {
-          break
-        }
+      if !line.is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
+        eprintln!("Not enough indentation on line {:?}!\n", line_num);
 
-        if !c.is_whitespace() && i == 0 // No indentation at all
-          || (!block_indent.is_none() && i < block_indent.unwrap() && !c.is_whitespace()) // Not enough indentation
-        {
-
-          eprintln!("Not enough indentation!\n");
-
-          // Block is valid, iff the last indented line is blank
-          blank_finish = (line_num > start_line) &&
-            src_lines
-              .get(line_num - 1)
-              .unwrap()
-              .trim()
-              .is_empty();
-
-          eprintln!("Blank finish: {:?}", blank_finish);
-
-          // end while iteration
-          line_num = last_line_num;
-          break
-
-        }
-
-      }
-
-      if line_num >= last_line_num {
-        eprintln!("Breaking out of while loop\n");
+        // Ended with a blank finish if the last line before unindent was blank
+        blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().is_empty();
         loop_broken = true;
         break
       }
 
-      // Trim beginning whitespace from line under observation
-      // for blank line check
-      let no_indent_line = line.trim_start();
-
-      let line_indent: usize;
-
       // Updating the minimal level of indentation, if line isn't blank
       // and there isn't predetermined block indentation
-      if no_indent_line.is_empty() && until_blank {
+      if line.is_empty() && until_blank {
 
         blank_finish = true;
         break
 
       } else if block_indent.is_none() {
-
-        line_indent = line.chars().count() - no_indent_line.chars().count();
 
         eprintln!("Line indent: {:?} on line {:?}", line_indent, line_num);
 
@@ -541,11 +500,7 @@ impl Parser {
       }
 
       eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
-
-      // if !line.trim().is_empty() {
-        block_lines.push(line);
-      // }
-
+      block_lines.push(line);
       line_num += 1;
 
     }
@@ -562,35 +517,25 @@ impl Parser {
       eprintln!("Removing first line indentation...\n");
 
       if let Some(first_line) = block_lines.first_mut() {
-        
         let mut cs = first_line.chars();
-
         for _i in 0..first_indent.unwrap() {
           cs.next();
         }
-
         let trunc_line = cs.as_str().to_string();
-
           *first_line = trunc_line;
-
       }
     }
 
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
       if strip_indent {
-
         eprintln!("Removing indentation from lines...\n");
-
         for (index, line) in block_lines.iter_mut().enumerate() {
-
           if first_indent.is_some() && index == 0 {
             eprintln!("Cursor currently on the first line of block and \nfirst line had own indentation.\nContinuing...\n");
             continue
           }
-
           eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
-
           let trunc_line = match utils::strip_indent(line.clone(), indent) {
             Ok(line) => line,
             Err(e) => {
@@ -598,16 +543,13 @@ impl Parser {
               return Err(format!("Indentation removal error on line {} of block under inspection\n", index));              
             }
           };
-
           *line = trunc_line;
-
           eprintln!("Line after drain: {:?}\n", line);
         }
       }
     }
 
     block_lines.shrink_to_fit(); // Free unnecessary used memory
-
     let line_diff = block_lines.len();
 
     Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
