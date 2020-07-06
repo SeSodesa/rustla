@@ -449,7 +449,7 @@ impl Parser {
 
     // Push first line into `block_lines` and increment
     // line number to ignore indentation (for now) if first_indent was set
-    if !first_indent.is_none() {
+    if first_indent.is_some() {
       eprintln!("Pushing line {} to block_lines", line_num);
       let line = src_lines.get(line_num).unwrap().to_owned();
       block_lines.push(line);
@@ -471,7 +471,7 @@ impl Parser {
 
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
-      if !line.is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
+      if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
         eprintln!("Not enough indentation on line {:?}!\n", line_num);
 
         // Ended with a blank finish if the last line before unindent was blank
@@ -482,7 +482,7 @@ impl Parser {
 
       // Updating the minimal level of indentation, if line isn't blank
       // and there isn't predetermined block indentation
-      if line.is_empty() && until_blank {
+      if line.trim().is_empty() && until_blank {
 
         blank_finish = true;
         break
