@@ -20,15 +20,15 @@ fn inline_parse_01 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::Literal(data) = &nodes[12].data {
-      data.text.as_str()
+    if let TreeNodeType::Literal{text} = &nodes[12].data {
+      text.as_str()
     } else {panic!()},
     "literal"
   );
 
   assert_eq!(
-    if let TreeNodeType::StrongEmphasis(data) = &nodes[15].data {
-      data.text.as_str()
+    if let TreeNodeType::StrongEmphasis{text} = &nodes[15].data {
+      text.as_str()
     } else {panic!()},
     "strong emphasis"
   );
@@ -51,15 +51,15 @@ fn inline_parse_02 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::Reference(data) = &nodes[12].data {
-      data.target_label.as_str()
+    if let TreeNodeType::Reference{target_label} = &nodes[12].data {
+      target_label.as_str()
     } else {panic!()},
     "simple-reference+with:punctuation"
   );
 
   assert_eq!(
-    if let TreeNodeType::Reference(data) = &nodes[18].data {
-      data.target_label.as_str()
+    if let TreeNodeType::Reference{target_label} = &nodes[18].data {
+      target_label.as_str()
     } else {panic!()},
     "phrase reference"
   );
@@ -83,15 +83,15 @@ fn inline_parse_03 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::Reference(data) = &nodes[6].data {
-      data.target_label.as_str()
+    if let TreeNodeType::Reference{target_label} = &nodes[6].data {
+      target_label.as_str()
     } else {panic!()},
     "simple-reference"
   );
 
   assert_eq!(
-    if let TreeNodeType::InlineTarget(data) = &nodes[12].data {
-      data.target_label.as_str()
+    if let TreeNodeType::InlineTarget{target_label} = &nodes[12].data {
+      target_label.as_str()
     } else {panic!()},
     "inline target."
   );
@@ -115,8 +115,8 @@ fn inline_parse_04 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::SubstitutionReference(data) = &nodes[6].data {
-      data.text.as_str()
+    if let TreeNodeType::SubstitutionReference{target_label} = &nodes[6].data {
+      target_label.as_str()
     } else {panic!()},
     "substitution reference"
   );
@@ -139,8 +139,8 @@ fn inline_parse_05 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::AbsoluteURI(data) = &nodes[10].data {
-      data.text.as_str()
+    if let TreeNodeType::AbsoluteURI{text} = &nodes[10].data {
+      text.as_str()
     } else {panic!("Absolute URI not found!")},
     "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top"
   );
@@ -163,8 +163,8 @@ fn inline_parse_06 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::StandaloneEmail(data) = &nodes[10].data {
-      data.text.as_str()
+    if let TreeNodeType::StandaloneEmail{text} = &nodes[10].data {
+      text.as_str()
     } else {panic!()},
     "mailto:john.harry.doe@www.example.com"
   );

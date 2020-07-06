@@ -62,7 +62,7 @@ impl Body  {
     let bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let indent = captures.get(0).unwrap().end();
 
-    let bullet_list_data = TreeNodeType::BulletList(doctree::body_nodes::BulletList::new(bullet, indent));
+    let bullet_list_data = TreeNodeType::BulletList{bullet: bullet, indent:indent};
 
     let list_node = TreeNode::new(bullet_list_data);
 
@@ -184,8 +184,8 @@ impl BulletList {
     let list_item_bullet = captures.get(1).unwrap().as_str().chars().next().unwrap();
     let list_item_indent = captures.get(0).unwrap().end();
 
-    let (list_bullet, list_indent) = match &tree_wrapper.tree.node.data {
-      doctree::TreeNodeType::BulletList(bullet_list_node) => (bullet_list_node.bullet, bullet_list_node.indent),
+    let (list_bullet, list_indent) = match tree_wrapper.tree.node.data {
+      doctree::TreeNodeType::BulletList{bullet, indent} => (bullet, indent),
       _ => return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
     };
 
@@ -199,7 +199,7 @@ impl BulletList {
         // indent with Parser::read_indented_block and parse it for inline elements,
         // feeding those to the ListItem node.
 
-        let item_node = doctree::TreeNode::new(TreeNodeType::ListItem(body_nodes::ListItem{}));
+        let item_node = doctree::TreeNode::new(TreeNodeType::ListItem);
 
         tree_wrapper.tree.push_child(item_node);
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
@@ -293,7 +293,7 @@ impl BulletList {
         // and have the parser push a new bullet machine on top of the
         // parser stack to signify an increase in nesting level.
 
-        let bullet_list_data = TreeNodeType::BulletList(body_nodes::BulletList::new(bullet, indent));
+        let bullet_list_data = TreeNodeType::BulletList{bullet: bullet, indent: indent};
 
         let list_node = TreeNode::new(bullet_list_data);
 
@@ -655,10 +655,10 @@ impl Inline {
     let data = String::from(content.as_str());
 
     let node = match pattern_name {
-      PatternName::StrongEmphasis => TreeNode::new(TreeNodeType::StrongEmphasis(inline_nodes::StrongEmphasis{text: data})),
-      PatternName::Emphasis => TreeNode::new(TreeNodeType::Emphasis(inline_nodes::Emphasis{text: data})),
-      PatternName::Literal => TreeNode::new(TreeNodeType::Literal(inline_nodes::Literal{text: data})),
-      PatternName::InlineTarget => TreeNode::new(TreeNodeType::InlineTarget(inline_nodes::InlineTarget{target_label: data})),
+      PatternName::StrongEmphasis => TreeNode::new(TreeNodeType::StrongEmphasis{text: data}),
+      PatternName::Emphasis => TreeNode::new(TreeNodeType::Emphasis{text: data}),
+      PatternName::Literal => TreeNode::new(TreeNodeType::Literal{text: data}),
+      PatternName::InlineTarget => TreeNode::new(TreeNodeType::InlineTarget{target_label: data}),
       _ => panic!("No such paired delimiter type!")
     };
 
@@ -677,7 +677,7 @@ impl Inline {
 
     let content = captures.get(0).unwrap();
 
-    let data = TreeNodeType::WhiteSpace(inline_nodes::WhiteSpace{text: String::from(content.as_str())});
+    let data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
 
     let node = TreeNode::new(data);
 
@@ -698,15 +698,15 @@ impl Inline {
     let data = match pattern_name {
       PatternName::SimpleRef | PatternName::PhraseRef => {
         let target_label = captures.get(1).unwrap();
-        TreeNodeType::Reference(inline_nodes::Reference{target_label: String::from(target_label.as_str())})
+        TreeNodeType::Reference{target_label: String::from(target_label.as_str())}
       },
       PatternName::FootNoteRef => {
         let target_label = captures.get(1).unwrap();
-        TreeNodeType::FootnoteReference(inline_nodes::FootnoteReference{target_label: String::from(target_label.as_str())})
+        TreeNodeType::FootnoteReference{target_label: String::from(target_label.as_str())}
       },
       PatternName::SubstitutionRef => {
         let target_label = captures.get(1).unwrap();
-        TreeNodeType::SubstitutionReference(inline_nodes::SubstitutionReference{text: String::from(target_label.as_str())})
+        TreeNodeType::SubstitutionReference{target_label: String::from(target_label.as_str())}
       },
       PatternName::StandaloneHyperlink => {
 
@@ -736,7 +736,7 @@ impl Inline {
             // If no email when missing a scheme, simply return match as string
             if email == MISSING {
               let match_str = whole_match.as_str();
-              let data = TreeNodeType::Text(inline_nodes::Text{text: String::from(whole_match.as_str())});
+              let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
               let text_node = TreeNode::new(data);
               return (text_node, match_str.chars().count())
             }
@@ -744,7 +744,7 @@ impl Inline {
             let match_str = whole_match.as_str();
 
             // If a successful email recognition, prepend a mailto scheme to email.
-            TreeNodeType::StandaloneEmail(inline_nodes::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)})
+            TreeNodeType::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)}
 
           }
 
@@ -824,9 +824,9 @@ impl Inline {
 
             // If URI is valid, return it as URI, else as text
             if is_valid {
-              TreeNodeType::AbsoluteURI(inline_nodes::AbsoluteURI{text: String::from(whole_match.as_str())})
+              TreeNodeType::AbsoluteURI{text: String::from(whole_match.as_str())}
             } else {
-              TreeNodeType::Text(inline_nodes::Text{text: String::from(whole_match.as_str())})
+              TreeNodeType::Text{text: String::from(whole_match.as_str())}
             }
 
           }
@@ -854,7 +854,7 @@ impl Inline {
 
     let data = String::from(content.as_str());
 
-    let node = TreeNode::new(TreeNodeType::Text(inline_nodes::Text{text: data}));
+    let node = TreeNode::new(TreeNodeType::Text{text: data});
 
     assert!(node.children.is_empty());
 
