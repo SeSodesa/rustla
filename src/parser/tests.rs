@@ -346,9 +346,7 @@ sadfdfdsasfasff
 fn bullet_list_01 () {
 
   let src = String::from("
-- This is the first bullet list item.  The blank line above the
-  first list item is required; blank lines between list items
-  (such as below this paragraph) are optional.");
+- This is the first bullet list item.");
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -362,7 +360,7 @@ fn bullet_list_01 () {
     }
   };
 
-  eprintln!("{:#?}", doctree.tree);
+  //eprintln!("{:#?}", doctree.tree.walk_to_root());
 
   match doctree.tree.node.children[1].data {
     TreeNodeType::BulletList{..}=> (),
@@ -392,7 +390,9 @@ fn bullet_list_02 () {
     }
   };
 
-  eprintln!("{:#?}", doctree.tree.walk_to_root());
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", &doctree.tree);
 
   todo!()
 

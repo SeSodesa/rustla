@@ -51,24 +51,25 @@ pub enum PatternName {
 /// been compiled into a DFA yet.
 type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 
-pub const COMMON_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
-];
+// pub const COMMON_TRANSITIONS: &[UncompiledTransition] = &[
+//   (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
+// ];
 
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
   (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
-  (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", Body::bullet),
+  (PatternName::Bullet, r"^(\s*)([+\-*\u{2022}])(?: +|$)", Body::bullet),
   (PatternName::Text, r"^(\s*)\S", Body::paragraph)
 ];
 
 
 pub const BULLET_LIST_TRANSITIONS: &[UncompiledTransition] = &[
-  (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", BulletList::bullet)
+  (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
+  (PatternName::Bullet, r"^(\s*)([+\-*\u{2022}])(?: +|$)", BulletList::bullet)
 ];
 
 pub const BULLET_LIST_ITEM_TRANSITIONS: &[UncompiledTransition] = &[
   (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
-  (PatternName::Bullet, r"^\s*([+\-*\u{2022}])( +|$)", ListItem::bullet),
+  (PatternName::Bullet, r"^(\s*)([+\-*\u{2022}])(?: +|$)", ListItem::bullet),
   (PatternName::Paragraph, r"^(\s*)\S", ListItem::paragraph),
 ];
 
@@ -220,7 +221,7 @@ lazy_static! {
 
     let mut action_map = collections::HashMap::new();
 
-    let mut body_actions = Vec::with_capacity(COMMON_TRANSITIONS.len() + BODY_TRANSITIONS.len());
+    let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
 
     for (pat_name, expr, fun) in BODY_TRANSITIONS.iter() {
       let r = regex::Regex::new(expr).unwrap();
@@ -242,7 +243,7 @@ lazy_static! {
 
     let mut bullet_list_item_actions = Vec::with_capacity(BULLET_LIST_ITEM_TRANSITIONS.len());
 
-    for (pat_name, expr, fun) in BULLET_LIST_TRANSITIONS.iter() {
+    for (pat_name, expr, fun) in BULLET_LIST_ITEM_TRANSITIONS.iter() {
       let r = regex::Regex::new(expr).unwrap();
       bullet_list_item_actions.push((*pat_name, r, *fun));
     }
