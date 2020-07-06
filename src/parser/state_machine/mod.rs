@@ -75,6 +75,7 @@ pub enum StateMachine {
   BulletList(MachineWithState<BulletList>),
   DefinitionList(MachineWithState<DefinitionList>),
   EnumeratedList(MachineWithState<EnumeratedList>),
+  ListItem(MachineWithState<ListItem>),
   FieldList(MachineWithState<FieldList>),
   OptionList(MachineWithState<OptionList>),
   LineBlock(MachineWithState<LineBlock>),
@@ -144,6 +145,7 @@ impl StateMachine {
     match self {
       StateMachine::Body(machine) => Ok(machine.state.transitions),
       StateMachine::BulletList(machine) => Ok(machine.state.transitions),
+      StateMachine::ListItem(machine) => Ok(machine.state.transitions),
       StateMachine::DefinitionList(machine) => Ok(machine.state.transitions),
       StateMachine::EnumeratedList(machine) => Ok(machine.state.transitions),
       StateMachine::FieldList(machine) => Ok(machine.state.transitions),

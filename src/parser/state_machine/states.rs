@@ -321,14 +321,56 @@ impl BulletList {
 
   }
 
+}
 
+/// ### ListItem
+/// A state for recognizing other beginning list items (enumerators or bullets)
+/// and paragraphs. A single list item consists of paragraphs of text, and detection
+/// of any other types of items will trigger a transition to a previous state in the stack.
+pub struct ListItem {
+  pub transitions: &'static Vec<Transition>
+}
+
+impl std::fmt::Debug for ListItem {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    f.debug_struct("BulletList").finish()
+  }
+}
+
+impl ListItem {
+
+  /// ### new
+  /// A `ListItem` state constructor.
+  pub fn new () -> Self {
+    Self{
+      transitions: transitions::TRANSITION_MAP.get("ListItem").unwrap()
+    }
+  }
+
+  /// ### bullet
+  /// A bullet detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
+  pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+    todo!()
+  }
+
+
+  /// ### enumerator
+  /// An enumerator detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
+  pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+    todo!()
+  }
+
+  /// ### paragraph
+  /// Direct child nodes of list items may only be paragraphs.
+  /// This function parses each paragraph in a list item for inline nodes.
+  /// A paragraph must have at least the same level of indentation as the containing list item,
+  /// otherwise is it interpreted as ending the current list item.
   pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
-
     todo!();
-
   }
 
 }
+
 
 /// ### Definition
 /// A state for handling the second line of a possible
