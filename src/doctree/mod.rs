@@ -169,7 +169,7 @@ pub enum TreeNodeType {
   Transition(structural_nodes::Transition),
 
   // Body level elements
-  Paragraph(body_nodes::Paragraph),
+  Paragraph,
   Compound(body_nodes::Compound),
   Container(body_nodes::Container),
   BulletList {bullet: char, indent: usize},

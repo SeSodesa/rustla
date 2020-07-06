@@ -111,7 +111,7 @@ impl Body  {
       return Err("Couldn't parse paragraph for inline nodes\n")
     };
 
-    let data = TreeNodeType::Paragraph(body_nodes::Paragraph{});
+    let data = TreeNodeType::Paragraph;
 
     let paragraph_node = TreeNode::new(data);
 
