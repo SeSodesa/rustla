@@ -406,9 +406,75 @@ impl ListItem {
   /// A paragraph must have at least the same level of indentation as the containing list item,
   /// otherwise is it interpreted as ending the current list item.
   pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
-    todo!();
-  }
+    
+    let mut tree_wrapper = doctree.unwrap();
 
+    let (bullet, item_bullet_indent, item_text_indent) = match tree_wrapper.tree.node.data {
+      TreeNodeType::ListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
+      _ => return Err("Failed to retrieve bullet list item info when parsing a paragraph.\n")
+    };
+
+    let detected_par_indent = captures.get(1).unwrap().as_str().chars().count();
+
+    match detected_par_indent {
+
+      t_indent if t_indent == item_text_indent => {
+
+        // If the indentation of the paragraph matches with the text
+        // indentation of the list item, the paragraph is a valid part of the item
+        // and can be added to it.
+
+        let mut paragraph_node = TreeNode::new(TreeNodeType::Paragraph);
+
+        // Read indented block here
+        let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), None) {
+          Ok((lines, min_indent, line_offset, blank_finish)) => {
+            if min_indent != item_text_indent {
+              return Err("Indent of list item block was less than given.")
+            }
+            lines.join("\n")
+          }
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Error when reading list item block.\n")
+          }
+        };
+
+        // Pass text to inline parser as a string
+        let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
+
+        let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
+          children
+        } else {
+          Vec::new()
+        };
+
+        // Add inline nodes to Paragraph node
+        paragraph_node.append_children(&mut inline_nodes);
+
+        tree_wrapper.tree.push_child(paragraph_node);
+        
+
+        Ok( ( Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::Some(1) ) )
+      }
+
+      indent if indent < item_text_indent => {
+
+        // Less indentation means the paragraph is not a part of this
+        // nested list. Possibly a continuation of the previous list item.
+        todo!()
+      }
+
+      indent if indent > item_text_indent => {
+
+        // More indentation might mean that there is a literal block as a part of this list item.
+        todo!()
+      }
+
+      _ => todo!() // The other options still need to be figured out
+
+    }
+  }
 }
 
 

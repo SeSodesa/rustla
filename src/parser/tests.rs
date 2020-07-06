@@ -343,6 +343,44 @@ sadfdfdsasfasff
 
 
 #[test]
+fn read_indented_block_06 () {
+
+  let src = "
+
+  sdasdasdasdasd
+  adsadadasdasd
+
+  adasdasdasdasdfasd
+  <sdfasdfadsffafs
+  sadfdfdsasfasff
+
+asfsadfasdfsad
+";
+
+  let lines = utils::str_to_lines(src);
+
+  match Parser::read_indented_block(&lines, Some(2), Some(true), None, Some(2), None) {
+    Ok((lines, _indent, line_diff, _empty_finish)) => {
+
+      eprintln!("{:#?}", lines);
+
+      assert_eq!(line_diff, 2);
+
+      assert_eq!(
+        lines.join("\n"),
+"sdasdasdasdasd
+adsadadasdasd"
+      );
+    },
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+}
+
+
+#[test]
 fn bullet_list_01 () {
 
   let src = String::from("
@@ -376,7 +414,11 @@ fn bullet_list_02 () {
   let src = String::from("
   - List item 1
 
-    Second paragraph of the list item.");
+    Second paragraph of the list item.
+    
+    Third paragraph of this list item...
+    
+  ");
 
   let mut doctree = DocTree::new(String::from("test"));
 
