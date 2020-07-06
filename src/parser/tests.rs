@@ -432,10 +432,14 @@ fn bullet_list_02 () {
     }
   };
 
-  doctree.tree = doctree.tree.walk_to_root();
+  match doctree.tree.node.children[1].children[0].children[2].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("Second non-whitespace child of ListItem wasn't a paragraph!\n")
+  }
 
-  eprintln!("{:#?}", &doctree.tree);
-
-  todo!()
+  match doctree.tree.node.children[1].children[0].children[2].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
+  }
 
 }
