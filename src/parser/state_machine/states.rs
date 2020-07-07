@@ -180,9 +180,9 @@ impl BulletList {
 
     let mut tree_wrapper = doctree.unwrap();
 
-    let list_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-    let list_item_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
-    let list_item_text_indent = captures.get(0).unwrap().end();
+    let detected_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
+    let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
+    let detected_text_indent = captures.get(0).unwrap().end();
 
     let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.tree.node.data {
       doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
@@ -191,19 +191,51 @@ impl BulletList {
 
     // If bullet and indentation match with current list node, continue with current list.
     // Else check for possible sublist or need to break out of current list and act accordingly.
-    match (list_item_bullet, list_item_bullet_indent, list_item_text_indent) {
+    match (detected_item_bullet, detected_bullet_indent, detected_text_indent) {
+
       (bullet, b_indent, t_indent) if bullet == list_bullet && b_indent == list_bullet_indent => {
 
         // Still within same list based on indentation and bullet.
         // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
         // parse body elements on the same indentation level
 
-        let item_node = doctree::TreeNode::new(TreeNodeType::ListItem{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent});
+        let mut item_node = doctree::TreeNode::new(TreeNodeType::ListItem{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent});
+        let mut paragraph_node = doctree::TreeNode::new(TreeNodeType::Paragraph);
 
-        // Create new ListItem and focus on it
+        // Read indented block here
+        let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), Some(t_indent)) {
+          Ok((lines, min_indent, line_offset, blank_finish)) => {
+            if min_indent != t_indent {
+              return Err("Indent of list item block was less than given.")
+            }
+            lines.join("\n")
+          }
+          Err(e) => {
+            eprintln!("{}", e);
+            return Err("Error when reading list item block.\n")
+          }
+        };
+
+        // Pass text to inline parser as a string
+        let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
+
+        let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
+          children
+        } else {
+          Vec::new()
+        };
+
+        // Add inline nodes to Paragraph node
+        paragraph_node.append_children(&mut inline_nodes);
+
+        item_node.push_child(paragraph_node);
+
         tree_wrapper.tree.push_child(item_node);
+
+        // Focus on the ListItem node after pushing it to the current bullet list
+        // tree_wrapper.tree.push_child(item_node);
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-          Ok(tree_zipper) => tree_zipper,
+          Ok(tree_zipper) =>tree_zipper,
           Err(node_itself) => {
             return Err("No child of type ListItem to be focused on.\n")
           }
@@ -211,7 +243,7 @@ impl BulletList {
 
         let list_item_state = StateMachine::ListItem(MachineWithState::<ListItem>{state: ListItem::new()});
 
-        return Ok((Some(tree_wrapper), Some(list_item_state), PushOrPop::Push, LineAdvance::None))
+        return Ok((Some(tree_wrapper), Some(list_item_state), PushOrPop::Push, LineAdvance::Some(1)))
 
       },
 
@@ -325,9 +357,6 @@ impl ListItem {
     let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
 
-
-    let mut paragraph_node = TreeNode::new(TreeNodeType::Paragraph);
-
     // Match against bullet and indentation.
 
     match (detected_bullet, detected_bullet_indent, detected_text_indent) {
@@ -337,37 +366,12 @@ impl ListItem {
         // If they are the same, we have detected another list item on the same level
         // and need to move back to parent list so it might be appended.
 
-
-        // Read indented block here
-        let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), Some(t_indent)) {
-          Ok((lines, min_indent, line_offset, blank_finish)) => {
-            if min_indent != list_item_text_indent {
-              return Err("Indent of list item block was less than given.")
-            }
-            lines.join("\n")
-          }
-          Err(e) => {
-            eprintln!("{}", e);
-            return Err("Error when reading list item block.\n")
-          }
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree) => tree,
+          Err(tree) => return Err("Couldn't focus on parent bullet list")
         };
-
-        // Pass text to inline parser as a string
-        let inline_parser = MachineWithState::<Inline>::from(MachineWithState::new());
-
-        let mut inline_nodes = if let Some(children) = inline_parser.parse(block, current_line) {
-          children
-        } else {
-          Vec::new()
-        };
-
-        // Add inline nodes to Paragraph node
-        paragraph_node.append_children(&mut inline_nodes);
         
-        // Create new Paragraph inside above ListItem and focus on it
-        tree_wrapper.tree.push_child(paragraph_node);
-        
-        return Ok( ( Some(tree_wrapper), None, PushOrPop:: Neither, LineAdvance::Some(1) ) )
+        return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
 
       }
 

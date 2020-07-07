@@ -72,7 +72,7 @@ impl Parser {
     // The parsing loop
     loop {
 
-      eprintln!("Machine stack state: {:#?}", self.machine_stack);
+      // eprintln!("Machine stack state: {:#?}", self.machine_stack);
       eprintln!("On line {:#?}", self.current_line);
 
       let mut match_found = false;
@@ -85,8 +85,6 @@ impl Parser {
 
         // We need as_ref(), as unwrap() returns a reference to an Option and not the StateMachine itself
         if let Some(machine) = machine.as_ref() {
-
-          eprintln!("Matching on state...\n");
 
           match machine {
             StateMachine::EOF => {
@@ -172,7 +170,6 @@ impl Parser {
                   };
                 }
                 PushOrPop::Neither => {
-                  eprintln!("{:#?}", push_or_pop);
                   if let Some(next_state) = opt_next_state {
                     let machine = match self.machine_stack.last_mut() {
                       Some(opt_machine) => opt_machine.replace(next_state),
@@ -434,23 +431,23 @@ impl Parser {
       None => None
     };
 
-    eprintln!("Minimal indent after block assignment: {:?}", minimal_indent);
+    // eprintln!("Minimal indent after block assignment: {:?}", minimal_indent);
 
     // If there is block indentation but no predetermined indentation for the first line,
     // set the indentation of the first line equal to block indentation.
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
-      eprintln!("Setting first line indentation equal to block indentation: {}...\n", block_indent);
+      // eprintln!("Setting first line indentation equal to block indentation: {}...\n", block_indent);
       Some(block_indent)
     } else {
       first_indent
     };
 
-    eprintln!("First indent set to {:?}", first_indent);
+    // eprintln!("First indent set to {:?}", first_indent);
 
     // Push first line into `block_lines` and increment
     // line number to ignore indentation (for now) if first_indent was set
     if first_indent.is_some() {
-      eprintln!("Pushing line {} to block_lines", line_num);
+      // eprintln!("Pushing line {} to block_lines", line_num);
       let line = src_lines.get(line_num).unwrap().to_owned();
       block_lines.push(line);
       line_num += 1;
@@ -514,7 +511,7 @@ impl Parser {
     // If indentation was expected on the first line, remove it
     if !first_indent.is_none() && !block_lines.is_empty() {
 
-      eprintln!("Removing first line indentation...\n");
+      // eprintln!("Removing first line indentation...\n");
 
       if let Some(first_line) = block_lines.first_mut() {
         let mut cs = first_line.chars();
@@ -529,13 +526,13 @@ impl Parser {
     // Strip all minimal indentation from each line
     if let Some(indent) = minimal_indent {
       if strip_indent {
-        eprintln!("Removing indentation from lines...\n");
+        // eprintln!("Removing indentation from lines...\n");
         for (index, line) in block_lines.iter_mut().enumerate() {
           if first_indent.is_some() && index == 0 {
-            eprintln!("Cursor currently on the first line of block and \nfirst line had own indentation.\nContinuing...\n");
+            // eprintln!("Cursor currently on the first line of block and \nfirst line had own indentation.\nContinuing...\n");
             continue
           }
-          eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
+          // eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
           let trunc_line = match utils::strip_indent(line.clone(), indent) {
             Ok(line) => line,
             Err(e) => {
@@ -544,7 +541,7 @@ impl Parser {
             }
           };
           *line = trunc_line;
-          eprintln!("Line after drain: {:?}\n", line);
+          // eprintln!("Line after drain: {:?}\n", line);
         }
       }
     }
