@@ -180,13 +180,17 @@ impl BulletList {
 
     let mut tree_wrapper = doctree.unwrap();
 
+    eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
+
     let detected_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
     let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
     let detected_text_indent = captures.get(0).unwrap().end();
 
     let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.tree.node.data {
       doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
-      _ => return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
+      _ => {
+        return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
+      }
     };
 
     // If bullet and indentation match with current list node, continue with current list.
@@ -280,7 +284,7 @@ impl BulletList {
 
       },
 
-      (bullet, b_indent, t_indent) if b_indent >= list_text_indent => {
+      (bullet, b_indent, t_indent) if b_indent == list_text_indent => {
 
         // More indent after discovering a bullet means a sublist has started,
         // regardless of bullet type.
@@ -294,6 +298,8 @@ impl BulletList {
 
         let list_machine = StateMachine::BulletList(MachineWithState::<BulletList>::from(MachineWithState::new()));
 
+        tree_wrapper.tree.push_child(list_node);
+
         // Move focus to the nested list node
         tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
           Ok(child_zipper) => child_zipper,
@@ -302,8 +308,7 @@ impl BulletList {
           }
         };
 
-        // Push nested list to latest list
-        tree_wrapper.tree.push_child(list_node);
+        eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
 
         return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push, LineAdvance::None))
 
@@ -348,6 +353,8 @@ impl ListItem {
     
     let mut tree_wrapper = doctree.unwrap();
 
+    eprintln!("{:#?}", tree_wrapper.tree.node.data);
+
     let (list_item_bullet, list_item_bullet_indent, list_item_text_indent) = match tree_wrapper.tree.node.data {
       TreeNodeType::ListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
       _ => return Err("Not focused on list item.\nCannot ask for bullet and indentation.\n")
@@ -371,6 +378,7 @@ impl ListItem {
           Err(tree) => return Err("Couldn't focus on parent bullet list")
         };
         
+        eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
         return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
 
       }
@@ -385,6 +393,7 @@ impl ListItem {
           Err(tree) => return Err("Couldn't focus on parent bullet list")
         };
 
+        eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
         return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
 
       }
@@ -397,6 +406,8 @@ impl ListItem {
           Ok(tree) => tree,
           Err(tree) => return Err("Couldn't focus on parent bullet list")
         };
+
+        eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
 
         return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
       }

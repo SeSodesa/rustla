@@ -161,7 +161,7 @@ impl Parser {
                   }
                 },
                 PushOrPop::Pop => {
-                  eprintln!("Received POP instruction");
+                  eprintln!("Received POP instruction...\n");
                   match self.machine_stack.pop() {
                     Some(machine) => (),
                     None => {
