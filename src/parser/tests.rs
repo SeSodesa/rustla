@@ -493,3 +493,60 @@ fn bullet_list_03 () {
   }
 
 }
+
+
+
+#[test]
+fn bullet_list_04 () {
+
+  let src = String::from("
+  - List item 1
+
+    Second paragraph of the list item.
+
+  - List item 2
+
+  asfasdfdsfasfasdfasfd
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("First child of BulletList wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("Second child of BulletList wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[2].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("No empty line after bullet list!\n")
+  }
+
+}

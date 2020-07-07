@@ -380,14 +380,25 @@ impl ListItem {
         // list item was detected => need to move focus to said list and pop from
         // parser machine stack until corresponding level of nesting is reached.
 
-        todo!()
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree) => tree,
+          Err(tree) => return Err("Couldn't focus on parent bullet list")
+        };
+
+        return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
       }
 
       (bullet, b_indent, t_indent) if b_indent >= list_item_text_indent => {
         // Indent greater than that of the current item means a sublist has started,
-        // again, assuming that it aligns with the left edge of teh list item.
+        // again, assuming that it aligns with the left edge of the list item.
 
-        todo!()
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree) => tree,
+          Err(tree) => return Err("Couldn't focus on parent bullet list")
+        };
+
+        return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
       }
 
       _ => {
@@ -466,7 +477,15 @@ impl ListItem {
 
         // Less indentation means the paragraph is not a part of this
         // nested list. Possibly a continuation of the previous list item.
-        todo!()
+        // Focus on parent and pop from stack.
+      
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree) => tree,
+          Err(tree) => return Err("Bullet list outer paragraph detected, but no parent?\n")
+        };
+
+        Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
       }
 
       indent if indent > item_text_indent => {
