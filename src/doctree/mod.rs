@@ -251,39 +251,6 @@ pub enum TreeNodeType {
 
 }
 
-/// ### NodeId
-/// A global counter of document nodes
-#[derive(Debug)]
-pub struct NodeId {
-  id: usize
-}
-
-impl NodeId {
-
-  /// ### new
-  /// A NodeId constructor. In the beginning,
-  /// there are 0 Nodes.
-  pub fn new() -> Self {
-    NodeId {
-      id: 0
-    }
-  }
-
-  /// ### increment
-  /// Increments the `NodeId` counter by 1.
-  pub fn increment(&mut self) {
-    self.id += 1;
-  }
-
-  /// ### get
-  /// Return a copy of the NodeId counter.NodeId
-  pub fn assign (&mut self) -> usize{
-    let current = self.id;
-    self.increment();
-    current
-  }
-
-}
 
 /// ### Parent
 /// A shorthand for an optional (parent might not exist)
