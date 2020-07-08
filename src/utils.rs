@@ -1,7 +1,7 @@
 /// This submoddule contains useful functions and other constructs that don't
 /// sensibly belong to any specific entity in the program.
 
-use std::{str, path, fs, io};
+use std::{str, path, fs, io, convert::TryFrom};
 use std::io::BufRead;
 
 // =======================
@@ -87,63 +87,67 @@ pub enum UpperAlpha {
   V, W, X, Y, Z, None,
 }
 
-impl From<u32> for UpperAlpha {
+impl TryFrom<u32> for UpperAlpha {
 
-  /// ### from
+  type Error = &'static str;
+
+  /// ### try_from
   /// Converts a `u32` to a corresponding `UpperAlpha` numeral variant.
-  fn from (numeral: u32) -> Self {
+  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
     match numeral {
-      1   => Self::A,
-      2   => Self::B,
-      3   => Self::C,
-      4   => Self::D,
-      5   => Self::E,
-      6   => Self::F,
-      7   => Self::G,
-      8   => Self::H,
-      9   => Self::I,
-      10  => Self::J,
-      11  => Self::K,
-      12  => Self::L,
-      13  => Self::M,
-      14  => Self::N,
-      15  => Self::O,
-      16  => Self::P,
-      17  => Self::Q,
-      18  => Self::R,
-      19  => Self::S,
-      20  => Self::T,
-      21  => Self::U,
-      22  => Self::V,
-      23  => Self::W,
-      24  => Self::X,
-      25  => Self::Y,
-      26  => Self::Z,
-      _   => Self::None
+      1   => Ok(Self::A),
+      2   => Ok(Self::B),
+      3   => Ok(Self::C),
+      4   => Ok(Self::D),
+      5   => Ok(Self::E),
+      6   => Ok(Self::F),
+      7   => Ok(Self::G),
+      8   => Ok(Self::H),
+      9   => Ok(Self::I),
+      10  => Ok(Self::J),
+      11  => Ok(Self::K),
+      12  => Ok(Self::L),
+      13  => Ok(Self::M),
+      14  => Ok(Self::N),
+      15  => Ok(Self::O),
+      16  => Ok(Self::P),
+      17  => Ok(Self::Q),
+      18  => Ok(Self::R),
+      19  => Ok(Self::S),
+      20  => Ok(Self::T),
+      21  => Ok(Self::U),
+      22  => Ok(Self::V),
+      23  => Ok(Self::W),
+      24  => Ok(Self::X),
+      25  => Ok(Self::Y),
+      26  => Ok(Self::Z),
+      _   => Err("No matching upper-case alphanumeral for a given integer\n")
     }
   }
 }
 
-impl From<&str> for UpperAlpha {
+impl TryFrom<&str> for UpperAlpha {
+
+  type Error = &'static str;
 
   /// ### from
   /// Converts a `&str` to a corresponding `UpperAlpha` numeral variant.
-  fn from (alpha_str: &str) -> Self {
+  fn try_from (alpha_str: &str) -> Result<Self, Self::Error> {
     match alpha_str {
-      "A" => Self::A, "B" => Self::B,
-      "C" => Self::C, "D" => Self::D,
-      "E" => Self::E, "F" => Self::F,
-      "G" => Self::G, "H" => Self::H,
-      "I" => Self::I, "J" => Self::J,
-      "K" => Self::K, "L" => Self::L,
-      "M" => Self::M, "N" => Self::N,
-      "O" => Self::O, "P" => Self::P,
-      "Q" => Self::Q, "R" => Self::R,
-      "S" => Self::S, "T" => Self::T,
-      "U" => Self::U, "V" => Self::V,
-      "W" => Self::W, "X" => Self::X,
-      "Y" => Self::Y, "Z" => Self::Z,
-      _ => Self::None
+      "A" => Ok(Self::A), "B" => Ok(Self::B),
+      "C" => Ok(Self::C), "D" => Ok(Self::D),
+      "E" => Ok(Self::E), "F" => Ok(Self::F),
+      "G" => Ok(Self::G), "H" => Ok(Self::H),
+      "I" => Ok(Self::I), "J" => Ok(Self::J),
+      "K" => Ok(Self::K), "L" => Ok(Self::L),
+      "M" => Ok(Self::M), "N" => Ok(Self::N),
+      "O" => Ok(Self::O), "P" => Ok(Self::P),
+      "Q" => Ok(Self::Q), "R" => Ok(Self::R),
+      "S" => Ok(Self::S), "T" => Ok(Self::T),
+      "U" => Ok(Self::U), "V" => Ok(Self::V),
+      "W" => Ok(Self::W), "X" => Ok(Self::X),
+      "Y" => Ok(Self::Y), "Z" => Ok(Self::Z),
+      _ => Err("No matching upper-case alphanumeral for given &str\n")
     }
   }
 }
@@ -159,62 +163,67 @@ pub enum LowerAlpha {
 }
 
 
-impl From<u32> for LowerAlpha {
-  /// ### from
-  /// Converts a `u32` to a corresponding `LowerAlpha` numeral variant.
-  fn from (numeral: u32) -> Self {
+impl TryFrom<u32> for LowerAlpha {
+
+  type Error = &'static str;
+
+  /// ### try_from
+  /// Converts a `u32` to a corresponding `LowerAlpha` numeral variant,.
+  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
     match numeral {
-      1   => Self::A,
-      2   => Self::B,
-      3   => Self::C,
-      4   => Self::D,
-      5   => Self::E,
-      6   => Self::F,
-      7   => Self::G,
-      8   => Self::H,
-      9   => Self::I,
-      10  => Self::J,
-      11  => Self::K,
-      12  => Self::L,
-      13  => Self::M,
-      14  => Self::N,
-      15  => Self::O,
-      16  => Self::P,
-      17  => Self::Q,
-      18  => Self::R,
-      19  => Self::S,
-      20  => Self::T,
-      21  => Self::U,
-      22  => Self::V,
-      23  => Self::W,
-      24  => Self::X,
-      25  => Self::Y,
-      26  => Self::Z,
-      _   => Self::None
+      1   => Ok(Self::A),
+      2   => Ok(Self::B),
+      3   => Ok(Self::C),
+      4   => Ok(Self::D),
+      5   => Ok(Self::E),
+      6   => Ok(Self::F),
+      7   => Ok(Self::G),
+      8   => Ok(Self::H),
+      9   => Ok(Self::I),
+      10  => Ok(Self::J),
+      11  => Ok(Self::K),
+      12  => Ok(Self::L),
+      13  => Ok(Self::M),
+      14  => Ok(Self::N),
+      15  => Ok(Self::O),
+      16  => Ok(Self::P),
+      17  => Ok(Self::Q),
+      18  => Ok(Self::R),
+      19  => Ok(Self::S),
+      20  => Ok(Self::T),
+      21  => Ok(Self::U),
+      22  => Ok(Self::V),
+      23  => Ok(Self::W),
+      24  => Ok(Self::X),
+      25  => Ok(Self::Y),
+      26  => Ok(Self::Z),
+      _   => Err("No matching lower-case alphanumeral for a given integer\n")
     }
   }
 }
 
-impl From<&str> for LowerAlpha {
+impl TryFrom<&str> for LowerAlpha {
 
-  /// ### from
-  /// Converts a `&str` to a corresponding `LowerAlpha` numeral variant.
-  fn from (alpha_str: &str) -> Self {
+  type Error = &'static str;
+
+  /// ### try_from
+  /// Converts a `&str` to a corresponding `UpperAlpha` numeral variant.
+  fn try_from (alpha_str: &str) -> Result<Self, Self::Error> {
     match alpha_str {
-      "a" => Self::A, "b" => Self::B,
-      "c" => Self::C, "d" => Self::D,
-      "e" => Self::E, "f" => Self::F,
-      "g" => Self::G, "h" => Self::H,
-      "i" => Self::I, "j" => Self::J,
-      "k" => Self::K, "l" => Self::L,
-      "m" => Self::M, "n" => Self::N,
-      "o" => Self::O, "p" => Self::P,
-      "q" => Self::Q, "r" => Self::R,
-      "s" => Self::S, "t" => Self::T,
-      "u" => Self::U, "v" => Self::V,
-      "w" => Self::W, "x" => Self::X,
-      "y" => Self::Y, "z" => Self::Z,
-      _ => Self::None
+      "a" => Ok(Self::A), "b" => Ok(Self::B),
+      "c" => Ok(Self::C), "d" => Ok(Self::D),
+      "e" => Ok(Self::E), "f" => Ok(Self::F),
+      "g" => Ok(Self::G), "h" => Ok(Self::H),
+      "i" => Ok(Self::I), "j" => Ok(Self::J),
+      "k" => Ok(Self::K), "l" => Ok(Self::L),
+      "m" => Ok(Self::M), "n" => Ok(Self::N),
+      "o" => Ok(Self::O), "p" => Ok(Self::P),
+      "q" => Ok(Self::Q), "r" => Ok(Self::R),
+      "s" => Ok(Self::S), "t" => Ok(Self::T),
+      "u" => Ok(Self::U), "v" => Ok(Self::V),
+      "w" => Ok(Self::W), "x" => Ok(Self::X),
+      "y" => Ok(Self::Y), "z" => Ok(Self::Z),
+      _ => Err("No matching lower-case alphanumeral for given &str\n")
     }
   }
 }
@@ -228,47 +237,54 @@ pub enum UpperRoman {
   I, None
 }
 
-impl From<u32> for UpperRoman {
+impl TryFrom<u32> for UpperRoman {
 
-  /// ### from
+  type Error = &'static str;
+
+  /// ### try_from
   /// Converts a `u32` to an `UpperRoman` numeral variant.
-  fn from (numeral: u32) -> Self {
+  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
     match numeral {
-      1000  => Self::M,
-      900   => Self::CM,
-      500   => Self::D,
-      400   => Self::CD,
-      100   => Self::C,
-      90    => Self::XC,
-      50    => Self::L,
-      40    => Self::XL,
-      10    => Self::X,
-      9     => Self::IX,
-      5     => Self::V,
-      4     => Self::IV,
-      1     => Self::I,
-      _     => Self::None
+      1000  => Ok(Self::M),
+      900   => Ok(Self::CM),
+      500   => Ok(Self::D),
+      400   => Ok(Self::CD),
+      100   => Ok(Self::C),
+      90    => Ok(Self::XC),
+      50    => Ok(Self::L),
+      40    => Ok(Self::XL),
+      10    => Ok(Self::X),
+      9     => Ok(Self::IX),
+      5     => Ok(Self::V),
+      4     => Ok(Self::IV),
+      1     => Ok(Self::I),
+      _     => Err("No matching upper-case Roman numeral for a given integer\n")
     }
   }
 }
 
-impl From<&str> for UpperRoman {
-  fn from (roman_str: &str) -> Self {
+impl TryFrom<&str> for UpperRoman {
+
+  type Error = &'static str;
+
+  /// ### try_from
+  /// Tries to convert a `&str` to an `UpperRoman` variant.
+  fn try_from (roman_str: &str) -> Result<Self, Self::Error> {
     match roman_str {
-      "M" => Self::M,
-      "CM" => Self::CM,
-      "D" => Self::D,
-      "CD" => Self::CD,
-      "C" => Self::C,
-      "XC" => Self::XC,
-      "L" => Self::L,
-      "XL" => Self::XL,
-      "X" => Self::X,
-      "IX" => Self::IX,
-      "V" => Self::V,
-      "IV" => Self::IV,
-      "I" => Self::I,
-      _ => Self::None,
+      "M"   => Ok(Self::M),
+      "CM"  => Ok(Self::CM),
+      "D"   => Ok(Self::D),
+      "CD"  => Ok(Self::CD),
+      "C"   => Ok(Self::C),
+      "XC"  => Ok(Self::XC),
+      "L"   => Ok(Self::L),
+      "XL"  => Ok(Self::XL),
+      "X"   => Ok(Self::X),
+      "IX"  => Ok(Self::IX),
+      "V"   => Ok(Self::V),
+      "IV"  => Ok(Self::IV),
+      "I"   => Ok(Self::I),
+      _     => Err("No matching upper-case roman numeral for given &str\n")
     }
   }
 }
@@ -282,50 +298,54 @@ pub enum LowerRoman {
   I, None
 }
 
-impl From<u32> for LowerRoman {
+impl TryFrom<u32> for LowerRoman {
 
-  /// ### from
-  /// Converts a `u32` to an `LowerRoman` numeral variant.
-  fn from (numeral: u32) -> Self {
+  type Error = &'static str;
+
+  /// ### try_from
+  /// Converts a `u32` to an `UpperRoman` numeral variant.
+  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
     match numeral {
-      1000  => Self::M,
-      900   => Self::CM,
-      500   => Self::D,
-      400   => Self::CD,
-      100   => Self::C,
-      90    => Self::XC,
-      50    => Self::L,
-      40    => Self::XL,
-      10    => Self::X,
-      9     => Self::IX,
-      5     => Self::V,
-      4     => Self::IV,
-      1     => Self::I,
-      _     => Self::None
+      1000  => Ok(Self::M),
+      900   => Ok(Self::CM),
+      500   => Ok(Self::D),
+      400   => Ok(Self::CD),
+      100   => Ok(Self::C),
+      90    => Ok(Self::XC),
+      50    => Ok(Self::L),
+      40    => Ok(Self::XL),
+      10    => Ok(Self::X),
+      9     => Ok(Self::IX),
+      5     => Ok(Self::V),
+      4     => Ok(Self::IV),
+      1     => Ok(Self::I),
+      _     => Err("No matching lower-case Roman numeral for a given integer\n")
     }
   }
 }
 
-impl From<&str> for LowerRoman {
+impl TryFrom<&str> for LowerRoman {
 
-  /// ### from
-  /// Converts a `&str` to a corresponding `LowerRoman` numeral variant.
-  fn from (roman_str: &str) -> Self {
+  type Error = &'static str;
+
+  /// ### try_from
+  /// Tries to convert a `&str` to a `LowerRoman` variant.
+  fn try_from (roman_str: &str) -> Result<Self, Self::Error> {
     match roman_str {
-      "m" => Self::M,
-      "cm" => Self::CM,
-      "d" => Self::D,
-      "cd" => Self::CD,
-      "c" => Self::C,
-      "xc" => Self::XC,
-      "l" => Self::L,
-      "xl" => Self::XL,
-      "x" => Self::X,
-      "ix" => Self::IX,
-      "v" => Self::V,
-      "iv" => Self::IV,
-      "i" => Self::I,
-      _ => Self::None,
+      "m"   => Ok(Self::M),
+      "cm"  => Ok(Self::CM),
+      "d"   => Ok(Self::D),
+      "cd"  => Ok(Self::CD),
+      "c"   => Ok(Self::C),
+      "xc"  => Ok(Self::XC),
+      "l"   => Ok(Self::L),
+      "xl"  => Ok(Self::XL),
+      "x"   => Ok(Self::X),
+      "ix"  => Ok(Self::IX),
+      "v"   => Ok(Self::V),
+      "iv"  => Ok(Self::IV),
+      "i"   => Ok(Self::I),
+      _     => Err("No matching lower-case roman numeral for given &str\n")
     }
   }
 }
