@@ -58,6 +58,32 @@ type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 pub const BODY_TRANSITIONS: &[UncompiledTransition] = &[
   (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
   (PatternName::Bullet, r"^(\s*)([+\-*\u{2022}])(?: +|$)", Body::bullet),
+  (PatternName::Enumerator, r"(?x)
+    ^(?P<indent>\s*)
+    (?:
+      # Both left and right parentheses around enumerator
+      \((?P<arabic_parens>[0-9]+)\)
+      | \((?P<lower_alpha_parens>[a-z])\)
+      | \((?P<upper_alpha_parens>[A-Z])\)
+      | \((?P<lower_roman_parens>[ivxlcdm]+)\)
+      | \((?P<upper_roman_parens>[ICXLCDM]+)\)
+
+      # Only right parenthesis after enumerator
+      | (?P<arabic_rparen>[0-9]+)\)
+      | (?P<lower_alpha_rparen>[a-z])\)
+      | (?P<upper_alpha_rparen>[A-Z])\)
+      | (?P<lower_roman_rparen>[ivxlcdm]+)\)
+      | (?P<upper_roman_rparen>[ICXLCDM]+)\)
+
+      # Period after enumerator
+      | (?P<arabic_period>[0-9]+)\.
+      | (?P<lower_alpha_period>[a-z])\.
+      | (?P<upper_alpha_period>[A-Z])\.
+      | (?P<lower_roman_period>[ivxlcdm]+)\.
+      | (?P<upper_roman_period>[ICXLCDM]+)\.
+    )(?-x)
+    (?: +|$)
+    ", Body::enumerator),
   (PatternName::Text, r"^(\s*)\S", Body::paragraph)
 ];
 
