@@ -203,7 +203,7 @@ impl BulletList {
         // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
         // parse body elements on the same indentation level
 
-        let mut item_node = doctree::TreeNode::new(TreeNodeType::ListItem{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent});
+        let mut item_node = doctree::TreeNode::new(TreeNodeType::BulletListItem{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent});
         let mut paragraph_node = doctree::TreeNode::new(TreeNodeType::Paragraph);
 
         // Read indented block here
@@ -356,7 +356,7 @@ impl ListItem {
     eprintln!("{:#?}", tree_wrapper.tree.node.data);
 
     let (list_item_bullet, list_item_bullet_indent, list_item_text_indent) = match tree_wrapper.tree.node.data {
-      TreeNodeType::ListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
+      TreeNodeType::BulletListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
       _ => return Err("Not focused on list item.\nCannot ask for bullet and indentation.\n")
     };
 
@@ -436,7 +436,7 @@ impl ListItem {
     let mut tree_wrapper = doctree.unwrap();
 
     let (bullet, item_bullet_indent, item_text_indent) = match tree_wrapper.tree.node.data {
-      TreeNodeType::ListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
+      TreeNodeType::BulletListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
       _ => return Err("Failed to retrieve bullet list item info when parsing a paragraph.\n")
     };
 

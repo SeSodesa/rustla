@@ -174,7 +174,7 @@ pub enum TreeNodeType {
   // Container(body_nodes::Container),
   BulletList {bullet: char, bullet_indent: usize, text_indent: usize},
   EnumeratedList,
-  ListItem{bullet: char, bullet_indent: usize, text_indent: usize},
+  BulletListItem{bullet: char, bullet_indent: usize, text_indent: usize},
   DefinitionList(body_nodes::DefinitionList),
   DefinitionListItem(body_nodes::DefinitionListItem),
   // Term(body_nodes::Term),

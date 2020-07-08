@@ -473,12 +473,12 @@ fn bullet_list_03 () {
   eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].children[0].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
   match doctree.tree.node.children[1].children[1].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second child of BulletList wasn't a ListItem!\n")
   }
 
@@ -525,12 +525,12 @@ fn bullet_list_04 () {
   eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].children[0].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
   match doctree.tree.node.children[1].children[1].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second child of BulletList wasn't a ListItem!\n")
   }
 
@@ -586,7 +586,7 @@ fn bullet_list_05 () {
   eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].children[0].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
@@ -596,7 +596,7 @@ fn bullet_list_05 () {
   }
 
   match doctree.tree.node.children[1].children[2].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Third child of BulletList wasn't a ListItem!\n")
   }
 
@@ -643,7 +643,7 @@ fn bullet_list_06 () {
   eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].children[0].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First non-whitespace child of BulletList wasn't a ListItem!\n")
   }
 
@@ -653,7 +653,7 @@ fn bullet_list_06 () {
   }
 
   match doctree.tree.node.children[1].children[1].children[0].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First non-whitespace child of sublist wasn't a ListItem!\n")
   }
 
@@ -663,17 +663,17 @@ fn bullet_list_06 () {
   }
 
   match doctree.tree.node.children[1].children[1].children[2].children[1].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second non-whitespace child of subsublist wasn't a ListItem!\n")
   }
 
   match doctree.tree.node.children[1].children[1].children[3].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Fourth non-whitespace child of sublist wasn't a ListItem!\n")
   }
 
   match doctree.tree.node.children[1].children[2].data {
-    TreeNodeType::ListItem{..} => (),
+    TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Third non-whitespace child of BulletList wasn't a ListItem!\n")
   }
 
