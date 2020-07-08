@@ -90,7 +90,7 @@ pub enum UpperAlpha {
 impl From<u32> for UpperAlpha {
 
   /// ### from
-  /// Converts a `u32` to a corresponding `Self` numeral variant.
+  /// Converts a `u32` to a corresponding `UpperAlpha` numeral variant.
   fn from (numeral: u32) -> Self {
     match numeral {
       1   => Self::A,
@@ -198,7 +198,7 @@ impl From<u32> for LowerAlpha {
 impl From<&str> for LowerAlpha {
 
   /// ### from
-  /// Converts a `&str` to a corresponding `UpperAlpha` numeral variant.
+  /// Converts a `&str` to a corresponding `LowerAlpha` numeral variant.
   fn from (alpha_str: &str) -> Self {
     match alpha_str {
       "a" => Self::A, "b" => Self::B,
@@ -307,6 +307,9 @@ impl From<u32> for LowerRoman {
 }
 
 impl From<&str> for LowerRoman {
+
+  /// ### from
+  /// Converts a `&str` to a corresponding `LowerRoman` numeral variant.
   fn from (roman_str: &str) -> Self {
     match roman_str {
       "m" => Self::M,
