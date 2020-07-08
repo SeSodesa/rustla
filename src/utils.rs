@@ -64,6 +64,9 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
 // Enumerators and converters
 // ==========================
 
+/// ### EnumeratorFormat
+/// An enumeration of the different ways of representing
+/// natural numbers in *reStructuredText* enumerated lists.
 pub enum EnumeratorFormat {
   Arabic(u64),            // 1, 2, 3, 4, 5, ...
   LowerAlpha(LowerAlpha), // a, b, c, d, e, ...
@@ -81,38 +84,66 @@ pub enum UpperAlpha {
   A, B, C, D, E, F, G,
   H, I, J, K, L, M, N,
   O, P, Q, R, S, T, U,
-  V, W, X, Y, Z,
+  V, W, X, Y, Z, None,
 }
 
-impl From<UpperAlpha> for u32 {
-  fn from (numeral: UpperAlpha) -> Self {
+impl From<u32> for UpperAlpha {
+
+  /// ### from
+  /// Converts a `u32` to a corresponding `UpperALpha` numeral variant.
+  fn from (numeral: u32) -> Self {
     match numeral {
-      UpperAlpha::A => 1,
-      UpperAlpha::B => 2,
-      UpperAlpha::C => 3,
-      UpperAlpha::D => 4,
-      UpperAlpha::E => 5,
-      UpperAlpha::F => 6,
-      UpperAlpha::G => 7,
-      UpperAlpha::H => 8,
-      UpperAlpha::I => 9,
-      UpperAlpha::J => 10,
-      UpperAlpha::K => 11,
-      UpperAlpha::L => 12,
-      UpperAlpha::M => 13,
-      UpperAlpha::N => 14,
-      UpperAlpha::O => 15,
-      UpperAlpha::P => 16,
-      UpperAlpha::Q => 17,
-      UpperAlpha::R => 18,
-      UpperAlpha::S => 19,
-      UpperAlpha::T => 20,
-      UpperAlpha::U => 21,
-      UpperAlpha::V => 22,
-      UpperAlpha::W => 23,
-      UpperAlpha::X => 24,
-      UpperAlpha::Y => 25,
-      UpperAlpha::Z => 26,
+      1   => Self::A,
+      2   => Self::B,
+      3   => Self::C,
+      4   => Self::D,
+      5   => Self::E,
+      6   => Self::F,
+      7   => Self::G,
+      8   => Self::H,
+      9   => Self::I,
+      10  => Self::J,
+      11  => Self::K,
+      12  => Self::L,
+      13  => Self::M,
+      14  => Self::N,
+      15  => Self::O,
+      16  => Self::P,
+      17  => Self::Q,
+      18  => Self::R,
+      19  => Self::S,
+      20  => Self::T,
+      21  => Self::U,
+      22  => Self::V,
+      23  => Self::W,
+      24  => Self::X,
+      25  => Self::Y,
+      26  => Self::Z,
+      _   => Self::None
+    }
+  }
+}
+
+impl From<&str> for UpperAlpha {
+
+  /// ### from
+  /// Converts a `&str` to a corresponding `UpperALpha` numeral variant.
+  fn from (alpha_str: &str) -> Self {
+    match alpha_str {
+      "A" => UpperAlpha::A, "B" => UpperAlpha::B,
+      "C" => UpperAlpha::C, "D" => UpperAlpha::D,
+      "E" => UpperAlpha::E, "F" => UpperAlpha::F,
+      "G" => UpperAlpha::G, "H" => UpperAlpha::H,
+      "I" => UpperAlpha::I, "J" => UpperAlpha::J,
+      "K" => UpperAlpha::K, "L" => UpperAlpha::L,
+      "M" => UpperAlpha::M, "N" => UpperAlpha::N,
+      "O" => UpperAlpha::O, "P" => UpperAlpha::P,
+      "Q" => UpperAlpha::Q, "R" => UpperAlpha::R,
+      "S" => UpperAlpha::S, "T" => UpperAlpha::T,
+      "U" => UpperAlpha::U, "V" => UpperAlpha::V,
+      "W" => UpperAlpha::W, "X" => UpperAlpha::X,
+      "Y" => UpperAlpha::Y, "Z" => UpperAlpha::Z,
+      _ => UpperAlpha::None
     }
   }
 }
@@ -124,38 +155,42 @@ pub enum LowerAlpha {
   A, B, C, D, E, F, G,
   H, I, J, K, L, M, N,
   O, P, Q, R, S, T, U,
-  V, W, X, Y, Z,
+  V, W, X, Y, Z, None
 }
 
-impl From<LowerAlpha> for u32 {
-  fn from (numeral: LowerAlpha) -> Self {
+
+impl From<u32> for LowerAlpha {
+  /// ### from
+  /// Converts a `u32` to a corresponding `LowerAlpha` numeral variant.
+  fn from (numeral: u32) -> Self {
     match numeral {
-      LowerAlpha::A => 1,
-      LowerAlpha::B => 2,
-      LowerAlpha::C => 3,
-      LowerAlpha::D => 4,
-      LowerAlpha::E => 5,
-      LowerAlpha::F => 6,
-      LowerAlpha::G => 7,
-      LowerAlpha::H => 8,
-      LowerAlpha::I => 9,
-      LowerAlpha::J => 10,
-      LowerAlpha::K => 11,
-      LowerAlpha::L => 12,
-      LowerAlpha::M => 13,
-      LowerAlpha::N => 14,
-      LowerAlpha::O => 15,
-      LowerAlpha::P => 16,
-      LowerAlpha::Q => 17,
-      LowerAlpha::R => 18,
-      LowerAlpha::S => 19,
-      LowerAlpha::T => 20,
-      LowerAlpha::U => 21,
-      LowerAlpha::V => 22,
-      LowerAlpha::W => 23,
-      LowerAlpha::X => 24,
-      LowerAlpha::Y => 25,
-      LowerAlpha::Z => 26,
+      1   => Self::A,
+      2   => Self::B,
+      3   => Self::C,
+      4   => Self::D,
+      5   => Self::E,
+      6   => Self::F,
+      7   => Self::G,
+      8   => Self::H,
+      9   => Self::I,
+      10  => Self::J,
+      11  => Self::K,
+      12  => Self::L,
+      13  => Self::M,
+      14  => Self::N,
+      15  => Self::O,
+      16  => Self::P,
+      17  => Self::Q,
+      18  => Self::R,
+      19  => Self::S,
+      20  => Self::T,
+      21  => Self::U,
+      22  => Self::V,
+      23  => Self::W,
+      24  => Self::X,
+      25  => Self::Y,
+      26  => Self::Z,
+      _   => Self::None
     }
   }
 }
@@ -166,25 +201,29 @@ impl From<LowerAlpha> for u32 {
 pub enum UpperRoman {
   M, CM, D, CD, C, XC,
   L, XL, X, IX, V, IV,
-  I,
+  I, None
 }
 
-impl From<UpperRoman> for u32 {
-  fn from (numeral: UpperRoman) -> Self {
+impl From<u32> for UpperRoman {
+
+  /// ### from
+  /// Converts a `u32` to an `UpperRoman` numeral variant.
+  fn from (numeral: u32) -> Self {
     match numeral {
-      UpperRoman::M   => 1000,
-      UpperRoman::CM  => 900,
-      UpperRoman::D   => 500,
-      UpperRoman::CD  => 400,
-      UpperRoman::C   => 100,
-      UpperRoman::XC  => 90,
-      UpperRoman::L   => 50,
-      UpperRoman::XL  => 40,
-      UpperRoman::X   => 10,
-      UpperRoman::IX  => 9,
-      UpperRoman::V   => 5,
-      UpperRoman::IV  => 4,
-      UpperRoman::I   => 1,
+      1000  => Self::M,
+      900   => Self::CM,
+      500   => Self::D,
+      400   => Self::CD,
+      100   => Self::C,
+      90    => Self::XC,
+      50    => Self::L,
+      40    => Self::XL,
+      10    => Self::X,
+      9     => Self::IX,
+      5     => Self::V,
+      4     => Self::IV,
+      1     => Self::I,
+      _     => Self::None
     }
   }
 }
@@ -195,25 +234,29 @@ impl From<UpperRoman> for u32 {
 pub enum LowerRoman {
   M, CM, D, CD, C, XC,
   L, XL, X, IX, V, IV,
-  I,
+  I, None
 }
 
-impl From<LowerRoman> for u32 {
-  fn from (numeral: LowerRoman) -> Self {
+impl From<u32> for LowerRoman {
+
+  /// ### from
+  /// Converts a `u32` to an `LowerRoman` numeral variant.
+  fn from (numeral: u32) -> Self {
     match numeral {
-      LowerRoman::M   => 1000,
-      LowerRoman::CM  => 900,
-      LowerRoman::D   => 500,
-      LowerRoman::CD  => 400,
-      LowerRoman::C   => 100,
-      LowerRoman::XC  => 90,
-      LowerRoman::L   => 50,
-      LowerRoman::XL  => 40,
-      LowerRoman::X   => 10,
-      LowerRoman::IX  => 9,
-      LowerRoman::V   => 5,
-      LowerRoman::IV  => 4,
-      LowerRoman::I   => 1,
+      1000  => Self::M,
+      900   => Self::CM,
+      500   => Self::D,
+      400   => Self::CD,
+      100   => Self::C,
+      90    => Self::XC,
+      50    => Self::L,
+      40    => Self::XL,
+      10    => Self::X,
+      9     => Self::IX,
+      5     => Self::V,
+      4     => Self::IV,
+      1     => Self::I,
+      _     => Self::None
     }
   }
 }
