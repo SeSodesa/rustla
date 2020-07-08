@@ -601,3 +601,85 @@ fn bullet_list_05 () {
   }
 
 }
+
+
+
+#[test]
+fn bullet_list_06 () {
+
+  let src = String::from("
+  + List item 1
+
+    Second paragraph of the list item.
+
+    - Sublist item 1
+
+    - Sublist item 2
+
+      * Subsublist item 1
+
+      * Subsublist item 2
+
+    - Sublist item 3
+
+  + List item 2
+
+  asfasdfdsfasfasdfasfd
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("First non-whitespace child of BulletList wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::BulletList{..} => (),
+    _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].children[0].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("First non-whitespace child of sublist wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].children[2].data {
+    TreeNodeType::BulletList{..} => (),
+    _ => panic!("Third non-whitespace child of sublist wasn't a BulletList!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].children[2].children[1].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("Second non-whitespace child of subsublist wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[1].children[3].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("Fourth non-whitespace child of sublist wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[2].data {
+    TreeNodeType::ListItem{..} => (),
+    _ => panic!("Third non-whitespace child of BulletList wasn't a ListItem!\n")
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::Paragraph{..} => (),
+    _ => panic!("Item after BulletList at document root level wasn't a Paragraph!\n")
+  }
+
+}
