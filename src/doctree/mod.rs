@@ -158,7 +158,9 @@ impl TreeNode {
 pub enum TreeNodeType {
 
   // DocTree root node
-  Root{doc_name: String},
+  Root{
+    doc_name: String
+  },
 
   // Simple empty line with no additional data
   EmptyLine,
@@ -172,10 +174,27 @@ pub enum TreeNodeType {
   Paragraph,
   // Compound(body_nodes::Compound),
   // Container(body_nodes::Container),
-  BulletList {bullet: char, bullet_indent: usize, text_indent: usize},
-  EnumeratedList { enum_type: EnumeratorType, enumerator_indent: usize, text_indent: usize },
-  EnumeratedListItem { enum_type: EnumeratorType, index: usize, enumerator_indent: usize, text_indent: usize },
-  BulletListItem{bullet: char, bullet_indent: usize, text_indent: usize},
+  BulletList {
+    bullet: char,
+    bullet_indent: usize,
+    text_indent: usize
+  },
+  BulletListItem{
+    bullet: char,
+    bullet_indent: usize,
+    text_indent: usize
+  },
+  EnumeratedList {
+    enum_type: EnumeratorType,
+    enumerator_indent: usize,
+    text_indent: usize
+  },
+  EnumeratedListItem {
+    enum_type: EnumeratorType,
+    index_in_list: usize,
+    enumerator_indent: usize,
+    text_indent: usize
+  },
   DefinitionList(body_nodes::DefinitionList),
   DefinitionListItem(body_nodes::DefinitionListItem),
   // Term(body_nodes::Term),
@@ -227,15 +246,33 @@ pub enum TreeNodeType {
   TableEntry(body_nodes::TableEntry),
 
   // Inline elements
-  Text{text:String},
-  Emphasis{text: String},
-  StrongEmphasis{text:String},
-  Literal{text: String},
-  InlineTarget{target_label: String},
-  Reference{target_label: String},
-  FootnoteReference{target_label: String},
-  CitationReference{target_label: String},
-  SubstitutionReference{target_label: String},
+  Text {
+    text:String
+  },
+  Emphasis {
+    text: String
+  },
+  StrongEmphasis {
+    text:String
+  },
+  Literal {
+    text: String
+  },
+  InlineTarget {
+    target_label: String
+  },
+  Reference {
+    target_label: String
+  },
+  FootnoteReference {
+    target_label: String
+  },
+  CitationReference {
+    target_label: String
+  },
+  SubstitutionReference {
+    target_label: String
+  },
   TitleReference(inline_nodes::TitleReference),
   AbsoluteURI{text: String},
   StandaloneEmail{text: String},
