@@ -153,10 +153,9 @@ impl Body  {
       Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
     };
 
-    // Create a new EnumeratedList state and tell the parser to
-    // push it on its machine stack here
+    let enumerated_state = StateMachine::new(pattern_name);
 
-    todo!()
+    Ok( ( Some(tree_wrapper), Some(enumerated_state), PushOrPop::Push, LineAdvance::None ) )
 
   }
 
@@ -649,7 +648,6 @@ impl std::fmt::Debug for EnumeratedList {
     f.debug_struct("EnumeratedList").finish()
   }
 }
-
 
 impl EnumeratedList {
 
