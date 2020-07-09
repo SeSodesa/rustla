@@ -74,69 +74,50 @@ pub enum LineAdvance {
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
-#[derive(Debug)]
+#[derive(Debug, Hash, PartialEq, Eq)]
 pub enum StateMachine {
-  Body(MachineWithState<Body>),
-  BulletList(MachineWithState<BulletList>),
-  DefinitionList(MachineWithState<DefinitionList>),
-  EnumeratedList(MachineWithState<EnumeratedList>),
-  ListItem(MachineWithState<ListItem>),
-  FieldList(MachineWithState<FieldList>),
-  OptionList(MachineWithState<OptionList>),
-  LineBlock(MachineWithState<LineBlock>),
-  ExtensionOptions(MachineWithState<ExtensionOptions>),
-  ExplicitMarkup(MachineWithState<ExplicitMarkup>),
-  Text(MachineWithState<Text>),
-  Definition(MachineWithState<Definition>),
-  Line(MachineWithState<Line>),
-  SubstitutionDef(MachineWithState<SubstitutionDef>),
-  Failure(MachineWithState<Failure>),
+  Body,
+  BulletList,
+  DefinitionList,
+  EnumeratedList,
+  ListItem,
+  FieldList,
+  OptionList,
+  LineBlock,
+  ExtensionOptions,
+  ExplicitMarkup,
+  Text,
+  Definition,
+  Line,
+  SubstitutionDef,
+  Failure,
   EOF
 }
 
 
+// ====================
+// Statemachine methods
+// ====================
 impl StateMachine {
-
-  /// ### new
-  /// A `StateMachine` enum constructor
-  fn new (state_type_name: &PatternName) -> Self {
-    match state_type_name {
-      //"Body" => StateMachine::Body( MachineWithState::<Body> { state: Body::new() } ),
-      PatternName::Bullet => StateMachine::BulletList( MachineWithState::<BulletList> { state: BulletList::new() } ),
-      PatternName::Enumerator => StateMachine::EnumeratedList( MachineWithState::<EnumeratedList> { state: EnumeratedList::new() } ),
-      PatternName::FieldMarker => StateMachine::FieldList( MachineWithState::<FieldList> { state: FieldList::new() } ),
-      PatternName::OptionMarker => StateMachine::OptionList( MachineWithState::<OptionList> { state: OptionList::new() } ),
-      PatternName::LineBlock => StateMachine::LineBlock( MachineWithState::<LineBlock> { state: LineBlock::new() } ),
-      PatternName::ExplicitMarkup => StateMachine::ExplicitMarkup( MachineWithState::<ExplicitMarkup> { state: ExplicitMarkup::new() } ),
-      //"DefinitionList" => StateMachine::DefinitionList( MachineWithState::<DefinitionList> { state: DefinitionList::new() } ),
-      //"ExtensionOptions" => StateMachine::ExtensionOptions( MachineWithState::<ExtensionOptions> { state: ExtensionOptions::new() } ),
-      //"Definition" => StateMachine::Definition( MachineWithState::<Definition> { state: Definition::new() } ),
-      PatternName::Line => StateMachine::Line( MachineWithState::<Line> { state: Line::new() } ),
-      //"SubstitutionDef" => StateMachine::SubstitutionDef( MachineWithState::<SubstitutionDef> { state: SubstitutionDef::new() } ),
-      PatternName::Text => StateMachine::Text( MachineWithState::<Text> { state: Text::new() } ),
-      _ => unreachable!()
-    }
-  }
-
 
   /// ### to_failure
   /// Transitions a `StateMachine` into a `Failure` state using the From trait,
   /// the implementation of which automatically implements the Into trait.
   pub fn to_failure (self) -> Self {
     match self {
-      StateMachine::Body(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::BulletList(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::DefinitionList(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::EnumeratedList(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::FieldList(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::OptionList(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::LineBlock(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::ExtensionOptions(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::ExplicitMarkup(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::Text(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::Definition(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::Line(machine) => StateMachine::Failure(machine.into()),
-      StateMachine::SubstitutionDef(machine) => StateMachine::Failure(machine.into()),
+      StateMachine::Body              => StateMachine::Failure,
+      StateMachine::BulletList        => StateMachine::Failure,
+      StateMachine::DefinitionList    => StateMachine::Failure,
+      StateMachine::EnumeratedList    => StateMachine::Failure,
+      StateMachine::FieldList         => StateMachine::Failure,
+      StateMachine::OptionList        => StateMachine::Failure,
+      StateMachine::LineBlock         => StateMachine::Failure,
+      StateMachine::ExtensionOptions  => StateMachine::Failure,
+      StateMachine::ExplicitMarkup    => StateMachine::Failure,
+      StateMachine::Text              => StateMachine::Failure,
+      StateMachine::Definition        => StateMachine::Failure,
+      StateMachine::Line              => StateMachine::Failure,
+      StateMachine::SubstitutionDef   => StateMachine::Failure,
       _ => unreachable!()
     }
   }
@@ -149,22 +130,50 @@ impl StateMachine {
   pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
-      StateMachine::Body(machine) => Ok(machine.state.transitions),
-      StateMachine::BulletList(machine) => Ok(machine.state.transitions),
-      StateMachine::ListItem(machine) => Ok(machine.state.transitions),
-      StateMachine::DefinitionList(machine) => Ok(machine.state.transitions),
-      StateMachine::EnumeratedList(machine) => Ok(machine.state.transitions),
-      StateMachine::FieldList(machine) => Ok(machine.state.transitions),
-      StateMachine::OptionList(machine) => Ok(machine.state.transitions),
-      StateMachine::LineBlock(machine) => Ok(machine.state.transitions),
-      StateMachine::ExtensionOptions(machine) => Ok(machine.state.transitions),
-      StateMachine::ExplicitMarkup(machine) => Ok(machine.state.transitions),
-      StateMachine::Text(machine) => Ok(machine.state.transitions),
-      StateMachine::Definition(machine) => Ok(machine.state.transitions),
-      StateMachine::Line(machine) => Ok(machine.state.transitions),
-      StateMachine::SubstitutionDef(machine) => Ok(machine.state.transitions),
-      StateMachine::EOF => Err("Already moved past EOF. No transitions to perform.\n"),
-      StateMachine::Failure( .. ) => Err("Failure state has no transitions\n")
+      StateMachine::Body              => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::BulletList        => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::ListItem          => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::DefinitionList    => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::EnumeratedList    => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::FieldList         => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::OptionList        => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::LineBlock         => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::ExtensionOptions  => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::ExplicitMarkup    => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::Text              => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::Definition        => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::Line              => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::SubstitutionDef   => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      },
+      StateMachine::EOF               => Err("Already moved past EOF. No transitions to perform.\n"),
+      StateMachine::Failure           => Err("Failure state has no transitions\n")
     }
   }
 }
@@ -368,8 +377,19 @@ impl <S> MachineWithState <S> {
 /// StateMachine associated functions
 /// =================================
 impl StateMachine {
+  fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
 
+    eprintln!("Compiling transitions for a state...\n");
 
+    let mut transitions = Vec::with_capacity(StateMachine::BODY_TRANSITIONS.len());
+
+    for (pat_name, expr, fun) in StateMachine::BODY_TRANSITIONS.iter() {
+      let r = regex::Regex::new(expr).unwrap();
+      transitions.push((*pat_name, r, *fun));
+    }
+
+    transitions
+  }
 }
 
 /// =================================

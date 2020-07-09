@@ -30,7 +30,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
     }
   };
 
-  let next_state = StateMachine::new(pattern_name);
+  let next_state = StateMachine::Body;
 
   Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None))
 
@@ -108,7 +108,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
   };
 
-  let enumerated_state = StateMachine::new(pattern_name);
+  let enumerated_state = StateMachine::EnumeratedList;
 
   Ok( ( Some(tree_wrapper), Some(enumerated_state), PushOrPop::Push, LineAdvance::None ) )
 

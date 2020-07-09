@@ -63,14 +63,19 @@ impl Parser {
 
     eprintln!("Initiating parse...\n");
 
-    let init_state = MachineWithState::new( );
-
-    let init_machine = StateMachine::Body(init_state);
+    let init_machine = StateMachine::Body;
 
     self.machine_stack.push(Some(init_machine));
 
+    let mut iteration_count = 0;
+
     // The parsing loop
     loop {
+
+      if iteration_count > 1000 {
+        eprintln!("Ended parsing loop because of excessive iterations...\n");
+        break
+      }
 
       // eprintln!("Machine stack state: {:#?}", self.machine_stack);
       eprintln!("On line {:#?}", self.current_line);
@@ -223,7 +228,7 @@ impl Parser {
         };
       }
 
-      //self.current_line += 1;
+
 
       if self.current_line >= self.src_lines.len() {
 
@@ -234,6 +239,8 @@ impl Parser {
           return Err("Cannot transition missing machine to EOF state\n")
         };
       }
+
+      iteration_count += 1;
 
     };
 

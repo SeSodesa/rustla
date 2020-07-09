@@ -243,148 +243,51 @@ lazy_static! {
   /// the `Parser` `StateMachine`.
   /// 
   /// With this regexes are only compiled into automata once.
-  pub static ref TRANSITION_MAP: HashMap<&'static str, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
+  pub static ref TRANSITION_MAP: HashMap<StateMachine, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
 
     let mut action_map = collections::HashMap::new();
 
-    let mut body_actions = Vec::with_capacity(BODY_TRANSITIONS.len());
+    let body_actions = StateMachine::compile_state_transitions(&StateMachine::BODY_TRANSITIONS);
+    action_map.insert(StateMachine::Body, body_actions);
 
-    for (pat_name, expr, fun) in BODY_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      body_actions.push((*pat_name, r, *fun));
-    }
+    let bullet_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_TRANSITIONS);
+    action_map.insert(StateMachine::BulletList, bullet_actions);
 
-    action_map.insert("Body", body_actions);
+    let bullet_list_item_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_ITEM_TRANSITIONS);
+    action_map.insert(StateMachine::ListItem, bullet_list_item_actions);
 
+    let definition_actions = StateMachine::compile_state_transitions(&StateMachine::DEFINITION_LIST_TRANSITIONS);
+    action_map.insert(StateMachine::DefinitionList, definition_actions);
 
-    let mut bullet_actions = Vec::with_capacity(BULLET_LIST_TRANSITIONS.len());
+    let enumerated_actions = StateMachine::compile_state_transitions(&StateMachine::ENUMERATED_LIST_TRANSITIONS);
+    action_map.insert(StateMachine::EnumeratedList, enumerated_actions);
 
-    for (pat_name, expr, fun) in BULLET_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      bullet_actions.push((*pat_name, r, *fun));
-    }
+    let field_actions = StateMachine::compile_state_transitions(&StateMachine::FIELD_LIST_TRANSITIONS);
+    action_map.insert(StateMachine::FieldList, field_actions);
 
-    action_map.insert("Bullet", bullet_actions);
+    let option_actions = StateMachine::compile_state_transitions(&StateMachine::OPTION_LIST_TRANSITIONS);
+    action_map.insert(StateMachine::OptionList, option_actions);
 
+    let line_block_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_BLOCK_TRANSITIONS);
+    action_map.insert(StateMachine::LineBlock, line_block_actions);
 
-    let mut bullet_list_item_actions = Vec::with_capacity(BULLET_LIST_ITEM_TRANSITIONS.len());
+    let extension_option_actions = StateMachine::compile_state_transitions(&StateMachine::EXTENSION_OPTION_TRANSITIONS);
+    action_map.insert(StateMachine::ExtensionOptions, extension_option_actions);
 
-    for (pat_name, expr, fun) in BULLET_LIST_ITEM_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      bullet_list_item_actions.push((*pat_name, r, *fun));
-    }
+    let explicit_markup_actions = StateMachine::compile_state_transitions(&StateMachine::EXPLICIT_MARKUP_TRANSITIONS);
+    action_map.insert(StateMachine::ExplicitMarkup, explicit_markup_actions);
 
-    action_map.insert("ListItem", bullet_list_item_actions);
+    let text_actions = StateMachine::compile_state_transitions(&StateMachine::TEXT_TRANSITIONS);
+    action_map.insert(StateMachine::Text, text_actions);
 
+    let definition_actions = StateMachine::compile_state_transitions(&StateMachine::DEFINITION_TRANSITIONS);
+    action_map.insert(StateMachine::Definition, definition_actions);
 
-    let mut definition_actions = Vec::with_capacity(DEFINITION_LIST_TRANSITIONS.len());
+    let line_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_TRANSITIONS);
+    action_map.insert(StateMachine::Line, line_actions);    
 
-    for (pat_name, expr, fun) in DEFINITION_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      definition_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Definition", definition_actions);
-
-
-    let mut enumerated_actions = Vec::with_capacity(ENUMERATED_LIST_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in ENUMERATED_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      enumerated_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Enumerated", enumerated_actions);
-
-
-    let mut field_actions = Vec::with_capacity(FIELD_LIST_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in FIELD_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      field_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("FieldList", field_actions);
-
-
-    let mut option_actions = Vec::with_capacity(OPTION_LIST_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in FIELD_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      option_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("OptionList", option_actions);
-
-
-    let mut line_block_actions = Vec::with_capacity(LINE_BLOCK_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in LINE_BLOCK_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      line_block_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("LineBlock", line_block_actions);
-
-
-    let mut extension_option_actions = Vec::with_capacity(EXTENSION_OPTION_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in FIELD_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      extension_option_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("ExtensionOption", extension_option_actions);
-
-  
-    let mut explicit_markup_actions = Vec::with_capacity(EXPLICIT_MARKUP_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in FIELD_LIST_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      explicit_markup_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("ExplicitMarkup", explicit_markup_actions);
-
-
-    let mut text_actions = Vec::with_capacity(TEXT_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in TEXT_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      text_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Text", text_actions);
-
-
-    let mut definition_actions = Vec::with_capacity(DEFINITION_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in DEFINITION_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      definition_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Definition", definition_actions);
-
-
-    let mut line_actions = Vec::with_capacity(LINE_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in LINE_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      line_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Line", line_actions);    
-
-
-    let mut subst_def_actions = Vec::with_capacity(SUBSTITUTION_DEF_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in SUBSTITUTION_DEF_TRANSITIONS.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      subst_def_actions.push((*pat_name, r, *fun));
-    }
-
-    action_map.insert("Line", subst_def_actions);    
+    let subst_def_actions = StateMachine::compile_state_transitions(&StateMachine::SUBSTITUTION_DEF_TRANSITIONS);
+    action_map.insert(StateMachine::SubstitutionDef, subst_def_actions);    
 
     action_map
 

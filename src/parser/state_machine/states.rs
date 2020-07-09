@@ -30,7 +30,7 @@ impl Body  {
   /// A `Body` state constructor.
   pub fn new() -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("Body").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::Body).unwrap()
     }
   }
 
@@ -76,7 +76,7 @@ impl Body  {
       }
     };
 
-    let next_state = StateMachine::new(pattern_name);
+    let next_state = StateMachine::BulletList;
 
     Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None))
 
@@ -153,7 +153,7 @@ impl Body  {
       Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
     };
 
-    let enumerated_state = StateMachine::new(pattern_name);
+    let enumerated_state = StateMachine::Body;
 
     Ok( ( Some(tree_wrapper), Some(enumerated_state), PushOrPop::Push, LineAdvance::None ) )
 
@@ -238,7 +238,7 @@ impl BulletList {
   /// A `BulletList` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("Bullet").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::BulletList).unwrap()
     }
   }
 
@@ -317,7 +317,7 @@ impl BulletList {
           }
         };
 
-        let list_item_state = StateMachine::ListItem(MachineWithState::<ListItem>{state: ListItem::new()});
+        let list_item_state = StateMachine::ListItem;
 
         return Ok((Some(tree_wrapper), Some(list_item_state), PushOrPop::Push, LineAdvance::Some(1)))
 
@@ -368,7 +368,7 @@ impl BulletList {
 
         let list_node = TreeNode::new(bullet_list_data);
 
-        let list_machine = StateMachine::BulletList(MachineWithState::<BulletList>::from(MachineWithState::new()));
+        let list_machine = StateMachine::BulletList;
 
         tree_wrapper.tree.push_child(list_node);
 
@@ -415,7 +415,7 @@ impl ListItem {
   /// A `ListItem` state constructor.
   pub fn new () -> Self {
     Self{
-      transitions: transitions::TRANSITION_MAP.get("ListItem").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::ListItem).unwrap()
     }
   }
 
@@ -604,7 +604,7 @@ impl Definition {
   /// A `Definition` state constructor
   pub fn new () -> Self {
     Self{
-      transitions: transitions::TRANSITION_MAP.get("Definition").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::Definition).unwrap()
     }
   }
 
@@ -631,7 +631,7 @@ impl DefinitionList {
   /// A `DefinitionList` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("DefinitionList").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::DefinitionList).unwrap()
     }
   }
 }
@@ -655,7 +655,7 @@ impl EnumeratedList {
   /// An `EnumeratedList` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("EnumeratedList").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::EnumeratedList).unwrap()
     }
   }
 
@@ -681,7 +681,7 @@ impl ExplicitMarkup {
   /// An `ExplicitMarkup` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("ExplicitMarkup").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::ExplicitMarkup).unwrap()
     }
   }
 
@@ -706,7 +706,7 @@ impl ExtensionOptions {
   /// An `ExtenstionOptions` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("ExtenstionOptions").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::ExtensionOptions).unwrap()
     }
   }
 
@@ -730,7 +730,7 @@ impl FieldList {
   /// An `FieldList` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("FieldList").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::FieldList).unwrap()
     }
   }
 
@@ -757,7 +757,7 @@ impl Line {
   /// An `Line` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("Line").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::Line).unwrap()
     }
   }
 
@@ -781,7 +781,7 @@ impl LineBlock{
   /// An `LineBlock` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("LineBlock").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::LineBlock).unwrap()
     }
   }
 
@@ -805,7 +805,7 @@ impl OptionList {
   /// An `OptionList` state constructor.
   pub fn new () -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("OptionList").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::OptionList).unwrap()
     }
   }
 
@@ -841,7 +841,7 @@ impl SubstitutionDef {
   /// A `SubstitutioDef` state constructor
   pub fn new() -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("SubstitutionDef").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::SubstitutionDef).unwrap()
     }
   }
 
@@ -865,7 +865,7 @@ impl Text {
   /// A `Text` state constructor
   pub fn new() -> Self {
     Self {
-      transitions: transitions::TRANSITION_MAP.get("Text").unwrap()
+      transitions: transitions::TRANSITION_MAP.get(&StateMachine::Text).unwrap()
     }
   }
 
