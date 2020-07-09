@@ -4,7 +4,7 @@
 //pub mod body;
 
 use super::*;
-use crate::doctree::{self, TreeNode, TreeNodeType, structural_nodes, body_nodes, inline_nodes};
+use crate::doctree::{self, TreeNode, TreeNodeType, EnumeratorType, structural_nodes, body_nodes, inline_nodes};
 
 
 /// ### Body
@@ -82,9 +82,82 @@ impl Body  {
 
   }
 
-
+  /// ### enumerator
+  /// Transition method for matching enumerators in the `Body` state.
+  /// Attempts to create a new enumerated list node and focus on it,
+  /// while at the same time pushing a new `EnumeratedList` state on
+  /// top of the parser machine stack.
+  /// 
+  /// This does not yet parse the first detected list item.
+  /// That responsibility is on the corresponding enumerator method
+  /// of the `EnumeratedList` state.
   pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
-    todo!();
+    
+    let mut tree_wrapper = doctree.unwrap();
+
+    let detected_enumerator_indent = captures.name("indent").unwrap().as_str().chars().count();
+    let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+
+    const ENUMERATOR_NAMES: [&str; 15] = [
+      "arabic_parens", "lower_alpha_parens", "upper_alpha_parens", "lower_roman_parens", "upper_roman_parens",
+      "arabic_rparen", "lower_alpha_rparen", "upper_alpha_rparen", "lower_roman_rparen", "upper_roman_rparen",
+      "arabic_period", "lower_alpha_period", "upper_alpha_period", "lower_roman_period", "upper_roman_period",
+    ];
+
+    let mut opt_enumerator_type: Option<EnumeratorType> = None;
+    for enum_type in ENUMERATOR_NAMES.iter() {
+
+      let enumerator_candidate = captures.name(enum_type);
+
+      if let Some(enumerator) = enumerator_candidate {
+        opt_enumerator_type = match *enum_type {
+          "arabic_parens"       =>  Some(EnumeratorType::ParensArabic),
+          "lower_alpha_parens"  =>  Some(EnumeratorType::ParensLowerAlpha),
+          "upper_alpha_parens"  =>  Some(EnumeratorType::ParensUpperAlpha),
+          "lower_roman_parens"  =>  Some(EnumeratorType::ParensLowerRoman),
+          "upper_roman_parens"  =>  Some(EnumeratorType::ParensUpperRoman),
+          "arabic_rparen"       =>  Some(EnumeratorType::RParenArabic),
+          "lower_alpha_rparen"  =>  Some(EnumeratorType::RParenLowerAlpha),
+          "upper_alpha_rparen"  =>  Some(EnumeratorType::RParenUpperAlpha),
+          "lower_roman_rparen"  =>  Some(EnumeratorType::RParenLowerRoman),
+          "upper_roman_rparen"  =>  Some(EnumeratorType::RParenUpperRoman),
+          "arabic_period"       =>  Some(EnumeratorType::PeriodArabic),
+          "lower_alpha_period"  =>  Some(EnumeratorType::PeriodLowerAlpha),
+          "upper_alpha_period"  =>  Some(EnumeratorType::PeriodUpperAlpha),
+          "lower_roman_period"  =>  Some(EnumeratorType::PeriodLowerRoman),
+          "upper_roman_period"  =>  Some(EnumeratorType::PeriodUpperRoman),
+          _                     =>  unreachable!()
+        };
+        break
+      } 
+    };
+
+    let enumerator_type = if let Some(enumerator) = opt_enumerator_type {
+      enumerator
+    } else {
+      return Err("Enumerator detected but no known enumerator type!\n")
+    };
+    
+    let node_data = TreeNodeType::EnumeratedList {
+      enum_type: enumerator_type,
+      enumerator_indent: detected_enumerator_indent,
+      text_indent: detected_text_indent,
+    };
+
+    let list_node = TreeNode::new(node_data);
+
+    tree_wrapper.tree.push_child(list_node);
+
+    tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
+      Ok(tree)  => tree,
+      Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
+    };
+
+    // Create a new EnumeratedList state and tell the parser to
+    // push it on its machine stack here
+
+    todo!()
+
   }
 
 

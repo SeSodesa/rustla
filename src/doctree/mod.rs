@@ -173,7 +173,8 @@ pub enum TreeNodeType {
   // Compound(body_nodes::Compound),
   // Container(body_nodes::Container),
   BulletList {bullet: char, bullet_indent: usize, text_indent: usize},
-  EnumeratedList,
+  EnumeratedList { enum_type: EnumeratorType, enumerator_indent: usize, text_indent: usize },
+  EnumeratedListItem { enum_type: EnumeratorType, index: usize, enumerator_indent: usize, text_indent: usize },
   BulletListItem{bullet: char, bullet_indent: usize, text_indent: usize},
   DefinitionList(body_nodes::DefinitionList),
   DefinitionListItem(body_nodes::DefinitionListItem),
@@ -249,6 +250,19 @@ pub enum TreeNodeType {
   Generated(inline_nodes::Generated),
   WhiteSpace{text: String},
 
+}
+
+#[derive(Debug, PartialEq)]
+/// ### EnumeratorType
+/// An enumeration of the different enumerator types
+/// that an enumerated list might have. Used for comparing
+/// enumerated list items on the same indentation (nesting)
+/// level. A list item needs to have the same enumerator type
+/// as the containing enumerated list.
+pub enum EnumeratorType {
+  ParensArabic, ParensLowerAlpha, ParensUpperAlpha, ParensLowerRoman, ParensUpperRoman,
+  RParenArabic, RParenLowerAlpha, RParenUpperAlpha, RParenLowerRoman, RParenUpperRoman,
+  PeriodArabic, PeriodLowerAlpha, PeriodUpperAlpha, PeriodLowerRoman, PeriodUpperRoman,
 }
 
 
