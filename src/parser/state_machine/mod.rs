@@ -2,6 +2,11 @@
 /// of state machines used by the parser.
 
 pub mod states;
+mod body;
+mod bullet_list;
+mod common;
+mod inline;
+mod list_item;
 mod transitions;
 mod tests;
 
@@ -10,8 +15,8 @@ use std::cmp;
 use super::*;
 use crate::utils;
 use states::*;
-use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, *};
-use crate::doctree::{self, TreeNode};
+use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, UncompiledTransition,  *};
+use crate::doctree::{self, TreeNode, EnumeratorType};
 
 
 /// ### TransitionMethod
@@ -55,7 +60,7 @@ pub enum PushOrPop {
 
 /// ### LineAdvance
 /// An enum returned by the transition methods to tell the parser whether
-/// it needs to advance it line cursor after the method execution or not.
+/// it needs to advance its line cursor after the method execution or not.
 pub enum LineAdvance {
   Some(usize),
   None
@@ -88,6 +93,7 @@ pub enum StateMachine {
   Failure(MachineWithState<Failure>),
   EOF
 }
+
 
 impl StateMachine {
 
@@ -363,5 +369,250 @@ impl <S> MachineWithState <S> {
 /// =================================
 impl StateMachine {
 
+
+}
+
+/// =================================
+/// StateMachine associated constants
+/// =================================
+impl StateMachine {
+
+  /// ### BODY_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Body`.
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 4] = [
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, Self::BULLET_PATTERN, Body::bullet),
+    (PatternName::Enumerator, Self::ENUMERATOR_PATTERN, Body::enumerator),
+    (PatternName::Text, Self::PARAGRAPH_PATTERN, Body::paragraph)
+  ];
+
+
+  /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
+  /// An array of transitions related to `StateMachine::BulletList`.
+  pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, Body::empty_line),
+    (PatternName::Bullet, Self::BULLET_PATTERN, BulletList::bullet)
+  ];
+
+
+  /// ### BULLET_LIST_ITEM_TRANSITIONS
+  /// An array of transitions related to `StateMachine::BulletListItem`.
+  pub const BULLET_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 3] = [
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, Body::empty_line),
+    (PatternName::Bullet, Self::BULLET_PATTERN, ListItem::bullet),
+    (PatternName::Paragraph, Self::PARAGRAPH_PATTERN, ListItem::paragraph),
+  ];
+
+
+  /// ### DEFINITION_LIST_TRANSITIONS
+  /// An array of transitions related to `StateMachine::DefinitionList`.
+  pub const DEFINITION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+  /// ### ENUMERATED_LIST_TRANSITIONS
+  /// An array of transitions related to `StateMachine::EnumeratedList`.
+  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### FIELD_LIST_TRANSITIONS
+  /// An array of transitions related to `StateMachine::FieldList`.
+  pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+  /// ### OPTION_LIST_TRANSITIONS
+  /// An array of transitions related to `StateMachine::OptionList`.
+  pub const OPTION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### LINE_BLOCK_TRANSITIONS
+  /// An array of transitions related to `StateMachine::LineBlock`.
+  pub const LINE_BLOCK_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### EXTENSION_OPTIONS_TRANSITIONS
+  /// An array of transitions related to `StateMachine::ExtensionOptions`.
+  pub const EXTENSION_OPTION_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### EXPLICIT_MARKUP_TRANSITIONS
+  /// An array of transitions related to `StateMachine::ExplicitMarkup`.
+  pub const EXPLICIT_MARKUP_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### TEXT_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Text`.
+  pub const TEXT_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### DEFINITION_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Definition`.
+  pub const DEFINITION_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### LINE_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Line`.
+  pub const LINE_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### SUBSTITUTION_DEF_TRANSITIONS
+  /// An array of transitions related to `StateMachine::SubstitutionDef`.
+  pub const SUBSTITUTION_DEF_TRANSITIONS: [UncompiledTransition; 0] = [
+
+  ];
+
+
+  /// ### INLINE_TRANSITIONS
+  /// An array of transitions related to `StateMachine::DefinitionList`.
+  pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
+    (PatternName::WhiteSpace, r"^\s+", Inline::whitespace),
+    (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", Inline::paired_delimiter),
+    (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", Inline::paired_delimiter),
+    (PatternName::Literal, r"^``(\S|\S.*\S)``", Inline::paired_delimiter),
+    (PatternName::InlineTarget, r"^_`([\w .]+)`", Inline::paired_delimiter),
+    (PatternName::PhraseRef, r"^`(\S|\S.*\S)`__?", Inline::reference),
+    (PatternName::Interpreted, r"^`(\S|\S.*\S)`", Inline::paired_delimiter),
+    (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", Inline::reference),
+    (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", Inline::reference),
+    (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", Inline::reference),
+
+    // ### StandaloneHyperlink
+    //
+    // source: https://www.rfc-editor.org/rfc/rfc2396.txt, appendix B
+    //
+    // The capturing groups correspond to the following constructs:
+    //   $1 = http:
+    //   $2 = http
+    //   $3 = //www.ics.uci.edu
+    //   $4 = www.ics.uci.edu
+    //   $5 = /pub/ietf/uri/
+    //   $6 = <undefined>
+    //   $7 = <undefined>
+    //   $8 = #Related
+    //   $9 = Related
+    //
+    // where <undefined> indicates that the component is not present, as is
+    // the case for the query component in the above example.  Therefore, we
+    // can determine the value of the four components and fragment as
+    //
+    //   scheme    = $2
+    //   authority = $4
+    //   path      = $5
+    //   query     = $7
+    //   fragment  = $9
+    //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
+    (PatternName::StandaloneHyperlink, r"(?x)^
+      (?P<absolute>
+        (?:
+          (?P<scheme> # 😵
+            about|acap|addbook|afp|afs|aim|callto|castanet|chttp|cid|crid|data|dav|dict|dns|eid|fax|feed|file|finger|freenet|ftp|go|gopher|
+            gsm-sms|h323|h324|hdl|hnews|http|https|hydra|iioploc|ilu|im|imap|info|ior|ipp|irc|iris.beep|iseek|jar|javascript|jdbc|ldap|lifn|
+            livescript|lrq|mailbox|mailserver|mailto|md5|mid|mocha|modem|mtqp|mupdate|news|nfs|nntp|opaquelocktoken|phone|pop|pop3|pres|printer|
+            prospero|rdar|res|rtsp|rvp|rwhois|rx|sdp|service|shttp|sip|sips|smb|snews|snmp|soap.beep|soap.beeps|ssh|t120|tag|tcp|tel|telephone|
+            telnet|tftp|tip|tn3270|tv|urn|uuid|vemmi|videotex|view-source|wais|whodp|whois++|x-man-page|xmlrpc.beep|xmlrpc.beeps|z39.50r|z39.50s
+          )
+          :
+        )
+        (?://
+          (?P<authority>
+            (?:(?P<userinfo>[A-Za-z0-9]+(?:.[A-Za-z0-9]+)*)@)?
+            (?P<host>[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*)
+            (?::(?P<port>[0-9]+))?
+          )
+        )?
+        (?P<path>
+          /?[a-zA-Z0-9]+(?:/[A-Za-z0-9]+)*/?
+        )
+        (?:\?
+          (?P<query>
+            [=&a-zA-Z0-9]+
+          )
+        )?
+        (?:\#
+          (?P<fragment>
+            [a-zA-Z0-9]+
+          )
+        )?
+      )
+      | # if not absolute uri, then email
+      ^(?P<email>
+        [-_a-zA-Z0-9]+
+        (?:\.[-_!~*'{|}/\#?\^`&=+$%a-zA-Z0-9]+)*
+        @
+        [-_a-zA-Z0-9]+
+        (?:[.-][a-zA-Z0-9]+)*
+      )
+      ", Inline::reference),
+    //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
+    (PatternName::Text, r"^([\S]+)", Inline::text)
+  ];
+
+
+  // ==================================
+  // Patterns common to multiple states
+  // ==================================
+
+
+  /// #### BLANK_LINE_PATTERN
+  /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
+  const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
+
+
+  /// #### BULLET_PATERN
+  /// A pattern for matching bullet list bullets.
+  const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}])(?: +|$)";
+
+
+  /// #### ENUMERATOR_PATTERN
+  /// A pattern for matching enumerated list items.
+  const ENUMERATOR_PATTERN: &'static str = r"(?x) # Insignificant whitespace mode on
+    ^(?P<indent>\s*)
+    (?:
+      # Both left and right parentheses around enumerator
+      \((?P<arabic_parens>[0-9]+)\)
+      | \((?P<lower_alpha_parens>[a-z])\)
+      | \((?P<upper_alpha_parens>[A-Z])\)
+      | \((?P<lower_roman_parens>[ivxlcdm]+)\)
+      | \((?P<upper_roman_parens>[ICXLCDM]+)\)
+
+      # Only right parenthesis after enumerator
+      | (?P<arabic_rparen>[0-9]+)\)
+      | (?P<lower_alpha_rparen>[a-z])\)
+      | (?P<upper_alpha_rparen>[A-Z])\)
+      | (?P<lower_roman_rparen>[ivxlcdm]+)\)
+      | (?P<upper_roman_rparen>[ICXLCDM]+)\)
+
+      # Period after enumerator
+      | (?P<arabic_period>[0-9]+)\.
+      | (?P<lower_alpha_period>[a-z])\.
+      | (?P<upper_alpha_period>[A-Z])\.
+      | (?P<lower_roman_period>[ivxlcdm]+)\.
+      | (?P<upper_roman_period>[ICXLCDM]+)\.
+    )(?-x)
+    (?: +|$)";
+
+
+    /// #### PARAGRAPH_PATTERN
+    /// A pattern for detecting any text, possibly beginning with whitespace.
+    /// This pattern should generally be tested against only after all other
+    /// possibilities have been eliminated. 
+    const PARAGRAPH_PATTERN: &'static str = r"^(\s*)\S";
 
 }

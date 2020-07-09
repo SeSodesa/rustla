@@ -49,7 +49,7 @@ pub enum PatternName {
 /// ### UncompiledTransition
 /// A type alias for a transition `(PatternName, regex_pattern, TransitionMethod)`, whose regex pattern has not
 /// been compiled into a DFA yet.
-type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
+pub type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 
 // pub const COMMON_TRANSITIONS: &[UncompiledTransition] = &[
 //   (PatternName::EmptyLine, r"^\s*$", Body::empty_line),
