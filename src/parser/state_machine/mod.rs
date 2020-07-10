@@ -1,7 +1,6 @@
 /// This module contains specifications
 /// of state machines used by the parser.
 
-pub mod states;
 mod body;
 mod bullet_list;
 mod common;
@@ -12,9 +11,10 @@ mod tests;
 
 use std::cmp;
 
+use regex;
+
 use super::*;
 use crate::utils;
-use states::*;
 use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, UncompiledTransition,  *};
 use crate::doctree::{self, TreeNode, EnumeratorType};
 
@@ -179,53 +179,35 @@ impl StateMachine {
 }
 
 
+/// =================================
+/// StateMachine associated functions
+/// =================================
+impl StateMachine {
 
-/// ### MachineWithState
-/// A state machine in a state `S`,
-/// which is its own type. This allows different
-/// state machines to hold common fields,
-/// while the embedded state types can hold their
-/// own specific fields like transition tables.
-#[derive(Debug)]
-pub struct MachineWithState <S> {
-  state: S,
-}
+  /// ### compile_state_transitions
+  /// Takes in a reference/slice to an associated array of uncompiled transitions
+  /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
+  /// in palce of the regex patterns.
+  /// 
+  /// Error handling needs to be added.
+  fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
 
+    let mut compiled_transitions = Vec::with_capacity(transitions.len());
 
-impl MachineWithState<Body> {
-
-  /// ### new
-  /// A state machine constructor. This is only implemented for
-  /// the `Body` state, as it is the starting state when it
-  /// comes to rST parsing. Transitions to and creation of
-  /// other states is handled by implementing the `From`
-  /// trait (the `from` function) for those states.
-  pub fn new() -> Self {
-
-    Self {
-      state: Body::new(),
+    for (pat_name, expr, fun) in transitions.iter() {
+      let r = regex::Regex::new(expr).unwrap();
+      compiled_transitions.push((*pat_name, r, *fun));
     }
+
+    compiled_transitions
   }
 
-}
 
 
-impl From<MachineWithState<Body>> for MachineWithState<Inline> {
-
-  fn from (machine: MachineWithState<Body>) -> Self {
-    Self {
-      state: Inline::new()
-    }
-  }
-
-}
-
-impl MachineWithState<Inline> {
-
-  /// ### parse
+  /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn parse (&self, inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
+  fn inline_parse (inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 
@@ -236,7 +218,7 @@ impl MachineWithState<Inline> {
 
     let src_chars = &mut src_without_escapes.chars();
 
-    match self.match_iter(&src_chars) {
+    match StateMachine::match_iter(&src_chars) {
       Some((node, offset)) => {
 
         nodes.push(node);
@@ -273,7 +255,7 @@ impl MachineWithState<Inline> {
         col = 0;
       }
 
-      match self.match_iter(&src_chars) {
+      match StateMachine::match_iter(&src_chars) {
         Some((node, offset)) => {
 
           nodes.push(node);
@@ -312,7 +294,7 @@ impl MachineWithState<Inline> {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_iter <'machine, 'chars> (&'machine self, chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
+  fn match_iter <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
 
     let src_str = chars_iter.as_str();
 
@@ -323,7 +305,7 @@ impl MachineWithState<Inline> {
 
     eprintln!("Matching against {:#?}\n", src_str);
 
-    for (pattern_name, regexp, parsing_function) in self.state.transitions.iter() {
+    for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
 
       match regexp.captures(src_str) {
 
@@ -349,51 +331,6 @@ impl MachineWithState<Inline> {
 
     None
 
-  }
-}
-
-
-
-/// ====================
-/// MachineWithState methods
-/// ====================
-impl <S> MachineWithState <S> {
-
-  /// ### run
-  /// Starts the processing of the given source.
-  /// Returns a modified `DocTree`.
-  /// This function is initially called by the parser,
-  /// but subsequent calls can be made by the state
-  /// machines on the top of the parser stack.
-  pub fn run (&mut self) -> Option<DocTree>{
-
-    unimplemented!();
-
-  }
-
-}
-
-/// =================================
-/// StateMachine associated functions
-/// =================================
-impl StateMachine {
-
-  /// ### compile_state_transitions
-  /// Takes in a reference/slice to an associated array of uncompiled transitions
-  /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
-  /// in palce of the regex patterns.
-  /// 
-  /// Error handling needs to be added.
-  fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
-
-    let mut compiled_transitions = Vec::with_capacity(transitions.len());
-
-    for (pat_name, expr, fun) in transitions.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      compiled_transitions.push((*pat_name, r, *fun));
-    }
-
-    compiled_transitions
   }
 }
 
@@ -423,9 +360,9 @@ impl StateMachine {
   /// ### BULLET_LIST_ITEM_TRANSITIONS
   /// An array of transitions related to `StateMachine::BulletListItem`.
   pub const BULLET_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 3] = [
-    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, Body::empty_line),
-    (PatternName::Bullet, Self::BULLET_PATTERN, ListItem::bullet),
-    (PatternName::Paragraph, Self::PARAGRAPH_PATTERN, ListItem::paragraph),
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, Self::BULLET_PATTERN, list_item::bullet),
+    (PatternName::Paragraph, Self::PARAGRAPH_PATTERN, list_item::paragraph),
   ];
 
 
@@ -507,16 +444,16 @@ impl StateMachine {
   /// ### INLINE_TRANSITIONS
   /// An array of transitions related to `StateMachine::DefinitionList`.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
-    (PatternName::WhiteSpace, r"^\s+", Inline::whitespace),
-    (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", Inline::paired_delimiter),
-    (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", Inline::paired_delimiter),
-    (PatternName::Literal, r"^``(\S|\S.*\S)``", Inline::paired_delimiter),
-    (PatternName::InlineTarget, r"^_`([\w .]+)`", Inline::paired_delimiter),
-    (PatternName::PhraseRef, r"^`(\S|\S.*\S)`__?", Inline::reference),
-    (PatternName::Interpreted, r"^`(\S|\S.*\S)`", Inline::paired_delimiter),
-    (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", Inline::reference),
-    (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", Inline::reference),
-    (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", Inline::reference),
+    (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
+    (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", inline::paired_delimiter),
+    (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", inline::paired_delimiter),
+    (PatternName::Literal, r"^``(\S|\S.*\S)``", inline::paired_delimiter),
+    (PatternName::InlineTarget, r"^_`([\w .]+)`", inline::paired_delimiter),
+    (PatternName::PhraseRef, r"^`(\S|\S.*\S)`__?", inline::reference),
+    (PatternName::Interpreted, r"^`(\S|\S.*\S)`", inline::paired_delimiter),
+    (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", inline::reference),
+    (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", inline::reference),
+    (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", inline::reference),
 
     // ### StandaloneHyperlink
     //
@@ -584,9 +521,9 @@ impl StateMachine {
         [-_a-zA-Z0-9]+
         (?:[.-][a-zA-Z0-9]+)*
       )
-      ", Inline::reference),
+      ", inline::reference),
     //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
-    (PatternName::Text, r"^([\S]+)", Inline::text)
+    (PatternName::Text, r"^([\S]+)", inline::text)
   ];
 
 

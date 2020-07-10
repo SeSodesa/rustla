@@ -2,7 +2,7 @@
 
 mod state_machine;
 
-use state_machine::{StateMachine, MachineWithState, PushOrPop, LineAdvance};
+use state_machine::{StateMachine, PushOrPop, LineAdvance};
 
 #[cfg(test)]
 mod tests;
