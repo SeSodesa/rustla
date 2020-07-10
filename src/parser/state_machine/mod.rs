@@ -1,9 +1,13 @@
 /// This module contains specifications
 /// of state machines used by the parser.
 
+// ===============================================
+// Submodules for namespacing transition functions
+// ===============================================
 mod body;
 mod bullet_list;
 mod common;
+mod enumerated_list;
 mod inline;
 mod list_item;
 mod transitions;
@@ -203,7 +207,6 @@ impl StateMachine {
   }
 
 
-
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
@@ -330,7 +333,49 @@ impl StateMachine {
     }
 
     None
+  }
 
+
+  /// ### check_enumerator_type
+  /// 
+  fn check_enumerator_type (captures: &regex::Captures) -> Option<EnumeratorType>{
+
+    const ENUMERATOR_NAMES: [&str; 15] = [
+      "arabic_parens", "lower_alpha_parens", "upper_alpha_parens", "lower_roman_parens", "upper_roman_parens",
+      "arabic_rparen", "lower_alpha_rparen", "upper_alpha_rparen", "lower_roman_rparen", "upper_roman_rparen",
+      "arabic_period", "lower_alpha_period", "upper_alpha_period", "lower_roman_period", "upper_roman_period",
+    ];
+
+    let mut opt_enumerator_type: Option<EnumeratorType> = None;
+
+    for enum_type in ENUMERATOR_NAMES.iter() {
+  
+      let enumerator_candidate = captures.name(enum_type);
+  
+      if let Some(enumerator) = enumerator_candidate {
+        opt_enumerator_type = match *enum_type {
+          enum_type if enum_type == ENUMERATOR_NAMES[0]   =>  Some(EnumeratorType::ParensArabic),
+          enum_type if enum_type == ENUMERATOR_NAMES[1]   =>  Some(EnumeratorType::ParensLowerAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[2]   =>  Some(EnumeratorType::ParensUpperAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[3]   =>  Some(EnumeratorType::ParensLowerRoman),
+          enum_type if enum_type == ENUMERATOR_NAMES[4]   =>  Some(EnumeratorType::ParensUpperRoman),
+          enum_type if enum_type == ENUMERATOR_NAMES[5]   =>  Some(EnumeratorType::RParenArabic),
+          enum_type if enum_type == ENUMERATOR_NAMES[6]   =>  Some(EnumeratorType::RParenLowerAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[7]   =>  Some(EnumeratorType::RParenUpperAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[8]   =>  Some(EnumeratorType::RParenLowerRoman),
+          enum_type if enum_type == ENUMERATOR_NAMES[9]   =>  Some(EnumeratorType::RParenUpperRoman),
+          enum_type if enum_type == ENUMERATOR_NAMES[10]  =>  Some(EnumeratorType::PeriodArabic),
+          enum_type if enum_type == ENUMERATOR_NAMES[11]  =>  Some(EnumeratorType::PeriodLowerAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[12]  =>  Some(EnumeratorType::PeriodUpperAlpha),
+          enum_type if enum_type == ENUMERATOR_NAMES[13]  =>  Some(EnumeratorType::PeriodLowerRoman),
+          enum_type if enum_type == ENUMERATOR_NAMES[14]  =>  Some(EnumeratorType::PeriodUpperRoman),
+          _ =>  unreachable!()
+        };
+        break
+      }
+    };
+
+    opt_enumerator_type
   }
 }
 
@@ -374,8 +419,8 @@ impl StateMachine {
 
   /// ### ENUMERATED_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::EnumeratedList`.
-  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
-
+  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 1] = [
+    (PatternName::Enumerator, StateMachine::ENUMERATOR_PATTERN, enumerated_list::enumerator)
   ];
 
 

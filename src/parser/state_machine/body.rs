@@ -53,41 +53,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let detected_enumerator_indent = captures.name("indent").unwrap().as_str().chars().count();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
 
-  const ENUMERATOR_NAMES: [&str; 15] = [
-    "arabic_parens", "lower_alpha_parens", "upper_alpha_parens", "lower_roman_parens", "upper_roman_parens",
-    "arabic_rparen", "lower_alpha_rparen", "upper_alpha_rparen", "lower_roman_rparen", "upper_roman_rparen",
-    "arabic_period", "lower_alpha_period", "upper_alpha_period", "lower_roman_period", "upper_roman_period",
-  ];
-
-  let mut opt_enumerator_type: Option<EnumeratorType> = None;
-  for enum_type in ENUMERATOR_NAMES.iter() {
-
-    let enumerator_candidate = captures.name(enum_type);
-
-    if let Some(enumerator) = enumerator_candidate {
-      opt_enumerator_type = match *enum_type {
-        "arabic_parens"       =>  Some(EnumeratorType::ParensArabic),
-        "lower_alpha_parens"  =>  Some(EnumeratorType::ParensLowerAlpha),
-        "upper_alpha_parens"  =>  Some(EnumeratorType::ParensUpperAlpha),
-        "lower_roman_parens"  =>  Some(EnumeratorType::ParensLowerRoman),
-        "upper_roman_parens"  =>  Some(EnumeratorType::ParensUpperRoman),
-        "arabic_rparen"       =>  Some(EnumeratorType::RParenArabic),
-        "lower_alpha_rparen"  =>  Some(EnumeratorType::RParenLowerAlpha),
-        "upper_alpha_rparen"  =>  Some(EnumeratorType::RParenUpperAlpha),
-        "lower_roman_rparen"  =>  Some(EnumeratorType::RParenLowerRoman),
-        "upper_roman_rparen"  =>  Some(EnumeratorType::RParenUpperRoman),
-        "arabic_period"       =>  Some(EnumeratorType::PeriodArabic),
-        "lower_alpha_period"  =>  Some(EnumeratorType::PeriodLowerAlpha),
-        "upper_alpha_period"  =>  Some(EnumeratorType::PeriodUpperAlpha),
-        "lower_roman_period"  =>  Some(EnumeratorType::PeriodLowerRoman),
-        "upper_roman_period"  =>  Some(EnumeratorType::PeriodUpperRoman),
-        _                     =>  unreachable!()
-      };
-      break
-    } 
-  };
-
-  let enumerator_type = if let Some(enumerator) = opt_enumerator_type {
+  let enumerator_type = if let Some(enumerator) = StateMachine::check_enumerator_type(&captures) {
     enumerator
   } else {
     return Err("Enumerator detected but no known enumerator type!\n")
@@ -108,9 +74,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
   };
 
-  let enumerated_state = StateMachine::EnumeratedList;
+  let next_state = StateMachine::EnumeratedList;
 
-  Ok( ( Some(tree_wrapper), Some(enumerated_state), PushOrPop::Push, LineAdvance::None ) )
+  Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None ) )
 
 }
 
