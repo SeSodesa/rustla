@@ -683,3 +683,35 @@ fn bullet_list_06 () {
   }
 
 }
+
+
+#[test]
+fn enumerated_list_01 () {
+
+  let src = String::from("
+(ii) List item 1
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList{..} => (),
+    _ => panic!("No EnumeratedList detected!\n")
+  }
+
+  todo!()
+
+}
