@@ -72,7 +72,7 @@ impl Parser {
     // The parsing loop
     loop {
 
-      if iteration_count > 1000 {
+      if iteration_count > 5000 {
         eprintln!("Ended parsing loop because of excessive iterations...\n");
         break
       }
@@ -124,8 +124,6 @@ impl Parser {
       } else {
         break
       };
-
-      eprintln!("Going over {:#?} transitions...\n", self.machine_stack.last().unwrap());
 
       // Iterating over a clone of the transitions
       for (pattern_name, regex, method) in latest_state_transitions.iter() {

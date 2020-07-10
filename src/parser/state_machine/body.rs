@@ -30,7 +30,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
     }
   };
 
-  let next_state = StateMachine::Body;
+  let next_state = StateMachine::BulletList;
 
   Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None))
 

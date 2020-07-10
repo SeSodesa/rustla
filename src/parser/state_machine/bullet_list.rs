@@ -78,9 +78,9 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
         }
       };
 
-      let list_item_state = StateMachine::ListItem;
+      let next_state = StateMachine::ListItem;
 
-      return Ok((Some(tree_wrapper), Some(list_item_state), PushOrPop::Push, LineAdvance::Some(1)))
+      return Ok((Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::Some(1)))
 
     },
 

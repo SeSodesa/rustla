@@ -74,7 +74,7 @@ pub enum LineAdvance {
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum StateMachine {
   Body,
   BulletList,
@@ -377,18 +377,23 @@ impl <S> MachineWithState <S> {
 /// StateMachine associated functions
 /// =================================
 impl StateMachine {
+
+  /// ### compile_state_transitions
+  /// Takes in a reference/slice to an associated array of uncompiled transitions
+  /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
+  /// in palce of the regex patterns.
+  /// 
+  /// Error handling needs to be added.
   fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
 
-    eprintln!("Compiling transitions for a state...\n");
+    let mut compiled_transitions = Vec::with_capacity(transitions.len());
 
-    let mut transitions = Vec::with_capacity(StateMachine::BODY_TRANSITIONS.len());
-
-    for (pat_name, expr, fun) in StateMachine::BODY_TRANSITIONS.iter() {
+    for (pat_name, expr, fun) in transitions.iter() {
       let r = regex::Regex::new(expr).unwrap();
-      transitions.push((*pat_name, r, *fun));
+      compiled_transitions.push((*pat_name, r, *fun));
     }
 
-    transitions
+    compiled_transitions
   }
 }
 
@@ -401,17 +406,17 @@ impl StateMachine {
   /// An array of transitions related to `StateMachine::Body`.
   pub const BODY_TRANSITIONS: [UncompiledTransition; 4] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, Self::BULLET_PATTERN, Body::bullet),
-    (PatternName::Enumerator, Self::ENUMERATOR_PATTERN, Body::enumerator),
-    (PatternName::Text, Self::PARAGRAPH_PATTERN, Body::paragraph)
+    (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
+    (PatternName::Enumerator, Self::ENUMERATOR_PATTERN, body::enumerator),
+    (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];
 
 
   /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
   /// An array of transitions related to `StateMachine::BulletList`.
   pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
-    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, Body::empty_line),
-    (PatternName::Bullet, Self::BULLET_PATTERN, BulletList::bullet)
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, Self::BULLET_PATTERN, bullet_list::bullet)
   ];
 
 
