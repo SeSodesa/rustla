@@ -645,7 +645,7 @@ impl Parser {
 
 
   /// ### lower_roman_to_u32
-  /// Converts a valid given upper-case Roman numeral to a `Some(u32)`.
+  /// Converts a valid given lower-case Roman numeral to a `Some(u32)`.
   /// If the numeral isn't valid, `None` is returned instead
   pub fn lower_roman_to_u32 (roman_str: &str) -> Option<u32> {
 
