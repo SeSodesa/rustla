@@ -558,6 +558,176 @@ impl Parser {
 
   }
 
+
+  /// ### upper_roman_to_u32
+  /// Converts a valid given upper-case Roman numeral to a `Some(u32)`.
+  /// If the numeral isn't valid, `None` is returned instead
+  pub fn upper_roman_to_u32 (roman_str: &str) -> Option<u32> {
+
+    let mut num_val: u32 = 0;
+    let mut buffer = String::with_capacity(2);
+    let mut chars_iter = roman_str.chars().peekable();
+
+    const ROMAN_MAX: u32 = 4999;
+
+    while let Some(c1) = chars_iter.next() {
+
+      buffer.push(c1);
+
+      match c1 {
+        'C' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'M' || *c2 == 'D' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        'X' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'C' || *c2 == 'L' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        'I' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'X' || *c2 == 'V' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        _ => ()
+      }
+
+
+      // Convert the contents of the buffer to u32, if valid.
+      let buf_str = buffer.as_str();
+
+      match buf_str {
+        "M"   => num_val += 1000,
+        "CM"  => num_val += 900,
+        "D"   => num_val += 500,
+        "CD"  => num_val += 400,
+        "C"   => num_val += 100,
+        "XC"  => num_val += 90,
+        "L"   => num_val += 50,
+        "XL"  => num_val += 40,
+        "X"   => num_val += 10,
+        "IX"  => num_val += 9,
+        "V"   => num_val += 5,
+        "IV"  => num_val += 4,
+        "I"   => num_val += 1,
+        _     => {
+          eprintln!("No match for supposed upper-case Roman numeral {}...\n", buf_str);
+          return None
+        }
+      }
+
+      if num_val > ROMAN_MAX {
+        eprintln!("Roman numerals greater than {} not supported by reStructuredText\n", ROMAN_MAX);
+        return None
+      }
+
+      buffer.clear();
+    }
+
+    Some(num_val)
+  }
+
+
+  /// ### lower_roman_to_u32
+  /// Converts a valid given upper-case Roman numeral to a `Some(u32)`.
+  /// If the numeral isn't valid, `None` is returned instead
+  pub fn lower_roman_to_u32 (roman_str: &str) -> Option<u32> {
+
+    let mut num_val: u32 = 0;
+    let mut buffer = String::with_capacity(2);
+    let mut chars_iter = roman_str.chars().peekable();
+
+    const ROMAN_MAX: u32 = 4999;
+
+    while let Some(c1) = chars_iter.next() {
+
+      buffer.push(c1);
+
+      match c1 {
+        'c' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'm' || *c2 == 'd' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        'x' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'c' || *c2 == 'l' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        'i' => {
+          match chars_iter.peek() {
+            None                                        => (),
+            Some(c2) if *c2 == 'x' || *c2 == 'v' => {
+              buffer.push(*c2);
+              chars_iter.next();
+            }
+            _                                           => ()
+          }
+        }
+        _ => ()
+      }
+
+
+      // Convert the contents of the buffer to u32, if valid.
+      let buf_str = buffer.as_str();
+
+      match buf_str {
+        "m"   => num_val += 1000,
+        "cm"  => num_val += 900,
+        "d"   => num_val += 500,
+        "cd"  => num_val += 400,
+        "c"   => num_val += 100,
+        "xc"  => num_val += 90,
+        "l"   => num_val += 50,
+        "xl"  => num_val += 40,
+        "x"   => num_val += 10,
+        "ix"  => num_val += 9,
+        "v"   => num_val += 5,
+        "iv"  => num_val += 4,
+        "i"   => num_val += 1,
+        _     => {
+          eprintln!("No match for supposed lower-case Roman numeral {}...\n", buf_str);
+          return None
+        }
+      }
+
+      if num_val > ROMAN_MAX {
+        eprintln!("Roman numerals greater than {} not supported by reStructuredText\n", ROMAN_MAX);
+        return None
+      }
+
+      buffer.clear();
+    }
+
+    Some(num_val)
+  }
+
 }
 
 
