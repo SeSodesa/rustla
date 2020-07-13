@@ -50,17 +50,18 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let detected_enumerator_indent = captures.name("indent").unwrap().as_str().chars().count();
+  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
 
-  let enumerator_type = if let Some(enumerator) = StateMachine::check_enumerator_type(&captures) {
-    enumerator
+  let enumerator_type = if let Some(enum_type) = pattern_name.as_enum_type() {
+    enum_type
   } else {
-    return Err("Enumerator detected but no known enumerator type!\n")
+    return Err("No matching enumerator type for pattern name...\n")
   };
 
   let node_data = TreeNodeType::EnumeratedList {
     enum_type: enumerator_type,
+    items: 0,
     enumerator_indent: detected_enumerator_indent,
     text_indent: detected_text_indent,
   };

@@ -335,48 +335,6 @@ impl StateMachine {
     None
   }
 
-
-  /// ### check_enumerator_type
-  /// 
-  fn check_enumerator_type (captures: &regex::Captures) -> Option<EnumeratorType>{
-
-    const ENUMERATOR_NAMES: [&str; 15] = [
-      "arabic_parens", "lower_alpha_parens", "upper_alpha_parens", "lower_roman_parens", "upper_roman_parens",
-      "arabic_rparen", "lower_alpha_rparen", "upper_alpha_rparen", "lower_roman_rparen", "upper_roman_rparen",
-      "arabic_period", "lower_alpha_period", "upper_alpha_period", "lower_roman_period", "upper_roman_period",
-    ];
-
-    let mut opt_enumerator_type: Option<EnumeratorType> = None;
-
-    for enum_type in ENUMERATOR_NAMES.iter() {
-  
-      let enumerator_candidate = captures.name(enum_type);
-  
-      if let Some(enumerator) = enumerator_candidate {
-        opt_enumerator_type = match *enum_type {
-          enum_type if enum_type == ENUMERATOR_NAMES[0]   =>  Some(EnumeratorType::ParensArabic),
-          enum_type if enum_type == ENUMERATOR_NAMES[1]   =>  Some(EnumeratorType::ParensLowerAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[2]   =>  Some(EnumeratorType::ParensUpperAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[3]   =>  Some(EnumeratorType::ParensLowerRoman),
-          enum_type if enum_type == ENUMERATOR_NAMES[4]   =>  Some(EnumeratorType::ParensUpperRoman),
-          enum_type if enum_type == ENUMERATOR_NAMES[5]   =>  Some(EnumeratorType::RParenArabic),
-          enum_type if enum_type == ENUMERATOR_NAMES[6]   =>  Some(EnumeratorType::RParenLowerAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[7]   =>  Some(EnumeratorType::RParenUpperAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[8]   =>  Some(EnumeratorType::RParenLowerRoman),
-          enum_type if enum_type == ENUMERATOR_NAMES[9]   =>  Some(EnumeratorType::RParenUpperRoman),
-          enum_type if enum_type == ENUMERATOR_NAMES[10]  =>  Some(EnumeratorType::PeriodArabic),
-          enum_type if enum_type == ENUMERATOR_NAMES[11]  =>  Some(EnumeratorType::PeriodLowerAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[12]  =>  Some(EnumeratorType::PeriodUpperAlpha),
-          enum_type if enum_type == ENUMERATOR_NAMES[13]  =>  Some(EnumeratorType::PeriodLowerRoman),
-          enum_type if enum_type == ENUMERATOR_NAMES[14]  =>  Some(EnumeratorType::PeriodUpperRoman),
-          _ =>  unreachable!()
-        };
-        break
-      }
-    };
-
-    opt_enumerator_type
-  }
 }
 
 /// =================================
@@ -386,10 +344,29 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 4] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 18] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
-    (PatternName::Enumerator, Self::ENUMERATOR_PATTERN, body::enumerator),
+    (PatternName::ArabicParens, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
+    (PatternName::ArabicRParen, StateMachine::ARABIC_RPAREN_PATTERN, body::enumerator),
+    (PatternName::ArabicPeriod, StateMachine::ARABIC_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::LowerAlphaParens, StateMachine::LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::LowerAlphaRParen, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::LowerAlphaPeriod, StateMachine::LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::UpperAlphaParens, StateMachine::UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::UpperAlphaRParen, StateMachine::UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::UpperAlphaPeriod, StateMachine::UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::LowerRomanParens, StateMachine::LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::LowerRomanRParen, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::LowerRomanPeriod, StateMachine::LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::UpperRomanParens, StateMachine::UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::UpperRomanRParen, StateMachine::UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::UpperRomanPeriod, StateMachine::UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
     (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];
 
@@ -419,9 +396,28 @@ impl StateMachine {
 
   /// ### ENUMERATED_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::EnumeratedList`.
-  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 16] = [
     (PatternName::EmptyLine, StateMachine::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Enumerator, StateMachine::ENUMERATOR_PATTERN, enumerated_list::enumerator)
+
+    (PatternName::ArabicParens, StateMachine::ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::ArabicRParen, StateMachine::ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::ArabicPeriod, StateMachine::ARABIC_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::LowerAlphaParens, StateMachine::LOWER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::LowerAlphaRParen, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::LowerAlphaPeriod, StateMachine::LOWER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::UpperAlphaParens, StateMachine::UPPER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::UpperAlphaRParen, StateMachine::UPPER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::UpperAlphaPeriod, StateMachine::UPPER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::LowerRomanParens, StateMachine::LOWER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::LowerRomanRParen, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::LowerRomanPeriod, StateMachine::LOWER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::UpperRomanParens, StateMachine::UPPER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::UpperRomanRParen, StateMachine::UPPER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::UpperRomanPeriod, StateMachine::UPPER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
   ];
 
 
@@ -587,6 +583,41 @@ impl StateMachine {
   /// A pattern for matching bullet list bullets.
   const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}])(?: +|$)";
 
+
+  /// A pattern for Arabic numerals with closing parentheses
+  const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing right parenthesis
+  const ARABIC_RPAREN_PATTERN: &'static str = r"^(\s*)([0-9]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing period
+  const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
+
+  /// A pattern for Arabic numerals with closing parentheses
+  const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing right parenthesis
+  const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing period
+  const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
+
+  /// A pattern for Arabic numerals with closing parentheses
+  const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing right parenthesis
+  const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing period
+  const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
+
+  /// A pattern for Arabic numerals with closing parentheses
+  const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing right parenthesis
+  const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing period
+  const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
+
+  /// A pattern for Arabic numerals with closing parentheses
+  const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing right parenthesis
+  const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
+  /// A pattern for Arabic numerals with a closing period
+  const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
 
   /// #### ENUMERATOR_PATTERN
   /// A pattern for matching enumerated list items.

@@ -16,6 +16,26 @@ pub enum PatternName {
   EmptyLine,
   Bullet,
   Enumerator,
+    ArabicParens,
+    ArabicRParen,
+    ArabicPeriod,
+
+    LowerAlphaParens,
+    LowerAlphaRParen,
+    LowerAlphaPeriod,
+
+    UpperAlphaParens,
+    UpperAlphaRParen,
+    UpperAlphaPeriod,
+
+    LowerRomanParens,
+    LowerRomanRParen,
+    LowerRomanPeriod,
+
+    UpperRomanParens,
+    UpperRomanRParen,
+    UpperRomanPeriod,
+
   FieldMarker,
   OptionMarker,
   DocTest,
@@ -42,6 +62,41 @@ pub enum PatternName {
   ImplicitURL,
   StandaloneHyperlink,
   WhiteSpace,
+}
+
+impl PatternName {
+
+  /// ### as_enum_type
+  /// providesa mapping between PatternNames and enumerator types.
+  pub fn as_enum_type (&self) -> Option<EnumeratorType> {
+    match self {
+      PatternName::ArabicParens   => Some(EnumeratorType::ArabicParens),
+      PatternName::ArabicRParen   => Some(EnumeratorType::ArabicRParen),
+      PatternName::ArabicPeriod   => Some(EnumeratorType::ArabicPeriod),
+
+      PatternName::LowerAlphaParens => Some(EnumeratorType::LowerAlphaParens),
+      PatternName::LowerAlphaRParen => Some(EnumeratorType::LowerAlphaRParen),
+      PatternName::LowerAlphaPeriod => Some(EnumeratorType::LowerAlphaPeriod),
+
+      PatternName::UpperAlphaParens => Some(EnumeratorType::UpperAlphaParens),
+      PatternName::UpperAlphaRParen => Some(EnumeratorType::UpperAlphaRParen),
+      PatternName::UpperAlphaPeriod => Some(EnumeratorType::UpperAlphaPeriod),
+
+      PatternName::LowerRomanParens => Some(EnumeratorType::LowerRomanParens),
+      PatternName::LowerRomanRParen => Some(EnumeratorType::LowerRomanRParen),
+      PatternName::LowerRomanPeriod => Some(EnumeratorType::LowerRomanPeriod),
+
+      PatternName::UpperRomanParens => Some(EnumeratorType::UpperRomanParens),
+      PatternName::UpperRomanRParen => Some(EnumeratorType::UpperRomanRParen),
+      PatternName::UpperRomanPeriod => Some(EnumeratorType::UpperRomanPeriod),
+
+      _   => {
+        eprintln!("Only enumerator-related PatterNames can be converted to EnumeratorTypes...\n");
+        None
+      }
+    }
+  }
+
 }
 
 

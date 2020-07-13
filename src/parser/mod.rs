@@ -559,10 +559,47 @@ impl Parser {
   }
 
 
+  /// ### lower_alpha_to_u32
+  fn alpha_to_u32 (alpha_str: &str) -> Option<u32> {
+    match alpha_str {
+      "A" | "a" => Some(1),
+      "B" | "b" => Some(2),
+      "C" | "c" => Some(3),
+      "D" | "d" => Some(4),
+      "E" | "e" => Some(5),
+      "F" | "f" => Some(6),
+      "G" | "g" => Some(7),
+      "H" | "h" => Some(8),
+      "I" | "i" => Some(9),
+      "J" | "j" => Some(10),
+      "K" | "k" => Some(11),
+      "L" | "l" => Some(12),
+      "M" | "m" => Some(13),
+      "N" | "n" => Some(14),
+      "O" | "o" => Some(15),
+      "P" | "p" => Some(16),
+      "Q" | "q" => Some(17),
+      "R" | "r" => Some(18),
+      "S" | "s" => Some(19),
+      "T" | "t" => Some(20),
+      "U" | "u" => Some(21),
+      "V" | "v" => Some(22),
+      "W" | "w" => Some(23),
+      "X" | "x" => Some(24),
+      "Y" | "y" => Some(25),
+      "Z" | "z" => Some(26),
+      _         => {
+        eprintln!("Error: Letter '{}' not recognized as integer by reStructuredText...\n", alpha_str);
+        None
+      }
+    }
+  }
+
+
   /// ### upper_roman_to_u32
   /// Converts a valid given upper-case Roman numeral to a `Some(u32)`.
   /// If the numeral isn't valid, `None` is returned instead
-  pub fn upper_roman_to_u32 (roman_str: &str) -> Option<u32> {
+  fn upper_roman_to_u32 (roman_str: &str) -> Option<u32> {
 
     let mut num_val: u32 = 0;
     let mut buffer = String::with_capacity(2);
@@ -647,7 +684,7 @@ impl Parser {
   /// ### lower_roman_to_u32
   /// Converts a valid given lower-case Roman numeral to a `Some(u32)`.
   /// If the numeral isn't valid, `None` is returned instead
-  pub fn lower_roman_to_u32 (roman_str: &str) -> Option<u32> {
+  fn lower_roman_to_u32 (roman_str: &str) -> Option<u32> {
 
     let mut num_val: u32 = 0;
     let mut buffer = String::with_capacity(2);

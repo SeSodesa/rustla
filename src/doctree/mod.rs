@@ -172,8 +172,6 @@ pub enum TreeNodeType {
 
   // Body level elements
   Paragraph,
-  // Compound(body_nodes::Compound),
-  // Container(body_nodes::Container),
   BulletList {
     bullet: char,
     bullet_indent: usize,
@@ -186,6 +184,7 @@ pub enum TreeNodeType {
   },
   EnumeratedList {
     enum_type: EnumeratorType,
+    items: usize,
     enumerator_indent: usize,
     text_indent: usize
   },
@@ -297,9 +296,9 @@ pub enum TreeNodeType {
 /// level. A list item needs to have the same enumerator type
 /// as the containing enumerated list.
 pub enum EnumeratorType {
-  ParensArabic, ParensLowerAlpha, ParensUpperAlpha, ParensLowerRoman, ParensUpperRoman,
-  RParenArabic, RParenLowerAlpha, RParenUpperAlpha, RParenLowerRoman, RParenUpperRoman,
-  PeriodArabic, PeriodLowerAlpha, PeriodUpperAlpha, PeriodLowerRoman, PeriodUpperRoman,
+  ArabicParens, LowerAlphaParens, UpperAlphaParens, LowerRomanParens, UpperRomanParens,
+  ArabicRParen, LowerAlphaRParen, UpperAlphaRParen, LowerRomanRParen, UpperRomanRParen,
+  ArabicPeriod, LowerAlphaPeriod, UpperAlphaPeriod, LowerRomanPeriod, UpperRomanPeriod,
 }
 
 
