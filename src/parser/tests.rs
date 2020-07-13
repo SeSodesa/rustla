@@ -726,19 +726,19 @@ fn upper_roman_to_usize_01 () {
   let mmmmcmxcix = "MMMMCMXCIX";
   let over_max = "MMMMCMXCX";
 
-  let iii_as_u32 = match Parser::upper_roman_to_u32(iii) {
+  let iii_as_u32 = match Parser::upper_roman_to_usize(iii) {
     Some(num) => num,
     None => panic!("Couldn't convert the Roman numeral III to u32\n")
   };
-  let iv_as_u32 = match Parser::upper_roman_to_u32(iv) {
+  let iv_as_u32 = match Parser::upper_roman_to_usize(iv) {
     Some(num) => num,
     None => panic!("Couldn't convert the Roman numeral iv to u32\n")
   };
-  let mmmmcmxcix_as_u32 = match Parser::upper_roman_to_u32(mmmmcmxcix) {
+  let mmmmcmxcix_as_u32 = match Parser::upper_roman_to_usize(mmmmcmxcix) {
     Some(num) => num,
     None => panic!("Couldn't convert the Roman numeral MMMMCMXCIX to u32\n")
   };
-  let over_max_as_u32 = Parser::upper_roman_to_u32(over_max);
+  let over_max_as_u32 = Parser::upper_roman_to_usize(over_max);
 
   assert_eq!(3, iii_as_u32);
   assert_eq!(4, iv_as_u32);

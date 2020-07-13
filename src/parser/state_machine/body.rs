@@ -83,7 +83,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     }
 
     EnumKind::UpperRoman => {
-      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
+      if let Some(num) = Parser::upper_roman_to_usize(detected_enum_str) {
         num
       } else {
         return Err("Couldn't convert upper-case Roman numeral to an integer...\n")
