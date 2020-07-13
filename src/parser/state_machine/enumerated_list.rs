@@ -11,13 +11,13 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
-    (delims, kind)
+  let (detected_delims, mut detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+    (*delims, *kind)
   } else {
     return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
   };
 
-  let detected_enum_as_usize = match detected_kind {
+  let mut detected_enum_as_usize = match detected_kind {
 
     EnumKind::Arabic => {
       detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
@@ -55,10 +55,20 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     _ => return Err("Not focused on EnumeratedList...\n")
   };
 
+  if detected_enum_str == "i" && *list_item_number == 0 {
+    // LowerRoman list at our hands
+    detected_kind = EnumKind::LowerRoman;
+    detected_enum_as_usize = 1;
+  } else if detected_enum_str == "I" && *list_item_number == 0 {
+    // UpperRoman list at our hands
+    detected_kind = EnumKind::LowerRoman;
+    detected_enum_as_usize = 1;
+  }
+
   // Matching detected parameters against corresponding list ones and proceeding accordingly 
   match (detected_delims, detected_kind, &detected_enumerator_indent, &detected_text_indent) {
 
-    (delims, kind, enum_indent, text_indent) if delims == list_delims && enum_indent == list_enumerator_indent && text_indent == list_text_indent  && detected_enum_as_usize == *list_item_number + 1 => {
+    (delims, kind, enum_indent, text_indent) if delims == *list_delims && enum_indent == list_enumerator_indent && text_indent == list_text_indent  && detected_enum_as_usize == *list_item_number + 1 => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
@@ -80,7 +90,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       todo!()
     }
 
-    (delims, kind, enum_indent, text_indent) if detected_delims != list_delims || detected_kind != list_kind  || enum_indent < list_enumerator_indent => {
+    (delims, kind, enum_indent, text_indent) if detected_delims != *list_delims || detected_kind != *list_kind  || enum_indent < list_enumerator_indent => {
       
       // Unmatching enumerator or less indent
       // => This enumerator is either a part of a superlist, or a different list on the same level
