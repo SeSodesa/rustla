@@ -11,37 +11,36 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let detected_enum_type = if let Some(enum_type) = pattern_name.as_enum_type() {
-    enum_type
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+    (delims, kind)
   } else {
-    return Err("No matching enum type for given enumerator pattern...\n")
+    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
   };
 
-  let detected_enum_as_u32 = match detected_enum_type {
+  let detected_enum_as_usize = match detected_kind {
 
-    EnumeratorType::ArabicParens | EnumeratorType::ArabicRParen | EnumeratorType::ArabicPeriod => {
-      detected_enum_str.parse::<u32>().unwrap() // Standard library has implemented conversion from str to u32
+    EnumKind::Arabic => {
+      detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversion from str to u32
     }
 
-    EnumeratorType::LowerAlphaParens | EnumeratorType::LowerAlphaRParen | EnumeratorType::LowerAlphaPeriod
-    | EnumeratorType::UpperAlphaParens | EnumeratorType::UpperAlphaRParen | EnumeratorType::UpperAlphaPeriod => {
-      if let Some(num) = Parser::alpha_to_u32(detected_enum_str) {
+    EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
+      if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
         num
       } else {
-        return Err("Couldn't convert alphabet to an integer...\n")
+        return Err("Couldn't convert given alphabet to an integer...\n")
       }
     }
 
-    EnumeratorType::LowerRomanParens | EnumeratorType::LowerRomanRParen | EnumeratorType::LowerRomanPeriod => {
-      if let Some(num) = Parser::lower_roman_to_u32(detected_enum_str) {
+    EnumKind::LowerRoman => {
+      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
         num
       } else {
         return Err("Couldn't convert lower-case Roman numeral to an integer...\n")
       }
     }
 
-    EnumeratorType::UpperRomanParens | EnumeratorType::UpperRomanRParen | EnumeratorType::UpperRomanPeriod => {
-      if let Some(num) = Parser::lower_roman_to_u32(detected_enum_str) {
+    EnumKind::UpperRoman => {
+      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
         num
       } else {
         return Err("Couldn't convert upper-case Roman numeral to an integer...\n")
@@ -49,33 +48,39 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     }
   };
 
-  let (list_enumerator_type, list_item_number,list_enumerator_indent, list_text_indent) = match &mut tree_wrapper.tree.node.data {
-    TreeNodeType::EnumeratedList { enum_type, items, enumerator_indent, text_indent } => (enum_type, items, enumerator_indent, text_indent),
+  eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
+
+  let (list_delims, list_kind, list_start_index, list_item_number,list_enumerator_indent, list_text_indent) = match &mut tree_wrapper.tree.node.data {
+    TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent, text_indent } => (delims, kind, start_index, n_of_items, enumerator_indent, text_indent),
     _ => return Err("Not focused on EnumeratedList...\n")
   };
 
   // Matching detected parameters against corresponding list ones and proceeding accordingly 
-  match (&detected_enum_type, &detected_enumerator_indent, &detected_text_indent) {
+  match (detected_delims, detected_kind, &detected_enumerator_indent, &detected_text_indent) {
 
-    (enum_type, enum_indent, text_indent) if enum_type == list_enumerator_type && enum_indent == list_enumerator_indent && text_indent == list_text_indent => {
+    (delims, kind, enum_indent, text_indent) if delims == list_delims && enum_indent == list_enumerator_indent && text_indent == list_text_indent  && detected_enum_as_usize == *list_item_number + 1 => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
 
+      eprintln!("Found list item belonging to current list...\n");
+
 
       todo!()
     }
 
-    (enum_type, enum_indent, text_indent) if enum_indent == list_text_indent => {
+    (delims, kind, enum_indent, text_indent) if enum_indent == list_text_indent => {
 
       // Enumerator indent is on the same level as the current list indentation
       // => A sublist has been detected, so push another EnumeratedList state on top of
-      // the parser state stack, created a new EnumeratedList node as a child of
+      // the parser state stack, create a new EnumeratedList node as a child of
       // the current one and focus on it.
+
+      eprintln!("Sublist enumerator detected...\n");
       todo!()
     }
 
-    (enum_type, enum_indent, text_indent) if enum_type != list_enumerator_type || enum_indent < list_enumerator_indent => {
+    (delims, kind, enum_indent, text_indent) if detected_delims != list_delims || detected_kind != list_kind  || enum_indent < list_enumerator_indent => {
       
       // Unmatching enumerator or less indent
       // => This enumerator is either a part of a superlist, or a different list on the same level
@@ -83,7 +88,10 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       todo!()
     }
 
-    _ => return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+    _ => {
+      eprintln!("No specific instruction for found detected enumerator parameters.\nSimply POPping from stack in hopes of the previous state knowing better...\n");
+      return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+    }
   }
 
 }

@@ -72,7 +72,7 @@ impl Parser {
     // The parsing loop
     loop {
 
-      if iteration_count > 5000 {
+      if iteration_count > 100 {
         eprintln!("Ended parsing loop because of excessive iterations...\n");
         break
       }
@@ -560,7 +560,7 @@ impl Parser {
 
 
   /// ### lower_alpha_to_u32
-  fn alpha_to_u32 (alpha_str: &str) -> Option<u32> {
+  fn alpha_to_usize (alpha_str: &str) -> Option<usize> {
     match alpha_str {
       "A" | "a" => Some(1),
       "B" | "b" => Some(2),
@@ -684,13 +684,13 @@ impl Parser {
   /// ### lower_roman_to_u32
   /// Converts a valid given lower-case Roman numeral to a `Some(u32)`.
   /// If the numeral isn't valid, `None` is returned instead
-  fn lower_roman_to_u32 (roman_str: &str) -> Option<u32> {
+  fn lower_roman_to_usize (roman_str: &str) -> Option<usize> {
 
-    let mut num_val: u32 = 0;
+    let mut num_val: usize = 0;
     let mut buffer = String::with_capacity(2);
     let mut chars_iter = roman_str.chars().peekable();
 
-    const ROMAN_MAX: u32 = 4999;
+    const ROMAN_MAX: usize = 4999;
 
     while let Some(c1) = chars_iter.next() {
 

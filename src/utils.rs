@@ -64,6 +64,22 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
 // Enumerators and converters
 // ==========================
 
+/// ### EnumFormat
+/// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
+/// A third option is to enclose them in matching parentheses `(` and `)`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum EnumDelims {
+  Period, Parens, RParen,
+}
+
+/// ### EnumKind
+/// List enumerator labels can be Arabic numerals, lower- or upper-case alphet `a--z` or `A--Z`,
+/// or lower- or upper-case Roman numerals between `1--4999`.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum EnumKind {
+  Arabic, LowerAlpha, UpperAlpha, LowerRoman, UpperRoman,
+}
+
 /// ### EnumeratorFormat
 /// An enumeration of the different ways of representing
 /// natural numbers in *reStructuredText* enumerated lists.

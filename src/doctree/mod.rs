@@ -15,6 +15,7 @@ pub mod body_nodes;
 pub mod inline_nodes;
 use self::node_types::BranchNodeType;
 
+use crate::utils::{EnumDelims, EnumKind};
 
 /// ### DocTree
 /// A container for the document tree.
@@ -183,13 +184,16 @@ pub enum TreeNodeType {
     text_indent: usize
   },
   EnumeratedList {
-    enum_type: EnumeratorType,
-    items: usize,
+    delims: EnumDelims,
+    kind: EnumKind,
+    start_index: usize,
+    n_of_items: usize,
     enumerator_indent: usize,
     text_indent: usize
   },
   EnumeratedListItem {
-    enum_type: EnumeratorType,
+    delims: EnumDelims,
+    kind: EnumKind,
     index_in_list: usize,
     enumerator_indent: usize,
     text_indent: usize
@@ -288,18 +292,18 @@ pub enum TreeNodeType {
 
 }
 
-#[derive(Debug, PartialEq)]
-/// ### EnumeratorType
-/// An enumeration of the different enumerator types
-/// that an enumerated list might have. Used for comparing
-/// enumerated list items on the same indentation (nesting)
-/// level. A list item needs to have the same enumerator type
-/// as the containing enumerated list.
-pub enum EnumeratorType {
-  ArabicParens, LowerAlphaParens, UpperAlphaParens, LowerRomanParens, UpperRomanParens,
-  ArabicRParen, LowerAlphaRParen, UpperAlphaRParen, LowerRomanRParen, UpperRomanRParen,
-  ArabicPeriod, LowerAlphaPeriod, UpperAlphaPeriod, LowerRomanPeriod, UpperRomanPeriod,
-}
+// #[derive(Debug, PartialEq)]
+// /// ### EnumeratorType
+// /// An enumeration of the different enumerator types
+// /// that an enumerated list might have. Used for comparing
+// /// enumerated list items on the same indentation (nesting)
+// /// level. A list item needs to have the same enumerator type
+// /// as the containing enumerated list.
+// pub enum EnumeratorType {
+//   ArabicParens, LowerAlphaParens, UpperAlphaParens, LowerRomanParens, UpperRomanParens,
+//   ArabicRParen, LowerAlphaRParen, UpperAlphaRParen, LowerRomanRParen, UpperRomanRParen,
+//   ArabicPeriod, LowerAlphaPeriod, UpperAlphaPeriod, LowerRomanPeriod, UpperRomanPeriod,
+// }
 
 
 /// ### Parent

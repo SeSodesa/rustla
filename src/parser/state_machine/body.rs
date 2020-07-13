@@ -52,16 +52,52 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
   let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let enumerator_type = if let Some(enum_type) = pattern_name.as_enum_type() {
-    enum_type
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+    (delims, kind)
   } else {
-    return Err("No matching enumerator type for pattern name...\n")
+    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
   };
 
+  let detected_enum_as_usize = match detected_kind {
+
+    EnumKind::Arabic => {
+      detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversion from str to u32
+    }
+
+    EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
+      if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
+        num
+      } else {
+        return Err("Couldn't convert alphabet to an integer...\n")
+      }
+    }
+
+    EnumKind::LowerRoman => {
+      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
+        num
+      } else {
+        return Err("Couldn't convert lower-case Roman numeral to an integer...\n")
+      }
+    }
+
+    EnumKind::UpperRoman => {
+      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
+        num
+      } else {
+        return Err("Couldn't convert upper-case Roman numeral to an integer...\n")
+      }
+    }
+  };
+
+  eprintln!("Start index: {}\n", detected_enum_as_usize);
+
   let node_data = TreeNodeType::EnumeratedList {
-    enum_type: enumerator_type,
-    items: 0,
+    delims: *detected_delims,
+    kind: *detected_kind,
+    start_index: detected_enum_as_usize,
+    n_of_items: 0,
     enumerator_indent: detected_enumerator_indent,
     text_indent: detected_text_indent,
   };
