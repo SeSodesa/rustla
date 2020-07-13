@@ -67,15 +67,18 @@ impl Parser {
 
     self.machine_stack.push(Some(init_machine));
 
-    let mut iteration_count = 0;
+    let mut line_changed: bool = false;
+    let mut line_not_changed_count: u32 = 0;
 
     // The parsing loop
     loop {
 
-      if iteration_count > 100 {
-        eprintln!("Ended parsing loop because of excessive iterations...\n");
+      if !line_changed && line_not_changed_count >= 10 {
+        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.current_line);
         break
       }
+
+      line_changed = false;
 
       // eprintln!("Machine stack state: {:#?}", self.machine_stack);
       eprintln!("On line {:#?}", self.current_line);
@@ -150,6 +153,8 @@ impl Parser {
 
           eprintln!("Executing transition method...\n");
 
+          let line_before_transition = self.current_line;
+
           self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
 
             Ok((opt_doctree, opt_next_state, push_or_pop, opt_line_advance)) => {
@@ -187,6 +192,13 @@ impl Parser {
                   self.current_line += offset;
                 }
                 _ => ()
+              }
+
+              if self.current_line == line_before_transition {
+                line_not_changed_count += 1;
+              } else {
+                line_changed = true;
+                line_not_changed_count = 0;
               }
 
               opt_doctree
@@ -237,8 +249,6 @@ impl Parser {
           return Err("Cannot transition missing machine to EOF state\n")
         };
       }
-
-      iteration_count += 1;
 
     };
 
