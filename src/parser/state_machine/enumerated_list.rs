@@ -20,7 +20,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let detected_enum_as_usize = match detected_kind {
 
     EnumKind::Arabic => {
-      detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversion from str to u32
+      detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
     }
 
     EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
