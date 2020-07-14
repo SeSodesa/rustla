@@ -189,7 +189,7 @@ pub enum TreeNodeType {
     start_index: usize,
     n_of_items: usize,
     enumerator_indent: usize,
-    text_indent: usize
+    latest_text_indent: usize
   },
   EnumeratedListItem {
     delims: EnumDelims,

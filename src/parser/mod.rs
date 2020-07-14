@@ -81,9 +81,6 @@ impl Parser {
 
       line_changed = false;
 
-      // eprintln!("Machine stack state: {:#?}", self.machine_stack);
-      eprintln!("On line {:#?}", self.current_line);
-
       let mut match_found = false;
 
       // Retrieving a clone of the transitions stored in the latest state
@@ -250,6 +247,9 @@ impl Parser {
           return Err("Cannot transition missing machine to EOF state\n")
         };
       }
+
+      eprintln!("Machine stack state: {:#?}", self.machine_stack);
+      eprintln!("On line {:#?}\n", self.current_line);
 
     };
 

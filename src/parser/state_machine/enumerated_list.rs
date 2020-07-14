@@ -51,7 +51,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
 
   let (list_delims, list_kind, list_start_index, list_item_number,list_enumerator_indent, list_text_indent) = match &mut tree_wrapper.tree.node.data {
-    TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent, text_indent } => (delims, kind, start_index, n_of_items, enumerator_indent, text_indent),
+    TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent } => (delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent),
     _ => return Err("Not focused on EnumeratedList...\n")
   };
 
@@ -68,7 +68,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   // Matching detected parameters against corresponding list ones and proceeding accordingly 
   match (detected_delims, detected_kind, &detected_enumerator_indent, &detected_text_indent) {
 
-    (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == list_enumerator_indent && text_indent == list_text_indent  && detected_enum_as_usize == *list_item_number + 1 => {
+    (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == *list_item_number + 1 => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
@@ -76,7 +76,10 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       eprintln!("Found list item belonging to current list...\n");
 
       match &mut tree_wrapper.tree.node.data {
-        TreeNodeType::EnumeratedList {n_of_items, ..} => *n_of_items += 1,
+        TreeNodeType::EnumeratedList {n_of_items, latest_text_indent, ..} => {
+          *n_of_items += 1;
+          *latest_text_indent = *text_indent;
+        },
         _ => return Err("Only enumerated lists keep track of the number of item nodes in them...\n")
       }
 
@@ -141,11 +144,18 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     }
 
     (delims, kind, enum_indent, text_indent) if detected_delims != *list_delims || detected_kind != *list_kind  || enum_indent < list_enumerator_indent => {
-      
+
       // Unmatching enumerator or less indent
       // => This enumerator is either a part of a superlist, or a different list on the same level
       // => Pop from machine stack and try parsing at a lower nesting level.
-      todo!()
+
+      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+        Ok(tree) => tree,
+        Err(tree) => return Err("Couldn't focus on list parent...\n")
+      };
+
+      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
     }
 
     _ => {

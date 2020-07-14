@@ -80,7 +80,35 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 /// ### enumerator
 /// An enumerator detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
 pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
-  todo!()
+
+  let mut tree_wrapper = doctree.unwrap();
+
+  eprintln!("{:#?}", tree_wrapper.tree.node.data);
+
+  let (list_item_bullet_indent, list_item_text_indent) = match tree_wrapper.tree.node.data {
+    TreeNodeType::EnumeratedListItem{enumerator_indent, text_indent, ..} => (enumerator_indent, text_indent),
+    _ => return Err("Not focused on enumerator list item.\nCannot ask for enumerator and indentation...\n")
+  };
+
+  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_enum_str = captures.get(2).unwrap().as_str();
+
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+    (*delims, *kind)
+  } else {
+    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
+  };
+
+  tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+    Ok(tree) => tree,
+    Err(tree) => return Err("Couldn't focus on parent bullet list")
+  };
+
+  eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
+
+  return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
 }
 
 /// ### paragraph
@@ -92,9 +120,10 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
   
   let mut tree_wrapper = doctree.unwrap();
 
-  let (bullet, item_bullet_indent, item_text_indent) = match tree_wrapper.tree.node.data {
-    TreeNodeType::BulletListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
-    _ => return Err("Failed to retrieve bullet list item info when parsing a paragraph.\n")
+  let (item_bullet_indent, item_text_indent) = match tree_wrapper.tree.node.data {
+    TreeNodeType::BulletListItem{bullet_indent, text_indent, ..} => (bullet_indent, text_indent),
+    TreeNodeType::EnumeratedListItem{enumerator_indent, text_indent, ..} => ( enumerator_indent, text_indent),
+    _ => return Err("Failed to retrieve bullet list item indentation info when parsing a paragraph.\n")
   };
 
   let detected_par_indent = captures.get(1).unwrap().as_str().chars().count();

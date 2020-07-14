@@ -109,7 +109,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     start_index: detected_enum_as_usize,
     n_of_items: 0,
     enumerator_indent: detected_enumerator_indent,
-    text_indent: detected_text_indent,
+    latest_text_indent: detected_text_indent,
   };
 
   eprintln!("List data: {:#?}\n", node_data);

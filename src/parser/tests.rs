@@ -726,6 +726,57 @@ fn enumerated_list_01 () {
 }
 
 
+#[test]
+fn enumerated_list_02 () {
+
+  let src = String::from("
+  (i) List item 1
+      with a valid second line
+
+      Second paragraph of this list item.
+
+  (i) List item 1
+      of a second list
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree);
+
+  doctree = match parser.parse() {
+    Ok(doctree) => doctree.unwrap(),
+    Err(e) => {
+      eprintln!("{}", e);
+      panic!();
+    }
+  };
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList{..} => (),
+    _ => panic!("No EnumeratedList detected!\n")
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::EnumeratedList{..} => (),
+    _ => panic!("No EnumeratedList detected!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Paragraph{..} => (),
+    _ => panic!("No Paragraph detected!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[2].data {
+    TreeNodeType::Paragraph{..} => (),
+    _ => panic!("No second Paragraph detected!\n")
+  }
+
+}
+
+
 
 #[test]
 fn upper_roman_to_usize_01 () {
