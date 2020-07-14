@@ -54,7 +54,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       };
 
       // Pass text to inline parser as a string
-      let mut inline_nodes = if let Some(children) = StateMachine::inline_parse(block, current_line) {
+      let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
         children
       } else {
         Vec::new()

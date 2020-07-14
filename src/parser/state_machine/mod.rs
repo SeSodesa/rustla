@@ -10,7 +10,7 @@ mod common;
 mod enumerated_list;
 mod inline;
 mod list_item;
-mod transitions;
+pub mod transitions;
 mod tests;
 
 use std::cmp;
@@ -204,135 +204,6 @@ impl StateMachine {
     }
 
     compiled_transitions
-  }
-
-
-  /// ### inline_parse
-  /// A function that parses inline text. Returns the nodes generated,
-  /// if there are any.
-  fn inline_parse (inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
-
-    let mut nodes: Vec<TreeNode> = Vec::new();
-
-    let mut col: usize = 0;
-
-    // Remove backslashes
-    let src_without_escapes = inline_src_block.replace("\\", "");
-
-    let src_chars = &mut src_without_escapes.chars();
-
-    match StateMachine::match_iter(&src_chars) {
-      Some((node, offset)) => {
-
-        nodes.push(node);
-
-        // Move iterator to start of next possible match
-        for _ in 0..offset - 1 {
-          let c = src_chars.next().unwrap();
-          eprintln!("Consuming {:#?}...", c);
-
-          col += 1;
-
-          if c == '\n' {
-            eprintln!("Detected newline...\n");
-            *current_line += 1;
-            col = 0;
-          }
-        }
-      },
-
-      None => {
-        eprintln!("No match on line {}, col {}.\nProceeding to consume next character...\n", current_line, col);
-      }
-    }
-
-    while let Some(c) = src_chars.next() {
-
-      eprintln!("Consuming {:#?}...\n", c);
-
-      col += 1;
-
-      if c == '\n' {
-        eprintln!("Detected newline...\n");
-        *current_line += 1;
-        col = 0;
-      }
-
-      match StateMachine::match_iter(&src_chars) {
-        Some((node, offset)) => {
-
-          nodes.push(node);
-
-          // Move iterator to start of next possible match
-          for _ in 0..offset - 1 {
-            let c = src_chars.next().unwrap();
-            eprintln!("Consuming {:#?}", c);
-
-            col += 1;
-
-            if c == '\n' {
-              eprintln!("Detected newline...\n");
-              *current_line += 1;
-              col = 0;
-            }
-          }
-        },
-
-        None => {
-          eprintln!("No match on line {}, col {}.\n", current_line, col);
-        }
-      }
-    }
-
-    if nodes.is_empty() {
-      return None
-    }
-
-    Some(nodes)
-
-  }
-
-  /// ### match_iter
-  /// A function for checking the string representation of
-  /// a given `Chars` iterator for a regex match and executing
-  /// the corresponding parsing method. Returns the `Option`al
-  /// generated node if successful, otherwise returns with `None`.
-  fn match_iter <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
-
-    let src_str = chars_iter.as_str();
-
-    if src_str.is_empty() {
-      eprintln!("Source has been drained of characters.\n");
-      return None
-    }
-
-    eprintln!("Matching against {:#?}\n", src_str);
-
-    for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
-
-      match regexp.captures(src_str) {
-
-        Some(capts) => {
-
-          eprintln!("Match found for {:#?}\n", pattern_name);
-
-          let (node, offset) = parsing_function(*pattern_name, &capts);
-
-          //eprintln!("{:#?}", node);
-
-          return Some((node, offset));
-
-        },
-
-        None => {
-          //eprintln!("No match for {:#?}", pattern_name);
-          continue // no match, do nothing
-        }
-
-      };
-    }
-
-    None
   }
 
 }

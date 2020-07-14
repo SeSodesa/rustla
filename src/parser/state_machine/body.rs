@@ -146,7 +146,7 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
   };
 
   // Pass text to inline parser as a string
-  let mut inline_nodes = if let Some(children) = StateMachine::inline_parse(block, current_line) {
+  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
     children
   } else {
     return Err("Couldn't parse paragraph for inline nodes\n")
