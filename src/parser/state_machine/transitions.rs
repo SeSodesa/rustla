@@ -70,8 +70,8 @@ lazy_static! {
     let bullet_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_TRANSITIONS);
     action_map.insert(StateMachine::BulletList, bullet_actions);
 
-    let bullet_list_item_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_ITEM_TRANSITIONS);
-    action_map.insert(StateMachine::ListItem, bullet_list_item_actions);
+    let list_item_actions = StateMachine::compile_state_transitions(&StateMachine::LIST_ITEM_TRANSITIONS);
+    action_map.insert(StateMachine::ListItem, list_item_actions);
 
     let definition_actions = StateMachine::compile_state_transitions(&StateMachine::DEFINITION_LIST_TRANSITIONS);
     action_map.insert(StateMachine::DefinitionList, definition_actions);

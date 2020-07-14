@@ -690,6 +690,7 @@ fn enumerated_list_01 () {
 
   let src = String::from("
   (i) List item 1
+      with a valid second line
     
   ");
 
@@ -705,14 +706,22 @@ fn enumerated_list_01 () {
     }
   };
 
-  // eprintln!("{:#?}", doctree.tree);
+  eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].data {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  todo!()
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem{..} => (),
+    _ => panic!("No EnumeratedListItem as child of EnumeratedList!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!("No Paragraph as child of EnumeratdListItem!\n")
+  }
 
 }
 

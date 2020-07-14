@@ -17,7 +17,7 @@ use std::collections;
 use regex;
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
-use crate::utils;
+use crate::utils::{self, EnumDelims, EnumKind};
 
 /// ### Parser
 /// The parser type. Contains an optional
