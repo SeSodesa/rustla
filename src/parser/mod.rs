@@ -46,13 +46,15 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree, initial_state: StateMachine) -> Self {
+  fn new(src: String, doctree: DocTree, opt_initial_state: Option<StateMachine>) -> Self {
+
+    let initial_state = opt_initial_state.or(Some(StateMachine::Body));
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       current_line: 0,
       doctree: Some(doctree),
-      machine_stack: vec!(Some(initial_state))
+      machine_stack: vec!(initial_state)
     }
 
   }
