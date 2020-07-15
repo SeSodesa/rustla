@@ -257,16 +257,58 @@ impl Parser {
 
   }
 
-  /// ### match_line
-  /// Attempts to match the current line to each pattern
-  /// in the list of transitions in the current `State`.
-  /// If no match is found, the current line number
-  /// is returned in an `Err`. If a line is matched,
-  /// attempts to run the transition|parsing method
-  /// related to the matched pattern.
-  fn match_line(&mut self) -> Result<(), String>{
+  /// ### enum_str_to_int_and_kind
+  /// Converts an enumerator &str to an integer using one of the
+  /// coverters, if possible.
+  fn enum_str_to_int_and_kind (detected_enum_str: &str, detected_kind: &EnumKind, list_item_number: Option<usize>) -> Option<(usize, EnumKind)> {
 
-    unimplemented!();
+    let list_item_number = list_item_number.unwrap_or(0);
+
+    if detected_enum_str == "i" && list_item_number == 0 {
+      // LowerRoman list at our hands
+      return Some((1, EnumKind::LowerRoman))
+    } else if detected_enum_str == "I" && list_item_number == 0 {
+      // UpperRoman list at our hands
+      return Some((1, EnumKind::UpperRoman))
+    }
+    
+    let detected_enum_as_usize = match detected_kind {
+
+      EnumKind::Arabic => {
+        detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
+      }
+  
+      EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
+        if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
+          num
+        } else {
+          eprintln!("Couldn't convert given alphabet to an integer...\n");
+          return None
+        }
+      }
+  
+      EnumKind::LowerRoman => {
+        if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
+          num
+        } else {
+          eprintln!("Couldn't convert lower-case Roman numeral to an integer...\n");
+          return None
+        }
+      }
+  
+      EnumKind::UpperRoman => {
+        if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
+          num
+        } else {
+          eprintln!("Couldn't convert upper-case Roman numeral to an integer...\n");
+          return None
+        }
+      }
+    };
+
+    Some(
+      (detected_enum_as_usize, *detected_kind)
+    )
 
   }
 

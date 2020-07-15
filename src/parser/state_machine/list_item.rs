@@ -99,13 +99,20 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       // Detected marker indent matches with the text indentation of the current list item.
       // A new sublist has started, so act accordingly.
 
+      eprintln!("Sublist with indetation {:#?} detected...\n", enum_indent);
+
+      let (list_number, list_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
+        Some((int, kind)) => (int, kind),
+        None => return Err("Couldn't parse sublist item enumerator...\n")
+      };
+
       let list_node_data = TreeNodeType::EnumeratedList{
         delims: detected_delims,
-        kind: detected_kind,
+        kind: list_kind,
         enumerator_indent: detected_enumerator_indent,
         latest_text_indent: detected_text_indent,
         n_of_items: 0,
-        start_index:0
+        start_index: list_number
       };
 
       let list_node = TreeNode::new(list_node_data);
@@ -123,8 +130,6 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       // Not sublist. Pop from parser stack and focus on parent list node.
 
       tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-
-
 
       Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
 
