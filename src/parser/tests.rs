@@ -388,7 +388,7 @@ fn bullet_list_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -422,7 +422,7 @@ fn bullet_list_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -460,7 +460,7 @@ fn bullet_list_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -512,7 +512,7 @@ fn bullet_list_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -573,7 +573,7 @@ fn bullet_list_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -630,7 +630,7 @@ fn bullet_list_06 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -691,7 +691,7 @@ fn enumerated_list_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),
@@ -737,7 +737,7 @@ fn enumerated_list_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree);
+  let mut parser = Parser::new(src, doctree, StateMachine::Body);
 
   doctree = match parser.parse() {
     Ok(doctree) => doctree.unwrap(),

@@ -24,7 +24,7 @@ use crate::utils::{self, EnumDelims, EnumKind};
 /// The parser type. Contains an optional
 /// source line vector and a document tree.
 /// These are optional to facilitate their passing
-/// to any state machine in `machine_stack` via
+/// to any transitions functions via
 /// `std::option::Option::take`
 /// without invalidating the fields.
 pub struct Parser {
@@ -46,13 +46,13 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree) -> Self {
+  fn new(src: String, doctree: DocTree, initial_state: StateMachine) -> Self {
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       current_line: 0,
       doctree: Some(doctree),
-      machine_stack: Vec::with_capacity(2)
+      machine_stack: vec!(Some(initial_state))
     }
 
   }
