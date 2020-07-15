@@ -25,53 +25,39 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 
   match (detected_bullet, detected_bullet_indent, detected_text_indent) {
 
-    (bullet, b_indent, t_indent) if bullet == list_item_bullet && b_indent == list_item_bullet_indent => {
+    (bullet, b_indent, t_indent) if b_indent == list_item_text_indent => {
 
-      // If they are the same, we have detected another list item on the same level
-      // and need to move back to parent list so it might be appended.
+      // Bullet indent equal to list item text indent means there is a sublist under this list item.
+      // Push a new BulletList state on top of the parser stack, a new BulletListNode as the child of the
+      // current ListItem node and parse from current line forward.
 
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+      let list_node_data = TreeNodeType::BulletList{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent};
+
+      let list_node = TreeNode::new(list_node_data);
+
+      tree_wrapper.tree.push_child(list_node);
+
+      tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
         Ok(tree) => tree,
-        Err(tree) => return Err("Couldn't focus on parent bullet list")
-      };
-      
-      eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
-      return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
-
-    }
-
-    (bullet, b_indent, t_indent) if t_indent < list_item_text_indent => {
-      // Indentation less than that of the current list item => probably a parent
-      // list item was detected => need to move focus to said list and pop from
-      // parser machine stack until corresponding level of nesting is reached.
-
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-        Ok(tree) => tree,
-        Err(tree) => return Err("Couldn't focus on parent bullet list")
+        Err(..) => return Err("Couldn't focus on child bullet list under list item...\n")
       };
 
-      eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
-      return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+      Ok( ( Some(tree_wrapper), Some(StateMachine::BulletList), PushOrPop::Push, LineAdvance::None ) )
 
-    }
-
-    (bullet, b_indent, t_indent) if b_indent >= list_item_text_indent => {
-      // Indent greater than that of the current item means a sublist has started,
-      // again, assuming that it aligns with the left edge of the list item.
-
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-        Ok(tree) => tree,
-        Err(tree) => return Err("Couldn't focus on parent bullet list")
-      };
-
-      eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
-
-      return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
     }
 
     _ => {
-      eprint!("No action for such (bullet, bullet indent, text indent) = ({}, {}, {}) combination.\n", detected_bullet, detected_bullet_indent, detected_text_indent);
-      return Err("")
+
+      // There is a sublist, only if the indentation matches. Otherwise we will assume that
+      // The list does not belong to this list item and reverse up the tree and parser state stack.
+
+      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+        Ok(tree) => tree,
+        Err(tree) => tree, // at root
+      };
+
+      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
     }
   }
 }
@@ -100,14 +86,51 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
   };
 
-  tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-    Ok(tree) => tree,
-    Err(tree) => return Err("Couldn't focus on parent bullet list")
+  let item_text_indent = match tree_wrapper.tree.node.data {
+    TreeNodeType::BulletListItem{text_indent, ..} => text_indent,
+    TreeNodeType::EnumeratedListItem{text_indent, ..} => text_indent,
+    _ => return Err("Not focused on list item inside a list item function.\nWhy...?\n")
   };
 
-  eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
+  match detected_enumerator_indent {
 
-  return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+    enum_indent if enum_indent == item_text_indent => {
+
+      // Detected marker indent matches with the text indentation of the current list item.
+      // A new sublist has started, so act accordingly.
+
+      let list_node_data = TreeNodeType::EnumeratedList{
+        delims: detected_delims,
+        kind: detected_kind,
+        enumerator_indent: detected_enumerator_indent,
+        latest_text_indent: detected_text_indent,
+        n_of_items: 0,
+        start_index:0
+      };
+
+      let list_node = TreeNode::new(list_node_data);
+
+      tree_wrapper.tree.push_child(list_node);
+
+      tree_wrapper.tree = tree_wrapper.tree.focus_on_last_child().unwrap();
+
+      Ok( ( Some(tree_wrapper), Some(StateMachine::EnumeratedList), PushOrPop::Push, LineAdvance::None ) )
+
+    }
+
+    _ => {
+
+      // Not sublist. Pop from parser stack and focus on parent list node.
+
+      tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+
+
+
+      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+
+    }
+
+  }
 
 }
 

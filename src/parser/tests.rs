@@ -590,12 +590,12 @@ fn bullet_list_05 () {
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.tree.node.children[1].children[0].children[4].data {
     TreeNodeType::BulletList{..} => (),
     _ => panic!("Second child of BulletList wasn't a sublist!\n")
   }
 
-  match doctree.tree.node.children[1].children[2].data {
+  match doctree.tree.node.children[1].children[1].data {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Third child of BulletList wasn't a ListItem!\n")
   }
@@ -647,39 +647,34 @@ fn bullet_list_06 () {
     _ => panic!("First non-whitespace child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[1].data {
-    TreeNodeType::BulletList{..} => (),
-    _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n")
-  }
-
-  match doctree.tree.node.children[1].children[1].children[0].data {
-    TreeNodeType::BulletListItem{..} => (),
-    _ => panic!("First non-whitespace child of sublist wasn't a ListItem!\n")
-  }
-
-  match doctree.tree.node.children[1].children[1].children[2].data {
-    TreeNodeType::BulletList{..} => (),
-    _ => panic!("Third non-whitespace child of sublist wasn't a BulletList!\n")
-  }
-
-  match doctree.tree.node.children[1].children[1].children[2].children[1].data {
-    TreeNodeType::BulletListItem{..} => (),
-    _ => panic!("Second non-whitespace child of subsublist wasn't a ListItem!\n")
-  }
-
-  match doctree.tree.node.children[1].children[1].children[3].data {
-    TreeNodeType::BulletListItem{..} => (),
-    _ => panic!("Fourth non-whitespace child of sublist wasn't a ListItem!\n")
-  }
-
-  match doctree.tree.node.children[1].children[2].data {
-    TreeNodeType::BulletListItem{..} => (),
-    _ => panic!("Third non-whitespace child of BulletList wasn't a ListItem!\n")
-  }
-
-  match doctree.tree.node.children[2].data {
+  match doctree.tree.node.children[1].children[0].children[0].data {
     TreeNodeType::Paragraph{..} => (),
-    _ => panic!("Item after BulletList at document root level wasn't a Paragraph!\n")
+    _ => panic!("No Paragraph!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[4].data {
+    TreeNodeType::BulletList{..} => (),
+    _ => panic!("No BulletList!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[4].children[0].data {
+    TreeNodeType::BulletListItem{..} => (),
+    _ => panic!("No BulletListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[4].children[1].data {
+    TreeNodeType::BulletListItem{..} => (),
+    _ => panic!("No BulletListItem!\n")
+  }
+
+  match doctree.tree.node.children[1].children[0].children[4].children[1].children[2].data {
+    TreeNodeType::BulletList{..} => (),
+    _ => panic!("No BulletListItem!\n")
+  }
+  
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::BulletListItem{..} => (),
+    _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n")
   }
 
 }
