@@ -66,10 +66,6 @@ impl Parser {
 
     eprintln!("Initiating parse...\n");
 
-    let init_machine = StateMachine::Body;
-
-    self.machine_stack.push(Some(init_machine));
-
     let mut line_changed: bool = false;
     let mut line_not_changed_count: u32 = 0;
 
