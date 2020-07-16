@@ -400,7 +400,7 @@ impl Parser {
   }
 
 
-    /// ### inline_parse
+  /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
   fn inline_parse (inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
