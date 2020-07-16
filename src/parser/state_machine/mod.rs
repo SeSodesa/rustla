@@ -78,6 +78,9 @@ pub enum LineAdvance {
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
+/// 
+/// The variants are used as keys to the static `TRANSITION_MAP`, which stores vectors of
+/// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum StateMachine {
   Body,
