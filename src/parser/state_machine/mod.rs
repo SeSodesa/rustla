@@ -32,7 +32,7 @@ use crate::doctree::{self, TreeNode};
 /// If the optional next state is *not* `None`, the current state is either replaced with the new state or
 /// the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str>;
+type TransitionMethod = fn(src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> TransitionResult;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
@@ -550,4 +550,30 @@ impl StateMachine {
     /// possibilities have been eliminated. 
     const PARAGRAPH_PATTERN: &'static str = r"^(\s*)\S";
 
+}
+
+
+/// ### TransitionResult
+/// An enumeration fo the different results, including errors,
+/// that a transition function might have.
+pub enum TransitionResult {
+
+  /// #### Success
+  /// This is returned if nothing goes wrong with a transition method.
+  /// It includes the modified document tree, plus information about
+  /// how to manipulate the parser stack, whether the parser should advance
+  /// its line cursor.
+  Success {
+    doctree: DocTree,
+    next_state: Option<StateMachine>,
+    push_or_pop: PushOrPop,
+    line_advance: LineAdvance,
+  },
+
+  /// #### Failure
+  /// A general failure result. This will be returned if a clear error, such as a completetely invalid enumerator was
+  /// encountered in a transition method functions. Contains an error message and the doctree in its current state.
+  Failure {
+    message: String,
+  }
 }

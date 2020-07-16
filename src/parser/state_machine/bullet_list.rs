@@ -9,7 +9,7 @@ use super::*;
 /// transition method. Differs from the `Body` state version
 /// in that this detects whether a list of a different type has started
 /// and acts accordingly.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -22,7 +22,9 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
   let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.tree.node.data {
     doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
     _ => {
-      return Err("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
+      return TransitionResult::Failure {
+        message: String::from("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
+      }
     }
   };
 
@@ -43,13 +45,17 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), Some(t_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
           if min_indent != t_indent {
-            return Err("Indent of list item block was less than given.")
+            return TransitionResult::Failure {
+              message: String::from("Indent of list item block was less than given.")
+            }
           }
           lines.join("\n")
         }
         Err(e) => {
           eprintln!("{}", e);
-          return Err("Error when reading list item block.\n")
+          return TransitionResult::Failure {
+            message: String::from("Error when reading list item block.\n")
+          }
         }
       };
 
@@ -72,13 +78,20 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
         Ok(tree_zipper) =>tree_zipper,
         Err(node_itself) => {
-          return Err("No child of type ListItem to be focused on.\n")
+          return TransitionResult::Failure {
+            message: String::from("No child of type ListItem to be focused on.\n")
+          }
         }
       };
 
       let next_state = StateMachine::ListItem;
 
-      return Ok((Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::Some(1)))
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: Some(StateMachine::ListItem),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::Some(1)
+      }
 
     },
 
@@ -90,11 +103,18 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
         Ok(parent) => parent,
         Err(node_itself) => {
-          return Err("Encountered list on same level but couldn't focus on list parent.\n")
+          return TransitionResult::Failure {
+            message: String::from("Encountered list on same level but couldn't focus on list parent.\n")
+          }
         }
       };
 
-      return Ok((Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::None))
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::None
+      }
 
     },
 
@@ -107,11 +127,18 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
         Ok(parent) => parent,
         Err(node_itself) => {
-          return Err("Encountered a list item with less indent but couldn't focus on list parent.\n")
+          return TransitionResult::Failure {
+            message: String::from("Encountered a list item with less indent but couldn't focus on list parent.\n")
+          }
         }
       };
 
-      return Ok((Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None))
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
+      }
 
     },
 
@@ -135,18 +162,27 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
         Ok(child_zipper) => child_zipper,
         Err(node_itself) => {
-          return Err("An error occurred when shifting focus to sublist.\n");
+          return TransitionResult::Failure {
+            message: String::from("An error occurred when shifting focus to sublist.\n")
+          }
         }
       };
 
       eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
 
-      return Ok((Some(tree_wrapper), Some(list_machine), PushOrPop::Push, LineAdvance::None))
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: Some(StateMachine::BulletList),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None
+      }
 
     }
 
     _ => {
-      return Err("No action for this type of bullet--indent combination")
+      return TransitionResult::Failure {
+        message: String::from("No action for this type of bullet--indent combination\n")
+      }
     }
   }
 

@@ -6,7 +6,7 @@ use super::*;
 
 /// ### bullet
 /// A bullet detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   
   let mut tree_wrapper = doctree.unwrap();
 
@@ -14,7 +14,9 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 
   let (list_item_bullet, list_item_bullet_indent, list_item_text_indent) = match tree_wrapper.tree.node.data {
     TreeNodeType::BulletListItem{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
-    _ => return Err("Not focused on list item.\nCannot ask for bullet and indentation.\n")
+    _ => return TransitionResult::Failure {
+      message: String::from("Not focused on list item.\nCannot ask for bullet and indentation.\n")
+    }
   };
 
   let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
@@ -39,10 +41,17 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
         Ok(tree) => tree,
-        Err(..) => return Err("Couldn't focus on child bullet list under list item...\n")
+        Err(..) => return TransitionResult::Failure {
+          message: String::from("Couldn't focus on child bullet list under list item...\n")
+        }
       };
 
-      Ok( ( Some(tree_wrapper), Some(StateMachine::BulletList), PushOrPop::Push, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: Some(StateMachine::BulletList),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None
+      }
 
     }
 
@@ -56,7 +65,12 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
         Err(tree) => tree, // at root
       };
 
-      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
+      }
 
     }
   }
@@ -65,7 +79,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 
 /// ### enumerator
 /// An enumerator detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
-pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -73,7 +87,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
   let (list_item_bullet_indent, list_item_text_indent) = match tree_wrapper.tree.node.data {
     TreeNodeType::EnumeratedListItem{enumerator_indent, text_indent, ..} => (enumerator_indent, text_indent),
-    _ => return Err("Not focused on enumerator list item.\nCannot ask for enumerator and indentation...\n")
+    _ => return TransitionResult::Failure {
+      message: String::from("Not focused on enumerator list item.\nCannot ask for enumerator and indentation...\n")
+    }
   };
 
   let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
@@ -83,13 +99,17 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
     (*delims, *kind)
   } else {
-    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
+    return TransitionResult::Failure {
+      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n")
+    }
   };
 
   let item_text_indent = match tree_wrapper.tree.node.data {
     TreeNodeType::BulletListItem{text_indent, ..} => text_indent,
     TreeNodeType::EnumeratedListItem{text_indent, ..} => text_indent,
-    _ => return Err("Not focused on list item inside a list item function.\nWhy...?\n")
+    _ => return TransitionResult::Failure {
+      message: String::from("Not focused on list item inside a list item function.\nWhy...?\n")
+    }
   };
 
   match detected_enumerator_indent {
@@ -103,7 +123,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
       let (list_number, list_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
         Some((int, kind)) => (int, kind),
-        None => return Err("Couldn't parse sublist item enumerator...\n")
+        None => return TransitionResult::Failure {
+          message: String::from("Couldn't parse sublist item enumerator...\n")
+        }
       };
 
       let list_node_data = TreeNodeType::EnumeratedList{
@@ -121,7 +143,12 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
       tree_wrapper.tree = tree_wrapper.tree.focus_on_last_child().unwrap();
 
-      Ok( ( Some(tree_wrapper), Some(StateMachine::EnumeratedList), PushOrPop::Push, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: Some(StateMachine::EnumeratedList),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None
+      }
 
     }
 
@@ -131,7 +158,12 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
       tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
 
-      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
+      }
 
     }
 
@@ -144,14 +176,16 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 /// This function parses each paragraph in a list item for inline nodes.
 /// A paragraph must have at least the same level of indentation as the containing list item,
 /// otherwise is it interpreted as ending the current list item.
-pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   
   let mut tree_wrapper = doctree.unwrap();
 
   let (item_bullet_indent, item_text_indent) = match tree_wrapper.tree.node.data {
     TreeNodeType::BulletListItem{bullet_indent, text_indent, ..} => (bullet_indent, text_indent),
     TreeNodeType::EnumeratedListItem{enumerator_indent, text_indent, ..} => ( enumerator_indent, text_indent),
-    _ => return Err("Failed to retrieve bullet list item indentation info when parsing a paragraph.\n")
+    _ => return TransitionResult::Failure {
+      message: String::from("Failed to retrieve bullet list item indentation info when parsing a paragraph.\n")
+    }
   };
 
   let detected_par_indent = captures.get(1).unwrap().as_str().chars().count();
@@ -170,13 +204,17 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), None) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
           if min_indent != item_text_indent {
-            return Err("Indent of list item block was less than given.")
+            return TransitionResult::Failure {
+              message: String::from("Indent of list item block was less than given.\n")
+            }
           }
           lines.join("\n")
         }
         Err(e) => {
           eprintln!("{}", e);
-          return Err("Error when reading list item block.\n")
+          return TransitionResult::Failure {
+            message: String::from("Error when reading list item block.\n")
+          }
         }
       };
 
@@ -192,8 +230,13 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
 
       tree_wrapper.tree.push_child(paragraph_node);
       
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(1)
+      }
 
-      Ok( ( Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::Some(1) ) )
     }
 
     indent if indent < item_text_indent => {
@@ -204,10 +247,17 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
     
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
         Ok(tree) => tree,
-        Err(tree) => return Err("Bullet list outer paragraph detected, but no parent?\n")
+        Err(tree) => return TransitionResult::Failure {
+          message: String::from("Bullet list outer paragraph detected, but no parent?\n")
+        }
       };
 
-      Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
+      }
 
     }
 

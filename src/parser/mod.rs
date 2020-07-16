@@ -2,7 +2,7 @@
 
 mod state_machine;
 
-use state_machine::{StateMachine, PushOrPop, LineAdvance};
+use state_machine::{StateMachine, PushOrPop, LineAdvance, TransitionResult};
 use state_machine::transitions::COMPILED_INLINE_TRANSITIONS;
 
 #[cfg(test)]
@@ -157,13 +157,13 @@ impl Parser {
 
           self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
 
-            Ok((opt_doctree, opt_next_state, push_or_pop, opt_line_advance)) => {
+            TransitionResult::Success{doctree, next_state, push_or_pop, line_advance} => {
 
               match push_or_pop {
                 PushOrPop::Push => {
                   // If a transition method returns a state, check whether we should transition to it or
                   // push it on top of the stack...
-                  if let Some(next_state) = opt_next_state {
+                  if let Some(next_state) = next_state {
                     eprintln!("Pushing {:#?} on top of stack...\n", next_state);
                     self.machine_stack.push(Some(next_state))
                   }
@@ -178,7 +178,7 @@ impl Parser {
                   };
                 }
                 PushOrPop::Neither => {
-                  if let Some(next_state) = opt_next_state {
+                  if let Some(next_state) = next_state {
                     let machine = match self.machine_stack.last_mut() {
                       Some(opt_machine) => opt_machine.replace(next_state),
                       None => return Err("No machine on top of stack.\nCan't perform transition after executing transition method.\n")
@@ -187,7 +187,7 @@ impl Parser {
                 }
               };
 
-              match opt_line_advance {
+              match line_advance {
                 LineAdvance::Some(offset) => {
                   self.current_line += offset;
                 }
@@ -201,12 +201,12 @@ impl Parser {
                 line_not_changed_count = 0;
               }
 
-              opt_doctree
+              Some(doctree)
 
             }
 
-            Err(e) => {
-              eprintln!("{} on line {}", e, self.current_line);
+            TransitionResult::Failure {message} => {
+              eprintln!("{} on line {}", message, self.current_line);
               return Err("An error was encountered while executing a transition method.\n");
             }
           };
@@ -949,6 +949,7 @@ impl Parser {
   }
 
 }
+
 
 
 // /// ### val_from_key

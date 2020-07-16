@@ -3,13 +3,15 @@
 
 use super::*;
 
-pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
   let (list_delims, list_kind, list_start_index, list_item_number,list_enumerator_indent, list_text_indent) = match &mut tree_wrapper.tree.node.data {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent } => (delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent),
-    _ => return Err("Not focused on EnumeratedList...\n")
+    _ => return TransitionResult::Failure {
+      message: String::from("Not focused on EnumeratedList...\n")
+    }
   };
 
   let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
@@ -19,12 +21,16 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
     (*delims, *kind)
   } else {
-    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
+    return TransitionResult::Failure {
+      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n")
+    }
   };
 
   let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
     Some((int, kind)) => (int, kind),
-    None => return Err("Unknown enumerator type detected...?\n")
+    None => return TransitionResult::Failure {
+      message: String::from("Unknown enumerator type detected...?\n")
+    }
   };
 
   eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
@@ -42,21 +48,34 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
           *n_of_items += 1;
           *latest_text_indent = *text_indent;
         },
-        _ => return Err("Only enumerated lists keep track of the number of item nodes in them...\n")
+        _ => return TransitionResult::Failure {
+          message: String::from("Only enumerated lists keep track of the number of item nodes in them...\n")
+        }
       }
 
+      // Check for direct sublist starting on the same line, before reading in the paragraph.
+      // This might necessitate the pushing of another list as a direct child of the following list item,
+      // before reading in any text.
+
+      let opt_sublist_bullet_indent = detected_text_indent;
+
+ 
 
       // Read indented block here
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(*text_indent), Some(*text_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
           if min_indent != *text_indent {
-            return Err("Indent of list item block was less than given.")
+            return TransitionResult::Failure {
+              message: String::from("Indent of list item block was less than given.\n")
+            }
           }
           lines.join("\n")
         }
         Err(e) => {
           eprintln!("{}", e);
-          return Err("Error when reading list item block.\n")
+          return TransitionResult::Failure {
+            message: String::from("Error when reading list item block.\n")
+          }
         }
       };
 
@@ -85,12 +104,19 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
       tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
         Ok(tree)  => tree,
-        Err(tree) => return Err("Couldn't focus on enumerated list item...\n")
+        Err(tree) => return TransitionResult::Failure {
+          message: String::from("Couldn't focus on enumerated list item...\n")
+        }
       };
 
       let next_state = StateMachine::ListItem;
 
-      Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::Some(1) ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: Some(StateMachine::ListItem),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::Some(1)
+      }
 
     }
 
@@ -99,8 +125,103 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
       tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
 
-      return Ok( ( Some(tree_wrapper), None, PushOrPop::Pop, LineAdvance::None ) )
+      TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_state: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
+      }
+
     }
   }
 
+}
+
+
+fn check_item_for_inner_enumerator (src_lines: &Vec<String>, current_line: usize, item_text_indent: usize) -> Option<(usize, usize, EnumDelims, EnumKind)> {
+
+  const ENUMERATOR_PATTERNS: [(PatternName, &str); 15] = [
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, StateMachine::ARABIC_RPAREN_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, StateMachine::ARABIC_PERIOD_PATTERN),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PARENS_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_RPAREN_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PERIOD_PATTERN),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PARENS_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_RPAREN_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PERIOD_PATTERN),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PARENS_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ALPHA_RPAREN_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PERIOD_PATTERN),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PARENS_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_RPAREN_PATTERN),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PERIOD_PATTERN),
+  ];
+
+
+  lazy_static::lazy_static! {
+    static ref COMPILED_ENUM_PATTERNS: Vec<(PatternName, regex::Regex)> = {
+
+      let mut compiled_patterns = Vec::with_capacity(ENUMERATOR_PATTERNS.len());
+
+      for (pattern_name, pattern) in ENUMERATOR_PATTERNS.iter() {
+        compiled_patterns.push((*pattern_name, regex::Regex::new(pattern).unwrap()));
+      }
+
+      compiled_patterns
+
+    };
+  }
+
+  // Drain current line of parent list enumerator to test for nested enumerator
+  let mut chars = src_lines[current_line].chars();
+  for _ in 0..item_text_indent {
+    chars.next();
+  }
+  let line_without_enum = chars.as_str();
+
+  // Match current line against possible enumerators and return
+  // prematurely with indent (for reading the contained paragraph)
+  // and type if a match is found
+  for (pattern_name, regexp) in COMPILED_ENUM_PATTERNS.iter() {
+
+    let capts: regex::Captures = if let Some(capts) = regexp.captures(line_without_enum) {
+      capts // match found
+    } else {
+      continue
+    };
+
+    let detected_enum_indent = capts.get(1).unwrap().as_str().chars().count() + item_text_indent;
+    let detected_text_indent = capts.get(0).unwrap().as_str().chars().count() + item_text_indent;
+    let detected_enum_str = capts.get(2).unwrap().as_str();
+
+    let (detected_delims, detected_kind) = match pattern_name {
+      PatternName::Enumerator{delims, kind} => (delims, kind),
+      _ => return None // Shouldn't happen if patter was matched
+    };
+
+    let (enum_str_as_int, enum_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, detected_kind, None) {
+      Some((num, kind)) => (num, kind),
+      None => return None // Shouldn't happen, if pattern was matched
+    };
+
+  }
+  
+  // No matches => no sublist on same line.
+  None
+}
+
+enum NestedListResult {
+  Some {
+    enum_indent: usize,
+    text_indent: usize,
+    delims: EnumDelims,
+    kind: EnumKind,
+    
+  },
+  None
 }

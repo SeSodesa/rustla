@@ -9,7 +9,7 @@ use super::*;
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -26,13 +26,20 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
   tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
     Ok(child_zipper) => child_zipper,
     Err(node_itself) => {
-      return Err("An error occurred when adding a child to the current node.\n");
+      return TransitionResult::Failure{
+        message: String::from("An error occurred when adding a child to the current node.\n")
+      };
     }
   };
 
   let next_state = StateMachine::BulletList;
 
-  Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None))
+  TransitionResult::Success {
+    doctree: tree_wrapper,
+    next_state: Some(StateMachine::BulletList),
+    push_or_pop: PushOrPop::Push,
+    line_advance: LineAdvance::None
+  }
 
 }
 
@@ -46,7 +53,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
-pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -57,7 +64,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let (detected_delims, mut detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
     (*delims, *kind)
   } else {
-    return Err("No enumerator inside enumerator transition method.\nWhy...?\n")
+    return TransitionResult::Failure {
+      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n")
+    }
   };
 
   let mut detected_enum_as_usize = match detected_kind {
@@ -70,7 +79,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
         num
       } else {
-        return Err("Couldn't convert alphabet to an integer...\n")
+        return TransitionResult::Failure{
+          message: String::from("Couldn't convert alphabet to an integer...\n")
+        }
       }
     }
 
@@ -78,7 +89,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
         num
       } else {
-        return Err("Couldn't convert lower-case Roman numeral to an integer...\n")
+        return TransitionResult::Failure {
+          message: String::from("Couldn't convert lower-case Roman numeral to an integer...\n")
+        }
       }
     }
 
@@ -86,7 +99,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       if let Some(num) = Parser::upper_roman_to_usize(detected_enum_str) {
         num
       } else {
-        return Err("Couldn't convert upper-case Roman numeral to an integer...\n")
+        return TransitionResult::Failure {
+          message: String::from("Couldn't convert upper-case Roman numeral to an integer...\n")
+        }
       }
     }
   };
@@ -120,17 +135,24 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 
   tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
     Ok(tree)  => tree,
-    Err(tree) => return Err("Couldn't focus on enumerated list at body level...\n")
+    Err(tree) => return TransitionResult::Failure {
+      message: String::from("Couldn't focus on enumerated list at body level...\n")
+    }
   };
 
   let next_state = StateMachine::EnumeratedList;
 
-  Ok( ( Some(tree_wrapper), Some(next_state), PushOrPop::Push, LineAdvance::None ) )
+  TransitionResult::Success {
+    doctree: tree_wrapper,
+    next_state: Some(StateMachine::EnumeratedList),
+    push_or_pop: PushOrPop::Push,
+    line_advance: LineAdvance::None
+  }
 
 }
 
 
-pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> Result<(Option<DocTree>, Option<StateMachine>, PushOrPop, LineAdvance), &'static str> {
+pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
   let indent = captures.get(1).unwrap().as_str().chars().count();
@@ -141,7 +163,9 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
     }
     Err(e) => {
       eprintln!("{}", e);
-      return Err("Error when reading paragraph block in Body.\n")
+      return TransitionResult::Failure {
+        message: String::from("Error when reading paragraph block in Body.\n")
+      }
     }
   };
 
@@ -149,7 +173,9 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
   let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
     children
   } else {
-    return Err("Couldn't parse paragraph for inline nodes\n")
+    return TransitionResult::Failure {
+      message: String::from("Couldn't parse paragraph for inline nodes\n")
+    }
   };
 
   let data = TreeNodeType::Paragraph;
@@ -160,16 +186,25 @@ pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Op
 
   tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
     Ok(child) => child,
-    Err(node_itself) => return Err("Couldn't focus on child paragraph\n")
+    Err(node_itself) => return TransitionResult::Failure {
+      message: String::from("Couldn't focus on child paragraph\n")
+    }
   };
 
   tree_wrapper.tree.append_children(&mut inline_nodes);
 
   tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
     Ok(parent) => parent,
-    Err(node_self) => return Err("Couldn't move focus to paragraph parent...\n")
+    Err(node_self) => return TransitionResult::Failure {
+      message: String::from("Couldn't move focus to paragraph parent...\n")
+    }
   };
 
-  return Ok((Some(tree_wrapper), None, PushOrPop::Neither, LineAdvance::Some(1)))
+  TransitionResult::Success {
+    doctree: tree_wrapper,
+    next_state: None,
+    push_or_pop: PushOrPop::Neither,
+    line_advance: LineAdvance::Some(1)
+  }
 
 }
