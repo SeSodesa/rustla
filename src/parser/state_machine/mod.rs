@@ -127,10 +127,10 @@ impl StateMachine {
   }
 
   /// ### get_transitions
-  /// Retrieves the list of transitions from a `StateMachine` variant
-  /// using a `match` statement. This seems like a lot of repetition,
-  /// but this is the only way of doing this when wrapping each
-  /// different state machine type in an enum.
+  /// Retrieves the list of transitions based on a given `StateMachine` variant
+  /// using a `match` statement. First checks for end states that don't contain transitions,
+  /// such as `EOF` or `Failure` and if these are not matched,
+  /// retrieves a list of transitions from the `TRANSITION_MAP`.
   pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
