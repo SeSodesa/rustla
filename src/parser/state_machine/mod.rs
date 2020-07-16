@@ -26,8 +26,8 @@ use crate::doctree::{self, TreeNode};
 /// ### TransitionMethod
 /// A function pointer type alias for a State transition method.
 /// `TransitionMethod`s take in the document tree and regex captures
-/// for doctree modifications. Unless errors occur,
-/// they return an `Ok`-wrapped tuple of optional doctree (because the parser contains an `Option`al doctree and not just a doctree),
+/// for doctree modifications.
+/// They return a `TransitionResult::{Success, Failure}`, the success variant of which contains a doctree,
 /// a possible next state for the parser, information about manipulating the machine stack and whether to advance the parser line cursor.
 /// If the optional next state is *not* `None`, the current state is either replaced with the new state or
 /// the new state is pushed on top of the machine stack of the parser and parsing proceeds
@@ -134,50 +134,11 @@ impl StateMachine {
   pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
-      StateMachine::Body              => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::BulletList        => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::ListItem          => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::DefinitionList    => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::EnumeratedList    => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::FieldList         => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::OptionList        => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::LineBlock         => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::ExtensionOptions  => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::ExplicitMarkup    => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::Text              => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::Definition        => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::Line              => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
-      StateMachine::SubstitutionDef   => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      },
       StateMachine::EOF               => Err("Already moved past EOF. No transitions to perform.\n"),
-      StateMachine::Failure           => Err("Failure state has no transitions\n")
+      StateMachine::Failure           => Err("Failure state has no transitions\n"),
+      _ => {
+        Ok(TRANSITION_MAP.get(self).unwrap())
+      }
     }
   }
 }
