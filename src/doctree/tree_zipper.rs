@@ -183,4 +183,25 @@ impl TreeZipper {
 
   }
 
+
+  /// ### push_and_focus
+  /// Given a variant `TreeNodeType`, constructs a TreeNode from the data,
+  /// pushes it to current node's children and focuses on it.
+  pub fn push_and_focus(mut self, node_data: TreeNodeType) -> Result<Self, Self> {
+
+    let list_node = TreeNode::new(node_data);
+
+    self.node.push_child(list_node);
+
+    let node_result = match self.focus_on_last_child() {
+      Ok(child_zipper) => Ok(child_zipper),
+      Err(node_itself) => {
+        eprintln!("Warning: Couldn't focus on lates child node.\nReturning node itself.\n");
+        Err(node_itself)
+      }
+    };
+
+    node_result
+  }
+
 }
