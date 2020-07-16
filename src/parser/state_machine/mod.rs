@@ -112,20 +112,7 @@ impl StateMachine {
   /// the implementation of which automatically implements the Into trait.
   pub fn to_failure (self) -> Self {
     match self {
-      StateMachine::Body              => StateMachine::Failure,
-      StateMachine::BulletList        => StateMachine::Failure,
-      StateMachine::DefinitionList    => StateMachine::Failure,
-      StateMachine::EnumeratedList    => StateMachine::Failure,
-      StateMachine::FieldList         => StateMachine::Failure,
-      StateMachine::OptionList        => StateMachine::Failure,
-      StateMachine::LineBlock         => StateMachine::Failure,
-      StateMachine::ExtensionOptions  => StateMachine::Failure,
-      StateMachine::ExplicitMarkup    => StateMachine::Failure,
-      StateMachine::Text              => StateMachine::Failure,
-      StateMachine::Definition        => StateMachine::Failure,
-      StateMachine::Line              => StateMachine::Failure,
-      StateMachine::SubstitutionDef   => StateMachine::Failure,
-      _ => unreachable!()
+      _ => StateMachine::Failure
     }
   }
 
