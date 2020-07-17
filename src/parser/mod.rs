@@ -49,7 +49,7 @@ pub struct Parser {
   src_lines: Vec<String>,
   current_line: usize,
   doctree: Option<DocTree>,
-  machine_stack: Vec<Option<StateMachine>>,
+  machine_stack: Vec<StateMachine>,
 }
 
 
@@ -66,7 +66,7 @@ impl Parser {
   /// to `None` before granting ownership of the original contents.
   fn new(src: String, doctree: DocTree, opt_initial_state: Option<StateMachine>) -> Self {
 
-    let initial_state = opt_initial_state.or(Some(StateMachine::Body));
+    let initial_state = opt_initial_state.unwrap_or(StateMachine::Body);
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
@@ -105,39 +105,34 @@ impl Parser {
       // modifying the machine stack.
       let latest_state_transitions = if let Some(machine) = self.machine_stack.last() {
 
-        // We need as_ref(), as unwrap() returns a reference to an Option and not the StateMachine itself
-        if let Some(machine) = machine.as_ref() {
+        match machine {
+          StateMachine::EOF => {
+            eprintln!("Moved past EOF...\n");
 
-          match machine {
-            StateMachine::EOF => {
-              eprintln!("Moved past EOF...\n");
-
-              // Walk to doctree root before returning it
-              match self.doctree.take() {
-                Some(mut tree_wrapper) => {
-                  tree_wrapper.tree = tree_wrapper.tree.walk_to_root();
-                  self.doctree.replace(tree_wrapper);
-                }
-                None => {
-                  return Err("Tree should not be in the possession of a transition method after moving past EOF...\n")
-                }
-              };
-              break
-            }
-            StateMachine::Failure{ .. } => {
-              return Err("Parsing ended in Failure state...\n");
-            }
-            _ => {
-              if let Ok(transitions_ref) = machine.get_transitions() {
-                transitions_ref.clone()
-              } else {
-                return Err("No transitions for this state...\n")
+            // Walk to doctree root before returning it
+            match self.doctree.take() {
+              Some(mut tree_wrapper) => {
+                tree_wrapper.tree = tree_wrapper.tree.walk_to_root();
+                self.doctree.replace(tree_wrapper);
               }
+              None => {
+                return Err("Tree should not be in the possession of a transition method after moving past EOF...\n")
+              }
+            };
+            break
+          }
+          StateMachine::Failure{ .. } => {
+            return Err("Parsing ended in Failure state...\n");
+          }
+          _ => {
+            if let Ok(transitions_ref) = machine.get_transitions() {
+              transitions_ref.clone()
+            } else {
+              return Err("No transitions for this state...\n")
             }
           }
-        } else {
-          return Err("Parsing ended in Failure state.\n")
         }
+
       } else {
         break
       };
@@ -178,7 +173,7 @@ impl Parser {
                   // push it on top of the stack...
                   if let Some(next_state) = next_state {
                     eprintln!("Pushing {:#?} on top of stack...\n", next_state);
-                    self.machine_stack.push(Some(next_state))
+                    self.machine_stack.push(next_state)
                   }
                 },
                 PushOrPop::Pop => {
@@ -193,7 +188,7 @@ impl Parser {
                 PushOrPop::Neither => {
                   if let Some(next_state) = next_state {
                     let machine = match self.machine_stack.last_mut() {
-                      Some(opt_machine) => opt_machine.replace(next_state),
+                      Some(opt_machine) => *opt_machine = next_state,
                       None => return Err("No machine on top of stack.\nCan't perform transition after executing transition method.\n")
                     };
                   }
@@ -247,12 +242,10 @@ impl Parser {
         };
       }
 
-
-
       if self.current_line >= self.src_lines.len() {
 
         let opt_machine = if let Some(machine)  = self.machine_stack.last_mut() {
-          machine.replace(StateMachine::EOF)
+          *machine = StateMachine::EOF
         } else {
           return Err("Cannot transition missing machine to EOF state\n")
         };
