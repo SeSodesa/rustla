@@ -46,9 +46,24 @@ mod tests;
 /// `std::option::Option::take`
 /// without invalidating the fields.
 pub struct Parser {
+
+  /// #### src_lines
+  /// The source `String` converted to a vector of owned `String`s.
   src_lines: Vec<String>,
+
+  /// #### current_line
+  /// The absolute line index of src_lines.
   current_line: usize,
+
+  /// #### doctree
+  /// An `Option`al document tree. The optionality is necessary,
+  /// as this needs to be given to transition functions for modification
+  /// via `Option::take`.
   doctree: Option<DocTree>,
+
+  /// #### machine_stack
+  /// A stack of states that function as keys to vectors of state transitions.
+  /// The set of transitios is chosen based on the current state on top of the stack.
   machine_stack: Vec<StateMachine>,
 }
 
