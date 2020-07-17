@@ -201,13 +201,11 @@ impl Parser {
                 }
               };
 
-              match line_advance {
-                LineAdvance::Some(offset) => {
-                  self.current_line += offset;
-                }
-                _ => ()
+              if let LineAdvance::Some(offset) = line_advance {
+                self.current_line += offset;
               }
 
+              // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
               if self.current_line == line_before_transition {
                 line_not_changed_count += 1;
               } else {
