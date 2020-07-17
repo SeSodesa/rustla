@@ -222,10 +222,8 @@ impl Parser {
               return Err("An error was encountered while executing a transition method.\n");
             }
           };
-        }
 
-        if match_found {
-          break
+          break // Match found so stop looking for matches
         }
 
       }
@@ -254,8 +252,7 @@ impl Parser {
       if self.current_line >= self.src_lines.len() {
 
         let opt_machine = if let Some(machine)  = self.machine_stack.last_mut() {
-          let eof_state = StateMachine::EOF;
-          machine.replace(eof_state)
+          machine.replace(StateMachine::EOF)
         } else {
           return Err("Cannot transition missing machine to EOF state\n")
         };
