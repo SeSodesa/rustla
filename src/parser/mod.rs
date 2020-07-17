@@ -517,11 +517,11 @@ impl Parser {
         break
       }
 
-      let has_indent: bool = match line.get(0..1) {
-        Some(line) => {
-          line.chars().next().unwrap().is_whitespace()
-        },
-        None => return Err(format!("The first character of line {} could not be read.", line_num))
+
+      let has_indent: bool =if let Some(c) = line.chars().next() {
+        if c.is_whitespace() { true } else { false }
+      } else {
+        return Err(format!("The first character of line {} could not be read.", line_num))
       };
 
       if !indent_allowed && has_indent {
