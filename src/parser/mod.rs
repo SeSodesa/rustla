@@ -147,9 +147,8 @@ impl Parser {
 
         // Fetching a reference to current line
         let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.current_line) {
-          Ok(line) => line,
-          Err(e) => {
-            eprintln!("{}", e);
+          Some(line) => line,
+          None => {
             return Err("Parsing ended prematurely because of an unqualified move past EOF.\n")
           }
         };
@@ -346,14 +345,17 @@ impl Parser {
   /// Attempts to retrieve the source from a given line number.
   /// Returns an `Ok` clone of it if successful, else
   /// returns and `Err` with a message.
-  fn get_source_from_line (src_lines: &Vec<String>, line_num: usize) -> Result <&str, String> {
+  fn get_source_from_line <'src_lines> (src_lines: &Vec<String>, line_num: usize) -> Option<&str> {
 
     let src = match src_lines.get(line_num) {
       Some(line) => line.as_str(),
-      None => return Err(format!("No such line number ({} out of bounds).\nComputer says no...\n", line_num))
+      None => {
+        eprintln!("No such line number ({} out of bounds).\nComputer says no...\n", line_num);
+        return None
+      }
     };
 
-    Ok(src)
+    Some(src)
 
   }
 
