@@ -228,7 +228,8 @@ impl Parser {
 
       }
 
-      // Transtition the latest machine to a general failure state if no match found...
+      // No matches in current state so pop from state stack and attempt
+      // parsing in the previous state down stack
       if !match_found {
 
         eprintln!("No match found.\nPopping from machine stack...\n");
