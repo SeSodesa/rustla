@@ -7,7 +7,7 @@ use super::*;
 
 impl Parser {
 
-    /// ### enum_str_to_int_and_kind
+  /// ### enum_str_to_int_and_kind
   /// Converts an enumerator &str to an integer using one of the
   /// coverters, if possible.
   pub fn enum_str_to_int_and_kind (detected_enum_str: &str, detected_kind: &EnumKind, list_item_number: Option<usize>) -> Option<(usize, EnumKind)> {
@@ -63,7 +63,9 @@ impl Parser {
   }
 
 
-  /// ### lower_alpha_to_u32
+  /// ### alpha_to_usize
+  /// Converts and ASCII letter to a corresponding `Option`al integer betweem 1--26 inclusive.
+  /// Returns `None` if not successful.
   pub fn alpha_to_usize (alpha_str: &str) -> Option<usize> {
     match alpha_str {
       "A" | "a" => Some(1),
@@ -100,8 +102,8 @@ impl Parser {
   }
 
 
-  /// ### upper_roman_to_u32
-  /// Converts a valid given upper-case Roman numeral to a `Some(u32)`.
+  /// ### upper_roman_to_usize
+  /// Converts a valid given upper-case Roman numeral to a `Some(usize)`.
   /// If the numeral isn't valid, `None` is returned instead
   pub fn upper_roman_to_usize (roman_str: &str) -> Option<usize> {
 
@@ -150,7 +152,7 @@ impl Parser {
       }
 
 
-      // Convert the contents of the buffer to u32, if valid.
+      // Convert the contents of the buffer to usize, if valid.
       let buf_str = buffer.as_str();
 
       match buf_str {
@@ -185,8 +187,8 @@ impl Parser {
   }
 
 
-  /// ### lower_roman_to_u32
-  /// Converts a valid given lower-case Roman numeral to a `Some(u32)`.
+  /// ### lower_roman_to_usize
+  /// Converts a valid given lower-case Roman numeral to a `Some(usize)`.
   /// If the numeral isn't valid, `None` is returned instead
   pub fn lower_roman_to_usize (roman_str: &str) -> Option<usize> {
 
@@ -235,7 +237,7 @@ impl Parser {
       }
 
 
-      // Convert the contents of the buffer to u32, if valid.
+      // Convert the contents of the buffer to usize, if valid.
       let buf_str = buffer.as_str();
 
       match buf_str {
