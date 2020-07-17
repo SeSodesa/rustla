@@ -244,9 +244,8 @@ impl Parser {
 
         self.doctree.replace(doctree);
 
-        let _ = match self.machine_stack.pop() {
-          Some(machine) => machine,
-          None => return Err("Cannot pop from an empty stack.\n")
+        if let None = self.machine_stack.pop() {
+          return Err("Cannot pop from an empty stack.\n")
         };
       }
 
