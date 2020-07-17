@@ -1,15 +1,10 @@
 /// This is the `parser` module of ruSTLa
 
-mod state_machine;
-mod converters;
-use converters::*;
+// =========
+//  Imports
+// =========
 
-use state_machine::{StateMachine, PushOrPop, LineAdvance, TransitionResult};
-use state_machine::transitions::COMPILED_INLINE_TRANSITIONS;
-
-#[cfg(test)]
-mod tests;
-
+// Standard library
 use std::cmp;
 use std::io::{BufReader, Lines};
 use std::fs::File;
@@ -17,10 +12,31 @@ use std::fs::File;
 use std::str;
 use std::collections;
 
-use regex;
+
+// External crates
+// ---------------
+use regex::{Regex, Captures};
+
+
+// Own modules
+// -----------
+mod converters;
+use converters::*;
+
+mod state_machine;
+use state_machine::{StateMachine, PushOrPop, LineAdvance, TransitionResult};
+use state_machine::transitions::COMPILED_INLINE_TRANSITIONS;
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
 use crate::utils::{self, EnumDelims, EnumKind};
+
+#[cfg(test)]
+mod tests;
+
+
+// ==========================
+//  The Parser specification
+// ==========================
 
 /// ### Parser
 /// The parser type. Contains an optional
