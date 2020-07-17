@@ -56,11 +56,6 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
       // Read indented block here
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(*text_indent), Some(*text_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
-          if min_indent != *text_indent {
-            return TransitionResult::Failure {
-              message: String::from("Indent of list item block was less than given.\n")
-            }
-          }
           lines.join("\n")
         }
         Err(e) => {

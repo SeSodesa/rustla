@@ -390,13 +390,7 @@ fn bullet_list_01 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   //eprintln!("{:#?}", doctree.tree.walk_to_root());
 
@@ -424,13 +418,7 @@ fn bullet_list_02 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   // eprintln!("{:#?}", doctree.tree);
 
@@ -462,13 +450,7 @@ fn bullet_list_03 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -514,13 +496,7 @@ fn bullet_list_04 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -575,13 +551,7 @@ fn bullet_list_05 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -632,13 +602,7 @@ fn bullet_list_06 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -686,6 +650,8 @@ fn enumerated_list_01 () {
   let src = String::from("
   (i) List item 1
       with a valid second line
+
+  Some unindented text.
     
   ");
 
@@ -693,13 +659,7 @@ fn enumerated_list_01 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -739,13 +699,7 @@ fn enumerated_list_02 () {
 
   let mut parser = Parser::new(src, doctree, None);
 
-  doctree = match parser.parse() {
-    Ok(doctree) => doctree.unwrap(),
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+  doctree = parser.parse().unwrap_tree();
 
   eprintln!("{:#?}", doctree.tree);
 
