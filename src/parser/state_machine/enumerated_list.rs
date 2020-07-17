@@ -53,14 +53,6 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
         }
       }
 
-      // Check for direct sublist starting on the same line, before reading in the paragraph.
-      // This might necessitate the pushing of another list as a direct child of the following list item,
-      // before reading in any text.
-
-      let opt_sublist_bullet_indent = detected_text_indent;
-
- 
-
       // Read indented block here
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(*text_indent), Some(*text_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
