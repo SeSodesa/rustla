@@ -61,7 +61,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let (detected_delims, mut detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {
@@ -69,56 +69,16 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     }
   };
 
-  let mut detected_enum_as_usize = match detected_kind {
-
-    EnumKind::Arabic => {
-      detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
-    }
-
-    EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
-      if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
-        num
-      } else {
-        return TransitionResult::Failure{
-          message: String::from("Couldn't convert alphabet to an integer...\n")
-        }
-      }
-    }
-
-    EnumKind::LowerRoman => {
-      if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
-        num
-      } else {
-        return TransitionResult::Failure {
-          message: String::from("Couldn't convert lower-case Roman numeral to an integer...\n")
-        }
-      }
-    }
-
-    EnumKind::UpperRoman => {
-      if let Some(num) = Parser::upper_roman_to_usize(detected_enum_str) {
-        num
-      } else {
-        return TransitionResult::Failure {
-          message: String::from("Couldn't convert upper-case Roman numeral to an integer...\n")
-        }
-      }
+  let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
+    Some((int, kind)) => (int, kind),
+    None => return TransitionResult::Failure {
+      message: String::from("Unknown enumerator type detected...?\n")
     }
   };
 
-  if detected_enum_str == "i" {
-    // LowerRoman list at our hands
-    detected_kind = EnumKind::LowerRoman;
-    detected_enum_as_usize = 1;
-  } else if detected_enum_str == "I"{
-    // UpperRoman list at our hands
-    detected_kind = EnumKind::LowerRoman;
-    detected_enum_as_usize = 1;
-  }
-
   eprintln!("Start index: {}\n", detected_enum_as_usize);
 
-  let node_data = TreeNodeType::EnumeratedList {
+  let list_node_data = TreeNodeType::EnumeratedList {
     delims: detected_delims,
     kind: detected_kind,
     start_index: detected_enum_as_usize,
@@ -127,18 +87,9 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
     latest_text_indent: detected_text_indent,
   };
 
-  eprintln!("List data: {:#?}\n", node_data);
+  eprintln!("List data: {:#?}\n", list_node_data);
 
-  let list_node = TreeNode::new(node_data);
-
-  tree_wrapper.tree.push_child(list_node);
-
-  tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-    Ok(tree)  => tree,
-    Err(tree) => return TransitionResult::Failure {
-      message: String::from("Couldn't focus on enumerated list at body level...\n")
-    }
-  };
+  tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
 
   let next_state = StateMachine::EnumeratedList;
 
