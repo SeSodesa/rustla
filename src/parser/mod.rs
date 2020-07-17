@@ -64,7 +64,7 @@ pub struct Parser {
   /// #### machine_stack
   /// A stack of states that function as keys to vectors of state transitions.
   /// The set of transitios is chosen based on the current state on top of the stack.
-  machine_stack: Vec<StateMachine>,
+  state_stack: Vec<StateMachine>,
 }
 
 
@@ -87,7 +87,7 @@ impl Parser {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       current_line: 0,
       doctree: Some(doctree),
-      machine_stack: vec!(initial_state)
+      state_stack: vec!(initial_state)
     }
 
   }
@@ -118,7 +118,7 @@ impl Parser {
       // A clone is needed because the below for loop takes
       // ownership of a reference given to it, which would prevent us from
       // modifying the machine stack.
-      let latest_state_transitions = if let Some(machine) = self.machine_stack.last() {
+      let latest_state_transitions = if let Some(machine) = self.state_stack.last() {
 
         match machine {
           StateMachine::EOF => {
@@ -188,12 +188,12 @@ impl Parser {
                   // push it on top of the stack...
                   if let Some(next_state) = next_state {
                     eprintln!("Pushing {:#?} on top of stack...\n", next_state);
-                    self.machine_stack.push(next_state)
+                    self.state_stack.push(next_state)
                   }
                 },
                 PushOrPop::Pop => {
                   eprintln!("Received POP instruction...\n");
-                  match self.machine_stack.pop() {
+                  match self.state_stack.pop() {
                     Some(machine) => (),
                     None => {
                       return Err("Can't pop from empty stack.\n")
@@ -202,7 +202,7 @@ impl Parser {
                 }
                 PushOrPop::Neither => {
                   if let Some(next_state) = next_state {
-                    let machine = match self.machine_stack.last_mut() {
+                    let machine = match self.state_stack.last_mut() {
                       Some(opt_machine) => *opt_machine = next_state,
                       None => return Err("No machine on top of stack.\nCan't perform transition after executing transition method.\n")
                     };
@@ -252,21 +252,21 @@ impl Parser {
 
         self.doctree.replace(doctree);
 
-        if let None = self.machine_stack.pop() {
+        if let None = self.state_stack.pop() {
           return Err("Cannot pop from an empty stack.\n")
         };
       }
 
       if self.current_line >= self.src_lines.len() {
 
-        let opt_machine = if let Some(machine)  = self.machine_stack.last_mut() {
+        let opt_machine = if let Some(machine)  = self.state_stack.last_mut() {
           *machine = StateMachine::EOF
         } else {
           return Err("Cannot transition missing machine to EOF state\n")
         };
       }
 
-      eprintln!("Machine stack state: {:#?}", self.machine_stack);
+      eprintln!("Machine stack state: {:#?}", self.state_stack);
       eprintln!("On line {:#?}\n", self.current_line);
 
     };
@@ -705,6 +705,37 @@ impl Parser {
 
   }
 
+}
+
+
+/// ### ParsingResult
+/// An enumeration of the different ways a (nested) parsing session might terminate.
+/// The return type of the `Parser::parse` method. Generally, finishing conditions
+/// that are not outright failures will enclose the document tree fed to the parser
+/// when it was initialized.
+pub enum ParsingResult {
+
+  /// #### EOF
+  /// This will be returned, if the parser finished by passing over the last line of the source.
+  /// This generally indicates that the source file was parsed successfully.
+  EOF {
+    doctree: DocTree
+  },
+
+  /// #### EmptyStateStack
+  /// This will be returned if the parser was unable to parse any elements on some line of the source,
+  /// as patterns not matching will drain the parser state stack of states. This might be useful during
+  /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
+  /// that there were no expected nested structures on the same line.
+  EmptyStateStack {
+    doctree: DocTree
+  },
+
+  /// #### Failure
+  /// A simple failure type. This will be returned when there was clearly no way to recover.
+  Failure {
+    message: String
+  }
 }
 
 
