@@ -374,7 +374,7 @@ impl Parser {
 
     let src_chars = &mut src_without_escapes.chars();
 
-    match Parser::match_iter(&src_chars) {
+    match Parser::match_inline_str(&src_chars) {
       Some((node, offset)) => {
 
         nodes.push(node);
@@ -411,7 +411,7 @@ impl Parser {
         col = 0;
       }
 
-      match Parser::match_iter(&src_chars) {
+      match Parser::match_inline_str(&src_chars) {
         Some((node, offset)) => {
 
           nodes.push(node);
@@ -445,12 +445,12 @@ impl Parser {
 
   }
 
-  /// ### match_iter
+  /// ### match_inline_str
   /// A function for checking the string representation of
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_iter <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
+  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
 
     let src_str = chars_iter.as_str();
 
