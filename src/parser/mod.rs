@@ -138,8 +138,8 @@ impl Parser {
 
             // Walk to doctree root before returning it
             match self.doctree.take() {
-              Some(mut doctree) => {
-                doctree.tree = doctree.tree.walk_to_root();
+              Some(doctree) => {
+                // doctree.tree = doctree.tree.walk_to_root();
                 return ParsingResult::EOF { doctree: doctree }
               }
               None => {

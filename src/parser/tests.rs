@@ -391,6 +391,7 @@ fn bullet_list_01 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   //eprintln!("{:#?}", doctree.tree.walk_to_root());
 
@@ -419,6 +420,7 @@ fn bullet_list_02 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   // eprintln!("{:#?}", doctree.tree);
 
@@ -451,6 +453,7 @@ fn bullet_list_03 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -497,6 +500,7 @@ fn bullet_list_04 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -603,6 +607,7 @@ fn bullet_list_06 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -660,6 +665,7 @@ fn enumerated_list_01 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   eprintln!("{:#?}", doctree.tree);
 
@@ -700,6 +706,7 @@ fn enumerated_list_02 () {
   let mut parser = Parser::new(src, doctree, None, None);
 
   doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
 
   eprintln!("{:#?}", doctree.tree);
 
