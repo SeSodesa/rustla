@@ -53,6 +53,16 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
         }
       }
 
+      let item_node_data = TreeNodeType::EnumeratedListItem {
+        delims: delims,
+        kind: kind,
+        index_in_list: detected_enum_as_usize,
+        enumerator_indent: *enum_indent,
+        text_indent: *text_indent
+      };
+
+      tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+
       // Read indented block here
       let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(*text_indent), Some(*text_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
@@ -73,28 +83,10 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
         Vec::new()
       };
 
-      let paragraph_node_data = TreeNodeType::Paragraph;
-      let mut paragraph_node = TreeNode::new(paragraph_node_data);
+      let mut paragraph_node = TreeNode::new(TreeNodeType::Paragraph);
       paragraph_node.append_children(&mut inline_nodes);
 
-      let item_node_data = TreeNodeType::EnumeratedListItem {delims: delims, kind: kind, index_in_list: detected_enum_as_usize, enumerator_indent: *enum_indent, text_indent: *text_indent};
-
-      eprintln!("List node data: {:#?}\n", tree_wrapper.tree.node.data);
-
-      eprintln!("Item node data: {:#?}\n", item_node_data);
-
-      let mut item_node = TreeNode::new(item_node_data);
-
-      item_node.push_child(paragraph_node);
-
-      tree_wrapper.tree.push_child(item_node);
-
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-        Ok(tree)  => tree,
-        Err(tree) => return TransitionResult::Failure {
-          message: String::from("Couldn't focus on enumerated list item...\n")
-        }
-      };
+      tree_wrapper.tree.push_child(paragraph_node);
 
       let next_state = StateMachine::ListItem;
 
