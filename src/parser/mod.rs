@@ -20,12 +20,17 @@ use regex::{Regex, Captures};
 
 // Own modules
 // -----------
+
+use super::*;
+
 mod converters;
 use converters::*;
 
+mod types_and_aliases;
+use types_and_aliases::*;
+
 mod state_machine;
-use state_machine::{StateMachine, PushOrPop, LineAdvance, TransitionResult};
-use state_machine::transitions::COMPILED_INLINE_TRANSITIONS;
+use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
 use crate::utils::{self, EnumDelims, EnumKind};
