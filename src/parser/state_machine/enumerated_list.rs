@@ -36,9 +36,9 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
   eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
 
   // Matching detected parameters against corresponding list ones and proceeding accordingly 
-  match (detected_delims, detected_kind, &detected_enumerator_indent, &detected_text_indent) {
+  match (detected_delims, detected_kind, detected_enumerator_indent, detected_text_indent) {
 
-    (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == *list_item_number + 1 => {
+    (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == *list_enumerator_indent && detected_enum_as_usize == *list_item_number + 1 => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
@@ -46,7 +46,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
       match &mut tree_wrapper.tree.node.data {
         TreeNodeType::EnumeratedList {n_of_items, latest_text_indent, ..} => {
           *n_of_items += 1;
-          *latest_text_indent = *text_indent;
+          *latest_text_indent = text_indent;
         },
         _ => return TransitionResult::Failure {
           message: String::from("Only enumerated lists keep track of the number of item nodes in them...\n")
@@ -57,14 +57,14 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         delims: delims,
         kind: kind,
         index_in_list: detected_enum_as_usize,
-        enumerator_indent: *enum_indent,
-        text_indent: *text_indent
+        enumerator_indent: enum_indent,
+        text_indent: text_indent
       };
 
       tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
       // Read indented block here
-      let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(*text_indent), Some(*text_indent)) {
+      let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent), Some(text_indent)) {
         Ok((lines, min_indent, line_offset, blank_finish)) => {
           lines.join("\n")
         }
