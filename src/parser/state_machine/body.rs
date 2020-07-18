@@ -14,21 +14,15 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   let mut tree_wrapper = doctree.unwrap();
 
   let bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-  let bullet_indent = captures.get(1).unwrap().as_str().chars().count();
-  let text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
   let bullet_list_data = TreeNodeType::BulletList{bullet: bullet, bullet_indent:bullet_indent, text_indent: text_indent};
 
-  let list_node = TreeNode::new(bullet_list_data);
-
-  tree_wrapper.tree.node.push_child(list_node);
-
-  tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-    Ok(child_zipper) => child_zipper,
-    Err(node_itself) => {
-      return TransitionResult::Failure{
-        message: String::from("An error occurred when adding a child to the current node.\n")
-      };
+  tree_wrapper.tree = match tree_wrapper.tree.push_and_focus(bullet_list_data) {
+    Ok(tree) => tree,
+    Err(..) => return TransitionResult::Failure {
+      message: String::from("Couldn't focus on bullet list...\n")
     }
   };
 
@@ -57,8 +51,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
   let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
@@ -106,7 +100,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
-  let indent = captures.get(1).unwrap().as_str().chars().count();
+  let indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(indent), None) {
     Ok((lines, min_indent, line_offset, blank_finish)) => {

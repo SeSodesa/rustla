@@ -14,8 +14,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     }
   };
 
-  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
   let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {

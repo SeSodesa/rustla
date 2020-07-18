@@ -20,8 +20,8 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   };
 
   let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
   // Match against bullet and indentation.
 
@@ -92,8 +92,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     }
   };
 
-  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
   let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
@@ -188,7 +188,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
     }
   };
 
-  let detected_par_indent = captures.get(1).unwrap().as_str().chars().count();
+  let detected_par_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   match detected_par_indent {
 

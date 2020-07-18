@@ -16,8 +16,8 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
 
   let detected_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count();
-  let detected_text_indent = captures.get(0).unwrap().end();
+  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
   let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.tree.node.data {
     doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
