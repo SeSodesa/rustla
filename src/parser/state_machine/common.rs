@@ -20,6 +20,5 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     push_or_pop: PushOrPop::Neither,
     line_advance: LineAdvance::Some(1),
   }
-  
 
 }
