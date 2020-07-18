@@ -55,6 +55,13 @@ pub struct Parser {
   /// The absolute line index of src_lines.
   current_line: usize,
 
+  /// #### base_indent
+  /// The level of basic indentation that the parser is working with.
+  /// This is useful information during nested parsing sessions, where
+  /// the level of indentation of the incoming block of text to be parsed
+  /// needs to be passed to the nested parser for node comparison.
+  base_indent: usize,
+
   /// #### doctree
   /// An `Option`al document tree. The optionality is necessary,
   /// as this needs to be given to transition functions for modification
@@ -79,15 +86,14 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree, opt_initial_state: Option<StateMachine>) -> Self {
-
-    let initial_state = opt_initial_state.unwrap_or(StateMachine::Body);
+  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, initial_state: Option<StateMachine>) -> Self {
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       current_line: 0,
+      base_indent: base_indent.unwrap_or(0),
       doctree: Some(doctree),
-      state_stack: vec!(initial_state)
+      state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
     }
 
   }
