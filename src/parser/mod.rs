@@ -191,7 +191,7 @@ impl Parser {
 
           let line_before_transition = self.current_line;
 
-          self.doctree = match method(&self.src_lines, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
+          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
 
             TransitionResult::Success{doctree, next_state, push_or_pop, line_advance} => {
 

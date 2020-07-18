@@ -9,7 +9,7 @@ use super::*;
 /// transition method. Differs from the `Body` state version
 /// in that this detects whether a list of a different type has started
 /// and acts accordingly.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 

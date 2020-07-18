@@ -6,7 +6,7 @@ use super::*;
 
 /// ### empty_line
 /// Simply adds an empty line to the children of the curren node.
-pub fn empty_line (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn empty_line (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
 
   let mut tree_wrapper = doctree.unwrap();
 

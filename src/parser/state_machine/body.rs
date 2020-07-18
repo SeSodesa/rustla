@@ -9,7 +9,7 @@ use super::*;
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -53,7 +53,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
-pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -103,7 +103,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 }
 
 
-pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
   let indent = captures.get(1).unwrap().as_str().chars().count();

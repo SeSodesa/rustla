@@ -6,7 +6,7 @@ use super::*;
 
 /// ### bullet
 /// A bullet detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
-pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   
   let mut tree_wrapper = doctree.unwrap();
 
@@ -79,7 +79,7 @@ pub fn bullet (src_lines: &Vec<String>, current_line: &mut usize, doctree: Optio
 
 /// ### enumerator
 /// An enumerator detected within a `ListItem` state either signifies a start of a new superlist or a sublist of the current list.
-pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -176,7 +176,7 @@ pub fn enumerator (src_lines: &Vec<String>, current_line: &mut usize, doctree: O
 /// This function parses each paragraph in a list item for inline nodes.
 /// A paragraph must have at least the same level of indentation as the containing list item,
 /// otherwise is it interpreted as ending the current list item.
-pub fn paragraph (src_lines: &Vec<String>, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   
   let mut tree_wrapper = doctree.unwrap();
 
