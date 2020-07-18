@@ -35,7 +35,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
   eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
 
-  // Matching detected parameters against corresponding list ones and proceeding accordingly 
+  // Matching detected parameters against corresponding list ones and proceeding accordingly
   match (detected_delims, detected_kind, detected_enumerator_indent, detected_text_indent) {
 
     (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == *list_enumerator_indent && detected_enum_as_usize == *list_item_number + 1 => {
@@ -63,30 +63,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
       tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      // Read indented block here
-      let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent), Some(text_indent)) {
-        Ok((lines, min_indent, line_offset, blank_finish)) => {
-          lines.join("\n")
-        }
-        Err(e) => {
-          eprintln!("{}", e);
-          return TransitionResult::Failure {
-            message: String::from("Error when reading list item block.\n")
-          }
-        }
+      tree_wrapper = match first_block_of_enum_list_item(tree_wrapper, src_lines, base_indent, current_line, text_indent) {
+        Some(doctree) => doctree,
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       };
-
-      // Pass text to inline parser as a string
-      let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
-        children
-      } else {
-        Vec::new()
-      };
-
-      let mut paragraph_node = TreeNode::new(TreeNodeType::Paragraph);
-      paragraph_node.append_children(&mut inline_nodes);
-
-      tree_wrapper.tree.push_child(paragraph_node);
 
       let next_state = StateMachine::ListItem;
 
@@ -96,7 +76,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::Some(1)
       }
-
     }
 
     _ => {
@@ -110,8 +89,37 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None
       }
-
     }
   }
+}
 
+/// ### first_block_of_enum_list_item
+/// Parses the first block of an enumerated list item, in case it contains body level nodes
+/// right after the enumerator.
+fn first_block_of_enum_list_item (mut doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<DocTree>{
+
+  // Read indented block here
+  let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent), Some(text_indent)) {
+    Ok((lines, min_indent, line_offset, blank_finish)) => {
+      lines.join("\n")
+    }
+    Err(e) => {
+      eprintln!("{}\n", e);
+      eprintln!("Error when reading list item block.\n");
+      return None
+    }
+  };
+
+  // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
+  let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::Body)).parse() {
+    ParsingResult::EOF {doctree} => return Some(doctree), // All of block as parsed successfully
+    ParsingResult::EmptyStateStack { doctree } => doctree,
+    ParsingResult::Failure {message} => {
+      eprintln!("{:#?}", message);
+      eprintln!("Nested parse ended in failure...\n");
+      return None
+    }
+  };
+
+  Some(doctree)
 }
