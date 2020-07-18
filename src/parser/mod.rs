@@ -265,19 +265,14 @@ impl Parser {
         };
 
         let mut doctree = self.doctree.take().unwrap();
-
-        doctree.tree = match doctree.tree.focus_on_parent() {
-          Ok(parent) => parent,
-          Err(root_node) => return ParsingResult::Failure { message: String::from("No node parent when reducing nesting level...\n") }
-        };
-
+        doctree.tree = doctree.tree.focus_on_parent().unwrap();
         self.doctree.replace(doctree);
 
       }
 
       if self.current_line >= self.src_lines.len() {
 
-        let opt_machine = if let Some(machine)  = self.state_stack.last_mut() {
+        if let Some(machine)  = self.state_stack.last_mut() {
           *machine = StateMachine::EOF
         } else {
           return ParsingResult::Failure { message: String::from("Cannot transition missing machine to EOF state\n") }
@@ -289,7 +284,7 @@ impl Parser {
 
     };
 
-    ParsingResult::EOF {doctree: self.doctree.take().unwrap() }
+    ParsingResult::EOF { doctree: self.doctree.take().unwrap() }
 
   }
 
