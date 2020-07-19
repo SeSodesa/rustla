@@ -27,7 +27,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  let block = match Parser::read_text_block(&lines, 2, None) {
+  let (block, offset) = match Parser::read_text_block(&lines, 2, None) {
     Ok(block) => block,
     Err(e) => {
       eprintln!("{}", e);
@@ -102,7 +102,7 @@ asdfsdafasdfasdfa
   eprintln!("{:#?}", lines);
 
   match Parser::read_text_block(&lines, 2, Some(true)) {
-    Ok(block) => {
+    Ok((block, offset)) => {
 
       eprintln!("{:#?}", block);
 

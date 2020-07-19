@@ -566,7 +566,7 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
   /// Checks for indentation:
   /// if indentation is not allowed but indentation is found,
   /// returns an error message in an `Err`.
-  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: Option<bool>) -> Result<Vec<String>, String> {
+  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: Option<bool>) -> Result<(Vec<String>, usize), String> {
 
     // Default parameter for allowed indentation
     let indent_allowed = indent_allowed.unwrap_or(false);
@@ -606,7 +606,9 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
 
     lines.shrink_to_fit();
 
-    Ok(lines)
+    let offset = lines.len();
+
+    Ok((lines, offset))
 
   }
 
