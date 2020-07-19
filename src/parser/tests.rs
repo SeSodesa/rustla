@@ -737,10 +737,10 @@ fn enumerated_list_02 () {
 fn enumerated_list_03 () {
 
   let src = String::from("
-  (i) a) List item 1
+  (i) a) List item ia
          with a valid second line
 
-      Second paragraph of this list item.
+      Second paragraph of list item i.
 
   (i) List item 1
       of a second list

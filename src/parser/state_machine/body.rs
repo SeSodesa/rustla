@@ -141,7 +141,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
           doctree: tree_wrapper,
           next_state: None,
           push_or_pop: PushOrPop::Neither,
-          line_advance: LineAdvance::Some(1),
+          line_advance: LineAdvance::None,
         }
 
       } else { // paragraph does not belong to this item
