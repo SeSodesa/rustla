@@ -110,11 +110,16 @@ impl Parser {
 
     println!("=====================\n Initiating parse...\n=====================\n");
 
+    eprintln!("... with base indent: {:#?}\n", self.base_indent);
+
     let mut line_changed: bool = false;
     let mut line_not_changed_count: u32 = 0;
 
     // The parsing loop
     loop {
+
+      eprintln!("Line {:#?} state stack: {:#?}\n", self.current_line, self.state_stack);
+      eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().tree.node.data);
 
       if !line_changed && line_not_changed_count >= 10 {
         eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.current_line);
@@ -282,17 +287,8 @@ impl Parser {
       }
 
       if self.current_line >= self.src_lines.len() {
-
-        if let Some(machine)  = self.state_stack.last_mut() {
-          *machine = StateMachine::EOF
-        } else {
-          return ParsingResult::Failure { message: String::from("Cannot transition missing machine to EOF state\n") }
-        };
+        self.state_stack.push(StateMachine::EOF);
       }
-
-      eprintln!("Machine stack state: {:#?}", self.state_stack);
-      eprintln!("On line {:#?}\n", self.current_line);
-
     };
 
     ParsingResult::EOF { doctree: self.doctree.take().unwrap() }
@@ -414,12 +410,12 @@ impl Parser {
         // Move iterator to start of next possible match
         for _ in 0..offset - 1 {
           let c = src_chars.next().unwrap();
-          eprintln!("Consuming {:#?}...", c);
+          // eprintln!("Consuming {:#?}...", c);
 
           col += 1;
 
           if c == '\n' {
-            eprintln!("Detected newline...\n");
+            // eprintln!("Detected newline...\n");
             *current_line += 1;
             col = 0;
           }
@@ -427,18 +423,18 @@ impl Parser {
       },
 
       None => {
-        eprintln!("No match on line {}, col {}.\nProceeding to consume next character...\n", current_line, col);
+        // eprintln!("No match on line {}, col {}.\nProceeding to consume next character...\n", current_line, col);
       }
     }
 
     while let Some(c) = src_chars.next() {
 
-      eprintln!("Consuming {:#?}...\n", c);
+      // eprintln!("Consuming {:#?}...\n", c);
 
       col += 1;
 
       if c == '\n' {
-        eprintln!("Detected newline...\n");
+        // eprintln!("Detected newline...\n");
         *current_line += 1;
         col = 0;
       }
@@ -451,12 +447,12 @@ impl Parser {
           // Move iterator to start of next possible match
           for _ in 0..offset - 1 {
             let c = src_chars.next().unwrap();
-            eprintln!("Consuming {:#?}", c);
+            // eprintln!("Consuming {:#?}", c);
 
             col += 1;
 
             if c == '\n' {
-              eprintln!("Detected newline...\n");
+              // eprintln!("Detected newline...\n");
               *current_line += 1;
               col = 0;
             }
@@ -464,7 +460,7 @@ impl Parser {
         },
 
         None => {
-          eprintln!("No match on line {}, col {}.\n", current_line, col);
+          // eprintln!("No match on line {}, col {}.\n", current_line, col);
         }
       }
     }
@@ -487,11 +483,11 @@ impl Parser {
     let src_str = chars_iter.as_str();
 
     if src_str.is_empty() {
-      eprintln!("Source has been drained of characters.\n");
+      // eprintln!("Source has been drained of characters.\n");
       return None
     }
 
-    eprintln!("Matching against {:#?}\n", src_str);
+    // eprintln!("Matching against {:#?}\n", src_str);
 
     for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
 
@@ -499,7 +495,7 @@ impl Parser {
 
         Some(capts) => {
 
-          eprintln!("Match found for {:#?}\n", pattern_name);
+          // eprintln!("Match found for {:#?}\n", pattern_name);
 
           let (node, offset) = parsing_function(*pattern_name, &capts);
 
@@ -528,8 +524,13 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
 
   eprintln!("Line before nested parse: {:?}...\n", current_line);
 
+
+  let relative_block_indent = text_indent - base_indent;
+  eprintln!("Text indent: {:#?}\n", text_indent);
+  eprintln!("Relative block indent: {:#?}\n", relative_block_indent);
+
   // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-  let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent-base_indent), Some(text_indent-base_indent)) {
+  let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), Some(relative_block_indent)) {
     Ok((lines, min_indent, line_offset, blank_finish)) => {
       (lines.join("\n"), line_offset)
     }
@@ -550,7 +551,7 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
     }
   };
 
-  *current_line += line_offset;
+  // *current_line += line_offset;
 
   eprintln!("Line after nested parse: {:?}...\n", current_line);
 
@@ -716,7 +717,7 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
 
     }
 
-    eprintln!("Loop broken: {:?}\n", loop_broken);
+    // eprintln!("Loop broken: {:?}\n", loop_broken);
 
     if !loop_broken {
       blank_finish = true;
@@ -762,6 +763,8 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
 
     block_lines.shrink_to_fit(); // Free unnecessary used memory
     let line_diff = block_lines.len();
+
+    eprintln!("Block lines: {:#?}\n", block_lines);
 
     Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
 

@@ -184,7 +184,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
     TreeNodeType::BulletListItem{bullet_indent, text_indent, ..} => (bullet_indent, text_indent),
     TreeNodeType::EnumeratedListItem{enumerator_indent, text_indent, ..} => ( enumerator_indent, text_indent),
     _ => return TransitionResult::Failure {
-      message: String::from("Failed to retrieve bullet list item indentation info when parsing a paragraph.\n")
+      message: String::from("Failed to retrieve list item indentation info when parsing a paragraph inside one.\n")
     }
   };
 

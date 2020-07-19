@@ -13,8 +13,6 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
 
   let mut tree_wrapper = doctree.unwrap();
 
-  eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
-
   let detected_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
@@ -38,50 +36,17 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
       // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
       // parse body elements on the same indentation level
 
-      let mut item_node = doctree::TreeNode::new(TreeNodeType::BulletListItem{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent});
-      let mut paragraph_node = doctree::TreeNode::new(TreeNodeType::Paragraph);
-
-      // Read indented block here
-      let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(t_indent), Some(t_indent)) {
-        Ok((lines, min_indent, line_offset, blank_finish)) => {
-          if min_indent != t_indent {
-            return TransitionResult::Failure {
-              message: String::from("Indent of list item block was less than given.")
-            }
-          }
-          lines.join("\n")
-        }
-        Err(e) => {
-          eprintln!("{}", e);
-          return TransitionResult::Failure {
-            message: String::from("Error when reading list item block.\n")
-          }
-        }
+      let item_node_data = TreeNodeType::BulletListItem{
+        bullet: bullet,
+        bullet_indent: b_indent,
+        text_indent: t_indent
       };
 
-      // Pass text to inline parser as a string
-      let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
-        children
-      } else {
-        Vec::new()
-      };
+      tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      // Add inline nodes to Paragraph node
-      paragraph_node.append_children(&mut inline_nodes);
-
-      item_node.push_child(paragraph_node);
-
-      tree_wrapper.tree.push_child(item_node);
-
-      // Focus on the ListItem node after pushing it to the current bullet list
-      // tree_wrapper.tree.push_child(item_node);
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-        Ok(tree_zipper) =>tree_zipper,
-        Err(node_itself) => {
-          return TransitionResult::Failure {
-            message: String::from("No child of type ListItem to be focused on.\n")
-          }
-        }
+      tree_wrapper = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, t_indent) {
+        Some(doctree) => doctree,
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       };
 
       let next_state = StateMachine::ListItem;

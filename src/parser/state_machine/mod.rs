@@ -80,6 +80,9 @@ impl StateMachine {
     match self {
       StateMachine::EOF               => Err("Already moved past EOF. No transitions to perform.\n"),
       StateMachine::Failure           => Err("Failure state has no transitions\n"),
+      StateMachine::ListItem          => {
+        Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())
+      }
       _ => {
         Ok(TRANSITION_MAP.get(self).unwrap())
       }

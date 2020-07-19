@@ -13,11 +13,63 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-  let bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
-  let text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
+  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
-  let bullet_list_data = TreeNodeType::BulletList{bullet: bullet, bullet_indent:bullet_indent, text_indent: text_indent};
+  // Are we focused on a node where we care about the indentation and such?
+  match tree_wrapper.tree.node.data {
+
+    TreeNodeType::BulletListItem {bullet, bullet_indent, text_indent } => {
+
+      match (detected_bullet, detected_bullet_indent, detected_text_indent) {
+        (detected_bullet, detected_bullet_indent, detected_text_indent)
+        if detected_bullet_indent == text_indent => {
+
+          // Focused on list node and sublist detected...
+
+          let sublist_data = TreeNodeType::BulletList {
+            bullet: detected_bullet,
+            bullet_indent: detected_bullet_indent,
+            text_indent: detected_text_indent,
+          };
+
+          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
+
+          return TransitionResult::Success {
+            doctree: tree_wrapper,
+            next_state: Some(StateMachine::BulletList),
+            push_or_pop: PushOrPop::Push,
+            line_advance: LineAdvance::None,
+          }
+
+        }
+
+        (_,_,_) => { // Not a sublist so must be a parent list or some such
+
+          tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+
+          return TransitionResult::Success {
+            doctree: tree_wrapper,
+            next_state: None,
+            push_or_pop: PushOrPop::Pop,
+            line_advance: LineAdvance::None
+          }
+
+        }
+      }
+
+    }
+
+    _ => () // No troublesome data found
+      
+  }
+
+  let bullet_list_data = TreeNodeType::BulletList{
+    bullet: detected_bullet,
+    bullet_indent: detected_bullet_indent,
+    text_indent: detected_text_indent
+  };
 
   tree_wrapper.tree = match tree_wrapper.tree.push_and_focus(bullet_list_data) {
     Ok(tree) => tree,
@@ -25,16 +77,13 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
       message: String::from("Couldn't focus on bullet list...\n")
     }
   };
-
-  let next_state = StateMachine::BulletList;
-
+    
   TransitionResult::Success {
     doctree: tree_wrapper,
     next_state: Some(StateMachine::BulletList),
     push_or_pop: PushOrPop::Push,
     line_advance: LineAdvance::None
   }
-
 }
 
 
@@ -81,7 +130,43 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     latest_text_indent: detected_text_indent,
   };
 
-  eprintln!("List data: {:#?}\n", list_node_data);
+  match tree_wrapper.tree.node.data {
+
+    TreeNodeType::BulletListItem { text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
+      if detected_enumerator_indent == text_indent { // Contained paragraphs need to be aligned...
+
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(1),
+        }
+
+      } else { // paragraph does not belong to this item
+
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree)  => tree,
+          Err(tree) => {
+            eprintln!("INFO: focused on tree root inside transition method...\n");
+            tree
+          }
+        };
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+        }
+      }
+    }
+
+    _ => ()
+
+  }
+
 
   tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
 
@@ -100,9 +185,13 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
-  let indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
-  let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(indent), None) {
+  let paragraph_data = TreeNodeType::Paragraph;
+
+  let relative_indent = detected_indent - base_indent;
+
+  let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_indent), None) {
     Ok((lines, min_indent, line_offset, blank_finish)) => {
       lines.join("\n")
     }
@@ -123,27 +212,51 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
     }
   };
 
-  let data = TreeNodeType::Paragraph;
+  // Construct paragraph...
+  let mut paragraph_node = TreeNode::new(paragraph_data);
+  paragraph_node.append_children(&mut inline_nodes);
 
-  let paragraph_node = TreeNode::new(data);
+  // Check if we are inside a node that cares about indentation
+  match tree_wrapper.tree.node.data {
 
+    TreeNodeType::BulletListItem {text_indent, ..} | TreeNodeType::EnumeratedListItem {text_indent, ..} => {
+
+      if detected_indent == text_indent { // Contained paragraphs need to be aligned...
+
+        tree_wrapper.tree.push_child(paragraph_node);
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(1),
+        }
+
+      } else { // paragraph does not belong to this item
+
+        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
+          Ok(tree)  => tree,
+          Err(tree) => {
+            eprintln!("INFO: focused on tree root inside transition method...\n");
+            tree
+          }
+        };
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+        }
+      }
+    }
+
+    _ => () // No troublesome indented nodes as parent, do nothing
+
+  }
+
+  // No troublesome nodes so simply push paragraph to current node
   tree_wrapper.tree.push_child(paragraph_node);
-
-  tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-    Ok(child) => child,
-    Err(node_itself) => return TransitionResult::Failure {
-      message: String::from("Couldn't focus on child paragraph\n")
-    }
-  };
-
-  tree_wrapper.tree.append_children(&mut inline_nodes);
-
-  tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-    Ok(parent) => parent,
-    Err(node_self) => return TransitionResult::Failure {
-      message: String::from("Couldn't move focus to paragraph parent...\n")
-    }
-  };
 
   TransitionResult::Success {
     doctree: tree_wrapper,

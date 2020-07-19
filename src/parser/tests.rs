@@ -422,7 +422,7 @@ fn bullet_list_02 () {
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
 
-  // eprintln!("{:#?}", doctree.tree);
+  eprintln!("{:#?}", doctree.tree);
 
   match doctree.tree.node.children[1].children[0].children[0].data {
     TreeNodeType::Paragraph => (),
