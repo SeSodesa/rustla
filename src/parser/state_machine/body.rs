@@ -139,8 +139,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Neither,
+          next_state: Some(StateMachine::EnumeratedList),
+          push_or_pop: PushOrPop::Push,
           line_advance: LineAdvance::None,
         }
 

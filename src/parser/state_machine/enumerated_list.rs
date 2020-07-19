@@ -7,7 +7,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let (list_delims, list_kind, list_start_index, list_item_number,list_enumerator_indent, list_text_indent) = match &mut tree_wrapper.tree.node.data {
+  let (list_delims, list_kind, list_start_index, list_item_number,list_enumerator_indent, list_text_indent) = match tree_wrapper.tree.node.data {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent } => (delims, kind, start_index, n_of_items, enumerator_indent, latest_text_indent),
     _ => return TransitionResult::Failure {
       message: String::from("Not focused on EnumeratedList...\n")
@@ -38,7 +38,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
   // Matching detected parameters against corresponding list ones and proceeding accordingly
   match (detected_delims, detected_kind, detected_enumerator_indent, detected_text_indent) {
 
-    (delims, kind, enum_indent, text_indent) if delims == *list_delims && kind == *list_kind && enum_indent == *list_enumerator_indent && detected_enum_as_usize == *list_item_number + 1 => {
+    (delims, kind, enum_indent, text_indent) if delims == list_delims && kind == list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == list_item_number + 1 => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
@@ -63,7 +63,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
       tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      tree_wrapper = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, text_indent) {
+      tree_wrapper = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent) {
         Some(doctree) => doctree,
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       };

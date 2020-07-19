@@ -542,7 +542,7 @@ fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent
   };
 
   // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-  let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::Body)).parse() {
+  let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::ListItem)).parse() {
     ParsingResult::EOF {doctree} | ParsingResult::EmptyStateStack { doctree } => doctree,
     ParsingResult::Failure {message} => {
       eprintln!("{:?}", message);
