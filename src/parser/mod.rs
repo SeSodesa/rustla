@@ -521,6 +521,43 @@ impl Parser {
   }
 
 
+/// ### first_list_item_block
+/// Parses the first block of a list item, in case it contains body level nodes
+/// right after the enumerator, on the same line.
+fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<DocTree>{
+
+  eprintln!("Line before nested parse: {:?}...\n", current_line);
+
+  // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
+  let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent-base_indent), Some(text_indent-base_indent)) {
+    Ok((lines, min_indent, line_offset, blank_finish)) => {
+      (lines.join("\n"), line_offset)
+    }
+    Err(e) => {
+      eprintln!("{}\n", e);
+      eprintln!("Error when reading list item block.\n");
+      return None
+    }
+  };
+
+  // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
+  let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::Body)).parse() {
+    ParsingResult::EOF {doctree} | ParsingResult::EmptyStateStack { doctree } => doctree,
+    ParsingResult::Failure {message} => {
+      eprintln!("{:?}", message);
+      eprintln!("Nested parse ended in failure...\n");
+      return None
+    }
+  };
+
+  *current_line += line_offset;
+
+  eprintln!("Line after nested parse: {:?}...\n", current_line);
+
+  Some(doctree)
+}
+
+
   /// ### read_text_block
   /// Reads in an contiguous set of lines of text.
   /// A text block in rST terms is a set of lines
