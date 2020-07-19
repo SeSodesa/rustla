@@ -98,10 +98,12 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 /// right after the enumerator.
 fn first_block_of_enum_list_item (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<DocTree>{
 
-  // Read indented block here
-  let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent), Some(text_indent)) {
+  eprintln!("Line before nested parse: {:?}...\n", current_line);
+
+  // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
+  let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent-base_indent), Some(text_indent-base_indent)) {
     Ok((lines, min_indent, line_offset, blank_finish)) => {
-      lines.join("\n")
+      (lines.join("\n"), line_offset)
     }
     Err(e) => {
       eprintln!("{}\n", e);
@@ -114,11 +116,15 @@ fn first_block_of_enum_list_item (doctree: DocTree, src_lines: &Vec<String>, bas
   let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::Body)).parse() {
     ParsingResult::EOF {doctree} | ParsingResult::EmptyStateStack { doctree } => doctree,
     ParsingResult::Failure {message} => {
-      eprintln!("{:#?}", message);
+      eprintln!("{:?}", message);
       eprintln!("Nested parse ended in failure...\n");
       return None
     }
   };
+
+  *current_line += line_offset;
+
+  eprintln!("Line after nested parse: {:?}...\n", current_line);
 
   Some(doctree)
 }

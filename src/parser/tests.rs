@@ -733,6 +733,32 @@ fn enumerated_list_02 () {
 }
 
 
+#[test]
+fn enumerated_list_03 () {
+
+  let src = String::from("
+  (i) a) List item 1
+         with a valid second line
+
+      Second paragraph of this list item.
+
+  (i) List item 1
+      of a second list
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  todo!()
+}
+
 
 #[test]
 fn upper_roman_to_usize_01 () {
