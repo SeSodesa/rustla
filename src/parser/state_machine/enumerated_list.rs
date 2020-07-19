@@ -96,7 +96,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 /// ### first_block_of_enum_list_item
 /// Parses the first block of an enumerated list item, in case it contains body level nodes
 /// right after the enumerator.
-fn first_block_of_enum_list_item (mut doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<DocTree>{
+fn first_block_of_enum_list_item (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<DocTree>{
 
   // Read indented block here
   let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(text_indent), Some(text_indent)) {
