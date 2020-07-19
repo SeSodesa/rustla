@@ -195,16 +195,16 @@ impl Parser {
 
             TransitionResult::Success{doctree, next_state, push_or_pop, line_advance} => {
 
-              match push_or_pop {
-                PushOrPop::Push => {
+              match (push_or_pop, next_state) {
+
+                (PushOrPop::Push, next_state)  if next_state.is_some() => {
                   // If a transition method returns a state, check whether we should transition to it or
                   // push it on top of the stack...
-                  if let Some(next_state) = next_state {
-                    eprintln!("Pushing {:#?} on top of stack...\n", next_state);
-                    self.state_stack.push(next_state)
-                  }
+                  eprintln!("Pushing {:#?} on top of stack...\n", next_state);
+                  self.state_stack.push(next_state.unwrap());
                 },
-                PushOrPop::Pop => {
+
+                (PushOrPop::Pop, _) => {
                   eprintln!("Received POP instruction...\n");
                   match self.state_stack.pop() {
                     Some(machine) => (),
@@ -213,15 +213,25 @@ impl Parser {
                     }
                   };
                 }
-                PushOrPop::Neither => {
-                  if let Some(next_state) = next_state {
-                    let machine = match self.state_stack.last_mut() {
-                      Some(opt_machine) => *opt_machine = next_state,
-                      None => {
-                        eprintln!("No machine on top of stack.\nCan't perform transition after executing transition method...\n");
-                        return ParsingResult::EmptyStateStack { doctree: doctree }
-                      }
-                    };
+
+                (PushOrPop::Neither, next_state) if next_state.is_some() => {
+                  let machine = match self.state_stack.last_mut() {
+                    Some(opt_machine) => *opt_machine = next_state.unwrap(),
+                    None => {
+                      eprintln!("No machine on top of stack.\nCan't perform transition after executing transition method...\n");
+                      return ParsingResult::EmptyStateStack { doctree: doctree }
+                    }
+                  };
+                }
+
+                (PushOrPop::Neither, None) => {
+                  // No need to do anything to the stack...
+                }
+
+                (push_or_pop, next_state) => {
+                  eprintln!("No action for received (PushOrPop, StateMachine) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_state);
+                  return ParsingResult::Failure {
+                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.current_line)
                   }
                 }
               };
