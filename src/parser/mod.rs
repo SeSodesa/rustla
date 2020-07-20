@@ -568,6 +568,8 @@ impl Parser {
   /// returns an error message in an `Err`.
   fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: Option<bool>) -> Result<(Vec<String>, usize), String> {
 
+    eprintln!("Reading text block...\n^^^^^^^^^^^^^^^^^^^^");
+
     // Default parameter for allowed indentation
     let indent_allowed = indent_allowed.unwrap_or(false);
 
@@ -576,7 +578,7 @@ impl Parser {
 
     let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
 
-    while line_num < last_line - 1 {
+    while line_num < last_line {
 
       let line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
@@ -607,6 +609,8 @@ impl Parser {
     lines.shrink_to_fit();
 
     let offset = lines.len();
+
+    eprintln!("Lines: {:#?}\n", lines);
 
     Ok((lines, offset))
 
