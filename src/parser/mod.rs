@@ -203,7 +203,7 @@ impl Parser {
 
                 (_, next_state, nested_state_stack) if next_state.is_some() && nested_state_stack.is_some() => {
                   return ParsingResult::Failure {
-                    message: String::from("Transition  returned both, a single next state and the state stack of a nested parser.\nComputer says no...\n")
+                    message: String::from("Transition returned both, a single next state and the state stack of a nested parser.\nComputer says no...\n")
                   }
                 }
 
@@ -229,7 +229,7 @@ impl Parser {
                   };
                 }
 
-                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_some() => {
+                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_some() && nested_state_stack.is_none() => {
                   let machine = match self.state_stack.last_mut() {
                     Some(opt_machine) => *opt_machine = next_state.unwrap(),
                     None => {
@@ -237,6 +237,18 @@ impl Parser {
                       return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..).collect() }
                     }
                   };
+                }
+
+                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_none() && nested_state_stack.is_some() => {
+
+                  if let Some(state) = self.state_stack.pop() {
+                    self.state_stack.append(&mut nested_state_stack.unwrap());
+                  } else {
+                    return ParsingResult::Failure {
+                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.current_line)
+                    }
+                  }
+
                 }
 
                 (PushOrPop::Neither, None, None) => {
