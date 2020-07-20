@@ -756,7 +756,51 @@ fn enumerated_list_03 () {
 
   eprintln!("{:#?}", doctree.tree);
 
-  todo!()
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+    TreeNodeType::EnumeratedListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[0].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[1].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].children[0].data {
+    TreeNodeType::EnumeratedListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].children[0].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
 }
 
 
