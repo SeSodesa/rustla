@@ -38,7 +38,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
   // Matching detected parameters against corresponding list ones and proceeding accordingly
   match (detected_delims, detected_kind, detected_enumerator_indent, detected_text_indent) {
 
-    (delims, kind, enum_indent, text_indent) if delims == list_delims && kind == list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == list_item_number + 1 => {
+    (delims, kind, enum_indent, text_indent) if delims == list_delims && kind == list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == list_item_number + list_start_index => {
 
       // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
       // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
