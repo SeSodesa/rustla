@@ -27,7 +27,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  let (block, offset) = match Parser::read_text_block(&lines, 2, None) {
+  let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None) {
     Ok(block) => block,
     Err(e) => {
       eprintln!("{}", e);
@@ -67,7 +67,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  match Parser::read_text_block(&lines, 2, None) {
+  match Parser::read_text_block(&lines, 2, false, false, None) {
     Ok(_) => panic!("There was indent where one was not allowed..."),
     Err(e) => {
       eprintln!("{:#?}", e);
@@ -101,7 +101,7 @@ asdfsdafasdfasdfa
 
   eprintln!("{:#?}", lines);
 
-  match Parser::read_text_block(&lines, 2, Some(true)) {
+  match Parser::read_text_block(&lines, 2, true, false, None) {
     Ok((block, offset)) => {
 
       eprintln!("{:#?}", block);

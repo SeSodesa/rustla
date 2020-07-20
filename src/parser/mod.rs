@@ -551,7 +551,7 @@ impl Parser {
       }
     };
 
-    // *current_line += line_offset;
+    *current_line += line_offset;
 
     eprintln!("Line after nested parse: {:?}...\n", current_line);
 
@@ -566,12 +566,10 @@ impl Parser {
   /// Checks for indentation:
   /// if indentation is not allowed but indentation is found,
   /// returns an error message in an `Err`.
-  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: Option<bool>) -> Result<(Vec<String>, usize), String> {
+  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: bool, remove_indent: bool, alignment: Option<usize>) -> Result<(Vec<String>, usize), String> {
 
-    eprintln!("Reading text block...\n^^^^^^^^^^^^^^^^^^^^");
+    eprintln!("Reading text block...\n^^^^^^^^^^^^^^^^^^^^^");
 
-    // Default parameter for allowed indentation
-    let indent_allowed = indent_allowed.unwrap_or(false);
 
     let mut line_num = start_line;
     let last_line = src_lines.len();
@@ -580,27 +578,32 @@ impl Parser {
 
     while line_num < last_line {
 
-      let line: String = match src_lines.get(line_num) {
+      let mut line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
         None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
       };
 
-      if line.is_empty() {
+      if line.trim().is_empty() {
         break
       }
 
+      let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
-      let has_indent: bool =if let Some(c) = line.chars().next() {
-        if c.is_whitespace() { true } else { false }
-      } else {
-        return Err(format!("The first character of line {} could not be read.", line_num))
-      };
-
-      if !indent_allowed && has_indent {
+      if !indent_allowed && line_indent > 0 {
         return Err(format!("No indent allowed but indent found on line {}!\nComputer says no...\n", line_num))
       }
 
-      lines.push(line.clone());
+      if let Some(alignment) = alignment {
+        if alignment != line_indent {
+          return Err(format!("Block alignment was set but line {} indent does not match...\nComputer says no...\n", line_num))
+        }
+      }
+
+      if remove_indent {
+        line = line.as_str().trim_start().to_string();
+      }
+
+      lines.push(line);
 
       line_num += 1;
 

@@ -74,7 +74,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         doctree: tree_wrapper,
         next_state: Some(StateMachine::ListItem),
         push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(1)
+        line_advance: LineAdvance::None
       }
     }
 
