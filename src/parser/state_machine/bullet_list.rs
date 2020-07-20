@@ -44,18 +44,18 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
 
       tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      tree_wrapper = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, t_indent) {
-        Some(doctree) => doctree,
+      let (doctree, offset) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, t_indent) {
+        Some((doctree, nested_parse_offset)) => (doctree, nested_parse_offset),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       };
 
-      let next_state = StateMachine::ListItem;
+      tree_wrapper = doctree;
 
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_state: Some(StateMachine::ListItem),
         push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::None
+        line_advance: LineAdvance::Some(offset)
       }
 
     },
