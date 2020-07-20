@@ -191,8 +191,8 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
 
   let relative_indent = detected_indent - base_indent;
 
-  let block = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_indent), None) {
-    Ok((lines, min_indent, line_offset, blank_finish)) => {
+  let block = match Parser::read_text_block(src_lines, *current_line, None) {
+    Ok((lines, line_offset)) => {
       lines.join("\n")
     }
     Err(e) => {
