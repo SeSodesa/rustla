@@ -20,6 +20,7 @@ src/
 │   └── tree_zipper.rs
 ├── main.rs
 ├── parser
+│   ├── converters.rs
 │   ├── mod.rs
 │   ├── state_machine
 │   │   ├── body.rs
@@ -31,9 +32,10 @@ src/
 │   │   ├── mod.rs
 │   │   ├── tests.rs
 │   │   └── transitions.rs
-│   └── tests.rs
+│   ├── tests.rs
+│   └── types_and_aliases.rs
 └── utils.rs
 
-4 directories, 20 files
+4 directories, 22 files
 ```
 If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo test`.
