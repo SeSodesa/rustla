@@ -805,6 +805,78 @@ fn enumerated_list_03 () {
 
 
 #[test]
+fn mixed_nested_lists_01 () {
+
+  let src = String::from("
+  (i) * List item 1
+        of a nested bullet list within
+        an enumerated list...
+
+      * Nested list item 2
+
+        b) Nested enuemrated list in a nested bullet list
+
+      Second paragraph of list item i.
+
+  (ii) List item 2 of the parent list.
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::BulletList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+    TreeNodeType::BulletListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[1].data {
+    TreeNodeType::BulletListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[1].children[2].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[1].data {
+    TreeNodeType::Paragraph { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::EnumeratedListItem { .. } => (),
+    _ => panic!()
+  }
+ 
+}
+
+
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
