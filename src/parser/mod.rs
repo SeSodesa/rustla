@@ -551,8 +551,6 @@ impl Parser {
       }
     };
 
-    // *current_line += line_offset;
-
     eprintln!("Line after nested parse: {:?}...\n", current_line);
 
     Some((doctree, line_offset))
