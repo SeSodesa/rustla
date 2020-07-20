@@ -63,8 +63,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
       tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      let (doctree, offset) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent) {
-        Some((doctree, nested_parse_offset)) => (doctree, nested_parse_offset),
+      let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent) {
+        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       };
 
@@ -72,9 +72,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
       TransitionResult::Success {
         doctree: tree_wrapper,
-        next_state: Some(StateMachine::ListItem),
+        next_state: None,
         push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(offset)
+        line_advance: LineAdvance::Some(offset),
+        nested_state_stack: Some(state_stack)
       }
     }
 
@@ -87,7 +88,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         doctree: tree_wrapper,
         next_state: None,
         push_or_pop: PushOrPop::Pop,
-        line_advance: LineAdvance::None
+        line_advance: LineAdvance::None,
+        nested_state_stack: None
       }
     }
   }

@@ -144,8 +144,7 @@ impl Parser {
             // Walk to doctree root before returning it
             match self.doctree.take() {
               Some(doctree) => {
-                // doctree.tree = doctree.tree.walk_to_root();
-                return ParsingResult::EOF { doctree: doctree }
+                return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
               }
               None => {
                 return ParsingResult::Failure { message: String::from("Tree should not be in the possession of a transition method after moving past EOF...\n") }
@@ -198,19 +197,29 @@ impl Parser {
 
           self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
 
-            TransitionResult::Success{doctree, next_state, push_or_pop, line_advance} => {
+            TransitionResult::Success{doctree, next_state, push_or_pop, line_advance, nested_state_stack} => {
 
-              match (push_or_pop, next_state) {
+              match (push_or_pop, next_state, nested_state_stack) {
 
-                (PushOrPop::Push, next_state)  if next_state.is_some() => {
-                  // If a transition method returns a state, check whether we should transition to it or
-                  // push it on top of the stack...
+                (_, next_state, nested_state_stack) if next_state.is_some() && nested_state_stack.is_some() => {
+                  return ParsingResult::Failure {
+                    message: String::from("Transition  returned both, a single next state and the state stack of a nested parser.\nComputer says no...\n")
+                  }
+                }
+
+                (PushOrPop::Push, next_state, nested_state_stack)  if next_state.is_some() && nested_state_stack.is_none() => {
                   let next_state = next_state.unwrap();
                   eprintln!("Pushing {:#?} on top of stack...\n", next_state);
                   self.state_stack.push(next_state);
                 },
 
-                (PushOrPop::Pop, _) => {
+                (PushOrPop::Push, next_state, nested_state_stack)  if next_state.is_none() && nested_state_stack.is_some() => {
+                  let mut next_states = nested_state_stack.unwrap();
+                  eprintln!("Appending {:#?} to stack...\n", next_states);
+                  self.state_stack.append(&mut next_states);
+                },
+
+                (PushOrPop::Pop, _, _) => {
                   eprintln!("Received POP instruction...\n");
                   match self.state_stack.pop() {
                     Some(machine) => (),
@@ -220,22 +229,22 @@ impl Parser {
                   };
                 }
 
-                (PushOrPop::Neither, next_state) if next_state.is_some() => {
+                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_some() => {
                   let machine = match self.state_stack.last_mut() {
                     Some(opt_machine) => *opt_machine = next_state.unwrap(),
                     None => {
                       eprintln!("No machine on top of stack.\nCan't perform transition after executing transition method...\n");
-                      return ParsingResult::EmptyStateStack { doctree: doctree }
+                      return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..).collect() }
                     }
                   };
                 }
 
-                (PushOrPop::Neither, None) => {
+                (PushOrPop::Neither, None, None) => {
                   // No need to do anything to the stack...
                 }
 
-                (push_or_pop, next_state) => {
-                  eprintln!("No action for received (PushOrPop, StateMachine) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_state);
+                (push_or_pop, next_state, nested_state_stack) => {
+                  eprintln!("No action for received (PushOrPop, StateMachine, Vec<Statemachine>) = ({:#?}, {:#?}, {:#?}) triplet...\n", push_or_pop, next_state, nested_state_stack);
                   return ParsingResult::Failure {
                     message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.current_line)
                   }
@@ -277,7 +286,7 @@ impl Parser {
 
         if let None = self.state_stack.pop() {
           eprintln!("Cannot pop from an empty stack.\n");
-          return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap() }
+          return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
         };
 
         let mut doctree = self.doctree.take().unwrap();
@@ -291,7 +300,7 @@ impl Parser {
       }
     };
 
-    ParsingResult::EOF { doctree: self.doctree.take().unwrap() }
+    ParsingResult::EOF { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
 
   }
 
@@ -520,7 +529,7 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<(DocTree, usize)>{
+  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<(DocTree, usize, Vec<StateMachine>)>{
 
     eprintln!("Line before nested parse: {:?}...\n", current_line);
 
@@ -542,8 +551,8 @@ impl Parser {
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let doctree = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::ListItem)).parse() {
-      ParsingResult::EOF {doctree} | ParsingResult::EmptyStateStack { doctree } => doctree,
+    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::ListItem)).parse() {
+      ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
         eprintln!("{:?}", message);
         eprintln!("Nested parse ended in failure...\n");
@@ -553,7 +562,7 @@ impl Parser {
 
     eprintln!("Line after nested parse: {:?}...\n", current_line);
 
-    Some((doctree, line_offset))
+    Some((doctree, line_offset, state_stack))
   }
 
 
@@ -791,7 +800,8 @@ pub enum ParsingResult {
   /// This will be returned, if the parser finished by passing over the last line of the source.
   /// This generally indicates that the source file was parsed successfully.
   EOF {
-    doctree: DocTree
+    doctree: DocTree,
+    state_stack: Vec<StateMachine>
   },
 
   /// #### EmptyStateStack
@@ -800,7 +810,8 @@ pub enum ParsingResult {
   /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
   /// that there were no expected nested structures on the same line.
   EmptyStateStack {
-    doctree: DocTree
+    doctree: DocTree,
+    state_stack: Vec<StateMachine>
   },
 
   /// #### Failure
@@ -818,8 +829,8 @@ impl ParsingResult {
   fn unwrap_tree(self) -> DocTree {
 
     match self {
-      Self::EOF {doctree} => doctree,
-      Self::EmptyStateStack {doctree} => doctree,
+      Self::EOF {doctree, state_stack} => doctree,
+      Self::EmptyStateStack {doctree, state_stack} => doctree,
       _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
     }
 

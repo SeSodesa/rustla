@@ -19,6 +19,7 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     next_state: None,
     push_or_pop: PushOrPop::Neither,
     line_advance: LineAdvance::Some(1),
+    nested_state_stack: None
   }
 
 }

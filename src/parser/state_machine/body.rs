@@ -41,6 +41,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
             next_state: Some(StateMachine::BulletList),
             push_or_pop: PushOrPop::Push,
             line_advance: LineAdvance::None,
+            nested_state_stack: None
           }
 
         }
@@ -53,7 +54,8 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
             doctree: tree_wrapper,
             next_state: None,
             push_or_pop: PushOrPop::Pop,
-            line_advance: LineAdvance::None
+            line_advance: LineAdvance::None,
+            nested_state_stack: None
           }
 
         }
@@ -82,7 +84,8 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
     doctree: tree_wrapper,
     next_state: Some(StateMachine::BulletList),
     push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::None
+    line_advance: LineAdvance::None,
+    nested_state_stack: None
   }
 }
 
@@ -142,6 +145,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
           next_state: Some(StateMachine::EnumeratedList),
           push_or_pop: PushOrPop::Push,
           line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
 
       } else { // paragraph does not belong to this item
@@ -159,6 +163,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
           next_state: None,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
       }
     }
@@ -176,7 +181,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     doctree: tree_wrapper,
     next_state: Some(StateMachine::EnumeratedList),
     push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::None
+    line_advance: LineAdvance::None,
+    nested_state_stack: None
   }
 
 }
@@ -230,6 +236,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
           next_state: None,
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(1),
+          nested_state_stack: None
         }
 
       } else { // paragraph does not belong to this item
@@ -247,6 +254,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
           next_state: None,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
       }
     }
@@ -262,7 +270,8 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
     doctree: tree_wrapper,
     next_state: None,
     push_or_pop: PushOrPop::Neither,
-    line_advance: LineAdvance::Some(1)
+    line_advance: LineAdvance::Some(1),
+    nested_state_stack: None
   }
 
 }

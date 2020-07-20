@@ -99,6 +99,7 @@ pub enum TransitionResult {
     next_state: Option<StateMachine>,
     push_or_pop: PushOrPop,
     line_advance: LineAdvance,
+    nested_state_stack: Option<Vec<StateMachine>>,
   },
 
   /// #### Failure
