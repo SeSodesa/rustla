@@ -161,7 +161,7 @@ pub enum TreeNodeType {
   /// #### Root
   /// The root node of an reStructuredText document tree.
   /// Contains the (name|absolute path) of the document
-  /// as its only field
+  /// as its only field.
   Root{
     doc_name: String
   },
@@ -261,21 +261,33 @@ pub enum TreeNodeType {
   /// #### FieldList
   /// A list of fields, that are used as a part of the
   /// reStructuredText extension syntax, such as directives.
+  /// Bibliographies are a special case of these types of lists.
   FieldList {
 
   },
 
   /// #### FieldListItem
-  /// A field item of a `FieldList`.
-  FieldListItem,
+  /// A field item of a `FieldList`. Consists of a marker with a field name and a
+  /// field body consisting of arbitrary body elements.
+  /// ```text
+  /// +--------------------+----------------------+
+  /// | ":" field name ":" | field body           |
+  /// +-------+------------+                      |
+  ///         | (body elements)+                  |
+  ///         +-----------------------------------+
+  /// ```
+  FieldListItem {
+    name: String,
 
-  /// #### FieldName
-  /// They key to the field body.
-  FieldName,
+  },
 
   /// #### FieldBody
-  /// The parameter that `FieldName` refers to.
-  FieldBody,
+  /// The parameter that `FieldName` refers to. May contain arbitrary body elements,
+  /// just like bulleted and enumerated list items. The first line after the marker specifies
+  /// the indentation used as a reference for parsing the rest of the block.
+  FieldBody {
+    indentation: usize
+  },
   
   /// #### OptionList
   /// A two-column list of command line options, such as the ones typically seen on unix `man` pages.
