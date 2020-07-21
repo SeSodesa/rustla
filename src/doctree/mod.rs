@@ -7,13 +7,7 @@ use std::collections::HashMap;
 mod tests;
 
 mod tree_zipper;
-  use tree_zipper::TreeZipper;
-
-mod node_types;
-pub mod structural_nodes;
-pub mod body_nodes;
-pub mod inline_nodes;
-use self::node_types::BranchNodeType;
+use tree_zipper::TreeZipper;
 
 use crate::utils::{EnumDelims, EnumKind};
 
@@ -237,26 +231,26 @@ pub enum TreeNodeType {
   /// #### DefinitionList
   /// A list of definitions. Contains `DefinitionListItems` or `EmptyLine` nodes
   /// as its direct children.
-  DefinitionList(body_nodes::DefinitionList),
+  DefinitionList,
 
   /// #### DefinitionListItem
   /// A child node type of `DefinitionList`.
   /// Contains a map of `DefinitionTerm`s and the corresponding
   /// `TermDefinitions`, in addition to optional term classifiers.
-  DefinitionListItem(body_nodes::DefinitionListItem),
+  DefinitionListItem,
 
   /// #### DefinitionTerm
   /// The term that is to be defined in a `DefinitionList`.
-  DefinitionTerm(body_nodes::Term),
+  DefinitionTerm,
 
   /// #### Classifier
   /// A classifier for a `DefinitionTerm` in a `DefinitionList`.
   /// Could be the type of a varible in a function decraration, or something similar.
-  Classifier(body_nodes::Classifier),
+  Classifier,
 
   /// #### TermDefinition
   /// A definition of a term in a `DefinitionList`.
-  TermDefinition(body_nodes::Definition),
+  TermDefinition,
 
   /// #### FieldList
   /// A list of fields, that are used as a part of the
