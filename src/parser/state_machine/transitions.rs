@@ -313,7 +313,7 @@ impl StateMachine {
   /// A pattern that signifies the start of a field list, such as a bibliography.
   /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
   /// as ": " signifies the end of a list marker.
-  const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S[^:]*\S)):(?: +|$)";
+  const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S(?:(?:: ){0}|.)*\S)):(?: +|$)";
 
   /// #### PARAGRAPH_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
