@@ -281,34 +281,39 @@ impl StateMachine {
   /// A pattern for Arabic numerals with a closing period
   const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
 
-  /// A pattern for Arabic numerals with closing parentheses
+  /// A pattern for lower case alphabetic numerals with closing parentheses
   const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
+  /// A pattern for lower case alphabetic numerals with a closing right parenthesis
   const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
+  /// A pattern for lower case alphabetic numerals with a closing period
   const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
 
-  /// A pattern for Arabic numerals with closing parentheses
+  /// A pattern for upper case alphabetic numerals with closing parentheses
   const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
+  /// A pattern for upper case alphabetic numerals with a closing right parenthesis
   const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
+  /// A pattern for upper case alphabetic numerals with a closing period
   const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
 
-  /// A pattern for Arabic numerals with closing parentheses
+  /// A pattern for lower Roman numerals with closing parentheses
   const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
+  /// A pattern for lower Roman numerals with a closing right parenthesis
   const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
+  /// A pattern for lower Roman numerals with a closing period
   const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
 
-  /// A pattern for Arabic numerals with closing parentheses
+  /// A pattern for upper Roman numerals with closing parentheses
   const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
+  /// A pattern for upper Roman numerals with a closing right parenthesis
   const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
+  /// A pattern for upper Roman numerals with a closing period
   const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
 
+  /// #### FIELD_MARKER_PATTERN
+  /// A pattern that signifies the start of a field list, such as a bibliography.
+  /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
+  /// as ": " signifies the end of a list marker.
+  const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S[^:]*\S)):(?: +|$)";
 
   /// #### PARAGRAPH_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
