@@ -309,43 +309,11 @@ impl StateMachine {
   /// A pattern for Arabic numerals with a closing period
   const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
 
-  /// #### ENUMERATOR_PATTERN
-  /// A pattern for matching enumerated list items.
-  const ENUMERATOR_PATTERN: &'static str = r"(?x) # Insignificant whitespace mode on
-    ^(?P<indent>\s*)
-    (?: # Enumerator types
-      \(
-        (?: # Both parentheses around enumerator
-          (?P<arabic_parens>[0-9]+)
-          | (?P<lower_alpha_parens>[a-z])
-          | (?P<upper_alpha_parens>[A-Z])
-          | (?P<lower_roman_parens>[ivxlcdm]+)
-          | (?P<upper_roman_parens>[ICXLCDM]+)
-        )
-      \)
-    | (?: # Only right parenthesis after enumerator
-        (?P<arabic_rparen>[0-9]+)
-        | (?P<lower_alpha_rparen>[a-z])
-        | (?P<upper_alpha_rparen>[A-Z])
-        | (?P<lower_roman_rparen>[ivxlcdm]+)
-        | (?P<upper_roman_rparen>[ICXLCDM]+)
-      ) \)
 
-    | (?: # Period after enumerator
-        (?P<arabic_period>[0-9]+)
-        | (?P<lower_alpha_period>[a-z])
-        | (?P<upper_alpha_period>[A-Z])
-        | (?P<lower_roman_period>[ivxlcdm]+)
-        | (?P<upper_roman_period>[ICXLCDM]+)
-      ) \.
-    )
-    (?:\ +|$)";
-
-
-    /// #### PARAGRAPH_PATTERN
-    /// A pattern for detecting any text, possibly beginning with whitespace.
-    /// This pattern should generally be tested against only after all other
-    /// possibilities have been eliminated. 
-    const PARAGRAPH_PATTERN: &'static str = r"^(\s*)\S";
+  /// #### PARAGRAPH_PATTERN
+  /// A pattern for detecting any text, possibly beginning with whitespace.
+  /// This pattern should generally be tested against only after all other
+  /// possibilities have been eliminated. 
+  const PARAGRAPH_PATTERN: &'static str = r"^(\s*)\S";
 
 }
