@@ -188,6 +188,30 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 }
 
 
+pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let tree_wrapper = doctree.unwrap();
+
+  let detected_field_name = captures.get(1).unwrap().as_str();
+
+  // Find out required field list indent from next line indentation
+  let next_line_indent = if let Some(text) = src_lines.get(*current_line + 1) {
+    Some(text.chars().take_while(|c| c.is_whitespace()).count())
+  } else {
+    None
+  };
+
+  // Take the cursor being on the last line into account
+  if next_line_indent.is_none() {
+    todo!()
+  }
+
+  // Parse first block of the field list.
+
+  todo!()
+}
+
+
 pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
