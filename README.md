@@ -11,7 +11,6 @@ This is subject to change as the project advances further.
 src
 ├── bin
 ├── doctree
-│   ├── body_nodes.rs
 │   ├── mod.rs
 │   ├── tests.rs
 │   └── tree_zipper.rs
@@ -33,6 +32,6 @@ src
 │   └── types_and_aliases.rs
 └── utils.rs
 
-4 directories, 19 files
+4 directories, 18 files
 ```
 If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo test`.
