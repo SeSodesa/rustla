@@ -17,50 +17,57 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
+  let sublist_data = TreeNodeType::BulletList {
+    bullet: detected_bullet,
+    bullet_indent: detected_bullet_indent,
+    text_indent: detected_text_indent,
+  };
+
   // Are we focused on a node where we care about the indentation and such?
   match tree_wrapper.tree.node.data {
 
-    TreeNodeType::BulletListItem {bullet, bullet_indent, text_indent } => {
-
-      match (detected_bullet, detected_bullet_indent, detected_text_indent) {
-        (detected_bullet, detected_bullet_indent, detected_text_indent)
-        if detected_bullet_indent == text_indent => {
-
-          // Focused on list node and sublist detected...
-
-          let sublist_data = TreeNodeType::BulletList {
-            bullet: detected_bullet,
-            bullet_indent: detected_bullet_indent,
-            text_indent: detected_text_indent,
-          };
-
-          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
-
-          return TransitionResult::Success {
-            doctree: tree_wrapper,
-            next_state: Some(StateMachine::BulletList),
-            push_or_pop: PushOrPop::Push,
-            line_advance: LineAdvance::None,
-            nested_state_stack: None
-          }
-
+    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
+      if detected_bullet_indent == text_indent {
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: Some(StateMachine::BulletList),
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
-
-        (_,_,_) => { // Not a sublist so must be a parent list or some such
-
-          tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-
-          return TransitionResult::Success {
-            doctree: tree_wrapper,
-            next_state: None,
-            push_or_pop: PushOrPop::Pop,
-            line_advance: LineAdvance::None,
-            nested_state_stack: None
-          }
-
+      } else {
+        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
       }
+    }
 
+    TreeNodeType::FieldListItem {body_indent, .. } => {
+      if detected_bullet_indent == body_indent {
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: Some(StateMachine::BulletList),
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
+        }
+      } else {
+        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
+        }
+      }
     }
 
     _ => () // No troublesome data found
