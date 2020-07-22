@@ -312,7 +312,7 @@ impl Parser {
       }
     };
 
-    ParsingResult::EOF { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
+    ParsingResult::EOF { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
 
   }
 

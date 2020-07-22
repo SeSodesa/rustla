@@ -934,9 +934,56 @@ An ending paragraph...
     _ => panic!()
   }
 
-  todo!()
-
 }
+
+
+#[test]
+fn field_list_02 () {
+
+  let src = String::from("
+    :field marker 1: Marker body
+  and a line with too little indentation
+
+
+An ending paragraph...
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::FieldList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::Paragraph { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[3].data {
+    TreeNodeType::EmptyLine => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[4].data {
+    TreeNodeType::EmptyLine => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[5].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+}
+
 
 #[test]
 fn upper_roman_to_usize_01 () {
