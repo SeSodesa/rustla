@@ -13,7 +13,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 18] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 19] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
@@ -35,6 +35,8 @@ impl StateMachine {
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, body::field_marker),
 
     (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];
@@ -113,8 +115,9 @@ impl StateMachine {
 
   /// ### FIELD_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::FieldList`.
-  pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
-
+  pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+    (PatternName::EmptyLine, StateMachine::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, field_list::field_marker),
   ];
 
   /// ### OPTION_LIST_TRANSITIONS
@@ -313,7 +316,7 @@ impl StateMachine {
   /// A pattern that signifies the start of a field list, such as a bibliography.
   /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
   /// as ": " signifies the end of a list marker.
-  const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S(?:(?:: ){0}|.)*\S)):(?: +|$)";
+  const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S.*\S)):(?: +|$)";
 
   /// #### PARAGRAPH_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
