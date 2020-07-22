@@ -875,6 +875,70 @@ fn mixed_nested_lists_01 () {
 
 
 #[test]
+fn field_list_01 () {
+
+  let src = String::from("
+:field marker 1: Marker body
+  with a line indented relative to it
+
+:field marker 2: Body with
+    some more indentation
+    and a third line as well
+
+    * and
+    * why
+    * not
+    * a list
+    * as well
+
+An ending paragraph...
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::FieldList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].children[2].data {
+    TreeNodeType::BulletList { .. } => (),
+    _ => panic!()
+  }
+
+  todo!()
+
+}
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";

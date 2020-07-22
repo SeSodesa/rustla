@@ -593,9 +593,6 @@ impl Parser {
   /// returns an error message in an `Err`.
   fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: bool, remove_indent: bool, alignment: Option<usize>) -> Result<(Vec<String>, usize), String> {
 
-    eprintln!("Reading text block...\n^^^^^^^^^^^^^^^^^^^^^");
-
-
     let mut line_num = start_line;
     let last_line = src_lines.len();
 
