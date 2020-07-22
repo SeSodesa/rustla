@@ -35,62 +35,65 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
   eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
 
-  // Matching detected parameters against corresponding list ones and proceeding accordingly
-  match (detected_delims, detected_kind, detected_enumerator_indent, detected_text_indent) {
+  match tree_wrapper.tree.node.data {
 
-    (delims, kind, enum_indent, text_indent) if delims == list_delims && kind == list_kind && enum_indent == list_enumerator_indent && detected_enum_as_usize == list_item_number + list_start_index => {
+    TreeNodeType::EnumeratedList { delims, kind, enumerator_indent, latest_text_indent, n_of_items, start_index } => {
 
-      // All parameters are the same, so this ListItem is a direct child of the current EnumeratedList.
-      // Create a new ListItem node, focus on it and push a ListItem state on top of the parser stack.
+      if delims == detected_delims && kind == list_kind && enumerator_indent == detected_enumerator_indent && detected_enum_as_usize == list_item_number + list_start_index {
+        // Modify list parameters
+        match &mut tree_wrapper.tree.node.data {
+          TreeNodeType::EnumeratedList {n_of_items, latest_text_indent, ..} => {
+            *n_of_items += 1;
+            *latest_text_indent = detected_text_indent;
+          },
+          _ => return TransitionResult::Failure {
+            message: String::from("Only enumerated lists keep track of the number of item nodes in them...\n")
+          }
+        }
 
-      match &mut tree_wrapper.tree.node.data {
-        TreeNodeType::EnumeratedList {n_of_items, latest_text_indent, ..} => {
-          *n_of_items += 1;
-          *latest_text_indent = text_indent;
-        },
-        _ => return TransitionResult::Failure {
-          message: String::from("Only enumerated lists keep track of the number of item nodes in them...\n")
+        let item_node_data = TreeNodeType::EnumeratedListItem {
+          delims: delims,
+          kind: kind,
+          index_in_list: detected_enum_as_usize,
+          enumerator_indent: detected_enumerator_indent,
+          text_indent: detected_text_indent
+        };
+
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+
+        let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent, None) {
+          Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+          None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+        };
+
+        tree_wrapper = doctree;
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::Some(offset),
+          nested_state_stack: Some(state_stack)
+        }
+
+      } else {
+        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
       }
-
-      let item_node_data = TreeNodeType::EnumeratedListItem {
-        delims: delims,
-        kind: kind,
-        index_in_list: detected_enum_as_usize,
-        enumerator_indent: enum_indent,
-        text_indent: text_indent
-      };
-
-      tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
-
-      let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent, None) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
-      };
-
-      tree_wrapper = doctree;
-
-      TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: None,
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(offset),
-        nested_state_stack: Some(state_stack)
-      }
     }
 
-    _ => {
-      eprintln!("No specific instruction for found detected enumerator parameters.\nSimply POPping from stack in hopes of the previous state knowing better...\n");
+    _ => {} // Not inside enumerated list...
 
-      tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+  }
 
-      TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: None,
-        push_or_pop: PushOrPop::Pop,
-        line_advance: LineAdvance::None,
-        nested_state_stack: None
-      }
-    }
+  TransitionResult::Failure {
+    message: format!("Only enumerated lists may contain enumerated list items.\nComputer says no...\n")
   }
 }
