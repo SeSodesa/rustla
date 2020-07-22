@@ -541,17 +541,16 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     eprintln!("Line before nested parse: {:?}...\n", current_line);
 
 
+    let relative_first_indent = first_indent.or(None);
     let relative_block_indent = text_indent - base_indent;
-    eprintln!("Text indent: {:#?}\n", text_indent);
-    eprintln!("Relative block indent: {:#?}\n", relative_block_indent);
 
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), Some(relative_block_indent)) {
+    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), relative_first_indent) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
         (lines.join("\n"), line_offset)
       }
