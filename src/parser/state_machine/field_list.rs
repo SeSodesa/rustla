@@ -50,10 +50,10 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_state: Some(StateMachine::ListItem),
+          next_state: None,
           push_or_pop: PushOrPop::Push,
           line_advance: LineAdvance::Some(offset),
-          nested_state_stack: None
+          nested_state_stack: Some(state_stack)
         }
 
       } else {
