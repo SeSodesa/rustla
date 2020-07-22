@@ -13,7 +13,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let detected_item_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
+  let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
@@ -26,133 +26,55 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
     }
   };
 
-  // If bullet and indentation match with current list node, continue with current list.
-  // Else check for possible sublist or need to break out of current list and act accordingly.
-  match (detected_item_bullet, detected_bullet_indent, detected_text_indent) {
 
-    (bullet, b_indent, t_indent) if bullet == list_bullet && b_indent == list_bullet_indent => {
+  match tree_wrapper.tree.node.data {
 
-      // Still within same list based on indentation and bullet.
-      // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
-      // parse body elements on the same indentation level
+    TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
 
-      let item_node_data = TreeNodeType::BulletListItem{
-        bullet: bullet,
-        bullet_indent: b_indent,
-        text_indent: t_indent
-      };
+      if bullet == detected_bullet && bullet_indent == detected_bullet_indent && text_indent == detected_text_indent {
+        // Still within same list based on indentation and bullet.
+        // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
+        // parse body elements on the same indentation level
 
-      tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+        let item_node_data = TreeNodeType::BulletListItem{
+          bullet: bullet,
+          bullet_indent: detected_bullet_indent,
+          text_indent: detected_text_indent
+        };
 
-      let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, t_indent, None) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
-      };
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
-      tree_wrapper = doctree;
+        let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None) {
+          Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+          None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+        };
 
-      return TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: None,
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(offset),
-        nested_state_stack: Some(state_stack)
-      }
+        tree_wrapper = doctree;
 
-    },
-
-    (bullet, b_indent, t_indent) if bullet != list_bullet && t_indent == list_text_indent => {
-
-      // If bullet doesn't match but indent is the same, we have another list on the same level
-      //   => simply move focus back to parent (body or another list) so the new list might be appended to it
-
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-        Ok(parent) => parent,
-        Err(node_itself) => {
-          return TransitionResult::Failure {
-            message: String::from("Encountered list on same level but couldn't focus on list parent.\n")
-          }
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::Some(offset),
+          nested_state_stack: Some(state_stack)
         }
-      };
-
-      return TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: None,
-        push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::None,
-        nested_state_stack: None
-      }
-
-    },
-
-    (bullet, b_indent, t_indent) if b_indent < list_bullet_indent => {
-
-      // Less indent after discovering a bullet means a sublist has ended,
-      // regardless of bullet type.
-      // Move focus back to parent and pop from machine stack.
-
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-        Ok(parent) => parent,
-        Err(node_itself) => {
-          return TransitionResult::Failure {
-            message: String::from("Encountered a list item with less indent but couldn't focus on list parent.\n")
-          }
+      } else {
+        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+        return TransitionResult::Success {
+          doctree: tree_wrapper,
+          next_state: None,
+          push_or_pop: PushOrPop::Pop,
+          line_advance: LineAdvance::None,
+          nested_state_stack: None
         }
-      };
-
-      return TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: None,
-        push_or_pop: PushOrPop::Pop,
-        line_advance: LineAdvance::None,
-        nested_state_stack: None
-      }
-
-    },
-
-    (bullet, b_indent, t_indent) if b_indent == list_text_indent => {
-
-      // More indent after discovering a bullet means a sublist has started,
-      // regardless of bullet type.
-      // Create an entirely new bullet list node, focus on it, add it to the children of the current list
-      // and have the parser push a new bullet machine on top of the
-      // parser stack to signify an increase in nesting level.
-
-      let bullet_list_data = TreeNodeType::BulletList{bullet: bullet, bullet_indent: b_indent, text_indent: t_indent};
-
-      let list_node = TreeNode::new(bullet_list_data);
-
-      let list_machine = StateMachine::BulletList;
-
-      tree_wrapper.tree.push_child(list_node);
-
-      // Move focus to the nested list node
-      tree_wrapper.tree = match tree_wrapper.tree.focus_on_last_child() {
-        Ok(child_zipper) => child_zipper,
-        Err(node_itself) => {
-          return TransitionResult::Failure {
-            message: String::from("An error occurred when shifting focus to sublist.\n")
-          }
-        }
-      };
-
-      eprintln!("{:#?}\n", tree_wrapper.tree.node.data);
-
-      return TransitionResult::Success {
-        doctree: tree_wrapper,
-        next_state: Some(StateMachine::BulletList),
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::None,
-        nested_state_stack: None
       }
 
     }
 
     _ => {
       return TransitionResult::Failure {
-        message: String::from("No action for this type of bullet--indent combination\n")
+        message: String::from("Tried parsing a bullet list item osutide of a bullet list.\nComputer says no...\n")
       }
     }
   }
-
 }

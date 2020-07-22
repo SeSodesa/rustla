@@ -34,21 +34,28 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
             message: format!("Tried parsing a field marker on line {} for inline nodes but none found.\nMarker not valid...\n", current_line)
           }
         };
-        let item_node_data = TreeNodeType::FieldListItem {
-          raw_marker_name: detected_marker_name.to_string(),
-          marker_name_as_inline_nodes: marker_inline_nodes,
-          marker_indent: detected_marker_indent,
-          body_indent: detected_body_indent
-        };
-
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
 
         let (doctree, offset, state_stack) = if one_line_body {
+          let item_node_data = TreeNodeType::FieldListItem {
+            raw_marker_name: detected_marker_name.to_string(),
+            marker_name_as_inline_nodes: marker_inline_nodes,
+            marker_indent: detected_marker_indent,
+            body_indent: detected_text_indent
+          };
+          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
           match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None) {
             Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
             None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
           }
         } else {
+          let item_node_data = TreeNodeType::FieldListItem {
+            raw_marker_name: detected_marker_name.to_string(),
+            marker_name_as_inline_nodes: marker_inline_nodes,
+            marker_indent: detected_marker_indent,
+            body_indent: detected_body_indent
+          };
+
+          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
           match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent)) {
             Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
             None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}

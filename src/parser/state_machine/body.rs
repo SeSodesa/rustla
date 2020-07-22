@@ -218,6 +218,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
           nested_state_stack: None
         }
       } else {
+        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
         return TransitionResult::Success {
           doctree: tree_wrapper,
           next_state: None,

@@ -986,6 +986,90 @@ An ending paragraph...
 
 
 #[test]
+fn field_list_03 () {
+
+  let src = String::from("
+  :Date: 2001-08-16
+  :Version: 1
+  :Authors: - Me
+            - Myself
+            - I
+  :Indentation: Since the field marker may be quite long, the second
+     and subsequent lines of the field body do not have to line up
+     with the first line, but they must be indented relative to the
+     field name marker, and they must line up with each other.
+  :Parameter i: integer
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::FieldList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Paragraph { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].children[0].data {
+    TreeNodeType::Paragraph { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[2].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[2].children[0].data {
+    TreeNodeType::BulletList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[3].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[3].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[4].data {
+    TreeNodeType::FieldListItem { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[4].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
