@@ -8,6 +8,7 @@ mod body;
 mod bullet_list;
 mod common;
 mod enumerated_list;
+mod field_list;
 mod inline;
 mod list_item;
 pub mod transitions;
