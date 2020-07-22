@@ -77,10 +77,3 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
   }
 
 }
-
-
-fn parse_raw_marker_str_for_inline_nodes (marker_str: &str, current_line: &mut usize) -> Option<Vec<TreeNode>> {
-  
-  Parser::inline_parse(marker_str.to_string(), current_line)
-  
-}
