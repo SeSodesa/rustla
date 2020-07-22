@@ -302,7 +302,6 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   match tree_wrapper.tree.node.data {
 
     TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem {text_indent, .. } => {
-
       if detected_indent == text_indent { // Contained paragraphs need to be aligned...
         tree_wrapper.tree.push_child(paragraph_node);
         return TransitionResult::Success {
