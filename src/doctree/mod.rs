@@ -257,7 +257,7 @@ pub enum TreeNodeType {
   /// reStructuredText extension syntax, such as directives.
   /// Bibliographies are a special case of these types of lists.
   FieldList {
-
+    marker_indent: usize,
   },
 
   /// #### FieldListItem
@@ -272,7 +272,8 @@ pub enum TreeNodeType {
   /// ```
   FieldListItem {
     name: String,
-
+    marker_indent: usize,
+    body_indent: usize,
   },
 
   /// #### FieldBody
