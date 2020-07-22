@@ -149,7 +149,7 @@ impl TreeNode {
 /// ### TreeNodeType
 /// An enumaration of the different possible document
 /// node types.
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub enum TreeNodeType {
 
   /// #### Root
@@ -271,7 +271,8 @@ pub enum TreeNodeType {
   ///         +-----------------------------------+
   /// ```
   FieldListItem {
-    name: String,
+    raw_marker_name: String,
+    marker_name_as_inline_nodes: Vec<TreeNode>,
     marker_indent: usize,
     body_indent: usize,
   },
