@@ -288,6 +288,44 @@ impl StateMachine {
   /// as ": " signifies the end of a list marker.
   const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S.*\S)):(?: +|$)";
 
+
+  // ========================
+  // Explicit markup patterns
+  // ========================
+
+  /// #### FOOTNOTE_PATTERN
+  /// A pattern for matching against footnotes.
+  /// A footnote label might be a sequence of digits,
+  /// a single `#`, a simple reference name or an asterisk `*`.
+  /// Different label formats have different functions,
+  /// such as auto-numbering with `#`.
+  const FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+|\#|\#[a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*|\*)\](?:[ ]+|$)";
+
+
+  /// #### CITATION_PATTERN
+  /// A pattern for matching against citations.
+  /// Similar to `FOOTNOTE_PATTERN`, but only
+  /// recognizes simple reference names in labels.
+  const CITATION_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+
+
+  /// #### HYPERLINK_TARGET_PATTERN
+  /// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
+  /// with and underscore `_`, the latter of which signifies an anonymous link.
+  const HYPERLINK_TARGET_PATTERN: &'static str = r"^(\s*)\.\.[ ]+_([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*|_):(?:[ ]+|$)";
+
+
+  /// #### SUBSTITUTION_DEF_PATTERN
+  /// A patterns for matching substitution definitions, a.k.a. macros.
+  const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
+
+
+  /// #### DIRECTIVE_PATTERN
+  /// A pattern for matching directives. The directive label is used to determine the type of directive
+  /// inside a transition function. The label itself if a simple reference name (an identifier).
+  const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
+
+
   /// #### PARAGRAPH_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
   /// This pattern should generally be tested against only after all other
