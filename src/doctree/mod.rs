@@ -22,33 +22,13 @@ pub struct DocTree {
   /// Holds the tree focused on a specific node.
   pub tree: TreeZipper,
 
-  /// #### src_line
-  /// The row currently under inspection by the parser.
-  src_line: usize,
-
-  /// #### indirect_target_nodes
-  /// A vector of indirect target nodes.
-  indirect_target_nodes: NodeRefVec,
-
-  /// #### substitutiton_defs
-  /// A map of substitution names to nodes containing substitution definitions.
-  substitution_defs: HashMap<String, TreeNodeType>,
-
-  /// #### substitution_names
-  /// A mapping of case-normalized substitution names to the original names.
-  substitution_names: HashMap<String, String>,
-
-  /// #### refs_to_nodes
-  /// A mapping of reference names to reference nodes.
-  refs_to_nodes: HashMap<String, NodeRefVec>,
-
-  /// #### ids_to_nodes
-  /// A mapping of ids to vectors of reference nodes.
-  ids_to_nodes: HashMap<usize, NodeRefVec>,
-
-  /// #### names_to_ids
-  /// A mapping of node names to their unique ids.
-  names_to_ids: HashMap<String, usize>,
+  /// #### node_counter
+  /// Keeps track of how many nodes have been added to the tree thus far
+  /// besides the root node, that gets an ID of `0`. Some nodes might differ
+  /// in their behaviour depending on their insertion order into the tree.
+  /// For example, a field list will be transformed into bibliographic data,
+  /// if it is the first non-(whitespace|comment) node in the tree.
+  node_counter: u32,
 
 }
 
@@ -61,6 +41,8 @@ impl DocTree {
   /// A `DocTree` constructor.
   pub fn new(doc_name: String) -> Self {
 
+    let root_id: u32 = 0;
+
     let root_data = TreeNodeType::Root{doc_name};
 
     let root_node = TreeNode::new(root_data);
@@ -69,13 +51,7 @@ impl DocTree {
 
     DocTree {
       tree: zipper,
-      src_line: 0,
-      indirect_target_nodes: Vec::new(),
-      substitution_defs: HashMap::new(),
-      substitution_names: HashMap::new(),
-      refs_to_nodes: HashMap::new(),
-      ids_to_nodes: HashMap::new(),
-      names_to_ids: HashMap::new(),
+      node_counter: root_id,
     }
 
   }
