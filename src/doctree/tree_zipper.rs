@@ -33,13 +33,7 @@ impl TreeZipper {
   /// ### push child
   /// Adds a child node to the contained node.
   pub fn push_child (&mut self, tree_node: TreeNode) {
-    match self.node.push_child(tree_node) {
-      Ok(()) => (),
-      Err(e) => {
-        eprintln!("{:#?}\n", e);
-        panic!()
-      }
-    } 
+    self.node.push_child(tree_node);
   }
 
 
@@ -197,13 +191,7 @@ impl TreeZipper {
 
     let list_node = TreeNode::new(node_data);
 
-    match self.node.push_child(list_node) {
-      Ok(()) => (),
-      Err(e) => {
-        eprintln!("{:#?}", e);
-        return Err(self)
-      }
-    }
+    self.node.push_child(list_node);
 
     let node_result = match self.focus_on_last_child() {
       Ok(child_zipper) => Ok(child_zipper),

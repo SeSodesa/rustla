@@ -83,35 +83,33 @@ impl TreeNode {
 
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
-  pub fn push_child (&mut self, node : TreeNode) -> Result<(), String> {
+  pub fn push_child (&mut self, node : TreeNode) {
 
     if self.child_is_allowed(&node.data) {
       self.children.push(node);
     } else {
-      return Err(format!("Child of type {:#?} not allowed inside a {:#?}", node.data, self.data))
+      eprintln!("Child of type {:#?} not allowed inside a {:#?}", node.data, self.data);
+      panic!();
     }
-    
-    Ok(())
   }
 
 
   /// ### append_children
   /// Appends multiple children to `self.children`.
-  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) -> Result<(), String> {
+  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
 
     // Check whether all children are valid
     for child in children.iter() {
       if self.child_is_allowed(&child.data) {
         continue
       } else {
-        eprintln!("Found incompatible child {:#?} when appending children to {:#?}...\n", child.data, self.data);
+        eprintln!("Found incompatible child {:#?} when appending children to {:#?}.\nComputer says no...\n", child.data, self.data);
         panic!();
       }
-  }
+    }
 
     self.children.append(children);
 
-    Ok(())
   }
 
   /// ### traverse
