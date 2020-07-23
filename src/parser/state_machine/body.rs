@@ -375,3 +375,33 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   }
 
 }
+
+
+// ==================
+//  Helper functions
+// ==================
+
+
+/// ### match_parent_indent
+/// Checks the indentation of the given parent (current) node and whether the relevant detected indent matches with it.
+/// If the indent matches, we can push to the current node and focus on the new node. Otherwise
+fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize, next_state: StateMachine) -> bool {
+
+  // Match against the parent node. Only document root ignores indentation;
+  // inside any other container it makes a difference.
+  match parent_data {
+
+    TreeNodeType::Root { .. } => true,
+
+    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
+      if relevant_detected_indent == *text_indent { true } else { false }
+    }
+
+    TreeNodeType::FieldListItem {body_indent, .. } => {
+      if relevant_detected_indent == *body_indent { true } else { false }
+    },
+
+    _ => false // else, do nothing...
+  }
+
+}

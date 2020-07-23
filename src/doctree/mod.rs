@@ -88,7 +88,7 @@ impl TreeNode {
     if self.child_is_allowed(&node.data) {
       self.children.push(node);
     } else {
-      eprintln!("Child of type {:#?} not allowed inside a {:#?}", node.data, self.data);
+      eprintln!("Child of type {:#?} not allowed inside a {:#?}.\nComputer says no...\n", node.data, self.data);
       panic!();
     }
   }
