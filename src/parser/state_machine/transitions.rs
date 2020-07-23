@@ -244,7 +244,7 @@ impl StateMachine {
 
   /// #### BULLET_PATERN
   /// A pattern for matching bullet list bullets.
-  const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}])(?: +|$)";
+  const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
 
   /// A pattern for Arabic numerals with closing parentheses
