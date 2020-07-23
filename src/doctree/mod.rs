@@ -83,10 +83,15 @@ impl TreeNode {
 
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
-  pub fn push_child (&mut self, node : TreeNode) {
+  pub fn push_child (&mut self, node : TreeNode) -> Result<(), String> {
 
-    self.children.push(node);
-
+    if self.child_is_allowed(&node.data) {
+      self.children.push(node);
+    } else {
+      return Err(format!("Child of type {:#?} not allowed inside a {:#?}", node.data, self.data))
+    }
+    
+    Ok(())
   }
 
 
@@ -126,10 +131,38 @@ impl TreeNode {
           | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote          | TreeNodeType::Citation
           | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive         | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment             => true,
+          | TreeNodeType::Comment             | TreeNodeType::EmptyLine         => true,
           _ => false
         }
       },
+
+      TreeNodeType::BulletList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      TreeNodeType::EnumeratedList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::EnumeratedListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      TreeNodeType::FieldList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      TreeNodeType::OptionList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::OptionListItem { .. } => true,
+          _ => false
+        }
+      }
 
       TreeNodeType::Paragraph => {
         match node_data {
