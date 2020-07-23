@@ -97,8 +97,21 @@ impl TreeNode {
 
   /// ### append_children
   /// Appends multiple children to `self.children`.
-  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
+  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) -> Result<(), String> {
+
+    // Check whether all children are valid
+    for child in children.iter() {
+      if self.child_is_allowed(&child.data) {
+        continue
+      } else {
+        eprintln!("Found incompatible child {:#?} when appending children to {:#?}...\n", child.data, self.data);
+        panic!();
+      }
+  }
+
     self.children.append(children);
+
+    Ok(())
   }
 
   /// ### traverse
@@ -169,8 +182,9 @@ impl TreeNode {
           TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
           | TreeNodeType::Literal { .. }            | TreeNodeType::InlineTarget { .. }           | TreeNodeType::FootnoteReference { .. }
           | TreeNodeType::CitationReference { .. }  | TreeNodeType::SubstitutionReference { .. }  | TreeNodeType::AbsoluteURI { .. }
-          | TreeNodeType::StandaloneEmail { .. }    => true,
-          _=> false
+          | TreeNodeType::StandaloneEmail { .. }    | TreeNodeType::Text { .. }                   | TreeNodeType::WhiteSpace { .. }
+            => true,
+          _ => false
         }
       },
       _ => false
