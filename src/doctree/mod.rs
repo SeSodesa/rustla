@@ -133,6 +133,7 @@ impl TreeNode {
 
     match self.data {
 
+      // These elements are allowed to contain body level nodes
       TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote          | TreeNodeType::Footnote              | TreeNodeType::Citation  => {
@@ -147,6 +148,7 @@ impl TreeNode {
         }
       },
 
+      // Bullet lists may only contain empty lines or bullet list items
       TreeNodeType::BulletList { .. } => {
         match node_data {
           TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true,
@@ -154,6 +156,7 @@ impl TreeNode {
         }
       }
 
+      // Enumerated lists may only contain empty lines or enumerated list items
       TreeNodeType::EnumeratedList { .. } => {
         match node_data {
           TreeNodeType::EmptyLine | TreeNodeType::EnumeratedListItem { .. } => true,
@@ -161,6 +164,7 @@ impl TreeNode {
         }
       }
 
+      // Field lists may only contain empty lines or field list items
       TreeNodeType::FieldList { .. } => {
         match node_data {
           TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true,
@@ -168,6 +172,7 @@ impl TreeNode {
         }
       }
 
+      // Option lists may only contain empty lines or option list items
       TreeNodeType::OptionList { .. } => {
         match node_data {
           TreeNodeType::EmptyLine | TreeNodeType::OptionListItem { .. } => true,
@@ -175,6 +180,7 @@ impl TreeNode {
         }
       }
 
+      // Only paragraphs may contain inline nodes
       TreeNodeType::Paragraph => {
         match node_data {
           TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
