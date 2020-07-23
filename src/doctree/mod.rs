@@ -55,7 +55,6 @@ impl DocTree {
     }
 
   }
-
 }
 
 
@@ -111,6 +110,39 @@ impl TreeNode {
 
   }
 
+
+  /// ### child_is_allowed
+  /// Checks whether a node is allowed to be inserted into another node.
+  pub fn child_is_allowed (&self, node_data: &TreeNodeType) -> bool {
+
+    match self.data {
+
+      TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
+      | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
+      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote              | TreeNodeType::Citation  => {
+        match node_data {
+          TreeNodeType::Paragraph             | TreeNodeType::BulletList { .. } | TreeNodeType::EnumeratedList { .. }
+          | TreeNodeType::DefinitionList      | TreeNodeType::FieldList { .. }  | TreeNodeType::OptionList
+          | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
+          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote          | TreeNodeType::Citation
+          | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive         | TreeNodeType::SubstitutionDefinition
+          | TreeNodeType::Comment             => true,
+          _ => false
+        }
+      },
+
+      TreeNodeType::Paragraph => {
+        match node_data {
+          TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
+          | TreeNodeType::Literal { .. }            | TreeNodeType::InlineTarget { .. }           | TreeNodeType::FootnoteReference { .. }
+          | TreeNodeType::CitationReference { .. }  | TreeNodeType::SubstitutionReference { .. }  | TreeNodeType::AbsoluteURI { .. }
+          | TreeNodeType::StandaloneEmail { .. }    => true,
+          _=> false
+        }
+      },
+      _ => false
+    }
+  }
 
   /// ### get_data_type
   /// For retrieving an immutable reference to the data type of a node.
@@ -365,6 +397,18 @@ pub enum TreeNodeType {
   /// A generic citation target.
   Citation,
 
+  /// #### HyperlinkTarget
+  /// A target for a hyperlink.
+  HyperlinkTarget,
+
+  /// #### Directive
+  /// One of many differents kinds of directives.
+  Directive,
+
+  /// #### Comment
+  /// An rST comment, that might get removed by the writer of the object code.
+  Comment,
+
 
   // Inline elements
   // ---------------
@@ -386,6 +430,12 @@ pub enum TreeNodeType {
   StrongEmphasis {
     text:String
   },
+
+  /// #### InterpretedText
+  /// Text, whose meaning depends entirely on the given `role`:
+  /// (:role:`content`|`content`:role:). There are predefined roles
+  /// such as `math` or `emphasis`, but others may be defined by applications.
+  InterpretedText,
 
   /// #### Literal
   /// Literal text, usually reserved for code.
