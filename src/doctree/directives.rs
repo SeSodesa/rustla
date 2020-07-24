@@ -4,7 +4,7 @@
 
 use super::*;
 
-/// ### Directive
+/// ### DirectiveType
 /// An enumeration of the different directive types found in reStructuredText and LarST.
 #[derive(Debug)]
 pub enum DirectiveType {
