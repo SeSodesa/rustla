@@ -209,7 +209,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
 // ==================
 
 
-/// ### match_parent_indent
+/// ### parent_indent_matches
 /// Checks the indentation of the given parent (current) node and whether the relevant detected indent matches with it.
 /// If the indent matches, we can push to the current node and focus on the new node. Otherwise
 fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize) -> bool {
