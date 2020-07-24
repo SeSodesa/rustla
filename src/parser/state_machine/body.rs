@@ -23,77 +23,26 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
     text_indent: detected_text_indent,
   };
 
-  // Are we focused on a node where we care about the indentation and such?
-  match tree_wrapper.tree.node.data {
-
-    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
-      if detected_bullet_indent == text_indent {
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: Some(StateMachine::BulletList),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      } else {
-        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_bullet_indent) {
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: Some(StateMachine::BulletList),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    TreeNodeType::FieldListItem {body_indent, .. } => {
-      if detected_bullet_indent == body_indent {
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: Some(StateMachine::BulletList),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      } else {
-        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  } else {
+    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    _ => () // No troublesome data found
-      
   }
 
-  let bullet_list_data = TreeNodeType::BulletList{
-    bullet: detected_bullet,
-    bullet_indent: detected_bullet_indent,
-    text_indent: detected_text_indent
-  };
-
-  tree_wrapper.tree = match tree_wrapper.tree.push_and_focus(bullet_list_data) {
-    Ok(tree) => tree,
-    Err(..) => return TransitionResult::Failure {
-      message: String::from("Couldn't focus on bullet list...\n")
-    }
-  };
-    
-  TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_state: Some(StateMachine::BulletList),
-    push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::None,
-    nested_state_stack: None
-  }
 }
 
 
@@ -140,54 +89,24 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     latest_text_indent: detected_text_indent,
   };
 
-  match tree_wrapper.tree.node.data {
-
-    TreeNodeType::BulletListItem { text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
-      if detected_enumerator_indent == text_indent { // Contained paragraphs need to be aligned...
-
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
-
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: Some(StateMachine::EnumeratedList),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-
-      } else { // paragraph does not belong to this item
-
-        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-          Ok(tree)  => tree,
-          Err(tree) => {
-            eprintln!("INFO: focused on tree root inside transition method...\n");
-            tree
-          }
-        };
-
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_enumerator_indent) {
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: Some(StateMachine::EnumeratedList),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    _ => ()
-
-  }
-
-
-  tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
-
-  TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_state: Some(StateMachine::EnumeratedList),
-    push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::None,
-    nested_state_stack: None
+  } else {
+    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
+    }
   }
 
 }
@@ -205,63 +124,24 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  match tree_wrapper.tree.node.data {
-
-    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
-      if detected_marker_indent == text_indent {
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: Some(StateMachine::FieldList),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      } else {
-        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: Some(StateMachine::FieldList),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    TreeNodeType::FieldListItem {body_indent, .. } => {
-      if detected_marker_indent == body_indent {
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: Some(StateMachine::FieldList),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      } else {
-        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  } else {
+    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    _ => {} // else, do nothing...
-  }
-
-  // If no special container, ignore indentation and blindly push to tree
-  tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
-  TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_state: Some(StateMachine::FieldList),
-    push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::None,
-    nested_state_stack: None
   }
 }
 
@@ -301,77 +181,24 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   paragraph_node.append_children(&mut inline_nodes);
 
   // Check if we are inside a node that cares about indentation
-  match tree_wrapper.tree.node.data {
-
-    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem {text_indent, .. } => {
-      if detected_indent == text_indent { // Contained paragraphs need to be aligned...
-        tree_wrapper.tree.push_child(paragraph_node);
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Neither,
-          line_advance: LineAdvance::Some(1),
-          nested_state_stack: None
-        }
-      } else { // paragraph does not belong to this item
-        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-          Ok(tree)  => tree,
-          Err(tree) => {
-            eprintln!("INFO: focused on tree root inside transition method...\n");
-            tree
-          }
-        };
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_indent) {
+    tree_wrapper.tree.push_child(paragraph_node);
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(1),
+      nested_state_stack: None
     }
-
-    TreeNodeType::FieldListItem {body_indent, .. } => {
-      if detected_indent == body_indent {
-        tree_wrapper.tree.push_child(paragraph_node);
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Neither,
-          line_advance: LineAdvance::Some(1),
-          nested_state_stack: None
-        }
-      } else {
-        tree_wrapper.tree = match tree_wrapper.tree.focus_on_parent() {
-          Ok(tree)  => tree,
-          Err(tree) => {
-            eprintln!("INFO: focused on tree root inside transition method...\n");
-            tree
-          }
-        };
-        return TransitionResult::Success {
-          doctree: tree_wrapper,
-          next_state: None,
-          push_or_pop: PushOrPop::Pop,
-          line_advance: LineAdvance::None,
-          nested_state_stack: None
-        }
-      }
+  } else {
+    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
     }
-
-    _ => () // No troublesome indented nodes as parent, do nothing
-
-  }
-
-  // No troublesome nodes so simply push paragraph to current node
-  tree_wrapper.tree.push_child(paragraph_node);
-
-  TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_state: None,
-    push_or_pop: PushOrPop::Neither,
-    line_advance: LineAdvance::Some(1),
-    nested_state_stack: None
   }
 
 }
@@ -385,7 +212,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
 /// ### match_parent_indent
 /// Checks the indentation of the given parent (current) node and whether the relevant detected indent matches with it.
 /// If the indent matches, we can push to the current node and focus on the new node. Otherwise
-fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize, next_state: StateMachine) -> bool {
+fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize) -> bool {
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
@@ -401,7 +228,9 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
       if relevant_detected_indent == *body_indent { true } else { false }
     },
 
-    _ => false // else, do nothing...
+    // Add other cases here...
+
+    _ => false
   }
 
 }
