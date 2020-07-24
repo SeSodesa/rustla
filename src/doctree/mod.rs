@@ -8,6 +8,8 @@ mod tests;
 
 mod tree_zipper;
 use tree_zipper::TreeZipper;
+mod directives;
+use directives::DirectiveType;
 
 use crate::utils::{EnumDelims, EnumKind};
 
@@ -142,7 +144,7 @@ impl TreeNode {
           | TreeNodeType::DefinitionList      | TreeNodeType::FieldList { .. }  | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote          | TreeNodeType::Citation
-          | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive         | TreeNodeType::SubstitutionDefinition
+          | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment             | TreeNodeType::EmptyLine         => true,
           _ => false
         }
@@ -454,7 +456,9 @@ pub enum TreeNodeType {
 
   /// #### Directive
   /// One of many differents kinds of directives.
-  Directive,
+  Directive {
+    dir_type: DirectiveType,
+  },
 
   /// #### Comment
   /// An rST comment, that might get removed by the writer of the object code.
