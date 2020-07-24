@@ -19,6 +19,8 @@ pub enum DirectiveType {
   SubstitutionDef (SubstitutionDefDirective),
   Miscellaneous (MiscellaneousDirective),
   CommonOptions (CommonOptionDirective),
+
+  APlusrSTTools(AplusDirective)
 }
 
 
@@ -461,5 +463,178 @@ pub enum MiscellaneousDirective {
 /// An enumeration of different common option directive types.
 #[derive(Debug)]
 pub enum CommonOptionDirective {
+
+}
+
+
+/// ### AplusDirectve
+/// 
+/// Directives defined in the A+ rST Tools submodule of the A+ LMS.
+/// 
+/// Details: https://github.com/apluslms/a-plus-rst-tools
+#[derive(Debug)]
+pub enum AplusDirective {
+  
+  /// #### GradedQuestionnaire
+  /// 
+  /// The questionnaire directive arguments define the exercise key and optional max points with the difficulty.
+  /// For example, .. questionnaire:: 1 A50 sets key 1, max points 50 and difficulty A.
+  /// If not set in the directive arguments, the max points will be set to the sum of the question points.
+  /// Setting the difficulty is optional and it can be set even if the max points aren't defined in the argument.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
+  GradedQuestionnaire,
+
+  /// #### FeedbackQuestionnaire
+  /// 
+  /// A feedback questionnaire is almost like a graded questionnaire. When the feedback option is set,
+  /// the questionnaire uses the feedback category and CSS class by default.
+  /// Feedback questionnaires always grant full points if all of the required questions are answered.
+  /// 
+  /// The questionnaire options chapter-feedback, weekly-feedback, appendix-feedback,
+  /// and course-feedback use a different CSS class (with the same name as the option).
+  /// If points are not specified, they are set to zero.
+  /// The feedback option can be set only to one questionnaire in an RST file because the exercise key is then hardcoded to feedback.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#2-feedback-questionnaire
+  FeedbackQuestionnaire,
+
+  /// #### SubmittableExercise
+  /// 
+  /// These types of exercises are configured separately for the MOOC grader by linking a YAML configuration file with the config option.
+  /// Some settings may also be defined directly with the directive options.
+  /// The directive will attach the exercise at this position in the content chapter.
+  /// 
+  /// Its arguments define the exercise key and max points with the optional difficulty.
+  /// The instructions can be written in the body of the submit directive.
+  /// The body supports RST syntax. If the instructions field is also given in the config.yaml,
+  /// the body of the submit directive will be prioritized.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#3-submittable-exercise
+  SubmittableExercise,
+
+  /// ### LTIExercise
+  /// 
+  /// This exercise opens an external tool via the LTI launch protocol.
+  /// The LTI service must be configured beforehand in A+ by an administrator.
+  /// The lti option refers to the label of the LTI service.
+  /// The url option may exclude the domain of the service URL since the domain
+  /// must be equal to the URL defined in the LTI service anyway.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#4-external-exercise-lti
+  LTIExercise,
+
+  /// #### RoundSettings
+  /// 
+  /// The meta directive is used to define module (exercise round) settings. It should be defined in the RST
+  /// file that defines the toctree of the module (module index). Furthermore, it may be used in chapters to hide them (i.e.,
+  /// set status hidden) with the hidden option or to set the chapter audience with the audience option.
+  /// 
+  /// Details: Details: https://github.com/apluslms/a-plus-rst-tools#5-meta-exercise-round-settings
+  RoundSettings,
+
+  /// #### ActiveElementInput
+  /// 
+  /// This creates an input field for active element.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#6-active-element-input
+  ActiveElementInput,
+
+  /// #### ActiveElementOutput
+  /// 
+  /// This creates an output field for active element.
+  ///
+  /// More active element examples can be found at
+  /// https://version.aalto.fi/gitlab/piitulr1/active-element-example
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#7-active-element-output
+  ActiveElementOutput,
+
+  /// #### HiddenBlock
+  /// 
+  /// Directive for creating hidden content blocks. The content can be shown/hidden by clicking the link.
+  /// (This uses the Bootstrap collapse component.)
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#8-hidden-block
+  HiddenBlock,
+
+  /// #### PointOfInterest
+  /// 
+  /// Directive for creating a "point of interest" summary block.
+  /// This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "point_of_interest"]).
+  /// A point of interest is mostly like a normal admonition ("coloured info box"), but they are also linked to each other with next/previous links.
+  /// The links enable the user to quickly navigate between the points of interest.
+  ///
+  /// Point of interests may also be used to generate separate lecture slides (not directly included in the A+ content chapters).
+  /// This requires a separate tool called "presentation maker".
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#9-point-of-interest
+  PointOfInterest,
+
+  /// #### AnnotatedCodeBlock
+  /// 
+  /// Code blocks may be annotated with comments for specific lines. This extension must be activated separately in the project conf.py
+  /// (extensions = ["aplus_setup", "annotated"]).
+  /// This extension requires custom JavaScript code and CSS styles in order to highlight the annotations on mouse hover in the web browser.
+  /// The frontend code is not distributed in this repository (or anywhere).
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#10-annotated-code-blocks
+  AnnotatedCodeBlock,
+
+  /// #### CodeBlockWithLineReference
+  /// 
+  /// With the `lineref-code-block`, you may add links from the chapter contents to specific lines of the code block.
+  /// You define labels enclosed in :: for lines of the code block. Labels can include alphanumeric characters, underscore (_),
+  /// and hyphen (-). The directive is used similarly to the Sphinx directive code-block. This extension must be activated
+  /// separately in the project conf.py (extensions = ["aplus_setup", "codeblock_lineref"]).
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#11-code-blocks-with-line-references
+  CodeBlockWithLineReference,
+
+  /// #### REPLSession
+  /// 
+  /// The repl directive is used to print a (Scala) REPL session (read-eval-print loop).
+  /// This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "repl"]).
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#12-repl-sessions
+  REPLSession,
+
+  /// #### SubmittableACOSExercise
+  /// 
+  /// The custom directive acos-submit behaves almost identically to the normal submit directive.
+  /// It is intended for exercises that are hosted outside the MOOC grader, such as the ACOS server.
+  /// The directive option url should define the URL path of the exercise in the ACOS server.
+  /// The URL domain is added automatically based on the configuration value acos_submit_base_url in conf.py.
+  /// The acos-submit directive also automatically uses the ajax flag of the submit directive.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#13-submittable-acos-exercises
+  SubmittableACOSExercise,
+
+  /// #### HTMLDiv
+  /// 
+  /// The div directive can be used to insert basic <div> html elements into the generated document.
+  /// This is useful for styling and other similar reasons.
+  ///
+  /// Any arguments given to the directive will be added as classes to the resulting element.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#14-html-div-elements
+  HTMLDiv,
+
+  /// #### CSSStyledTopic
+  /// 
+  /// Directive that inserts topic elements that are more friendly to css styling using the bootstrap framework.
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#15-css-styled-topics
+  CSSStyledTopic,
+
+  /// #### Media
+  /// 
+  /// The media directives were developed basically for a single course and they may
+  /// not be quite reusable for other usecases, but they are listed here anyway.
+  /// This extension must be activated separately in the project conf.py
+  /// (extensions = ["aplus_setup", "media"]).
+  /// 
+  /// Details: https://github.com/apluslms/a-plus-rst-tools#16-media-directives
+  Media,
 
 }
