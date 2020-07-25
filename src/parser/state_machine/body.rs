@@ -71,7 +71,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     }
   };
 
-  let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
+  let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, &detected_kind, false, None, None) {
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
       message: String::from("Unknown enumerator type detected...?\n")

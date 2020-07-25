@@ -77,7 +77,7 @@ pub enum EnumDelims {
 /// or lower- or upper-case Roman numerals between `1--4999`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum EnumKind {
-  Arabic, LowerAlpha, UpperAlpha, LowerRoman, UpperRoman,
+  Arabic, LowerAlpha, UpperAlpha, LowerRoman, UpperRoman, Automatic,
 }
 
 /// ### EnumeratorFormat

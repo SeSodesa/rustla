@@ -10,9 +10,10 @@ impl Parser {
   /// ### enum_str_to_int_and_kind
   /// Converts an enumerator &str to an integer using one of the
   /// coverters, if possible.
-  pub fn enum_str_to_int_and_kind (detected_enum_str: &str, detected_kind: &EnumKind, list_item_number: Option<usize>) -> Option<(usize, EnumKind)> {
+  pub fn enum_str_to_int_and_kind (detected_enum_str: &str, detected_kind: &EnumKind, list_kind: &EnumKind, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>) -> Option<(usize, EnumKind)> {
 
     let list_item_number = list_item_number.unwrap_or(0);
+    let list_start_index = list_start_index.unwrap_or(1);
 
     if detected_enum_str == "i" && list_item_number == 0 {
       // LowerRoman list at our hands
@@ -22,6 +23,9 @@ impl Parser {
       return Some((1, EnumKind::UpperRoman))
     }
     
+    let mut detected_kind = *detected_kind;
+    let list_kind = *list_kind;
+
     let detected_enum_as_usize = match detected_kind {
 
       EnumKind::Arabic => {
@@ -54,17 +58,30 @@ impl Parser {
           return None
         }
       }
+
+      EnumKind::Automatic => {
+
+        if list_item_number == 0 && !in_list_item {
+          eprintln!("No items in list yet.\nSetting enumerator kind to Arabic...\n");
+          detected_kind = EnumKind::Arabic;
+        } else {
+          detected_kind = list_kind;
+        }
+        
+        list_item_number + list_start_index
+      }
+
     };
 
     Some(
-      (detected_enum_as_usize, *detected_kind)
+      (detected_enum_as_usize, detected_kind)
     )
 
   }
 
 
   /// ### alpha_to_usize
-  /// Converts and ASCII letter to a corresponding `Option`al integer betweem 1--26 inclusive.
+  /// Converts and ASCII letter to a corresponding `Option`al integer between 1--26 inclusive.
   /// Returns `None` if not successful.
   pub fn alpha_to_usize (alpha_str: &str) -> Option<usize> {
     match alpha_str {

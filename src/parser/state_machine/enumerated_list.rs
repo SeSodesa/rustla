@@ -26,7 +26,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     }
   };
 
-  let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, None) {
+  let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, &list_kind, true, Some(list_item_number), Some(list_start_index)) {
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
       message: String::from("Unknown enumerator type detected...?\n")
@@ -39,7 +39,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
     TreeNodeType::EnumeratedList { delims, kind, enumerator_indent, latest_text_indent, n_of_items, start_index } => {
 
-      if delims == detected_delims && kind == list_kind && enumerator_indent == detected_enumerator_indent && detected_enum_as_usize == list_item_number + list_start_index {
+      if delims == detected_delims && detected_kind == list_kind && enumerator_indent == detected_enumerator_indent && detected_enum_as_usize == list_item_number + list_start_index {
         // Modify list parameters
         match &mut tree_wrapper.tree.node.data {
           TreeNodeType::EnumeratedList {n_of_items, latest_text_indent, ..} => {
@@ -53,7 +53,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
         let item_node_data = TreeNodeType::EnumeratedListItem {
           delims: delims,
-          kind: kind,
+          kind: detected_kind,
           index_in_list: detected_enum_as_usize,
           enumerator_indent: detected_enumerator_indent,
           text_indent: detected_text_indent

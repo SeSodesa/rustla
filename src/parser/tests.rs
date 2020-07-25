@@ -805,6 +805,160 @@ fn enumerated_list_03 () {
 
 
 #[test]
+fn enumerated_list_04 () {
+
+  let src = String::from("
+  (#) First item of automatically numbered list
+
+  (#) Second item of automatically numbered list
+
+  (3) Third item that has to match with the internal counter of the list
+
+  (#) Fourth item of the same list, with automatic numbering, again.
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
+      if index_in_list != 1 { panic!() }
+    },
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
+      if index_in_list != 2 { panic!() }
+    },
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[2].data {
+    TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
+      if index_in_list != 3 { panic!() }
+    },
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[3].data {
+    TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
+      if index_in_list != 4 { panic!() }
+    },
+    _ => panic!()
+  }
+
+}
+
+
+#[test]
+fn enumerated_list_05 () {
+
+  let src = String::from("
+  (i) #) List item i1
+         with a valid second line
+
+      ii) List item i2
+
+      #) List item i3
+
+      First paragraph of list item i.
+
+  (#) List item ii
+
+  (iii) List item iii
+    
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::EnumeratedList { n_of_items, .. } => {
+      if n_of_items != 3 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::EnumeratedList{ .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+    TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
+      if kind != EnumKind::Arabic || index_in_list != 1 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[1].data {
+    TreeNodeType::EnumeratedList { kind, start_index, .. } => {
+      if kind != EnumKind::LowerRoman || start_index != 2 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[1].children[0].data {
+    TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
+      if kind != EnumKind::LowerRoman || index_in_list != 2 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[1].children[1].data {
+    TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
+      if kind != EnumKind::LowerRoman || index_in_list != 3 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].children[2].data {
+    TreeNodeType::Paragraph => {}
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
+      if kind != EnumKind::LowerRoman || index_in_list != 2 { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[2].data {
+    TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
+      if kind != EnumKind::LowerRoman || index_in_list != 3 { panic!() }
+    }
+    _ => panic!()
+  }
+
+}
+
+
+#[test]
 fn mixed_nested_lists_01 () {
 
   let src = String::from("
