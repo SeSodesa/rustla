@@ -59,9 +59,9 @@ pub struct Parser {
   /// The source `String` converted to a vector of owned `String`s.
   src_lines: Vec<String>,
 
-  /// #### current_line
+  /// #### line_cursor
   /// The absolute line index of src_lines.
-  current_line: usize,
+  line_cursor: usize,
 
   /// #### base_indent
   /// The level of basic indentation that the parser is working with.
@@ -98,7 +98,7 @@ impl Parser {
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
-      current_line: 0,
+      line_cursor: 0,
       base_indent: base_indent.unwrap_or(0),
       doctree: Some(doctree),
       state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
@@ -121,11 +121,11 @@ impl Parser {
     // The parsing loop
     loop {
 
-      eprintln!("Line {:#?} state stack: {:#?}\n", self.current_line, self.state_stack);
+      eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor, self.state_stack);
       eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().tree.node.data);
 
       if !line_changed && line_not_changed_count >= 10 {
-        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.current_line);
+        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.line_cursor);
         break
       }
 
@@ -176,7 +176,7 @@ impl Parser {
       for (pattern_name, regex, method) in latest_state_transitions.iter() {
 
         // Fetching a reference to current line
-        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.current_line) {
+        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor) {
           Some(line) => line,
           None => {
             return ParsingResult::Failure { message: String::from("Parsing ended prematurely because of an unqualified move past EOF...\n") }
@@ -196,9 +196,9 @@ impl Parser {
 
           eprintln!("Executing transition method...\n");
 
-          let line_before_transition = self.current_line;
+          let line_before_transition = self.line_cursor;
 
-          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.current_line, self.doctree.take(), captures, pattern_name) {
+          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
 
             TransitionResult::Success{doctree, next_state, push_or_pop, line_advance, nested_state_stack} => {
 
@@ -248,7 +248,7 @@ impl Parser {
                     self.state_stack.append(&mut nested_state_stack.unwrap());
                   } else {
                     return ParsingResult::Failure {
-                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.current_line)
+                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor)
                     }
                   }
 
@@ -261,17 +261,17 @@ impl Parser {
                 (push_or_pop, next_state, nested_state_stack) => {
                   eprintln!("No action for received (PushOrPop, StateMachine, Vec<Statemachine>) = ({:#?}, {:#?}, {:#?}) triplet...\n", push_or_pop, next_state, nested_state_stack);
                   return ParsingResult::Failure {
-                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.current_line)
+                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor)
                   }
                 }
               };
 
               if let LineAdvance::Some(offset) = line_advance {
-                self.current_line += offset;
+                self.line_cursor += offset;
               }
 
               // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
-              if self.current_line == line_before_transition {
+              if self.line_cursor == line_before_transition {
                 line_not_changed_count += 1;
               } else {
                 line_changed = true;
@@ -283,7 +283,7 @@ impl Parser {
             }
 
             TransitionResult::Failure {message} => {
-              eprintln!("{} on line {}", message, self.current_line);
+              eprintln!("{} on line {}", message, self.line_cursor);
               return ParsingResult::Failure { message: String::from("An error was encountered while executing a transition method.\n") }
             }
           };
@@ -310,7 +310,7 @@ impl Parser {
 
       }
 
-      if self.current_line >= self.src_lines.len() {
+      if self.line_cursor >= self.src_lines.len() {
         self.state_stack.push(StateMachine::EOF);
       }
     };
@@ -326,7 +326,7 @@ impl Parser {
   fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
 
     if line < self.src_lines.len() {
-      self.current_line = line;
+      self.line_cursor = line;
     } else {
       return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
     }
@@ -342,13 +342,13 @@ impl Parser {
   /// The called must handle the `Err` case.
   fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
 
-    self.current_line = match self.current_line.checked_add(n) {
+    self.line_cursor = match self.line_cursor.checked_add(n) {
       Some(value) => value,
       None =>
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.current_line > self.src_lines.len() {
+    if self.line_cursor > self.src_lines.len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
@@ -363,13 +363,13 @@ impl Parser {
   /// The called must handle the `Err` case.
   fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
 
-    self.current_line = match self.current_line.checked_sub(n) {
+    self.line_cursor = match self.line_cursor.checked_sub(n) {
       Some(value) => value,
       None =>
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.current_line > self.src_lines.len() {
+    if self.line_cursor > self.src_lines.len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
