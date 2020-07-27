@@ -24,7 +24,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   };
 
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_bullet_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data, tree_wrapper.node_count).unwrap();
+    tree_wrapper = tree_wrapper.push_and_focus(sublist_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::BulletList),
@@ -33,7 +33,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
       nested_state_stack: None
     }
   } else {
-    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: None,
@@ -90,7 +90,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
   };
 
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_enumerator_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data, tree_wrapper.node_count).unwrap();
+    tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::EnumeratedList),
@@ -99,7 +99,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
       nested_state_stack: None
     }
   } else {
-    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: None,
@@ -127,7 +127,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data, tree_wrapper.node_count).unwrap();
+    tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::FieldList),
@@ -136,7 +136,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
       nested_state_stack: None
     }
   } else {
-    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: None,
@@ -177,6 +177,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   let paragraph_data = TreeNodeType::Paragraph;
+  let mut paragraph_node = TreeNode::new_from_id_ref(paragraph_data, &mut tree_wrapper.node_count);
 
   let relative_indent = detected_indent - base_indent;
 
@@ -201,8 +202,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
     }
   };
 
-  // Construct paragraph...
-  let mut paragraph_node = TreeNode::new(paragraph_data, tree_wrapper.node_count);
+  // Add inline nodes to paragraph...
   paragraph_node.append_children(&mut inline_nodes);
 
   // Check if we are inside a node that cares about indentation
@@ -216,7 +216,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
       nested_state_stack: None
     }
   } else {
-    tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+    tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: None,

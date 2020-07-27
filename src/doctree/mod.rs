@@ -58,11 +58,24 @@ impl DocTree {
 
     DocTree {
       tree: TreeZipper::new(root_node, None, None),
-      node_count: root_id,
+      node_count: root_id + 1,
       footnote_data: FootnoteData::new(),
     }
   }
 
+
+  pub fn focus_on_parent (mut self) -> Self {
+
+    self.tree = match self.tree.focus_on_parent() {
+      Ok(tree) => tree,
+      Err(tree) => {
+        eprintln!("INFO: Tried focusing on node parent but no parent found.\n");
+        tree
+      }
+    };
+
+    self
+  }
 
   /// ### push_and_focus
   /// Creates a new node from given data, pushes it to the

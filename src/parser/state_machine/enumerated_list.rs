@@ -59,7 +59,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
           text_indent: detected_text_indent
         };
 
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data, tree_wrapper.node_count).unwrap();
+        tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
 
         let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent, None) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -77,7 +77,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
         }
 
       } else {
-        tree_wrapper.tree = tree_wrapper.tree.focus_on_parent().unwrap();
+        tree_wrapper = tree_wrapper.focus_on_parent();
 
         return TransitionResult::Success {
           doctree: tree_wrapper,
