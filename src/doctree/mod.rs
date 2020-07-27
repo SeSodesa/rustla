@@ -50,7 +50,7 @@ impl DocTree {
   /// A `DocTree` constructor.
   pub fn new(doc_name: String) -> Self {
 
-    let root_id: u32 = 0;
+    let root_id: NodeId = 0;
 
     let root_data = TreeNodeType::Root{doc_name};
 
