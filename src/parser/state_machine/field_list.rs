@@ -62,8 +62,6 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
           }
         };
 
-
-
         tree_wrapper = doctree;
 
         return TransitionResult::Success {
