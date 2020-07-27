@@ -33,7 +33,7 @@ mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
-use crate::utils::{self, EnumDelims, EnumKind};
+use crate::common::{self, EnumDelims, EnumKind};
 
 #[cfg(test)]
 mod tests;
@@ -779,7 +779,7 @@ impl Parser {
             continue
           }
           // eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
-          let trunc_line = match utils::strip_indent(line.clone(), indent) {
+          let trunc_line = match common::strip_indent(line.clone(), indent) {
             Ok(line) => line,
             Err(e) => {
               eprintln!("{}", e);

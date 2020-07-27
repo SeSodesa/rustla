@@ -2,7 +2,7 @@
 
 
 use super::*;
-use crate::utils;
+use crate::common;
 
 #[cfg(test)]
 
@@ -23,7 +23,7 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   eprintln!("{:#?}", lines);
 
@@ -63,7 +63,7 @@ asdfsdafasdfasdfa
     
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   eprintln!("{:#?}", lines);
 
@@ -97,7 +97,7 @@ asdfsdafasdfasdfa
     
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   eprintln!("{:#?}", lines);
 
@@ -140,7 +140,7 @@ asdfsdafasdfasdfa
     
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {
@@ -180,7 +180,7 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {
@@ -220,7 +220,7 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, None, None) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {
@@ -260,7 +260,7 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2)) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {
@@ -309,7 +309,7 @@ fn read_indented_block_05 () {
 asfsadfasdfsad
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2)) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {
@@ -357,7 +357,7 @@ fn read_indented_block_06 () {
 asfsadfasdfsad
 ";
 
-  let lines = utils::str_to_lines(src);
+  let lines = common::str_to_lines(src);
 
   match Parser::read_indented_block(&lines, Some(2), Some(true), None, Some(2), None) {
     Ok((lines, _indent, line_diff, _empty_finish)) => {

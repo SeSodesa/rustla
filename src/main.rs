@@ -7,7 +7,7 @@
 
 mod parser;
 mod doctree;
-mod utils;
+mod common;
 
 use std::io::BufRead;
 use std::{env, process, fs, path, io};
@@ -56,7 +56,7 @@ fn main() {
     println!("{:?} is a file.", path);
   
 
-    let line_iter = match utils::read_path_lines(path) {
+    let line_iter = match common::read_path_lines(path) {
       Ok(lines) => lines,
       Err(_e) => {
         eprintln!("File could not be opened");

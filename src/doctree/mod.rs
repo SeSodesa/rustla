@@ -11,9 +11,9 @@ use tree_zipper::TreeZipper;
 mod directives;
 use directives::DirectiveType;
 mod footnote_data;
-use footnote_data::*;
+use footnote_data::FootnoteData;
 
-use crate::utils::{EnumDelims, EnumKind};
+use crate::common::{EnumDelims, EnumKind, NodeId};
 
 /// ### DocTree
 /// A container for the document tree.
@@ -568,11 +568,6 @@ pub enum TreeNodeType {
   },
 
 }
-
-
-/// ### NodeId
-/// A type alias for an unsigned integer used as a node identifier.
-type NodeId = u32;
 
 
 /// ### Parent

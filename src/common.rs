@@ -60,6 +60,10 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
 
 }
 
+/// ### NodeId
+/// A type alias for an integer used as a node identifier.
+pub type NodeId = u32;
+
 // ==========================
 // Enumerators and converters
 // ==========================
