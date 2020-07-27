@@ -112,6 +112,8 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 }
 
 
+/// ### field_marker
+/// A transitioin function for handling detected field markers in a state that generates body type nodes.
 pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
@@ -146,6 +148,29 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 }
 
 
+/// ### footnote
+/// A transition function for generating footnotes
+pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+  todo!()
+}
+
+
+/// ### citation
+/// A transition function for generating citations
+pub fn citation (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+  todo!()
+}
+
+
+/// ### directive
+/// A transition function for parsing directives in a state that recognizes body elements.
+pub fn directive (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+  todo!()
+}
+
+
+/// ### paragraph
+/// A function that handles the parsing of paragraphs of text.
 pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
