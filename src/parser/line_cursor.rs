@@ -35,7 +35,7 @@ impl <'parser> LineCursor <'parser> {
 
   /// ### increment
   /// Increments both the relative and absolute offsets by given `amount`.
-  pub fn increment (&mut self, amount: usize) {
+  pub fn increment_by (&mut self, amount: usize) {
     self.relative_offset += amount;
     *self.absolute_offset += amount;
   }
