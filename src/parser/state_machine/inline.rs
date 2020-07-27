@@ -7,17 +7,17 @@ use super::*;
 /// ### paired_delimiter
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
   
   let content = captures.get(1).unwrap();
 
   let data = String::from(content.as_str());
 
   let node = match pattern_name {
-    PatternName::StrongEmphasis => TreeNode::new(TreeNodeType::StrongEmphasis{text: data}),
-    PatternName::Emphasis => TreeNode::new(TreeNodeType::Emphasis{text: data}),
-    PatternName::Literal => TreeNode::new(TreeNodeType::Literal{text: data}),
-    PatternName::InlineTarget => TreeNode::new(TreeNodeType::InlineTarget{target_label: data}),
+    PatternName::StrongEmphasis => TreeNode::new_from_id_ref(TreeNodeType::StrongEmphasis{text: data}, node_id),
+    PatternName::Emphasis => TreeNode::new_from_id_ref(TreeNodeType::Emphasis{text: data}, node_id),
+    PatternName::Literal => TreeNode::new_from_id_ref(TreeNodeType::Literal{text: data}, node_id),
+    PatternName::InlineTarget => TreeNode::new_from_id_ref(TreeNodeType::InlineTarget{target_label: data}, node_id),
     _ => panic!("No such paired delimiter type!")
   };
 
@@ -32,13 +32,13 @@ pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) 
 
 /// ### whitespace
 /// Parses inline whitespace
-pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
 
   let content = captures.get(0).unwrap();
 
   let data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
 
-  let node = TreeNode::new(data);
+  let node = TreeNode::new_from_id_ref(data, node_id);
 
   let match_len = content.as_str().chars().count();
 
@@ -49,10 +49,9 @@ pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (Tre
 
 /// ### reference
 /// Parses reference type inline elements based on their pattern name.
-pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
 
   let whole_match = captures.get(0).unwrap();
-
 
   let data = match pattern_name {
     PatternName::SimpleRef | PatternName::PhraseRef => {
@@ -96,7 +95,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (Tree
           if email == MISSING {
             let match_str = whole_match.as_str();
             let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
-            let text_node = TreeNode::new(data);
+            let text_node = TreeNode::new_from_id_ref(data, node_id);
             return (text_node, match_str.chars().count())
           }
 
@@ -194,7 +193,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (Tree
     _ => panic!("No such reference pattern.\n")
   };
 
-  let node = TreeNode::new(data);
+  let node = TreeNode::new_from_id_ref(data, node_id);
 
   let match_len = whole_match.as_str().chars().count();
 
@@ -205,7 +204,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (Tree
 /// ### text
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize) {
+pub fn text (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
 
   let content = captures.get(1).unwrap();
 
@@ -213,7 +212,7 @@ pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode
 
   let data = String::from(content.as_str());
 
-  let node = TreeNode::new(TreeNodeType::Text{text: data});
+  let node = TreeNode::new_from_id_ref(TreeNodeType::Text{text: data}, node_id);
 
   assert!(node.children.is_empty());
 

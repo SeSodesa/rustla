@@ -32,7 +32,7 @@ pub struct DocTree {
   /// in their behaviour depending on their insertion order into the tree.
   /// For example, a field list will be transformed into bibliographic data,
   /// if it is the first non-(whitespace|comment) node in the tree.
-  node_count: NodeId,
+  pub node_count: NodeId,
 
   /// #### footnote_count
   /// The number of footnotes that have been entered into the document thus far.
@@ -54,14 +54,42 @@ impl DocTree {
 
     let root_data = TreeNodeType::Root{doc_name};
 
-    let root_node = TreeNode::new(root_data);
+    let root_node = TreeNode::new(root_data, root_id);
 
     DocTree {
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id,
       footnote_data: FootnoteData::new(),
     }
+  }
 
+
+  /// ### push_and_focus
+  /// Creates a new node from given data, pushes it to the
+  /// children of currently focused on node and focuses on the new node.
+  /// If this succeeds, also increments `self.node_count`.
+  pub fn push_and_focus (mut self, node_data: TreeNodeType) -> Self {
+    self.tree = self.tree.push_and_focus(node_data, self.node_count).unwrap();
+    self.node_count += 1;
+    self
+  }
+
+
+  /// ### push_child
+  /// Pushes a new node to the children of the node currently focused on.
+  pub fn push_child (&mut self, node: TreeNode) {
+    self.tree.push_child(node);
+    self.node_count += 1;
+  }
+
+
+  /// ### append_children
+  /// Appends the nodes given in a given vector of nodes to the currently
+  /// focused on node in `self.tree`.
+  pub fn append_children (&mut self, nodes: &mut Children) {
+    let children = nodes.len() as NodeId; // No overflow checks...
+    self.tree.append_children(nodes);
+    self.node_count += children;
   }
 }
 
@@ -71,6 +99,7 @@ impl DocTree {
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
 pub struct TreeNode {
+  id: NodeId,
   pub data : TreeNodeType,
   pub children: Children,
 
@@ -80,12 +109,31 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  pub fn new(data: TreeNodeType) -> Self {
+  pub fn new(data: TreeNodeType, id: NodeId) -> Self {
     
     TreeNode {
+      id: id,
       children: Vec::new(),
       data: data
     }
+  }
+
+
+  /// ### new_from_id_ref
+  /// Works similarly to `TreeNode::new`, except also increments the id
+  /// behind the given address in addition to assignning the previous value
+  /// to the node being constructred.
+  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId) -> Self {
+
+    let node = Self {
+      id: *id_ref, // assign current id value to ndoe
+      children: Vec::new(),
+      data: data,
+    };
+
+    *id_ref += 1; // increment the id before returning with new node
+
+    node
 
   }
 

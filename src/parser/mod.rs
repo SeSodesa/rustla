@@ -33,7 +33,7 @@ mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
-use crate::common::{self, EnumDelims, EnumKind};
+use crate::common::{self, EnumDelims, EnumKind, NodeId};
 
 #[cfg(test)]
 mod tests;
@@ -412,7 +412,7 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, current_line: &mut usize) -> Option<Vec<TreeNode>> {
+  fn inline_parse (inline_src_block: String, current_line: &mut usize, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 
@@ -423,7 +423,7 @@ impl Parser {
 
     let src_chars = &mut src_without_escapes.chars();
 
-    match Parser::match_inline_str(&src_chars) {
+    match Parser::match_inline_str(&src_chars, node_counter) {
       Some((node, offset)) => {
 
         nodes.push(node);
@@ -460,7 +460,7 @@ impl Parser {
         col = 0;
       }
 
-      match Parser::match_inline_str(&src_chars) {
+      match Parser::match_inline_str(&src_chars, node_counter) {
         Some((node, offset)) => {
 
           nodes.push(node);
@@ -499,7 +499,7 @@ impl Parser {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNode, usize)> {
+  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars, node_id: &mut NodeId) -> Option<(TreeNode, usize)> {
 
     let src_str = chars_iter.as_str();
 
@@ -518,7 +518,7 @@ impl Parser {
 
           // eprintln!("Match found for {:#?}\n", pattern_name);
 
-          let (node, offset) = parsing_function(*pattern_name, &capts);
+          let (node, offset) = parsing_function(*pattern_name, &capts, node_id);
 
           //eprintln!("{:#?}", node);
 

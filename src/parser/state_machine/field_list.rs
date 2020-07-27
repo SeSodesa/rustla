@@ -27,7 +27,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 
     TreeNodeType::FieldList { marker_indent} => {
       if marker_indent == detected_marker_indent {
-        let marker_inline_nodes = if let Some(nodes) = Parser::inline_parse(detected_marker_name.to_string(), current_line) {
+        let marker_inline_nodes = if let Some(nodes) = Parser::inline_parse(detected_marker_name.to_string(), current_line, &mut tree_wrapper.node_count) {
           nodes
         } else {
           return TransitionResult::Failure { // Should not happen in the first place, if a field marker was detected...
@@ -42,7 +42,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
             marker_indent: detected_marker_indent,
             body_indent: detected_text_indent
           };
-          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data, tree_wrapper.node_count).unwrap();
           match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None) {
             Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
             None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
@@ -55,7 +55,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
             body_indent: detected_body_indent
           };
 
-          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+          tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data, tree_wrapper.node_count).unwrap();
           match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent)) {
             Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
             None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}

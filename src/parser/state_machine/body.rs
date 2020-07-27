@@ -24,7 +24,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
   };
 
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_bullet_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data).unwrap();
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(sublist_data, tree_wrapper.node_count).unwrap();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::BulletList),
@@ -90,7 +90,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
   };
 
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_enumerator_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data, tree_wrapper.node_count).unwrap();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::EnumeratedList),
@@ -127,7 +127,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
-    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data).unwrap();
+    tree_wrapper.tree = tree_wrapper.tree.push_and_focus(list_node_data, tree_wrapper.node_count).unwrap();
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_state: Some(StateMachine::FieldList),
@@ -193,7 +193,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   };
 
   // Pass text to inline parser as a string
-  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line) {
+  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line, &mut tree_wrapper.node_count) {
     children
   } else {
     return TransitionResult::Failure {
@@ -202,7 +202,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   };
 
   // Construct paragraph...
-  let mut paragraph_node = TreeNode::new(paragraph_data);
+  let mut paragraph_node = TreeNode::new(paragraph_data, tree_wrapper.node_count);
   paragraph_node.append_children(&mut inline_nodes);
 
   // Check if we are inside a node that cares about indentation

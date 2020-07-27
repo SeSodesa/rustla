@@ -33,7 +33,7 @@ pub type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 /// Returns a node a length of the match, so that the inline parser
 /// could determine how many characters to eat off the start of the
 /// source string.
-pub type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNode, usize);
+pub type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize);
 
 
 /// ### InlineTransition

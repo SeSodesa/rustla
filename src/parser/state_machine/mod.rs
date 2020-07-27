@@ -20,7 +20,7 @@ use regex;
 use lazy_static::lazy_static;
 
 use super::*;
-use crate::common::{EnumDelims, EnumKind};
+use crate::common::{EnumDelims, EnumKind, NodeId};
 //use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, UncompiledTransition,  *};
 use crate::doctree::{self, TreeNode};
 

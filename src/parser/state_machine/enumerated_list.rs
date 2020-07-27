@@ -59,7 +59,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
           text_indent: detected_text_indent
         };
 
-        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data).unwrap();
+        tree_wrapper.tree = tree_wrapper.tree.push_and_focus(item_node_data, tree_wrapper.node_count).unwrap();
 
         let (doctree, offset, state_stack) = match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent, None) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
