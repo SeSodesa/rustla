@@ -570,17 +570,7 @@ pub enum TreeNodeType {
 }
 
 
-/// ### Parent
-/// A shorthand for an optional (parent might not exist)
-/// weak reference to a parent node.
-type Parent = Option< Weak<RefCell<TreeNode>>>;
-
 /// ### Children
 /// Shorthand for a vector of owned child nodes.
 /// Empty vector indicates no children.
 type Children = Vec<TreeNode>;
-
-
-/// ### NodeRefVec
-/// A vector of weak pointers to internally mutable nodes.
-type NodeRefVec = Vec<Weak<RefCell<TreeNode>>>;
