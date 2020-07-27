@@ -29,6 +29,9 @@ use converters::*;
 mod types_and_aliases;
 use types_and_aliases::*;
 
+mod line_cursor;
+use line_cursor::LineCursor;
+
 mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
