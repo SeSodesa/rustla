@@ -577,13 +577,6 @@ impl Parser {
   }
 
 
-  /// ### first_field_item_block
-  /// Parses the first block of text after a field list item for body elements.
-  fn first_field_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, first_line_indent: usize, text_indent: usize) -> Option<(DocTree, usize, Vec<StateMachine>)> {
-    todo!()
-  }
-
-
   /// ### read_text_block
   /// Reads in an contiguous set of lines of text.
   /// A text block in rST terms is a set of lines
