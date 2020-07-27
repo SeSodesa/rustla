@@ -16,6 +16,7 @@ pub struct LineCursor <'parser> {
 
 
   /// #### absolute_offset
+  /// A pointer to the position of the parent parser.
   absolute_offset: &'parser mut usize,
 }
 
