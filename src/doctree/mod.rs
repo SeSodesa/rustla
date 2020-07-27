@@ -10,6 +10,8 @@ mod tree_zipper;
 use tree_zipper::TreeZipper;
 mod directives;
 use directives::DirectiveType;
+mod footnote_data;
+use footnote_data::*;
 
 use crate::utils::{EnumDelims, EnumKind};
 
@@ -30,7 +32,12 @@ pub struct DocTree {
   /// in their behaviour depending on their insertion order into the tree.
   /// For example, a field list will be transformed into bibliographic data,
   /// if it is the first non-(whitespace|comment) node in the tree.
-  node_counter: u32,
+  node_count: NodeId,
+
+  /// #### footnote_count
+  /// The number of footnotes that have been entered into the document thus far.
+  /// Main use for this counter is in auto-numbering footnotes with a '#'.
+  footnote_data: FootnoteData,
 
 }
 
@@ -49,11 +56,10 @@ impl DocTree {
 
     let root_node = TreeNode::new(root_data);
 
-    let zipper = TreeZipper::new(root_node, None, None);
-
     DocTree {
-      tree: zipper,
-      node_counter: root_id,
+      tree: TreeZipper::new(root_node, None, None),
+      node_count: root_id,
+      footnote_data: FootnoteData::new(),
     }
 
   }
@@ -138,12 +144,12 @@ impl TreeNode {
       // These elements are allowed to contain body level nodes
       TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote              | TreeNodeType::Citation  => {
+      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation  => {
         match node_data {
           TreeNodeType::Paragraph             | TreeNodeType::BulletList { .. } | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList      | TreeNodeType::FieldList { .. }  | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
-          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote          | TreeNodeType::Citation
+          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote  { .. }  | TreeNodeType::Citation
           | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment             | TreeNodeType::EmptyLine         => true,
           _ => false
@@ -444,7 +450,10 @@ pub enum TreeNodeType {
 
   /// #### Footnote
   /// A foonote citation target. Contaisn a label and the foornote text itself.
-  Footnote,
+  Footnote {
+    label: String,
+    number: u32,
+  },
 
   /// #### Citation
   /// A generic citation target.
@@ -559,6 +568,11 @@ pub enum TreeNodeType {
   },
 
 }
+
+
+/// ### NodeId
+/// A type alias for an unsigned integer used as a node identifier.
+type NodeId = u32;
 
 
 /// ### Parent
