@@ -78,8 +78,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
     }
   };
 
-  eprintln!("Start index: {}\n", detected_enum_as_usize);
-
   let list_node_data = TreeNodeType::EnumeratedList {
     delims: detected_delims,
     kind: detected_kind,

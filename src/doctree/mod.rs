@@ -64,6 +64,8 @@ impl DocTree {
   }
 
 
+  /// ### focus_on_parent
+  /// Focuses `self.tree` on its parent node if there is one.
   pub fn focus_on_parent (mut self) -> Self {
 
     self.tree = match self.tree.focus_on_parent() {
