@@ -83,33 +83,6 @@ pub enum PatternName {
 }
 
 
-/// ### FootnoteKind
-/// There are 4 different kinds of footnote markers:
-/// 1. Maually numbered
-/// 2. automatically numbered,
-/// 3. automatically nubered with a simple reference name
-/// 4. Automatically generated symbolic markers
-#[derive(Debug, Clone, Copy)]
-pub enum FootnoteKind {
-  Manual,
-  AutoNumbered,
-  SimpleRefName,
-  AutoSymbol,
-}
-
-
-/// ### IterpretedTextKind
-/// There are 3 types of interpreted inline text, such as math:
-/// 1. where the given role precedes the interpreted content and
-/// 2. where the interpreted content precedes the given role.
-/// 3. where  the type is not specified and the default role is used.
-#[derive(Debug, Clone, Copy)]
-pub enum InterpretedTextKind {
-  Default,
-  RoleThenContent,
-  ContentThenRole
-}
-
 /// ### TransitionResult
 /// An enumeration fo the different results, including errors,
 /// that a transition function might have.
