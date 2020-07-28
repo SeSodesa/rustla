@@ -43,6 +43,7 @@ pub enum StateMachine {
   EnumeratedList,
   ListItem,
   FieldList,
+  Footnote,
   OptionList,
   LineBlock,
   ExtensionOptions,
