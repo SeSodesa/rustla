@@ -512,8 +512,9 @@ pub enum TreeNodeType {
   SubstitutionDefinition,
 
   /// #### Footnote
-  /// A foonote citation target. Contaisn a label and the foornote text itself.
+  /// A foonote citation target. Contains a label and the foornote text itself.
   Footnote {
+    body_indent: usize,
     label: String,
     number: u32,
   },

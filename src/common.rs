@@ -68,6 +68,10 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
 /// A type alias for an integer used as a node identifier.
 pub type NodeId = u32;
 
+/// ### EnumInt
+/// A type alias for different kinds of enumerators such as list or foonote ordinals in integer format.
+pub type EnumAsInt = u32;
+
 
 // ==========================
 // Enumerators and converters
@@ -92,10 +96,10 @@ pub enum EnumKind {
 
 /// ### FootnoteKind
 /// There are 4 different kinds of footnote markers:
-/// 1. Maually numbered
-/// 2. automatically numbered,
-/// 3. automatically nubered with a simple reference name
-/// 4. Automatically generated symbolic markers
+/// 1. Manually numbered: .. [1] , .. [2], ...
+/// 2. automatically numbered: .. [#] 
+/// 3. automatically nubered with a simple reference name: .. [#simple_ref-name]
+/// 4. Automatically generated symbolic markers: .. [*]
 #[derive(Debug, Clone, Copy)]
 pub enum FootnoteKind {
   Manual,

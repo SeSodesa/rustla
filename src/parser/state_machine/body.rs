@@ -149,6 +149,62 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 /// ### footnote
 /// A transition function for generating footnotes
 pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let tree_wrapper = doctree.unwrap();
+
+
+  // Detected parameters...
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_label_str = captures.get(2).unwrap().as_str();
+
+  let detected_body_indent = if let Some(line) = src_lines.get(*current_line + 1) {
+    if line.is_empty() {
+      detected_text_indent
+    } else {
+      line.chars().take_while(|c| !c.is_whitespace()).count() + base_indent
+    }
+  } else {
+    detected_text_indent
+  };
+
+  let detected_label_as_int = if let Some( int) = footnote_label_to_int(&tree_wrapper, pattern_name, detected_label_str) {
+    int
+  } else {
+    return TransitionResult::Failure {
+      message: String::from("Cound not transform a footnote marker into an integer.\nComputer says no...\n")
+    }
+  };
+
+  let footnote_data = TreeNodeType::Footnote {
+    body_indent: detected_body_indent,
+    label: detected_label_str.to_string(),
+    number: { todo!() }
+  };
+
+
+  // Match against the parent node. Only document root ignores indentation;
+  // inside any other container it makes a difference.
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
+    tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: Some(StateMachine::Footnote),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
+    }
+  } else {
+    tree_wrapper = tree_wrapper.focus_on_parent();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
+    }
+  }
+  
   todo!()
 }
 
@@ -256,4 +312,34 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
     _ => false
   }
 
+}
+
+
+/// ### foonote_label_to_int
+/// Converts a foonote label into an ordinal based on the current state of `DocTree.foonote_data`,
+/// if possible. Returns the `Option`al integer, if successful.
+pub fn footnote_label_to_int (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<EnumAsInt> {
+
+  if let PatternName::Footnote { kind } = pattern_name {
+    match kind {
+      FootnoteKind::Manual => {
+        todo!()
+      }
+
+      FootnoteKind::AutoNumbered => {
+        todo!()
+      }
+
+      FootnoteKind::SimpleRefName => {
+        todo!()
+      }
+
+      FootnoteKind::AutoSymbol => {
+        todo!()
+      }
+    }
+  } else {
+    eprintln!("No footnote pattern inside a footnote transition function.\nComputer says no...\n");
+    None
+  }
 }

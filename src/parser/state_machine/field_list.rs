@@ -15,6 +15,9 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
   let detected_marker_name = captures.get(2).unwrap().as_str();
 
   let detected_body_indent = if let Some(next_line) = src_lines.get(*current_line + 1) {
+
+    // Add check for an empty line?
+
     next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent
   } else {
     detected_text_indent
