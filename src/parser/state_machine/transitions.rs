@@ -13,7 +13,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 22] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 26] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
@@ -41,6 +41,11 @@ impl StateMachine {
     (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
 
     (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, body::field_marker),
+
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, StateMachine::MANUAL_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, StateMachine::AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, StateMachine::SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, StateMachine::AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
 
     (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];
@@ -163,7 +168,7 @@ impl StateMachine {
     (PatternName::Literal, r"^``(\S|\S.*\S)``", inline::paired_delimiter),
     (PatternName::InlineTarget, r"^_`([\w .]+)`", inline::paired_delimiter),
     (PatternName::PhraseRef, r"^`(\S|\S.*\S)`__?", inline::reference),
-    (PatternName::Interpreted, r"^`(\S|\S.*\S)`", inline::paired_delimiter),
+    (PatternName::Interpreted { kind: InterpretedTextKind::Default } , r"^`(\S|\S.*\S)`", inline::paired_delimiter),
     (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\]__?", inline::reference),
     (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)__?", inline::reference),
     (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(?:_|__)?", inline::reference),
@@ -308,13 +313,23 @@ impl StateMachine {
   // Explicit markup patterns
   // ========================
 
-  /// #### FOOTNOTE_PATTERN
-  /// A pattern for matching against footnotes.
-  /// A footnote label might be a sequence of digits,
-  /// a single `#`, a simple reference name or an asterisk `*`.
-  /// Different label formats have different functions,
-  /// such as auto-numbering with `#`.
-  const FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+|\#|\#[a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*|\*)\](?:[ ]+|$)";
+  /// #### MANUAL_FOOTNOTE_PATTERN
+  /// A pattern for matching against manually numbered footnotes.
+  const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
+
+  /// #### AUTO_NUM_FOOTNOTE_PATTERN
+  /// A footnote pattern with the symbol '#' for a label.
+  /// This triggers automatic numbering for the footnote to be generated.
+  const AUTO_NUM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#)\](?:[ ]+|$)";
+
+  /// #### SIMPLE_NAME_FOOTNOTE_PATTERN
+  /// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
+  /// multiple times, as there is a simple reference name pointing to the footnote.
+  const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#[a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+
+  /// #### AUTO_SYM_FOOTNOTE_PATTERN
+  /// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
+  const AUTO_SYM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\*)\](?:[ ]+|$)";
 
 
   /// #### CITATION_PATTERN

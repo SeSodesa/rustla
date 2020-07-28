@@ -56,6 +56,7 @@ pub enum PatternName {
   Enumerator {delims: EnumDelims, kind: EnumKind},
 
   FieldMarker,
+  Footnote { kind: FootnoteKind },
   OptionMarker,
   DocTest,
   LineBlock,
@@ -69,9 +70,7 @@ pub enum PatternName {
   Escape,
   StrongEmphasis, // **strongly emphasised text**
   Emphasis, // *emphasized text*
-  Interpreted, // Plain interpreted text with the default role set by transpiler.
-  RoleThenContent, // Interpreted text with role before content, :role_label:`text`
-  ContentThenRole, // Interpreted text with content before role, `text`:role_label:
+  Interpreted { kind: InterpretedTextKind }, // Plain interpreted text with the default role set by transpiler.
   PhraseRef, // A reference in the form `text with spaces`__?
   SimpleRef, // A reference that doesn't need backticks: reference__?
   Literal, // Code
@@ -83,6 +82,33 @@ pub enum PatternName {
   WhiteSpace,
 }
 
+
+/// ### FootnoteKind
+/// There are 4 different kinds of footnote markers:
+/// 1. Maually numbered
+/// 2. automatically numbered,
+/// 3. automatically nubered with a simple reference name
+/// 4. Automatically generated symbolic markers
+#[derive(Debug, Clone, Copy)]
+pub enum FootnoteKind {
+  Manual,
+  AutoNumbered,
+  SimpleRefName,
+  AutoSymbol,
+}
+
+
+/// ### IterpretedTextKind
+/// There are 3 types of interpreted inline text, such as math:
+/// 1. where the given role precedes the interpreted content and
+/// 2. where the interpreted content precedes the given role.
+/// 3. where  the type is not specified and the default role is used.
+#[derive(Debug, Clone, Copy)]
+pub enum InterpretedTextKind {
+  Default,
+  RoleThenContent,
+  ContentThenRole
+}
 
 /// ### TransitionResult
 /// An enumeration fo the different results, including errors,
