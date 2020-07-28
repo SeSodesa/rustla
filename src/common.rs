@@ -121,289 +121,33 @@ pub enum InterpretedTextKind {
   ContentThenRole
 }
 
+// ===========
+//  Constants
+// ===========
 
-/// ### EnumeratorFormat
-/// An enumeration of the different ways of representing
-/// natural numbers in *reStructuredText* enumerated lists.
-pub enum EnumeratorFormat {
-  Arabic(u64),            // 1, 2, 3, 4, 5, ...
-  LowerAlpha(LowerAlpha), // a, b, c, d, e, ...
-  UpperAlpha(UpperAlpha), // A, B, C, D, E, ...
-  LowerRoman(LowerRoman), // i, ii, iii, iv, v, ...
-  UpperRoman(UpperRoman), // I, II, III, IV, V, ...
-  Automatic,              // symbol #
-}
-
-
-
-/// ### UpperAlpha
-/// Upper-case alphabetic numerals.
-pub enum UpperAlpha {
-  A, B, C, D, E, F, G,
-  H, I, J, K, L, M, N,
-  O, P, Q, R, S, T, U,
-  V, W, X, Y, Z, None,
-}
-
-impl TryFrom<u32> for UpperAlpha {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Converts a `u32` to a corresponding `UpperAlpha` numeral variant.
-  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
-    match numeral {
-      1   => Ok(Self::A),
-      2   => Ok(Self::B),
-      3   => Ok(Self::C),
-      4   => Ok(Self::D),
-      5   => Ok(Self::E),
-      6   => Ok(Self::F),
-      7   => Ok(Self::G),
-      8   => Ok(Self::H),
-      9   => Ok(Self::I),
-      10  => Ok(Self::J),
-      11  => Ok(Self::K),
-      12  => Ok(Self::L),
-      13  => Ok(Self::M),
-      14  => Ok(Self::N),
-      15  => Ok(Self::O),
-      16  => Ok(Self::P),
-      17  => Ok(Self::Q),
-      18  => Ok(Self::R),
-      19  => Ok(Self::S),
-      20  => Ok(Self::T),
-      21  => Ok(Self::U),
-      22  => Ok(Self::V),
-      23  => Ok(Self::W),
-      24  => Ok(Self::X),
-      25  => Ok(Self::Y),
-      26  => Ok(Self::Z),
-      _   => Err("No matching upper-case alphanumeral for a given integer\n")
-    }
-  }
-}
-
-impl TryFrom<&str> for UpperAlpha {
-
-  type Error = &'static str;
-
-  /// ### from
-  /// Converts a `&str` to a corresponding `UpperAlpha` numeral variant.
-  fn try_from (alpha_str: &str) -> Result<Self, Self::Error> {
-    match alpha_str {
-      "A" => Ok(Self::A), "B" => Ok(Self::B),
-      "C" => Ok(Self::C), "D" => Ok(Self::D),
-      "E" => Ok(Self::E), "F" => Ok(Self::F),
-      "G" => Ok(Self::G), "H" => Ok(Self::H),
-      "I" => Ok(Self::I), "J" => Ok(Self::J),
-      "K" => Ok(Self::K), "L" => Ok(Self::L),
-      "M" => Ok(Self::M), "N" => Ok(Self::N),
-      "O" => Ok(Self::O), "P" => Ok(Self::P),
-      "Q" => Ok(Self::Q), "R" => Ok(Self::R),
-      "S" => Ok(Self::S), "T" => Ok(Self::T),
-      "U" => Ok(Self::U), "V" => Ok(Self::V),
-      "W" => Ok(Self::W), "X" => Ok(Self::X),
-      "Y" => Ok(Self::Y), "Z" => Ok(Self::Z),
-      _ => Err("No matching upper-case alphanumeral for given &str\n")
-    }
-  }
-}
-
-
-/// ### LowerAlpha
-/// Lower-case alphabetic numerals.
-pub enum LowerAlpha {
-  A, B, C, D, E, F, G,
-  H, I, J, K, L, M, N,
-  O, P, Q, R, S, T, U,
-  V, W, X, Y, Z, None
-}
-
-
-impl TryFrom<u32> for LowerAlpha {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Converts a `u32` to a corresponding `LowerAlpha` numeral variant,.
-  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
-    match numeral {
-      1   => Ok(Self::A),
-      2   => Ok(Self::B),
-      3   => Ok(Self::C),
-      4   => Ok(Self::D),
-      5   => Ok(Self::E),
-      6   => Ok(Self::F),
-      7   => Ok(Self::G),
-      8   => Ok(Self::H),
-      9   => Ok(Self::I),
-      10  => Ok(Self::J),
-      11  => Ok(Self::K),
-      12  => Ok(Self::L),
-      13  => Ok(Self::M),
-      14  => Ok(Self::N),
-      15  => Ok(Self::O),
-      16  => Ok(Self::P),
-      17  => Ok(Self::Q),
-      18  => Ok(Self::R),
-      19  => Ok(Self::S),
-      20  => Ok(Self::T),
-      21  => Ok(Self::U),
-      22  => Ok(Self::V),
-      23  => Ok(Self::W),
-      24  => Ok(Self::X),
-      25  => Ok(Self::Y),
-      26  => Ok(Self::Z),
-      _   => Err("No matching lower-case alphanumeral for a given integer\n")
-    }
-  }
-}
-
-impl TryFrom<&str> for LowerAlpha {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Converts a `&str` to a corresponding `UpperAlpha` numeral variant.
-  fn try_from (alpha_str: &str) -> Result<Self, Self::Error> {
-    match alpha_str {
-      "a" => Ok(Self::A), "b" => Ok(Self::B),
-      "c" => Ok(Self::C), "d" => Ok(Self::D),
-      "e" => Ok(Self::E), "f" => Ok(Self::F),
-      "g" => Ok(Self::G), "h" => Ok(Self::H),
-      "i" => Ok(Self::I), "j" => Ok(Self::J),
-      "k" => Ok(Self::K), "l" => Ok(Self::L),
-      "m" => Ok(Self::M), "n" => Ok(Self::N),
-      "o" => Ok(Self::O), "p" => Ok(Self::P),
-      "q" => Ok(Self::Q), "r" => Ok(Self::R),
-      "s" => Ok(Self::S), "t" => Ok(Self::T),
-      "u" => Ok(Self::U), "v" => Ok(Self::V),
-      "w" => Ok(Self::W), "x" => Ok(Self::X),
-      "y" => Ok(Self::Y), "z" => Ok(Self::Z),
-      _ => Err("No matching lower-case alphanumeral for given &str\n")
-    }
-  }
-}
-
-
-/// ### UpperRoman
-/// Upper-case Roman numerals.
-pub enum UpperRoman {
-  M, CM, D, CD, C, XC,
-  L, XL, X, IX, V, IV,
-  I, None
-}
-
-impl TryFrom<u32> for UpperRoman {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Converts a `u32` to an `UpperRoman` numeral variant.
-  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
-    match numeral {
-      1000  => Ok(Self::M),
-      900   => Ok(Self::CM),
-      500   => Ok(Self::D),
-      400   => Ok(Self::CD),
-      100   => Ok(Self::C),
-      90    => Ok(Self::XC),
-      50    => Ok(Self::L),
-      40    => Ok(Self::XL),
-      10    => Ok(Self::X),
-      9     => Ok(Self::IX),
-      5     => Ok(Self::V),
-      4     => Ok(Self::IV),
-      1     => Ok(Self::I),
-      _     => Err("No matching upper-case Roman numeral for a given integer\n")
-    }
-  }
-}
-
-impl TryFrom<&str> for UpperRoman {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Tries to convert a `&str` to an `UpperRoman` variant.
-  fn try_from (roman_str: &str) -> Result<Self, Self::Error> {
-    match roman_str {
-      "M"   => Ok(Self::M),
-      "CM"  => Ok(Self::CM),
-      "D"   => Ok(Self::D),
-      "CD"  => Ok(Self::CD),
-      "C"   => Ok(Self::C),
-      "XC"  => Ok(Self::XC),
-      "L"   => Ok(Self::L),
-      "XL"  => Ok(Self::XL),
-      "X"   => Ok(Self::X),
-      "IX"  => Ok(Self::IX),
-      "V"   => Ok(Self::V),
-      "IV"  => Ok(Self::IV),
-      "I"   => Ok(Self::I),
-      _     => Err("No matching upper-case roman numeral for given &str\n")
-    }
-  }
-}
-
-
-/// ### LowerRoman
-/// Lower-case Roman numerals.
-pub enum LowerRoman {
-  M, CM, D, CD, C, XC,
-  L, XL, X, IX, V, IV,
-  I, None
-}
-
-impl TryFrom<u32> for LowerRoman {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Converts a `u32` to an `UpperRoman` numeral variant.
-  fn try_from (numeral: u32) -> Result<Self, Self::Error> {
-    match numeral {
-      1000  => Ok(Self::M),
-      900   => Ok(Self::CM),
-      500   => Ok(Self::D),
-      400   => Ok(Self::CD),
-      100   => Ok(Self::C),
-      90    => Ok(Self::XC),
-      50    => Ok(Self::L),
-      40    => Ok(Self::XL),
-      10    => Ok(Self::X),
-      9     => Ok(Self::IX),
-      5     => Ok(Self::V),
-      4     => Ok(Self::IV),
-      1     => Ok(Self::I),
-      _     => Err("No matching lower-case Roman numeral for a given integer\n")
-    }
-  }
-}
-
-impl TryFrom<&str> for LowerRoman {
-
-  type Error = &'static str;
-
-  /// ### try_from
-  /// Tries to convert a `&str` to a `LowerRoman` variant.
-  fn try_from (roman_str: &str) -> Result<Self, Self::Error> {
-    match roman_str {
-      "m"   => Ok(Self::M),
-      "cm"  => Ok(Self::CM),
-      "d"   => Ok(Self::D),
-      "cd"  => Ok(Self::CD),
-      "c"   => Ok(Self::C),
-      "xc"  => Ok(Self::XC),
-      "l"   => Ok(Self::L),
-      "xl"  => Ok(Self::XL),
-      "x"   => Ok(Self::X),
-      "ix"  => Ok(Self::IX),
-      "v"   => Ok(Self::V),
-      "iv"  => Ok(Self::IV),
-      "i"   => Ok(Self::I),
-      _     => Err("No matching lower-case roman numeral for given &str\n")
-    }
-  }
-}
+/// #### FOOTNOTE_SYMBOLS
+/// The standard Docutils system uses these symbols as footnote marks
+/// when a FootnoteKind::AutoSymbol is detected.
+/// They are, from first to last:
+/// 
+/// 1.  asterisk/star (`*`)
+/// 2.  dagger (`†`|`U+02020`)
+/// 3.  double dagger (`‡`|`U+02021`)
+/// 4.  section mark (`§`|`U+000A7`)
+/// 5.  pilcrow or paragraph mark (`¶`|`U+000B6`)
+/// 6.  number sign (`#`)
+/// 7.  spade suit (`♠`|`U+02660`)
+/// 8.  heart suit (`♥`|`U+02665`)
+/// 9.  diamond suit (`♦`|`U+02666`)
+/// 10. club suit (`♣`|`U+02663`)
+/// 
+/// As the next autosymbol is detected the next unused item
+/// from this list will be used as the footnote label character.
+/// If `n` is the number of times this list has been iteratred over
+/// and `s` the current autosymbol, then the actual label
+/// of the footnote is `s^(n+1)`. For example, if a document has
+/// `12` automatically symboled footnotes and a new one is constructed,
+/// then its label will be `‡‡ = ‡² = ‡¹⁺¹`.
+const FOOTNOTE_SYMBOLS: [char; 10] = [
+  '*', '†','‡','§','¶','#','♠','♥','♦','♣'
+];
