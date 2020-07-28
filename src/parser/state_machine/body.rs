@@ -315,19 +315,20 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
 /// ### foonote_label_to_int
 /// Converts a foonote label into an ordinal based on the current state of `DocTree.foonote_data`,
 /// if possible. Returns the `Option`al integer, if successful.
-pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(EnumAsInt, String)> {
+pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<String> {
 
   use std::convert::TryFrom;
 
   if let PatternName::Footnote { kind } = pattern_name {
     match kind {
+
       FootnoteKind::Manual => {
 
         // In this case the doctree is simply asked whether it has a reference
         // with this name. If yes, the user is warned of a duplicate label,
         // but otherwise no special action is taken.
 
-        todo!()
+        return Some(detected_label_str.to_string())
       }
 
       FootnoteKind::AutoNumbered => {
@@ -338,8 +339,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
         while let Some(n) = (1..EnumAsInt::MAX).next() {
 
-          // If n is not in the tree, return it
-
+          let n = n.to_string();
         }
 
         todo!()

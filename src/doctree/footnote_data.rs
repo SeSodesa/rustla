@@ -24,8 +24,8 @@ pub struct FootnoteData {
   /// length of the label formed from said symbol
   /// with integer division and modulo operations:
   /// ```rust
-  /// let len = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
-  /// let ind = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
+  /// let label_length = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
+  /// let symbol_index = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
   /// ```
   n_of_sym_footnotes: u32,
 }
