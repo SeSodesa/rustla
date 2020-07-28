@@ -11,21 +11,23 @@ use super::*;
 /// such as reserved foonote labels and mappings between
 pub struct FootnoteData {
 
-  /// #### max_id
-  /// The largest footnote label converted to a `u32` entered into the doctree thus far.
-  /// This is useful when trying to figure out what ID should be given
-  /// to an auto-numbered footnote.
-  max_id: NodeId,
-
-  /// #### entered_labels
+  /// #### numbered_foonotes
   /// A mapping of foonote labels added to the doctree to node identifiers.
   footnotes: HashMap<String, NodeId>,
 
-  /// #### references
-  /// A mapping of footnote references to node IDs.
-  /// Allows us to look up which nodes reference which footnotes.
-  references: HashMap<String, NodeId>
-
+  /// #### n_of_sym_footnotes
+  /// A counter of how many symbolic footnotes
+  /// have been encountered and successfully
+  /// inserted into the doctree. Used to access
+  /// the next symbol to be used in
+  /// `crate::common::FOONOTE_SYMBOLS` and the
+  /// length of the label formed from said symbol
+  /// with integer division and modulo operations:
+  /// ```rust
+  /// let len = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
+  /// let ind = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
+  /// ```
+  n_of_sym_footnotes: u32,
 }
 
 
@@ -36,9 +38,8 @@ impl FootnoteData {
   pub fn new() -> Self {
 
     Self {
-      max_id: 0,
       footnotes: HashMap::new(),
-      references: HashMap::new()
+      n_of_sym_footnotes: 0,
     }
   }
 }

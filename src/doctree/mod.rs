@@ -13,7 +13,7 @@ use directives::DirectiveType;
 mod footnote_data;
 use footnote_data::FootnoteData;
 
-use crate::common::{EnumDelims, EnumKind, NodeId};
+use crate::common::{EnumDelims, EnumKind, NodeId, EnumAsInt};
 
 /// ### DocTree
 /// A container for the document tree.
@@ -516,7 +516,6 @@ pub enum TreeNodeType {
   Footnote {
     body_indent: usize,
     label: String,
-    number: u32,
   },
 
   /// #### Citation

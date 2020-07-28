@@ -150,7 +150,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 /// A transition function for generating footnotes
 pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let tree_wrapper = doctree.unwrap();
+  let mut tree_wrapper = doctree.unwrap();
 
 
   // Detected parameters...
@@ -168,7 +168,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     detected_text_indent
   };
 
-  let detected_label_as_int = if let Some( int) = footnote_label_to_int(&tree_wrapper, pattern_name, detected_label_str) {
+  let detected_label_as_int = if let Some( int) = detected_footnote_label_to_ref_label(&tree_wrapper, pattern_name, detected_label_str) {
     int
   } else {
     return TransitionResult::Failure {
@@ -179,7 +179,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
   let footnote_data = TreeNodeType::Footnote {
     body_indent: detected_body_indent,
     label: detected_label_str.to_string(),
-    number: { todo!() }
   };
 
 
@@ -204,8 +203,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
       nested_state_stack: None
     }
   }
-  
-  todo!()
 }
 
 
@@ -318,23 +315,49 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
 /// ### foonote_label_to_int
 /// Converts a foonote label into an ordinal based on the current state of `DocTree.foonote_data`,
 /// if possible. Returns the `Option`al integer, if successful.
-pub fn footnote_label_to_int (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<EnumAsInt> {
+pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(EnumAsInt, String)> {
+
+  use std::convert::TryFrom;
 
   if let PatternName::Footnote { kind } = pattern_name {
     match kind {
       FootnoteKind::Manual => {
+
+        // In this case the doctree is simply asked whether it has a reference
+        // with this name. If yes, the user is warned of a duplicate label,
+        // but otherwise no special action is taken.
+
         todo!()
       }
 
       FootnoteKind::AutoNumbered => {
+
+        // Here we iterate the set of all possible `u32` values
+        // and once a number that has not been used as a label is found,
+        // it is returned.
+
+        while let Some(n) = (1..EnumAsInt::MAX).next() {
+
+          // If n is not in the tree, return it
+
+        }
+
         todo!()
       }
 
       FootnoteKind::SimpleRefName => {
+
+        // Same as with manual footnotes, check if this has already a number representation
+        // in the doctree and if not, return it.
+
         todo!()
       }
 
       FootnoteKind::AutoSymbol => {
+
+        // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
+        // entered into the document thus far.
+
         todo!()
       }
     }
