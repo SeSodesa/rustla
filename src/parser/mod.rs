@@ -103,7 +103,6 @@ impl Parser {
       doctree: Some(doctree),
       state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
     }
-
   }
 
   /// ### parse
@@ -251,7 +250,6 @@ impl Parser {
                       message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor)
                     }
                   }
-
                 }
 
                 (PushOrPop::Neither, None, None) => {
@@ -290,7 +288,6 @@ impl Parser {
 
           break // Match found so stop looking for matches
         }
-
       }
 
       // No matches in current state so pop from state stack and attempt
@@ -332,7 +329,6 @@ impl Parser {
     }
 
     Ok(())
-
   }
 
 
@@ -353,7 +349,6 @@ impl Parser {
     }
 
     Ok(())
-
   }
 
 
@@ -374,7 +369,6 @@ impl Parser {
     }
 
     Ok(())
-
   }
 
 
@@ -408,7 +402,6 @@ impl Parser {
     };
 
     Some(src)
-
   }
 
 
@@ -494,7 +487,6 @@ impl Parser {
     }
 
     Some(nodes)
-
   }
 
   /// ### match_inline_str
@@ -533,7 +525,6 @@ impl Parser {
           //eprintln!("No match for {:#?}", pattern_name);
           continue // no match, do nothing
         }
-
       };
     }
 
@@ -622,19 +613,13 @@ impl Parser {
       }
 
       lines.push(line);
-
       line_num += 1;
-
     }
 
     lines.shrink_to_fit();
-
     let offset = lines.len();
-
     eprintln!("Lines: {:#?}\n", lines);
-
     Ok((lines, offset))
-
   }
 
 
@@ -735,13 +720,11 @@ impl Parser {
         } else if line_indent > 0 {
           minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
         } 
-
       }
 
       eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
       block_lines.push(line);
       line_num += 1;
-
     }
 
     // eprintln!("Loop broken: {:?}\n", loop_broken);
@@ -794,9 +777,7 @@ impl Parser {
     eprintln!("Block lines: {:#?}\n", block_lines);
 
     Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
-
   }
-
 }
 
 
@@ -844,24 +825,5 @@ impl ParsingResult {
       Self::EmptyStateStack {doctree, state_stack} => doctree,
       _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
     }
-
   }
-
 }
-
-
-
-// /// ### val_from_key
-// /// Goes through a given list of tuples
-// /// ```
-// /// (TokenType, str_pattern, Action)
-// /// ```
-// /// and looks for a matching tokentype.
-// /// If it finds one, returns and `Option<&'static str>`,
-// /// otherwise returns `None`.
-// fn val_from_key(search_key: &TokenType, map: &[(TokenType, &'static str, Action)]) -> Option<&'static str> {
-//   for (_, val, _) in map.iter().filter(|&(map_key, _, _)| map_key == search_key) { 
-//     return Some(val);
-//   }
-//   None
-// }
