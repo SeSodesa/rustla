@@ -325,7 +325,7 @@ impl StateMachine {
   /// #### SIMPLE_NAME_FOOTNOTE_PATTERN
   /// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
   /// multiple times, as there is a simple reference name pointing to the footnote.
-  const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#[a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+  const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[\#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
   /// #### AUTO_SYM_FOOTNOTE_PATTERN
   /// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
