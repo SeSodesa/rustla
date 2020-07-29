@@ -210,7 +210,9 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
 
       match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+        None => return TransitionResult::Failure {
+          message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)
+        }
       }
     };
 
