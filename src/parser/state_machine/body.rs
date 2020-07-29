@@ -372,14 +372,12 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
         // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
 
-        for n in 1..EnumAsInt::MAX {
+        for n in 1..=EnumAsInt::MAX {
 
           eprintln!("{}", n);
 
           let n_str = n.to_string();
-          eprintln!("Seeking {} from existing footnotes...", n);
           if doctree.has_footnote_label(n_str.as_str()) {
-            eprintln!("... found it\n");
             continue
           }
           return Some( (n_str.clone(), n_str) )
@@ -393,15 +391,10 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // Same as with automatically numbered footnotes, check if this has already a number representation
         // in the doctree and if not, return it.
 
-        for n in 1..EnumAsInt::MAX {
-
-          eprintln!("{}", n);
+        for n in 1..=EnumAsInt::MAX {
 
           let n_str = n.to_string();
-
-          eprintln!("Seeking {} from existing footnotes...", n);
           if doctree.has_footnote_label(n_str.as_str()) {
-            eprintln!("... found it\n");
             continue
           }
           return Some( (n_str.clone(), detected_label_str.to_string()) )
