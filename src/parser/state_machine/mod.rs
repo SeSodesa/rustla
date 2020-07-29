@@ -79,9 +79,9 @@ impl StateMachine {
   pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
-      StateMachine::EOF               => Err("Already moved past EOF. No transitions to perform.\n"),
-      StateMachine::Failure           => Err("Failure state has no transitions\n"),
-      StateMachine::ListItem          => {
+      StateMachine::EOF       => Err("Already moved past EOF. No transitions to perform.\n"),
+      StateMachine::Failure   => Err("Failure state has no transitions\n"),
+      StateMachine::ListItem  | StateMachine::Footnote => {
         Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())
       }
       _ => {
