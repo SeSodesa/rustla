@@ -113,6 +113,13 @@ impl DocTree {
   pub fn has_footnote_label (&self, label_to_be_inspected_for: &str) -> bool {
     self.footnote_data.footnotes.contains_key(label_to_be_inspected_for)
   }
+
+
+  /// ### n_of_symbolic_footnotes
+  /// Returns the number of symbolic footnotes that have been entered into the doctree.
+  pub fn n_of_symbolic_footnotes (&self) -> u32 {
+    self.footnote_data.n_of_sym_footnotes
+  }
 }
 
 
