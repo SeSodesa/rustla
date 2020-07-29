@@ -13,7 +13,7 @@ pub struct FootnoteData {
 
   /// #### numbered_foonotes
   /// A mapping of foonote labels added to the doctree to node identifiers.
-  footnotes: HashMap<String, NodeId>,
+  pub footnotes: HashMap<String, NodeId>,
 
   /// #### n_of_sym_footnotes
   /// A counter of how many symbolic footnotes
@@ -27,7 +27,7 @@ pub struct FootnoteData {
   /// let label_length = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
   /// let symbol_index = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
   /// ```
-  n_of_sym_footnotes: u32,
+  pub n_of_sym_footnotes: u32,
 }
 
 

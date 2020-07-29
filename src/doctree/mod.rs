@@ -106,6 +106,13 @@ impl DocTree {
     self.tree.append_children(nodes);
     self.node_count += children;
   }
+
+
+  /// ### has_footnote_label
+  /// Checks whether the doctree already contains a footnote with the given label.
+  pub fn has_footnote_label (&self, label_to_be_inspected_for: &str) -> bool {
+    self.footnote_data.footnotes.contains_key(label_to_be_inspected_for)
+  }
 }
 
 
