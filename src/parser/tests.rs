@@ -1400,10 +1400,10 @@ fn footnote_03 () {
 fn footnote_04 () {
 
   let src = String::from("
-  .. [#] 1
-  .. [#] 2
+  .. [2] 1
+  .. [#test-with-mixed] 2
   .. [#] 3
-  .. [#] 4
+  .. [#second] 4
   .. [#] 5
 
   ");
@@ -1417,7 +1417,40 @@ fn footnote_04 () {
 
   eprintln!("{:#?}", doctree.tree);
 
-  todo!()
+  match &doctree.tree.node.children[1].data {
+    TreeNodeType::Footnote { label, target, ..} => {
+      if label == "2" && target == "2" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[2].data {
+    TreeNodeType::Footnote { label, target, ..} => {
+      if label == "1" && target == "test-with-mixed" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[3].data {
+    TreeNodeType::Footnote { label, target, ..} => {
+      if label == "3" && target == "3" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[4].data {
+    TreeNodeType::Footnote { label, target, ..} => {
+      if label == "4" && target == "second" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[5].data {
+    TreeNodeType::Footnote { label, target, ..} => {
+      if label == "5" && target == "5" {} else { panic!() }
+    }
+    _ => panic!()
+  }
 }
 
 
