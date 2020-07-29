@@ -152,7 +152,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
 
   let mut tree_wrapper = doctree.unwrap();
 
-
   // Detected parameters...
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -181,10 +180,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
-
-    eprintln!("Marker indent: {:#?}", detected_marker_indent);
-    eprintln!("Text indent: {:#?}", detected_text_indent);
-    eprintln!("Body indent: {:#?}\n", detected_body_indent);
 
     let (doctree, offset, state_stack) = if has_one_line_body {
 
