@@ -77,6 +77,44 @@ pub type EnumAsInt = u32;
 // Enumerators and converters
 // ==========================
 
+#[derive(Copy, Clone, Debug)]
+/// ### PatternName
+/// An enum of transition regex pattern names, both for body and inline level elements.
+pub enum PatternName {
+
+  // Body elements, possibly nested
+  EmptyLine,
+  Bullet,
+  Enumerator {delims: EnumDelims, kind: EnumKind},
+
+  FieldMarker,
+  Footnote { kind: FootnoteKind },
+  OptionMarker,
+  DocTest,
+  LineBlock,
+  ExplicitMarkup,
+  AnonymousTarget,
+  Line,
+  Paragraph,
+  Text,
+
+  // Inline Elements for parsing Strings
+  Escape,
+  StrongEmphasis, // **strongly emphasised text**
+  Emphasis, // *emphasized text*
+  Interpreted { kind: InterpretedTextKind }, // Plain interpreted text with the default role set by transpiler.
+  PhraseRef, // A reference in the form `text with spaces`__?
+  SimpleRef, // A reference that doesn't need backticks: reference__?
+  Literal, // Code
+  FootNoteRef,
+  InlineTarget, // Reference target in inline text: _`target label`
+  SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
+  ImplicitURL,
+  StandaloneHyperlink,
+  WhiteSpace,
+}
+
+
 /// ### EnumFormat
 /// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
 /// A third option is to enclose them in matching parentheses `(` and `)`.

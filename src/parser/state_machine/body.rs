@@ -190,7 +190,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-      tree_wrapper.add_footnote(current_line, target, tree_wrapper.tree.node.id);
+      tree_wrapper.add_footnote(current_line, pattern_name, target, tree_wrapper.tree.node.id);
 
       match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -205,7 +205,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-      tree_wrapper.add_footnote(current_line, target, tree_wrapper.tree.node.id);
+      tree_wrapper.add_footnote(current_line, pattern_name, target, tree_wrapper.tree.node.id);
 
       match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -420,7 +420,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
           }
         };
 
-        let label: String = vec![*symbol; passes].iter().collect();
+        let label: String = vec![*symbol; passes + 1].iter().collect();
         return Some( (label.clone(), label) )
       }
     }

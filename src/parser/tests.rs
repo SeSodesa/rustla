@@ -1308,6 +1308,95 @@ fn footnote_02 () {
 
 
 #[test]
+fn footnote_03 () {
+
+  let src = String::from("
+  .. [*] 1
+  .. [*] 2
+  .. [*] 3
+  .. [*] 4
+  .. [*] 5
+  .. [*] 6
+  .. [*] 7
+  .. [*] 8
+  .. [*] 9
+  .. [*] 10
+  .. [*] 11
+  .. [*] 12
+  .. [*] 13
+  .. [*] 14
+  .. [*] 15
+  .. [*] 16
+  .. [*] 17
+  .. [*] 18
+  .. [*] 19
+  .. [*] 20
+  .. [*] 21
+  .. [*] 22
+  .. [*] 23
+  .. [*] 24
+  .. [*] 25
+  .. [*] 26
+  .. [*] 27
+  .. [*] 28
+  .. [*] 29
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match &doctree.tree.node.children[1].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "*" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[3].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "‡" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[11].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "**" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[13].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "‡‡" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[21].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "***" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[29].data {
+    TreeNodeType::Footnote {label, ..} => {
+      if label == "♦♦♦" {} else {panic!()}
+    }
+    _ => panic!()
+  }
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
