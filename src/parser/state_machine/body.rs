@@ -348,6 +348,8 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(String, String)> {
 
+  eprintln!("Transforming detected label to reference label...\n");
+
   use std::convert::TryFrom;
 
   if let PatternName::Footnote { kind } = pattern_name {
@@ -370,13 +372,17 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
         // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
 
-        while let Some(n) = (1..EnumAsInt::MAX).next() {
+        for n in 1..EnumAsInt::MAX {
 
-          let n = n.to_string();
-          if doctree.has_footnote_label(n.as_str()) {
+          eprintln!("{}", n);
+
+          let n_str = n.to_string();
+          eprintln!("Seeking {} from existing footnotes...", n);
+          if doctree.has_footnote_label(n_str.as_str()) {
+            eprintln!("... found it\n");
             continue
           }
-          return Some( (n.clone(), n) )
+          return Some( (n_str.clone(), n_str) )
         }
         eprintln!("All possible footnote numbers in use.\nComputer says no...\n");
         return None
@@ -387,13 +393,18 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // Same as with automatically numbered footnotes, check if this has already a number representation
         // in the doctree and if not, return it.
 
-        while let Some(n) = (1..EnumAsInt::MAX).next() {
+        for n in 1..EnumAsInt::MAX {
 
-          let n = n.to_string();
-          if doctree.has_footnote_label(n.as_str()) {
+          eprintln!("{}", n);
+
+          let n_str = n.to_string();
+
+          eprintln!("Seeking {} from existing footnotes...", n);
+          if doctree.has_footnote_label(n_str.as_str()) {
+            eprintln!("... found it\n");
             continue
           }
-          return Some( (n.clone(), detected_label_str.to_string()) )
+          return Some( (n_str.clone(), detected_label_str.to_string()) )
         }
         eprintln!("All possible footnote numbers in use.\nComputer says no...\n");
         return None

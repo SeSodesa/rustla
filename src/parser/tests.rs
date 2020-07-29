@@ -1397,6 +1397,31 @@ fn footnote_03 () {
 
 
 #[test]
+fn footnote_04 () {
+
+  let src = String::from("
+  .. [#] 1
+  .. [#] 2
+  .. [#] 3
+  .. [#] 4
+  .. [#] 5
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  todo!()
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
