@@ -1266,6 +1266,48 @@ fn footnote_01 () {
 
 
 #[test]
+fn footnote_02 () {
+
+  let src = String::from("
+  .. [1] Here is a paragraph
+
+  .. [1] Another footnote with the same label (and target).
+         The duplicate label should generate a warning.
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::Footnote { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].data {
+    TreeNodeType::Footnote { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[2].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";

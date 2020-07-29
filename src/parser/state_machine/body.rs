@@ -185,23 +185,27 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
 
       let footnote_data = TreeNodeType::Footnote {
         body_indent: detected_text_indent,
-        label: label,
-        target: target
+        label: label.clone(),
+        target: target.clone()
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
+      tree_wrapper.add_footnote(current_line, target, tree_wrapper.tree.node.id);
+
       match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)}
       }
     } else {
 
       let footnote_data = TreeNodeType::Footnote {
         body_indent: detected_body_indent,
-        label: label,
-        target: target
+        label: label.clone(),
+        target: target.clone()
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+
+      tree_wrapper.add_footnote(current_line, target, tree_wrapper.tree.node.id);
 
       match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -355,10 +359,6 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // with this name. If yes, the user is warned of a duplicate label,
         // but otherwise no special action is taken.
 
-        if doctree.has_footnote_label(detected_label_str) {
-          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the duplicate...\n", detected_label_str);
-        }
-
         return Some((detected_label_str.to_string(), detected_label_str.to_string()))
       }
 
@@ -421,9 +421,6 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         };
 
         let label: String = vec![*symbol; passes].iter().collect();
-        if doctree.has_footnote_label(label.as_str()) {
-          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the duplicate...\n", label);
-        }
         return Some( (label.clone(), label) )
       }
     }

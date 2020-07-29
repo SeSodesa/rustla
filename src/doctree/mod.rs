@@ -115,6 +115,16 @@ impl DocTree {
   }
 
 
+  pub fn add_footnote (&mut self, current_line: &usize, label: String, id: NodeId) {
+    match self.footnote_data.footnotes.insert(label.clone(), id) {
+      Some(node_id) => {
+        eprintln!("Found an existing node with the target label \"{}\" on line {}.\nReplacing duplicate node id value {} with {}...\n", label, current_line, node_id, id);
+      }
+      None => {}
+    };
+  }
+
+
   /// ### n_of_symbolic_footnotes
   /// Returns the number of symbolic footnotes that have been entered into the doctree.
   pub fn n_of_symbolic_footnotes (&self) -> u32 {
@@ -128,7 +138,7 @@ impl DocTree {
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
 pub struct TreeNode {
-  id: NodeId,
+  pub id: NodeId,
   pub data : TreeNodeType,
   pub children: Children,
 
