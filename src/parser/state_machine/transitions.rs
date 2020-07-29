@@ -336,7 +336,7 @@ impl StateMachine {
   /// A pattern for matching against citations.
   /// Similar to `FOOTNOTE_PATTERN`, but only
   /// recognizes simple reference names in labels.
-  const CITATION_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+  const CITATION_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]*(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
 
   /// #### HYPERLINK_TARGET_PATTERN
