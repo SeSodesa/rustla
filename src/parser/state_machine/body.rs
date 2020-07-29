@@ -301,7 +301,7 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
       if relevant_detected_indent == *text_indent { true } else { false }
     }
 
-    TreeNodeType::FieldListItem {body_indent, .. } => {
+    TreeNodeType::FieldListItem {body_indent, .. } | TreeNodeType::Footnote {body_indent, ..} => {
       if relevant_detected_indent == *body_indent { true } else { false }
     },
 
