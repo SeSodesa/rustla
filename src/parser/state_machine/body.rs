@@ -329,7 +329,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // but otherwise no special action is taken.
 
         if doctree.has_footnote_label(detected_label_str) {
-          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the new one...\n", detected_label_str);
+          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the duplicate...\n", detected_label_str);
         }
 
         return Some((detected_label_str.to_string(), detected_label_str.to_string()))
@@ -394,6 +394,9 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         };
 
         let label: String = vec![*symbol; passes].iter().collect();
+        if doctree.has_footnote_label(label.as_str()) {
+          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the duplicate...\n", label);
+        }
         return Some( (label.clone(), label) )
       }
     }
