@@ -178,7 +178,8 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
 
   let footnote_data = TreeNodeType::Footnote {
     body_indent: detected_body_indent,
-    label: detected_label_str.to_string(),
+    label: label,
+    target: target
   };
 
 

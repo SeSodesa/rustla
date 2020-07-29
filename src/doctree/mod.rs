@@ -529,7 +529,8 @@ pub enum TreeNodeType {
   /// A foonote citation target. Contains a label and the foornote text itself.
   Footnote {
     body_indent: usize,
-    label: String,
+    label: String, // Displayed label
+    target: String // Reference target
   },
 
   /// #### Citation
