@@ -168,11 +168,11 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     detected_text_indent
   };
 
-  let detected_label_as_int = if let Some( int) = detected_footnote_label_to_ref_label(&tree_wrapper, pattern_name, detected_label_str) {
-    int
+  let (label, target) = if let Some( label_and_target ) = detected_footnote_label_to_ref_label(&tree_wrapper, pattern_name, detected_label_str) {
+    (label_and_target.0, label_and_target.1)
   } else {
     return TransitionResult::Failure {
-      message: String::from("Cound not transform a footnote marker into an integer.\nComputer says no...\n")
+      message: String::from("Cound not transform a footnote marker into a label--target-pair.\nComputer says no...\n")
     }
   };
 
@@ -313,9 +313,9 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
 
 
 /// ### foonote_label_to_int
-/// Converts a foonote label into an ordinal based on the current state of `DocTree.foonote_data`,
-/// if possible. Returns the `Option`al integer, if successful.
-pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<String> {
+/// Converts a foonote label into a label--target-pair based on the current state of `DocTree.foonote_data`,
+/// if possible. Returns an `Option`al pair `(label, target)` if successful.
+pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(String, String)> {
 
   use std::convert::TryFrom;
 
@@ -328,7 +328,11 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // with this name. If yes, the user is warned of a duplicate label,
         // but otherwise no special action is taken.
 
-        return Some(detected_label_str.to_string())
+        if doctree.has_footnote_label(detected_label_str) {
+          eprintln!("Warning: Doctree already has a footnote with the label {}.\n         It will be overwritten by the new one...\n", detected_label_str);
+        }
+
+        return Some((detected_label_str.to_string(), detected_label_str.to_string()))
       }
 
       FootnoteKind::AutoNumbered => {
@@ -337,20 +341,35 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // and once a number that has not been used as a label is found,
         // it is returned.
 
+        // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
+
         while let Some(n) = (1..EnumAsInt::MAX).next() {
 
           let n = n.to_string();
+          if doctree.has_footnote_label(n.as_str()) {
+            continue
+          }
+          return Some( (n.clone(), n) )
         }
-
-        todo!()
+        eprintln!("All possible footnote numbers in use.\nComputer says no...\n");
+        return None
       }
 
       FootnoteKind::SimpleRefName => {
 
-        // Same as with manual footnotes, check if this has already a number representation
+        // Same as with automatically numbered footnotes, check if this has already a number representation
         // in the doctree and if not, return it.
 
-        todo!()
+        while let Some(n) = (1..EnumAsInt::MAX).next() {
+
+          let n = n.to_string();
+          if doctree.has_footnote_label(n.as_str()) {
+            continue
+          }
+          return Some( (n.clone(), detected_label_str.to_string()) )
+        }
+        eprintln!("All possible footnote numbers in use.\nComputer says no...\n");
+        return None
       }
 
       FootnoteKind::AutoSymbol => {
@@ -358,7 +377,24 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
         // entered into the document thus far.
 
-        todo!()
+        use crate::common::FOOTNOTE_SYMBOLS; // Import constant locally
+
+        let n = doctree.n_of_symbolic_footnotes() as usize; // No overflow checks with as...
+
+        let n_of_symbols = FOOTNOTE_SYMBOLS.len();
+
+        let passes = n / n_of_symbols;
+        let index = n % n_of_symbols;
+        let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
+          Some(symb) => symb,
+          None       => {
+            eprintln!("No footnote symbol with index {}!\n", index);
+            panic!()
+          }
+        };
+
+        let label: String = vec![*symbol; passes].iter().collect();
+        return Some( (label.clone(), label) )
       }
     }
   } else {

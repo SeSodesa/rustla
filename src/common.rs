@@ -148,6 +148,6 @@ pub enum InterpretedTextKind {
 /// of the footnote is `s^(n+1)`. For example, if a document has
 /// `12` automatically symboled footnotes and a new one is constructed,
 /// then its label will be `‡‡ = ‡² = ‡¹⁺¹`.
-const FOOTNOTE_SYMBOLS: [char; 10] = [
+pub const FOOTNOTE_SYMBOLS: [char; 10] = [
   '*', '†','‡','§','¶','#','♠','♥','♦','♣'
 ];
