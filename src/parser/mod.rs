@@ -281,7 +281,7 @@ impl Parser {
             }
 
             TransitionResult::Failure {message} => {
-              eprintln!("{} on line {}", message, self.line_cursor);
+              eprintln!("{}", message);
               return ParsingResult::Failure { message: String::from("An error was encountered while executing a transition method.\n") }
             }
           };
@@ -546,6 +546,7 @@ impl Parser {
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
     let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), relative_first_indent) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
+        eprintln!("Block lines: {:#?}\n", lines);
         (lines.join("\n"), line_offset)
       }
       Err(e) => {
@@ -683,8 +684,8 @@ impl Parser {
 
     let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
 
-    eprintln!("First indent: {:?}", first_indent);
-    eprintln!("Block indent: {:?}\n", block_indent);
+    // eprintln!("First indent: {:?}", first_indent);
+    // eprintln!("Block indent: {:?}\n", block_indent);
 
     while line_num < last_line_num {
 
@@ -698,8 +699,8 @@ impl Parser {
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
       if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
-        eprintln!("Line: {:#?}", line);
-        eprintln!("Not enough indentation on line {:?}!\n", line_num);
+        // eprintln!("Line: {:#?}", line);
+        // eprintln!("Not enough indentation on line {:?}!\n", line_num);
 
         // Ended with a blank finish if the last line before unindent was blank
         blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().is_empty();
@@ -776,8 +777,6 @@ impl Parser {
 
     block_lines.shrink_to_fit(); // Free unnecessary used memory
     let line_diff = block_lines.len();
-
-    eprintln!("Block lines: {:#?}\n", block_lines);
 
     Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
   }

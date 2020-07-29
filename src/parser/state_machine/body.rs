@@ -106,7 +106,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
       nested_state_stack: None
     }
   }
-
 }
 
 
@@ -158,10 +157,15 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
   let detected_label_str = captures.get(2).unwrap().as_str();
 
   let detected_body_indent = if let Some(line) = src_lines.get(*current_line + 1) {
-    if line.is_empty() {
+    if line.trim().is_empty() {
       detected_text_indent
     } else {
-      line.chars().take_while(|c| c.is_whitespace()).count() + base_indent
+      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+      if indent < detected_marker_indent + 3 {
+        detected_text_indent
+      } else {
+        indent
+      }
     }
   } else {
     detected_text_indent
@@ -181,49 +185,29 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
 
-    let (doctree, offset, state_stack) = if has_one_line_body {
+    let footnote_data = TreeNodeType::Footnote {
+      body_indent: detected_body_indent,
+      label: label.clone(),
+      target: target.clone()
+    };
+    tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-      let footnote_data = TreeNodeType::Footnote {
-        body_indent: detected_text_indent,
-        label: label.clone(),
-        target: target.clone()
-      };
-      tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+    tree_wrapper.add_footnote(current_line, pattern_name, label, tree_wrapper.tree.node.id);
 
-      tree_wrapper.add_footnote(current_line, pattern_name, label, tree_wrapper.tree.node.id);
-
-      match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)}
-      }
-    } else {
-
-      let footnote_data = TreeNodeType::Footnote {
-        body_indent: detected_body_indent,
-        label: label.clone(),
-        target: target.clone()
-      };
-      tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
-
-      tree_wrapper.add_footnote(current_line, pattern_name, label, tree_wrapper.tree.node.id);
-
-      match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {
-          message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)
-        }
-      }
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
+      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)}
     };
 
     tree_wrapper = doctree;
 
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_state: None,
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(offset),
-      nested_state_stack: Some(state_stack)
-    }
+  return TransitionResult::Success {
+    doctree: tree_wrapper,
+    next_state: None,
+    push_or_pop: PushOrPop::Push,
+    line_advance: LineAdvance::Some(offset),
+    nested_state_stack: Some(state_stack)
+  }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
@@ -347,8 +331,6 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
 /// Converts a foonote label into a label--target-pair based on the current state of `DocTree.foonote_data`,
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(String, String)> {
-
-  eprintln!("Transforming detected label to reference label...\n");
 
   use std::convert::TryFrom;
 
