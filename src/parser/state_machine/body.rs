@@ -195,7 +195,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-      match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
+      match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       }
@@ -208,7 +208,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
       };
       tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-      match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
+      match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
       }

@@ -535,7 +535,7 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     eprintln!("Line before nested parse: {:?}...\n", current_line);
 
