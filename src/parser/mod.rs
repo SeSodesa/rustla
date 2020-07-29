@@ -535,7 +535,7 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn first_list_item_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     eprintln!("Line before nested parse: {:?}...\n", current_line);
 
@@ -556,7 +556,7 @@ impl Parser {
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), Some(StateMachine::ListItem)).parse() {
+    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), Some(start_state)).parse() {
       ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
         eprintln!("{:?}", message);
@@ -682,6 +682,9 @@ impl Parser {
     let mut blank_finish: bool = false;
 
     let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
+
+    eprintln!("First indent: {:?}", first_indent);
+    eprintln!("Block indent: {:?}\n", block_indent);
 
     while line_num < last_line_num {
 

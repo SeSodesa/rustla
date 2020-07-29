@@ -162,7 +162,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     if line.is_empty() {
       detected_text_indent
     } else {
-      line.chars().take_while(|c| !c.is_whitespace()).count() + base_indent
+      line.chars().take_while(|c| c.is_whitespace()).count() + base_indent
     }
   } else {
     detected_text_indent
@@ -176,23 +176,52 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     }
   };
 
-  let footnote_data = TreeNodeType::Footnote {
-    body_indent: detected_body_indent,
-    label: label,
-    target: target
-  };
-
+  let has_one_line_body = detected_body_indent < detected_marker_indent + 3;
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {
-    tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+
+    eprintln!("Marker indent: {:#?}", detected_marker_indent);
+    eprintln!("Text indent: {:#?}", detected_text_indent);
+    eprintln!("Body indent: {:#?}\n", detected_body_indent);
+
+    let (doctree, offset, state_stack) = if has_one_line_body {
+
+      let footnote_data = TreeNodeType::Footnote {
+        body_indent: detected_text_indent,
+        label: label,
+        target: target
+      };
+      tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+
+      match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_text_indent, None, StateMachine::Footnote) {
+        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+      }
+    } else {
+
+      let footnote_data = TreeNodeType::Footnote {
+        body_indent: detected_body_indent,
+        label: label,
+        target: target
+      };
+      tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+
+      match Parser::first_list_item_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
+        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+      }
+    };
+
+    tree_wrapper = doctree;
+
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: Some(StateMachine::Footnote),
+      next_state: None,
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None,
-      nested_state_stack: None
+      line_advance: LineAdvance::Some(offset),
+      nested_state_stack: Some(state_stack)
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();

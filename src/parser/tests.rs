@@ -1224,6 +1224,48 @@ fn field_list_03 () {
 
 
 #[test]
+fn footnote_01 () {
+
+  let src = String::from("
+  .. [1] Here is a paragraph
+     with body indent.
+
+     * Bullet list inside foonote
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match doctree.tree.node.children[1].data {
+    TreeNodeType::Footnote { .. } => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::Paragraph => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[1].data {
+    TreeNodeType::EmptyLine => (),
+    _ => panic!()
+  }
+
+  match doctree.tree.node.children[1].children[2].data {
+    TreeNodeType::BulletList { .. } => (),
+    _ => panic!()
+  }
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
