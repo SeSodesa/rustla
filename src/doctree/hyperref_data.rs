@@ -9,11 +9,11 @@ use super::*;
 /// This struct holds information related to footnotes and footnote references
 /// intered into the document tree thus far. This information includes things
 /// such as reserved foonote labels and mappings between
-pub struct FootnoteData {
+pub struct HyperrefData {
 
   /// #### numbered_foonotes
   /// A mapping of foonote labels added to the doctree to node identifiers.
-  pub footnotes: HashMap<String, NodeId>,
+  pub targets: HashMap<String, NodeId>,
 
   /// #### n_of_sym_footnotes
   /// A counter of how many symbolic footnotes
@@ -31,14 +31,14 @@ pub struct FootnoteData {
 }
 
 
-impl FootnoteData {
+impl HyperrefData {
 
   /// ### new
   /// A FoonoteData constructor.
   pub fn new() -> Self {
 
-    Self {
-      footnotes: HashMap::new(),
+    HyperrefData {
+      targets: HashMap::new(),
       n_of_sym_footnotes: 0,
     }
   }

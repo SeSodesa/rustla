@@ -190,7 +190,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
     };
     tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-    tree_wrapper.add_footnote(line_cursor.relative_offset(), pattern_name, label, tree_wrapper.tree.node.id);
+    tree_wrapper.add_target(line_cursor.relative_offset(), pattern_name, label, tree_wrapper.current_node_id());
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -266,14 +266,17 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
     tree_wrapper = doctree;
 
-  return TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_state: None,
-    push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::Some(offset),
-    nested_state_stack: Some(state_stack)
-  }
+    tree_wrapper.add_target(line_cursor.sum_total(), pattern_name, detected_label_str.to_string(), tree_wrapper.current_node_id());
+
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(offset),
+      nested_state_stack: Some(state_stack)
+    }
   } else {
+
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -418,7 +421,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
           eprintln!("{}", n);
 
           let n_str = n.to_string();
-          if doctree.has_footnote_label(n_str.as_str()) {
+          if doctree.has_target_label(n_str.as_str()) {
             continue
           }
           return Some( (n_str.clone(), n_str) )
@@ -435,7 +438,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         for n in 1..=EnumAsInt::MAX {
 
           let n_str = n.to_string();
-          if doctree.has_footnote_label(n_str.as_str()) {
+          if doctree.has_target_label(n_str.as_str()) {
             continue
           }
           return Some( (n_str.clone(), detected_label_str.to_string()) )

@@ -10,8 +10,8 @@ mod tree_zipper;
 use tree_zipper::TreeZipper;
 mod directives;
 use directives::DirectiveType;
-mod footnote_data;
-use footnote_data::FootnoteData;
+mod hyperref_data;
+use hyperref_data::HyperrefData;
 
 use crate::common::{EnumDelims, EnumKind, NodeId, EnumAsInt, PatternName, FootnoteKind};
 
@@ -37,7 +37,7 @@ pub struct DocTree {
   /// #### footnote_count
   /// The number of footnotes that have been entered into the document thus far.
   /// Main use for this counter is in auto-numbering footnotes with a '#'.
-  footnote_data: FootnoteData,
+  hyperref_data: HyperrefData,
 
 }
 
@@ -59,7 +59,7 @@ impl DocTree {
     DocTree {
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id + 1,
-      footnote_data: FootnoteData::new(),
+      hyperref_data: HyperrefData::new(),
     }
   }
 
@@ -110,13 +110,23 @@ impl DocTree {
 
   /// ### has_footnote_label
   /// Checks whether the doctree already contains a footnote with the given label.
-  pub fn has_footnote_label (&self, label_to_be_inspected_for: &str) -> bool {
-    self.footnote_data.footnotes.contains_key(label_to_be_inspected_for)
+  pub fn has_target_label (&self, label_to_be_inspected_for: &str) -> bool {
+    self.hyperref_data.targets.contains_key(label_to_be_inspected_for)
   }
 
 
-  pub fn add_footnote (&mut self, current_line: usize, pattern_name: &PatternName, label: String, id: NodeId) {
-    match self.footnote_data.footnotes.insert(label.clone(), id) {
+  /// ### current_node_id
+  /// Retrieves a copy of the node currently focused on.
+  pub fn current_node_id (&self) -> NodeId {
+    self.tree.node.id
+  }
+
+
+  /// ### add_target
+  /// Adds a given label to the known hyperref targets or updates the actual targe node id
+  /// if a label is already in the known labels.
+  pub fn add_target (&mut self, current_line: usize, pattern_name: &PatternName, label: String, id: NodeId) {
+    match self.hyperref_data.targets.insert(label.clone(), id) {
       Some(node_id) => {
         eprintln!("Found an existing node with the target label \"{}\" on line {}.\nReplacing duplicate node id value {} with {}...\n", label, current_line, node_id, id);
       }
@@ -128,21 +138,20 @@ impl DocTree {
         self.increment_symbolic_footnotes();
       }
     }
-
   }
 
 
   /// ### n_of_symbolic_footnotes
   /// Returns the number of symbolic footnotes that have been entered into the doctree.
   pub fn n_of_symbolic_footnotes (&self) -> u32 {
-    self.footnote_data.n_of_sym_footnotes
+    self.hyperref_data.n_of_sym_footnotes
   }
 
 
   /// ### increment_symbolic_footnotes
   /// Increments symbolic footnote counter of the doctree by 1.
   pub fn increment_symbolic_footnotes (&mut self) {
-    self.footnote_data.n_of_sym_footnotes += 1;
+    self.hyperref_data.n_of_sym_footnotes += 1;
   }
 
 }
