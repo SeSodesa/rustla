@@ -3,7 +3,7 @@
 
 use super::*;
 
-pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -61,9 +61,9 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
         tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, list_text_indent, None, StateMachine::ListItem) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, list_text_indent, None, StateMachine::ListItem) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-          None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", current_line)}
+          None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", line_cursor.sum_total())}
         };
 
         tree_wrapper = doctree;

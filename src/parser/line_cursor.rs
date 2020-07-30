@@ -35,6 +35,20 @@ impl LineCursor {
   }
 
 
+  /// ### relative_offset
+  /// Retrieves the 
+  pub fn relative_offset (&self) -> Line {
+    self.offset
+  }
+
+
+  /// ### relative_offset_mut_ref
+  /// Retrieves the 
+  pub fn relative_offset_mut_ref (&mut self) -> &mut Line {
+    &mut self.offset
+  }
+
+
   /// ### increment
   /// Increments relative offset by given `amount`.
   pub fn increment_by (&mut self, amount: Line) {

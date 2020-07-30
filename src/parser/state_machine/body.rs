@@ -9,7 +9,7 @@ use super::*;
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
-pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -55,7 +55,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut 
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
-pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -111,7 +111,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
 /// ### field_marker
 /// A transitioin function for handling detected field markers in a state that generates body type nodes.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -147,7 +147,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, current_line:
 
 /// ### footnote
 /// A transition function for generating footnotes
-pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -156,7 +156,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_label_str = captures.get(2).unwrap().as_str();
 
-  let detected_body_indent = if let Some(line) = src_lines.get(*current_line + 1) {
+  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
     if line.trim().is_empty() {
       detected_text_indent
     } else {
@@ -190,11 +190,11 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     };
     tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
 
-    tree_wrapper.add_footnote(current_line, pattern_name, label, tree_wrapper.tree.node.id);
+    tree_wrapper.add_footnote(line_cursor.relative_offset(), pattern_name, label, tree_wrapper.tree.node.id);
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, current_line, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", current_line)}
+      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
     };
 
     tree_wrapper = doctree;
@@ -221,21 +221,21 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
 
 /// ### citation
 /// A transition function for generating citations
-pub fn citation (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn citation (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   todo!()
 }
 
 
 /// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
-pub fn directive (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn directive (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
   todo!()
 }
 
 
 /// ### paragraph
 /// A function that handles the parsing of paragraphs of text.
-pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -245,7 +245,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
 
   let relative_indent = detected_indent - base_indent;
 
-  let block = match Parser::read_text_block(src_lines, *current_line, true, true, Some(relative_indent)) {
+  let block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
     Ok((lines, line_offset)) => {
       lines.join("\n")
     }
@@ -258,7 +258,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, current_line: &m
   };
 
   // Pass text to inline parser as a string
-  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, current_line, &mut tree_wrapper.node_count) {
+  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, line_cursor, &mut tree_wrapper.node_count) {
     children
   } else {
     return TransitionResult::Failure {

@@ -388,7 +388,7 @@ fn bullet_list_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -417,7 +417,7 @@ fn bullet_list_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -450,7 +450,7 @@ fn bullet_list_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -497,7 +497,7 @@ fn bullet_list_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -553,7 +553,7 @@ fn bullet_list_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
 
@@ -604,7 +604,7 @@ fn bullet_list_06 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -662,7 +662,7 @@ fn enumerated_list_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -703,7 +703,7 @@ fn enumerated_list_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -749,7 +749,7 @@ fn enumerated_list_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -820,7 +820,7 @@ fn enumerated_list_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -884,7 +884,7 @@ fn enumerated_list_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -978,7 +978,7 @@ fn mixed_nested_lists_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1051,7 +1051,7 @@ An ending paragraph...
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1105,7 +1105,7 @@ An ending paragraph...
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1158,7 +1158,7 @@ fn field_list_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1236,7 +1236,7 @@ fn footnote_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1278,7 +1278,7 @@ fn footnote_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1345,7 +1345,7 @@ fn footnote_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1410,7 +1410,7 @@ fn footnote_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();
@@ -1468,7 +1468,7 @@ fn footnote_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
   doctree.tree = doctree.tree.walk_to_root();

@@ -9,8 +9,9 @@ use crate::doctree::TreeNodeType;
 fn inline_parse_01 () {
 
   let src = String::from("This is a string with\n a ``literal``, **strong emphasis** and normal text");
+  let mut lc = LineCursor::new(0,0);
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };
@@ -39,7 +40,9 @@ fn inline_parse_02 () {
 
   let src = String::from("This is a string with a simple-reference+with:punctuation__\nand a `phrase reference`_");
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let mut lc = LineCursor::new(0,0);
+
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };
@@ -68,8 +71,9 @@ fn inline_parse_02 () {
 fn inline_parse_03 () {
 
   let src = String::from("Here is a simple-reference_ to an _`inline target.`");
+  let mut lc = LineCursor::new(0,0);
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };
@@ -98,8 +102,9 @@ fn inline_parse_03 () {
 fn inline_parse_04 () {
 
   let src = String::from("Here is a |substitution reference|_ to an _`inline target.`");
+  let mut lc = LineCursor::new(0,0);
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };
@@ -120,8 +125,9 @@ fn inline_parse_04 () {
 fn inline_parse_05 () {
 
   let src = String::from("This is an absolute URI: https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top");
+  let mut lc = LineCursor::new(0,0);
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };
@@ -142,8 +148,9 @@ fn inline_parse_05 () {
 fn inline_parse_06 () {
 
   let src = String::from("This is an email address: john.harry.doe@www.example.com");
+  let mut lc = LineCursor::new(0,0);
 
-  let nodes = match Parser::inline_parse(src, &mut 0, &mut 0) {
+  let nodes = match Parser::inline_parse(src, &mut lc, &mut 0) {
     Some(nodes) => nodes,
     None => panic!("No nodes to be found!")
   };

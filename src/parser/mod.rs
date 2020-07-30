@@ -30,7 +30,7 @@ mod types_and_aliases;
 use types_and_aliases::*;
 
 mod line_cursor;
-use line_cursor::LineCursor;
+use line_cursor::{LineCursor, Line};
 
 mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
@@ -61,7 +61,7 @@ pub struct Parser {
 
   /// #### line_cursor
   /// The absolute line index of src_lines.
-  line_cursor: usize,
+  line_cursor: LineCursor,
 
   /// #### base_indent
   /// The level of basic indentation that the parser is working with.
@@ -94,11 +94,11 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, initial_state: Option<StateMachine>) -> Self {
+  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>) -> Self {
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
-      line_cursor: 0,
+      line_cursor: LineCursor::new(0, base_line),
       base_indent: base_indent.unwrap_or(0),
       doctree: Some(doctree),
       state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
@@ -112,7 +112,7 @@ impl Parser {
 
     println!("=====================\n Initiating parse...\n=====================\n");
 
-    eprintln!("... with base indent: {:#?}\n", self.base_indent);
+    eprintln!("... with base indent {:#?} on line {:#?}\n", self.base_indent, self.line_cursor.sum_total());
 
     let mut line_changed: bool = false;
     let mut line_not_changed_count: u32 = 0;
@@ -120,11 +120,11 @@ impl Parser {
     // The parsing loop
     loop {
 
-      eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor, self.state_stack);
+      eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
       eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().tree.node.data);
 
       if !line_changed && line_not_changed_count >= 10 {
-        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.line_cursor);
+        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.line_cursor.sum_total());
         break
       }
 
@@ -175,7 +175,7 @@ impl Parser {
       for (pattern_name, regex, method) in latest_state_transitions.iter() {
 
         // Fetching a reference to current line
-        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor) {
+        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
           Some(line) => line,
           None => {
             return ParsingResult::Failure { message: String::from("Parsing ended prematurely because of an unqualified move past EOF...\n") }
@@ -195,7 +195,7 @@ impl Parser {
 
           eprintln!("Executing transition method...\n");
 
-          let line_before_transition = self.line_cursor;
+          let line_before_transition = self.line_cursor.sum_total();
 
           self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
 
@@ -247,7 +247,7 @@ impl Parser {
                     self.state_stack.append(&mut nested_state_stack.unwrap());
                   } else {
                     return ParsingResult::Failure {
-                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor)
+                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor.sum_total())
                     }
                   }
                 }
@@ -259,17 +259,17 @@ impl Parser {
                 (push_or_pop, next_state, nested_state_stack) => {
                   eprintln!("No action for received (PushOrPop, StateMachine, Vec<Statemachine>) = ({:#?}, {:#?}, {:#?}) triplet...\n", push_or_pop, next_state, nested_state_stack);
                   return ParsingResult::Failure {
-                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor)
+                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor.sum_total())
                   }
                 }
               };
 
               if let LineAdvance::Some(offset) = line_advance {
-                self.line_cursor += offset;
+                *self.line_cursor.relative_offset_mut_ref() += offset;
               }
 
               // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
-              if self.line_cursor == line_before_transition {
+              if self.line_cursor.sum_total() == line_before_transition {
                 line_not_changed_count += 1;
               } else {
                 line_changed = true;
@@ -307,7 +307,7 @@ impl Parser {
 
       }
 
-      if self.line_cursor >= self.src_lines.len() {
+      if self.line_cursor.relative_offset() >= self.src_lines.len() {
         self.state_stack.push(StateMachine::EOF);
       }
     };
@@ -323,7 +323,7 @@ impl Parser {
   fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
 
     if line < self.src_lines.len() {
-      self.line_cursor = line;
+      *self.line_cursor.relative_offset_mut_ref() = line;
     } else {
       return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
     }
@@ -338,13 +338,13 @@ impl Parser {
   /// The called must handle the `Err` case.
   fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
 
-    self.line_cursor = match self.line_cursor.checked_add(n) {
+    *self.line_cursor.relative_offset_mut_ref() = match self.line_cursor.relative_offset().checked_add(n) {
       Some(value) => value,
       None =>
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.line_cursor > self.src_lines.len() {
+    if self.line_cursor.relative_offset() > self.src_lines.len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
@@ -358,13 +358,13 @@ impl Parser {
   /// The called must handle the `Err` case.
   fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
 
-    self.line_cursor = match self.line_cursor.checked_sub(n) {
+    *self.line_cursor.relative_offset_mut_ref() = match self.line_cursor.relative_offset().checked_sub(n) {
       Some(value) => value,
       None =>
         return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
     };
 
-    if self.line_cursor > self.src_lines.len() {
+    if self.line_cursor.relative_offset() > self.src_lines.len() {
       return Err("No such line number.\nComputer says no...\n")
     }
 
@@ -408,7 +408,7 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, current_line: &mut usize, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
+  fn inline_parse (inline_src_block: String, line_cursor: &mut LineCursor, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 
@@ -433,7 +433,7 @@ impl Parser {
 
           if c == '\n' {
             // eprintln!("Detected newline...\n");
-            *current_line += 1;
+            *line_cursor.relative_offset_mut_ref() += 1;
             col = 0;
           }
         }
@@ -452,7 +452,7 @@ impl Parser {
 
       if c == '\n' {
         // eprintln!("Detected newline...\n");
-        *current_line += 1;
+        *line_cursor.relative_offset_mut_ref() += 1;
         col = 0;
       }
 
@@ -470,7 +470,7 @@ impl Parser {
 
             if c == '\n' {
               // eprintln!("Detected newline...\n");
-              *current_line += 1;
+              *line_cursor.relative_offset_mut_ref() += 1;
               col = 0;
             }
           }
@@ -535,16 +535,16 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut usize, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
-    eprintln!("Line before nested parse: {:?}...\n", current_line);
+    eprintln!("Line before nested parse: {:?}...\n", current_line.sum_total());
 
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
 
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), Some(relative_first_indent)) {
+    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent)) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
         eprintln!("Block lines: {:#?}\n", lines);
         (lines.join("\n"), line_offset)
@@ -557,7 +557,7 @@ impl Parser {
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), Some(start_state)).parse() {
+    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), current_line.sum_total(), Some(start_state)).parse() {
       ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
         eprintln!("{:?}", message);
@@ -566,7 +566,7 @@ impl Parser {
       }
     };
 
-    eprintln!("Line after nested parse: {:?}...\n", current_line);
+    eprintln!("Line after nested parse: {:?}...\n", current_line.sum_total());
 
     Some((doctree, line_offset, state_stack))
   }
