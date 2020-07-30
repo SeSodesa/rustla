@@ -540,11 +540,11 @@ impl Parser {
     eprintln!("Line before nested parse: {:?}...\n", current_line);
 
 
-    let relative_first_indent = first_indent.or(None);
+    let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
 
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), relative_first_indent) {
+    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(*current_line), Some(true), None, Some(relative_block_indent), Some(relative_first_indent)) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
         eprintln!("Block lines: {:#?}\n", lines);
         (lines.join("\n"), line_offset)
@@ -674,8 +674,8 @@ impl Parser {
     // Push first line into `block_lines` and increment
     // line number to ignore indentation (for now) if first_indent was set
     if first_indent.is_some() {
-      // eprintln!("Pushing line {} to block_lines", line_num);
       let line = src_lines.get(line_num).unwrap().to_owned();
+      eprintln!("Pushing line {:#?} to block_lines\n", line);
       block_lines.push(line);
       line_num += 1;
     }
@@ -693,6 +693,8 @@ impl Parser {
         Some(line) => line.clone(),
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
+
+      eprintln!("Line: {:#?}\n", line);
 
       // Check for sufficient indentation if line isn't empty
 
@@ -740,15 +742,17 @@ impl Parser {
     // If indentation was expected on the first line, remove it
     if !first_indent.is_none() && !block_lines.is_empty() {
 
-      // eprintln!("Removing first line indentation...\n");
+      eprintln!("Removing first line indentation {:#?}...\n", first_indent);
 
       if let Some(first_line) = block_lines.first_mut() {
         let mut cs = first_line.chars();
         for _i in 0..first_indent.unwrap() {
           cs.next();
+          eprintln!("{:#?}\n", cs.as_str());
         }
         let trunc_line = cs.as_str().to_string();
-          *first_line = trunc_line;
+        *first_line = trunc_line;
+        eprintln!("First line: {:#?}\n", first_line);
       }
     }
 

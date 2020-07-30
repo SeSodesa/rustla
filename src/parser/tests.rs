@@ -1475,7 +1475,47 @@ fn footnote_05 () {
 
   eprintln!("{:#?}", doctree.tree);
 
-  todo!()
+  match &doctree.tree.node.children[1].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "2" && target == "2" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[2].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "1" && target == "test-with-mixed" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[3].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "*" && target == "*" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[3].children[0].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "3" && target == "nested" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[4].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "†" && target == "†" {} else { panic!() }
+    }
+    _ => panic!()
+  }
+
+  match &doctree.tree.node.children[5].data {
+    TreeNodeType::Footnote { label, target, .. } => {
+      if label == "2" && target == "2" {} else { panic!() }
+    }
+    _ => panic!()
+  }
 }
 
 
