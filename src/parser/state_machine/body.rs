@@ -179,8 +179,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, current_line: &mu
     }
   };
 
-  let has_one_line_body = detected_body_indent < detected_marker_indent + 3;
-
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(&tree_wrapper.tree.node.data, detected_marker_indent) {

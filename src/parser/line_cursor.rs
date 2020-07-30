@@ -5,46 +5,53 @@ use super::*;
 
 
 /// ### LineCursor
-/// A line cursor type of a parser that holds the abolsute and relative (in case of nested parsing sessions)
-/// positions of the parser in the vector of source lines. The relative cursor is used to actually access
-/// the source lines' contents, whereas the sum of relative and absolute cursors is used mainly for debug prints.
-pub struct LineCursor <'parser> {
+/// A line cursor type of a parser that holds the start line and offset from it.
+/// The relative offset cursor is used to actually access
+/// the source lines' contents, whereas the sum of relative and absolute cursors is
+/// used mainly for debug prints and|or error messages.
+pub struct LineCursor {
 
-  /// #### relative_offset
+  /// #### offset
   /// This is used to access the contents of the source lines vector held by the parser.
-  relative_offset: usize,
+  /// It should generally be initialized to `0`.
+  offset: Line,
 
 
   /// #### absolute_offset
-  /// A pointer to the position of the parent parser.
-  absolute_offset: &'parser mut usize,
+  /// The line of text that a parser started working on.
+  baseline: Line,
 }
 
 
-impl <'parser> LineCursor <'parser> {
+impl LineCursor {
 
   /// ### new
   /// A `LineCursor` constructor.
-  pub fn new (relative: usize, absolute: &'parser mut usize) -> Self {
+  pub fn new (relative: Line, absolute: Line) -> Self {
     Self {
-      relative_offset: relative,
-      absolute_offset: absolute,
+      offset: relative,
+      baseline: absolute,
     }
   }
 
 
   /// ### increment
-  /// Increments both the relative and absolute offsets by given `amount`.
-  pub fn increment_by (&mut self, amount: usize) {
-    self.relative_offset += amount;
-    *self.absolute_offset += amount;
+  /// Increments relative offset by given `amount`.
+  pub fn increment_by (&mut self, amount: Line) {
+    self.offset += amount;
   }
 
 
   /// ### sum_total
   /// Returns the sum total of `self.relative_offset` and `*self.absolute_offset`.
-  pub fn sum_total (&self) -> usize {
-    self.relative_offset + *self.absolute_offset
+  pub fn sum_total (&self) -> Line {
+    self.offset + self.baseline
   }
 
 }
+
+
+/// ### Line
+/// A type alias for a line vector index.
+pub type Line = usize;
+
