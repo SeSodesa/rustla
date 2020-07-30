@@ -68,13 +68,15 @@ asdfsdafasdfasdfa
   eprintln!("{:#?}", lines);
 
   match Parser::read_text_block(&lines, 2, false, false, None) {
-    Ok(_) => panic!("There was indent where one was not allowed..."),
+    Ok((lines, offset)) => {
+      assert_eq!(
+        vec!["asdsafasfgasf  fwsdaf", "asfsdafasdfffasfsdfsaf"],
+        lines
+      )
+    },
     Err(e) => {
       eprintln!("{:#?}", e);
-      assert_eq!(
-        "No indent allowed but indent found on line 4!\nComputer says no...\n",
-        e
-      )
+      panic!()
     }
   };
 
@@ -1515,6 +1517,79 @@ fn footnote_05 () {
       if label == "2" && target == "2" {} else { panic!() }
     }
     _ => panic!()
+  }
+}
+
+
+#[test]
+fn citation_01 () {
+
+  let src = String::from("
+  .. [CIT2005] Citation
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match &doctree.tree.node.children[1].data {
+    TreeNodeType::Citation {label, .. } => {
+      if !(label == "CIT2005") { panic!() }
+    }
+     _=> panic!()
+  }
+
+  match &doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::Paragraph => {}
+     _=> panic!()
+  }
+}
+
+
+#[test]
+fn citation_02 () {
+
+  let src = String::from("
+  .. [one] aaa
+      .. [two] bbb
+        .. [three] ccc
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree.tree = doctree.tree.walk_to_root();
+
+  eprintln!("{:#?}", doctree.tree);
+
+  match &doctree.tree.node.children[1].data {
+    TreeNodeType::Citation {label, .. } => {
+      if !(label == "one") { panic!() }
+    }
+     _=> panic!()
+  }
+
+  match &doctree.tree.node.children[1].children[0].data {
+    TreeNodeType::Citation {label, .. } => {
+      if !(label == "two") { panic!() }
+    }
+     _=> panic!()
+  }
+
+  match &doctree.tree.node.children[1].children[0].children[0].data {
+    TreeNodeType::Citation {label, .. } => {
+      if !(label == "three") { panic!() }
+    }
+     _=> panic!()
   }
 }
 

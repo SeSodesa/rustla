@@ -13,7 +13,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 26] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 27] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
@@ -46,6 +46,8 @@ impl StateMachine {
     (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, StateMachine::AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
     (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, StateMachine::SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
     (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, StateMachine::AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
+
+    (PatternName::Citation, StateMachine::CITATION_PATTERN, body::citation),
 
     (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];

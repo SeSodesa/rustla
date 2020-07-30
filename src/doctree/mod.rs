@@ -246,12 +246,12 @@ impl TreeNode {
       // These elements are allowed to contain body level nodes
       TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation  => {
+      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {
           TreeNodeType::Paragraph             | TreeNodeType::BulletList { .. } | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList      | TreeNodeType::FieldList { .. }  | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
-          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote  { .. }  | TreeNodeType::Citation
+          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote  { .. }  | TreeNodeType::Citation { .. }
           | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment             | TreeNodeType::EmptyLine         => true,
           _ => false
@@ -560,7 +560,10 @@ pub enum TreeNodeType {
 
   /// #### Citation
   /// A generic citation target.
-  Citation,
+  Citation {
+    body_indent: usize,
+    label: String,
+  },
 
   /// #### HyperlinkTarget
   /// A target for a hyperlink.

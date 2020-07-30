@@ -221,8 +221,68 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
 /// ### citation
 /// A transition function for generating citations
-pub fn citation (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
-  todo!()
+pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let mut tree_wrapper = doctree.unwrap();
+
+  // Detected parameters...
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_label_str = captures.get(2).unwrap().as_str();
+
+  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+    if line.trim().is_empty() {
+      detected_text_indent
+    } else {
+      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+      if indent < detected_marker_indent + 3 {
+        detected_text_indent
+      } else {
+        indent
+      }
+    }
+  } else {
+    detected_text_indent
+  };
+
+  eprintln!("marker: {}", detected_marker_indent);
+  eprintln!("text: {}", detected_text_indent);
+  eprintln!("body: {}\n", detected_body_indent);
+
+  // Match against the parent node. Only document root ignores indentation;
+  // inside any other container it makes a difference.
+  if parent_indent_matches(&tree_wrapper.tree.node.data, detected_body_indent) {
+
+    let citation_data = TreeNodeType::Citation {
+      body_indent: detected_body_indent,
+      label: detected_label_str.to_string(),
+    };
+    tree_wrapper = tree_wrapper.push_and_focus(citation_data);
+
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation) {
+      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+    };
+
+    tree_wrapper = doctree;
+
+  return TransitionResult::Success {
+    doctree: tree_wrapper,
+    next_state: None,
+    push_or_pop: PushOrPop::Push,
+    line_advance: LineAdvance::Some(offset),
+    nested_state_stack: Some(state_stack)
+  }
+  } else {
+    tree_wrapper = tree_wrapper.focus_on_parent();
+    return TransitionResult::Success {
+      doctree: tree_wrapper,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
+    }
+  }
 }
 
 
@@ -313,7 +373,8 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
       if relevant_detected_indent == *text_indent { true } else { false }
     }
 
-    TreeNodeType::FieldListItem {body_indent, .. } | TreeNodeType::Footnote {body_indent, ..} => {
+    TreeNodeType::FieldListItem {body_indent, .. } | TreeNodeType::Footnote {body_indent, ..}
+    | TreeNodeType::Citation {body_indent, ..} => {
       if relevant_detected_indent == *body_indent { true } else { false }
     },
 

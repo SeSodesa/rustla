@@ -446,12 +446,8 @@ impl Parser {
 
     while let Some(c) = src_chars.next() {
 
-      // eprintln!("Consuming {:#?}...\n", c);
-
       col += 1;
-
       if c == '\n' {
-        // eprintln!("Detected newline...\n");
         *line_cursor.relative_offset_mut_ref() += 1;
         col = 0;
       }
@@ -464,21 +460,15 @@ impl Parser {
           // Move iterator to start of next possible match
           for _ in 0..offset - 1 {
             let c = src_chars.next().unwrap();
-            // eprintln!("Consuming {:#?}", c);
-
             col += 1;
-
             if c == '\n' {
-              // eprintln!("Detected newline...\n");
               *line_cursor.relative_offset_mut_ref() += 1;
               col = 0;
             }
           }
         },
 
-        None => {
-          // eprintln!("No match on line {}, col {}.\n", current_line, col);
-        }
+        None => {}
       }
     }
 
@@ -510,19 +500,11 @@ impl Parser {
       match regexp.captures(src_str) {
 
         Some(capts) => {
-
-          // eprintln!("Match found for {:#?}\n", pattern_name);
-
           let (node, offset) = parsing_function(*pattern_name, &capts, node_id);
-
-          //eprintln!("{:#?}", node);
-
           return Some((node, offset));
-
         },
 
         None => {
-          //eprintln!("No match for {:#?}", pattern_name);
           continue // no match, do nothing
         }
       };
@@ -537,16 +519,13 @@ impl Parser {
   /// right after the enumerator, on the same line.
   fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
-    eprintln!("Line before nested parse: {:?}...\n", current_line.sum_total());
-
-
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
 
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
     let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent)) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
-        eprintln!("Block lines: {:#?}\n", lines);
+        eprintln!("Block lines: {:#?}, line_offset: {:#?}\n", lines, line_offset);
         (lines.join("\n"), line_offset)
       }
       Err(e) => {
@@ -565,8 +544,6 @@ impl Parser {
         return None
       }
     };
-
-    eprintln!("Line after nested parse: {:?}...\n", current_line.sum_total());
 
     Some((doctree, line_offset, state_stack))
   }
@@ -600,12 +577,12 @@ impl Parser {
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
       if !indent_allowed && line_indent > 0 {
-        return Err(format!("No indent allowed but indent found on line {}!\nComputer says no...\n", line_num))
+        break
       }
 
       if let Some(alignment) = alignment {
         if alignment != line_indent {
-          return Err(format!("Block alignment was set but line {} indent does not match...\nComputer says no...\n", line_num))
+          break
         }
       }
 
@@ -675,7 +652,7 @@ impl Parser {
     // line number to ignore indentation (for now) if first_indent was set
     if first_indent.is_some() {
       let line = src_lines.get(line_num).unwrap().to_owned();
-      eprintln!("Pushing line {:#?} to block_lines\n", line);
+      // eprintln!("Pushing line {:#?} to block_lines\n", line);
       block_lines.push(line);
       line_num += 1;
     }
@@ -748,11 +725,9 @@ impl Parser {
         let mut cs = first_line.chars();
         for _i in 0..first_indent.unwrap() {
           cs.next();
-          eprintln!("{:#?}\n", cs.as_str());
         }
         let trunc_line = cs.as_str().to_string();
         *first_line = trunc_line;
-        eprintln!("First line: {:#?}\n", first_line);
       }
     }
 

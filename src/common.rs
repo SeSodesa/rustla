@@ -85,6 +85,7 @@ pub enum PatternName {
   // Body elements, possibly nested
   EmptyLine,
   Bullet,
+  Citation,
   Enumerator {delims: EnumDelims, kind: EnumKind},
 
   FieldMarker,
