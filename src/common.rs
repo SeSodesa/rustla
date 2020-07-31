@@ -94,7 +94,7 @@ pub enum PatternName {
   DocTest,
   LineBlock,
   ExplicitMarkup,
-  AnonymousTarget,
+  HyperlinkTarget(HyperlinkTargetKind),
   Line,
   Paragraph,
   Text,
@@ -145,6 +145,37 @@ pub enum FootnoteKind {
   AutoNumbered,
   SimpleRefName,
   AutoSymbol,
+}
+
+
+/// ### HyperlinkTargetKind
+/// A hyperlink target may be one of 3 types:
+///
+/// 1. internal,
+/// 2. external or
+/// 3. indirect
+///
+/// **Internal** hyperlink targets have empty link blocks. They provide an end point allowing
+/// a hyperlink to connect one place to another within a document.
+/// An internal hyperlink target points to the element following the target.
+///
+/// **External** hyperlink targets have an absolute or relative URI or email address in their link blocks.
+/// An external hyperlink's URI may begin on the same line as the explicit markup start and target name, or it may begin in an indented text block immediately following, with no intervening blank lines.
+/// If there are multiple lines in the link block, they are concatenated.
+/// Any unescaped whitespace is removed.
+/// 
+/// **Indirect** hyperlink targets have a hyperlink reference in their link blocks.
+/// Just as with hyperlink references anywhere else in a document,
+/// if a phrase-reference is used in the link block it must be enclosed in backquotes.
+/// As with external hyperlink targets, the link block of an indirect hyperlink target may
+/// begin on the same line as the explicit markup start or the next line.
+/// It may also be split over multiple lines, in which case the lines are
+/// joined with whitespace before being normalized.
+#[derive(Debug, Clone, Copy)]
+pub enum HyperlinkTargetKind {
+  Internal,
+  External,
+  Indirect
 }
 
 
