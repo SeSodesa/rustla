@@ -523,7 +523,7 @@ impl Parser {
     let relative_block_indent = text_indent - base_indent;
 
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent)) {
+    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent), true) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
         eprintln!("Block lines: {:#?}, line_offset: {:#?}\n", lines, line_offset);
         (lines.join("\n"), line_offset)
@@ -606,7 +606,7 @@ impl Parser {
   /// Determines the minimum level of indentation
   /// and uses it as a reference for ending the block.
   fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
-    strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>)
+    strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>, force_alignment: bool)
   -> Result<(Vec<String>, usize, usize, bool), String> {
 
     if src_lines.is_empty() {
@@ -646,8 +646,7 @@ impl Parser {
     }
 
     let mut blank_finish: bool = false;
-
-    let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
+    let mut loop_broken: bool = false; // Used to detect whether the below while loop was broken out of
 
     while line_num < last_line_num {
 
@@ -656,10 +655,18 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
-      // Check for sufficient indentation if line isn't empty
+      // Check for sufficient (or correct if block alignmen was forced) indentation if line isn't empty
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
-      if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
+      let break_when_not_aligned: bool = if block_indent.is_some() && force_alignment {
+        line_indent != block_indent.unwrap()
+      } else if block_indent.is_some() {
+        line_indent < block_indent.unwrap()
+      } else {
+        false
+      };
+
+      if !line.trim().is_empty() && ( line_indent < 1 || break_when_not_aligned ) {
 
         // Ended with a blank finish if the last line before unindent was blank
         blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().trim().is_empty();
