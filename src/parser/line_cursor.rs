@@ -52,7 +52,13 @@ impl LineCursor {
   /// ### increment
   /// Increments relative offset by given `amount`.
   pub fn increment_by (&mut self, amount: Line) {
-    self.offset += amount;
+    match self.offset.checked_add(amount) {
+      Some(line) => line,
+      None => {
+        eprintln!("Tried incrementing relative line offset by {} on line {} but overflew.\nComputer says no...\n", amount, self.sum_total());
+        panic!()
+      }
+    };
   }
 
 
