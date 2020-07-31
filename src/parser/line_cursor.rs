@@ -17,7 +17,7 @@ pub struct LineCursor {
   offset: Line,
 
 
-  /// #### absolute_offset
+  /// #### baseline
   /// The line of text that a parser started working on.
   baseline: Line,
 }
@@ -36,14 +36,14 @@ impl LineCursor {
 
 
   /// ### relative_offset
-  /// Retrieves the 
+  /// Retrieves the line relative to the baseline that a (nested) parser is on.
   pub fn relative_offset (&self) -> Line {
     self.offset
   }
 
 
   /// ### relative_offset_mut_ref
-  /// Retrieves the 
+  /// Retrieves a mutable reference to the line that the (nested) parser is on.
   pub fn relative_offset_mut_ref (&mut self) -> &mut Line {
     &mut self.offset
   }
@@ -63,7 +63,7 @@ impl LineCursor {
 
 
   /// ### sum_total
-  /// Returns the sum total of `self.relative_offset` and `*self.absolute_offset`.
+  /// Returns the sum total of `self.relative_offset` and `*self.baseline`.
   pub fn sum_total (&self) -> Line {
     self.offset + self.baseline
   }
