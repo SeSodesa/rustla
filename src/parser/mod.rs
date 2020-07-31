@@ -690,7 +690,7 @@ impl Parser {
       line_num += 1;
     }
 
-    if !loop_broken { blank_finish = true; }
+    if !loop_broken { blank_finish = true; } // Made it to the end of input
 
     // Strip all minimal indentation from each line
     if let Some(min_indent) = minimal_indent {
