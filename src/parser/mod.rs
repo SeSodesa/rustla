@@ -635,8 +635,6 @@ impl Parser {
       None => None
     };
 
-    // eprintln!("Minimal indent after block assignment: {:?}", minimal_indent);
-
     // If there is block indentation but no predetermined indentation for the first line,
     // set the indentation of the first line equal to block indentation.
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
@@ -646,13 +644,10 @@ impl Parser {
       first_indent
     };
 
-    // eprintln!("First indent set to {:?}", first_indent);
-
     // Push first line into `block_lines` and increment
     // line number to ignore indentation (for now) if first_indent was set
     if first_indent.is_some() {
       let line = src_lines.get(line_num).unwrap().to_owned();
-      // eprintln!("Pushing line {:#?} to block_lines\n", line);
       block_lines.push(line);
       line_num += 1;
     }
@@ -660,9 +655,6 @@ impl Parser {
     let mut blank_finish: bool = false;
 
     let mut loop_broken = false; // Used to detect whether the below while loop was broken out of
-
-    // eprintln!("First indent: {:?}", first_indent);
-    // eprintln!("Block indent: {:?}\n", block_indent);
 
     while line_num < last_line_num {
 
@@ -678,8 +670,6 @@ impl Parser {
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
       if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
-        // eprintln!("Line: {:#?}", line);
-        // eprintln!("Not enough indentation on line {:?}!\n", line_num);
 
         // Ended with a blank finish if the last line before unindent was blank
         blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().is_empty();
@@ -693,10 +683,7 @@ impl Parser {
 
         blank_finish = true;
         break
-
       } else if block_indent.is_none() {
-
-        eprintln!("Line indent: {:?} on line {:?}", line_indent, line_num);
 
         if minimal_indent.is_none() {
           minimal_indent = Some(line_indent);
@@ -716,40 +703,14 @@ impl Parser {
       blank_finish = true;
     }
 
-    // If indentation was expected on the first line, remove it
-    if !first_indent.is_none() && !block_lines.is_empty() {
-
-      eprintln!("Removing first line indentation {:#?}...\n", first_indent);
-
-      if let Some(first_line) = block_lines.first_mut() {
-        let mut cs = first_line.chars();
-        for _i in 0..first_indent.unwrap() {
-          cs.next();
-        }
-        let trunc_line = cs.as_str().to_string();
-        *first_line = trunc_line;
-      }
-    }
-
     // Strip all minimal indentation from each line
-    if let Some(indent) = minimal_indent {
+    if let Some(min_indent) = minimal_indent {
       if strip_indent {
-        // eprintln!("Removing indentation from lines...\n");
         for (index, line) in block_lines.iter_mut().enumerate() {
-          if first_indent.is_some() && index == 0 {
-            // eprintln!("Cursor currently on the first line of block and \nfirst line had own indentation.\nContinuing...\n");
-            continue
-          }
-          // eprintln!("Draining line {:?} of minimal indent, {:?}...", line, indent);
-          let trunc_line = match common::strip_indent(line.clone(), indent) {
-            Ok(line) => line,
-            Err(e) => {
-              eprintln!("{}", e);
-              return Err(format!("Indentation removal error on line {} of block under inspection\n", index));              
-            }
-          };
-          *line = trunc_line;
-          // eprintln!("Line after drain: {:?}\n", line);
+          let indent = if first_indent.is_some() && index == 0 { first_indent.unwrap() } else { min_indent };
+          let mut cs = line.chars();
+          for _i in 0..indent { cs.next(); } // Remove indentation in characters
+          *line = cs.as_str().to_string();
         }
       }
     }
