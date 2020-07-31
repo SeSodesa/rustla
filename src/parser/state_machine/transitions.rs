@@ -344,7 +344,7 @@ impl StateMachine {
   /// #### HYPERLINK_TARGET_PATTERN
   /// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
   /// with and underscore `_`, the latter of which signifies an anonymous link.
-  const HYPERLINK_TARGET_PATTERN: &'static str = r"^(\s*)\.\.[ ]+_([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*|_):(?:[ ]+|$)";
+  const HYPERLINK_TARGET_PATTERN: &'static str = r"^(\s*)\.\.[ ]+_([a-zA-Z0-9][a-zA-Z0-9 ]*(?:[-+._:][a-zA-Z0-9 ]+)*[a-zA-Z0-9]+|_):(?:[ ]+|$)";
 
 
   /// #### SUBSTITUTION_DEF_PATTERN

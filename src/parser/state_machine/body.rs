@@ -289,6 +289,13 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 }
 
 
+/// ### hyperlink_target
+/// Parses a hyperlink target into a node.
+pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+  todo!()
+}
+
+
 /// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
 pub fn directive (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
