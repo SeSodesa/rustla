@@ -121,7 +121,7 @@ impl Parser {
     loop {
 
       eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
-      eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().tree.node.data);
+      eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().get_node_data());
 
       if !line_changed && line_not_changed_count >= 10 {
         eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}.\nClearly something is amiss...\n", line_not_changed_count, self.line_cursor.sum_total());
@@ -302,7 +302,7 @@ impl Parser {
         };
 
         let mut doctree = self.doctree.take().unwrap();
-        doctree.tree = doctree.tree.focus_on_parent().unwrap();
+        doctree = doctree.focus_on_parent();
         self.doctree.replace(doctree);
 
       }

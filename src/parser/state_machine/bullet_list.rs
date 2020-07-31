@@ -17,7 +17,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
-  let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.tree.node.data {
+  let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.get_node_data() {
     doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
     _ => {
       return TransitionResult::Failure {
@@ -27,17 +27,17 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   };
 
 
-  match tree_wrapper.tree.node.data {
+  match tree_wrapper.get_node_data() {
 
     TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
 
-      if bullet == detected_bullet && bullet_indent == detected_bullet_indent && text_indent == detected_text_indent {
+      if *bullet == detected_bullet && *bullet_indent == detected_bullet_indent && *text_indent == detected_text_indent {
         // Still within same list based on indentation and bullet.
         // Create new ListItem node add a `ListItem` state on top of the state stack and proceed to
         // parse body elements on the same indentation level
 
         let item_node_data = TreeNodeType::BulletListItem{
-          bullet: bullet,
+          bullet: *bullet,
           bullet_indent: detected_bullet_indent,
           text_indent: detected_text_indent
         };

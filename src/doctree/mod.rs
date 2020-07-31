@@ -64,6 +64,20 @@ impl DocTree {
   }
 
 
+  /// ### walk_to_root
+  /// Walks to the root of the contained tree zipper.
+  pub fn walk_to_root (mut self) -> Self {
+    self.tree = self.tree.walk_to_root();
+    self
+  }
+
+
+  pub fn print_tree (&self) {
+    eprintln!("The Document Tree\n=================");
+    eprintln!("{:#?}", self.tree)
+  }
+
+
   /// ### focus_on_parent
   /// Focuses `self.tree` on its parent node if there is one.
   pub fn focus_on_parent (mut self) -> Self {
@@ -98,6 +112,61 @@ impl DocTree {
   }
 
 
+  /// ### get_node_data
+  /// Retrieves a shared reference to the data of the
+  /// currently focused on node.
+  pub fn get_node_data (&self) -> &TreeNodeType {
+    self.tree.node.get_data()
+  }
+
+
+    /// ### get_node_data
+  /// Retrieves a shared reference to the data of the
+  /// currently focused on node.
+  pub fn get_mut_node_data (&mut self) -> &mut TreeNodeType {
+    self.tree.node.get_mut_data()
+  }
+
+
+  /// ### get_child_data
+  /// Retrieves a shared reference to the data of the given child of the current node.
+  pub fn get_child_data (&self, index: usize) -> &TreeNodeType {
+    match self.tree.node.children.get(index) {
+      Some(node) => &node.data,
+      None => {
+        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+        panic!()
+      }
+    }
+  }
+
+
+  /// ### get_mut_child_data
+  /// Retrieves a mutable reference to the data of the given child of the current node.
+  pub fn get_mut_child_data (&mut self, index: usize) -> &mut TreeNodeType {
+    match self.tree.node.children.get_mut(index) {
+      Some(node) => &mut node.data,
+      None => {
+        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+        panic!()
+      }
+    }
+  }
+
+
+  /// ### child
+  /// Retrieves a shared reference to a given child.
+  pub fn child (&self, index: usize) -> &TreeNode {
+    match self.tree.node.children.get(index) {
+      Some(node) => node,
+      None => {
+        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+        panic!()
+      }
+    }
+  }
+
+
   /// ### append_children
   /// Appends the nodes given in a given vector of nodes to the currently
   /// focused on node in `self.tree`.
@@ -116,7 +185,7 @@ impl DocTree {
 
 
   /// ### current_node_id
-  /// Retrieves a copy of the node currently focused on.
+  /// Retrieves a copy of the node id currently focused on.
   pub fn current_node_id (&self) -> NodeId {
     self.tree.node.id
   }
@@ -235,7 +304,7 @@ impl TreeNode {
   /// Traverses `TreeNode`s recursively.
   fn traverse(&mut self) {
 
-    eprintln!("Entering {:?}", self.get_data_type());
+    eprintln!("Entering {:?}", self.get_data());
 
     let children = &mut self.children;
 
@@ -314,13 +383,28 @@ impl TreeNode {
     }
   }
 
+
+  pub fn child (&self, index: usize) -> &Self {
+    match self.children.get(index) {
+      Some(node) => node,
+      None => panic!()
+    }
+  }
+
   /// ### get_data_type
   /// For retrieving an immutable reference to the data type of a node.
   /// Mainly for printing purposes.
-  fn get_data_type (&self) -> &TreeNodeType {
+  pub fn get_data (&self) -> &TreeNodeType {
     &self.data
   }
 
+
+  /// ### get_data_type
+  /// For retrieving an immutable reference to the data type of a node.
+  /// Mainly for printing purposes.
+  pub fn get_mut_data (&mut self) -> &mut TreeNodeType {
+    &mut self.data
+  }
 }
 
 
@@ -392,7 +476,6 @@ pub enum TreeNodeType {
     start_index: usize,
     n_of_items: usize,
     enumerator_indent: usize,
-    latest_text_indent: usize
   },
 
   /// #### EnumeratedListItem

@@ -393,11 +393,11 @@ fn bullet_list_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
   //eprintln!("{:#?}", doctree.tree.walk_to_root());
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::BulletList{..}=> (),
     _ => panic!("No bullet list node where one was expected!\n")
   }
@@ -422,16 +422,16 @@ fn bullet_list_02 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
-    _ => panic!("Second non-whitespace child of ListItem wasn't a paragraph!\n")
+    _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[2].data {
+  match doctree.child(1).child(0).child(2).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }

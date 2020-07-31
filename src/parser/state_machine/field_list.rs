@@ -26,11 +26,11 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
   let one_line_body: bool = detected_marker_indent >= detected_body_indent;
 
   // Make sure we are inside a FieldList and that indentations match
-  match tree_wrapper.tree.node.data {
+  match tree_wrapper.get_node_data() {
 
     TreeNodeType::FieldList { marker_indent} => {
 
-      if marker_indent == detected_marker_indent {
+      if *marker_indent == detected_marker_indent {
         let marker_inline_nodes = if let Some(nodes) = Parser::inline_parse(detected_marker_name.to_string(), line_cursor, &mut tree_wrapper.node_count) {
           nodes
         } else {
