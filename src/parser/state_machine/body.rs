@@ -235,11 +235,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
       detected_text_indent
     } else {
       let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-      if indent < detected_marker_indent + 3 {
-        detected_text_indent
-      } else {
-        indent
-      }
+      if indent < detected_marker_indent + 3 { detected_text_indent } else { indent }
     }
   } else {
     detected_text_indent
@@ -293,7 +289,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 /// Parses a hyperlink target into a node.
 pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let doctree = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
   // Detected parameters
   // Here we check which type of target we are dealing with:
@@ -310,20 +306,27 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       detected_text_indent
     } else {
       let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-      if indent < detected_marker_indent + 3 {
-        detected_text_indent
-      } else {
-        indent
-      }
+      if indent < detected_marker_indent + 3 { detected_text_indent } else { indent }
     }
   } else {
     detected_text_indent
   };
 
   if parent_indent_matches(doctree.get_node_data(), detected_marker_indent) {
+
+    // Read in the following block of text here and parse it to find out the type of hyperref target in question
+
     todo!()
   } else {
-    todo!()
+
+    doctree = doctree.focus_on_parent();
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_state: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+      nested_state_stack: None
+    }
   }
 }
 

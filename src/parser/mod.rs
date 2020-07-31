@@ -522,6 +522,9 @@ impl Parser {
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
 
+    eprintln!("First: {}", relative_first_indent);
+    eprintln!("Block: {}\n", relative_block_indent);
+
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
     let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent), true) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {

@@ -14,23 +14,23 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_marker_name = captures.get(2).unwrap().as_str();
 
-  let detected_body_indent = if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
-
-    // Add check for an empty line?
-
-    next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent
-  } else {
-    detected_text_indent
-  };
-
-  let one_line_body: bool = detected_marker_indent >= detected_body_indent;
+  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+    if line.trim().is_empty() {
+      detected_text_indent
+    } else {
+      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+      if indent < detected_marker_indent + 1 { detected_text_indent } else { indent }
+    }
+  } else { detected_text_indent };
 
   // Make sure we are inside a FieldList and that indentations match
   match tree_wrapper.get_node_data() {
 
     TreeNodeType::FieldList { marker_indent} => {
 
+      // Parse the marker for inline nodes
       if *marker_indent == detected_marker_indent {
+
         let marker_inline_nodes = if let Some(nodes) = Parser::inline_parse(detected_marker_name.to_string(), line_cursor, &mut tree_wrapper.node_count) {
           nodes
         } else {
@@ -39,31 +39,17 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
           }
         };
 
-        let (doctree, offset, state_stack) = if one_line_body {
-          let item_node_data = TreeNodeType::FieldListItem {
-            raw_marker_name: detected_marker_name.to_string(),
-            marker_name_as_inline_nodes: marker_inline_nodes,
-            marker_indent: detected_marker_indent,
-            body_indent: detected_text_indent
-          };
-          tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
-          match Parser::parse_first_node_block (tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem) {
-            Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-            None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", line_cursor.sum_total())}
-          }
-        } else {
-          let item_node_data = TreeNodeType::FieldListItem {
-            raw_marker_name: detected_marker_name.to_string(),
-            marker_name_as_inline_nodes: marker_inline_nodes,
-            marker_indent: detected_marker_indent,
-            body_indent: detected_body_indent
-          };
+        let item_node_data = TreeNodeType::FieldListItem {
+          raw_marker_name: detected_marker_name.to_string(),
+          marker_name_as_inline_nodes: marker_inline_nodes,
+          marker_indent: detected_marker_indent,
+          body_indent: detected_body_indent
+        };
+        tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
 
-          tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
-          match Parser::parse_first_node_block (tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem) {
-            Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-            None => return TransitionResult::Failure {message: format!("Could not parse the first block of list item on line {:#?}", line_cursor.sum_total())}
-          }
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem) {
+          Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+          None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
         };
 
         tree_wrapper = doctree;
@@ -77,6 +63,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
         }
 
       } else {
+
         tree_wrapper = tree_wrapper.focus_on_parent();
         return TransitionResult::Success {
           doctree: tree_wrapper,
@@ -88,12 +75,8 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
       }
     }
 
-    _ => {} // Not inside a field list...
-
+    _ => return TransitionResult::Failure {
+        message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}.\nComputer says no...\n", line_cursor.sum_total())
+    }
   }
-
-  return TransitionResult::Failure {
-    message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}.\nComputer says no...\n", line_cursor.sum_total())
-  }
-
 }
