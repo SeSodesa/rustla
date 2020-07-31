@@ -638,7 +638,6 @@ impl Parser {
     // If there is block indentation but no predetermined indentation for the first line,
     // set the indentation of the first line equal to block indentation.
     let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
-      // eprintln!("Setting first line indentation equal to block indentation: {}...\n", block_indent);
       Some(block_indent)
     } else {
       first_indent
@@ -666,7 +665,6 @@ impl Parser {
       eprintln!("Line: {:#?}\n", line);
 
       // Check for sufficient indentation if line isn't empty
-
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
       if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
@@ -680,11 +678,9 @@ impl Parser {
       // Updating the minimal level of indentation, if line isn't blank
       // and there isn't predetermined block indentation
       if line.trim().is_empty() && until_blank {
-
         blank_finish = true;
         break
       } else if block_indent.is_none() {
-
         if minimal_indent.is_none() {
           minimal_indent = Some(line_indent);
         } else if line_indent > 0 {
@@ -697,11 +693,7 @@ impl Parser {
       line_num += 1;
     }
 
-    // eprintln!("Loop broken: {:?}\n", loop_broken);
-
-    if !loop_broken {
-      blank_finish = true;
-    }
+    if !loop_broken { blank_finish = true; }
 
     // Strip all minimal indentation from each line
     if let Some(min_indent) = minimal_indent {
