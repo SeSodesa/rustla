@@ -662,8 +662,6 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
-      eprintln!("Line: {:#?}\n", line);
-
       // Check for sufficient indentation if line isn't empty
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
@@ -688,7 +686,6 @@ impl Parser {
         } 
       }
 
-      eprintln!("Minimal indent {:?} on line {:?}", minimal_indent, line_num);
       block_lines.push(line);
       line_num += 1;
     }
@@ -701,7 +698,7 @@ impl Parser {
         for (index, line) in block_lines.iter_mut().enumerate() {
           let indent = if first_indent.is_some() && index == 0 { first_indent.unwrap() } else { min_indent };
           let mut cs = line.chars();
-          for _i in 0..indent { cs.next(); } // Remove indentation in characters
+          for _ in 0..indent { cs.next(); } // Remove indentation in characters
           *line = cs.as_str().to_string();
         }
       }
