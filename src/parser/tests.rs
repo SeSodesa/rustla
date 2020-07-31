@@ -1579,13 +1579,11 @@ fn citation_02 () {
   }
 
   match &doctree.tree.node.children[1].children[0].data {
-    TreeNodeType::Citation {label, .. } => {
-      if !(label == "two") { panic!() }
-    }
+    TreeNodeType::Paragraph => {}
      _=> panic!()
   }
 
-  match &doctree.tree.node.children[1].children[0].children[0].data {
+  match &doctree.tree.node.children[2].data {
     TreeNodeType::Citation {label, .. } => {
       if !(label == "three") { panic!() }
     }

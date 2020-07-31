@@ -655,7 +655,7 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
-      // Check for sufficient (or correct if block alignmen was forced) indentation if line isn't empty
+      // Check for sufficient (or correct if block alignment was forced) indentation if line isn't empty
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
       let break_when_not_aligned: bool = if block_indent.is_some() && force_alignment {
