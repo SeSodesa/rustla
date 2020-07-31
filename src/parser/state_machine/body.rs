@@ -292,6 +292,20 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 /// ### hyperlink_target
 /// Parses a hyperlink target into a node.
 pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let doctree = doctree.unwrap();
+
+  // Detected parameters
+  // Here we check which type of target we are dealing with:
+  // 1. internal
+  // 2. external or
+  // 3. indirect
+  // in addition to the usual identation and such.
+  let detected_indent = captures.get(1).unwrap().as_str().chars().count();
+  let detected_target_label = captures.get(2).unwrap().as_str();
+  
+
+
   todo!()
 }
 

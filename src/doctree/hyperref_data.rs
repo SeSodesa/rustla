@@ -11,9 +11,13 @@ use super::*;
 /// such as reserved foonote labels and mappings between
 pub struct HyperrefData {
 
-  /// #### numbered_foonotes
+  /// #### targets
   /// A mapping of foonote labels added to the doctree to node identifiers.
   pub targets: HashMap<String, NodeId>,
+
+  /// #### references
+  /// A map of references to node identifiers entered into the doctree thus far.
+  pub references: HashMap<String, NodeId>,
 
   /// #### n_of_sym_footnotes
   /// A counter of how many symbolic footnotes
@@ -28,6 +32,14 @@ pub struct HyperrefData {
   /// let symbol_index = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
   /// ```
   pub n_of_sym_footnotes: u32,
+
+  /// #### n_of_anon_targets
+  /// The number of anonymous targets entered into the document.
+  pub n_of_anon_targets: u32,
+
+  /// #### n_of_anon_refs
+  /// The number of anonymous targets entered into the document.
+  pub n_of_anon_refs: u32
 }
 
 
@@ -39,7 +51,10 @@ impl HyperrefData {
 
     HyperrefData {
       targets: HashMap::new(),
+      references: HashMap::new(),
       n_of_sym_footnotes: 0,
+      n_of_anon_targets: 0,
+      n_of_anon_refs: 0
     }
   }
 }

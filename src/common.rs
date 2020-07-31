@@ -94,7 +94,7 @@ pub enum PatternName {
   DocTest,
   LineBlock,
   ExplicitMarkup,
-  HyperlinkTarget(HyperlinkTargetKind),
+  HyperlinkTarget,
   Line,
   Paragraph,
   Text,
