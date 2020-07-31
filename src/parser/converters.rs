@@ -303,6 +303,6 @@ pub fn normalize_refname (name: &str) -> String {
   name.split_whitespace() 
     .collect::<Vec<&str>>() // Collects the SplitWhiteSpace iterator into a vector of &strs
     .join(" ")            // Joins the vector of &strs into an allocated String
-    .to_lowercase()                   // Performs a UTF8-compliant tarnformation of unicode scalars in the String
+    .to_lowercase()                   // Performs a UTF8-compliant transformation of unicode scalars in the String
                                       // into their lower-case counterparts
 }
