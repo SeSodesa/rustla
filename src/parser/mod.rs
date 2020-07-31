@@ -605,12 +605,6 @@ impl Parser {
   /// Reads in a block of indented lines text.
   /// Determines the minimum level of indentation
   /// and uses it as a reference for ending the block.
-  ///
-  /// Returns a tuple
-  /// ```rust
-  /// {block: Vec<String>, min_indent<usize>, finished_with_blank: bool}
-  /// ```
-  /// if successful.
   fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
     strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>)
   -> Result<(Vec<String>, usize, usize, bool), String> {
@@ -668,7 +662,7 @@ impl Parser {
       if !line.trim().is_empty() && ( line_indent < 1 || block_indent.is_some() && line_indent < block_indent.unwrap() ) {
 
         // Ended with a blank finish if the last line before unindent was blank
-        blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().is_empty();
+        blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().trim().is_empty();
         loop_broken = true;
         break
       }
