@@ -55,7 +55,7 @@ impl LineCursor {
     match self.offset.checked_add(amount) {
       Some(line) => line,
       None => {
-        eprintln!("Tried incrementing relative line offset by {} on line {} but overflew.\nComputer says no...\n", amount, self.sum_total());
+        eprintln!("Tried incrementing relative line offset by {} on line {} but overflowed.\nComputer says no...\n", amount, self.sum_total());
         panic!()
       }
     };
