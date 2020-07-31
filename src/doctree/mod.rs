@@ -24,7 +24,7 @@ pub struct DocTree {
 
   /// #### tree
   /// Holds the tree focused on a specific node.
-  pub tree: TreeZipper,
+  tree: TreeZipper,
 
   /// #### node_count
   /// Keeps track of how many nodes have been added to the tree thus far

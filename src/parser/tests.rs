@@ -455,26 +455,26 @@ fn bullet_list_03 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[2].data {
+  match doctree.child(1).child(0).child(2).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }
@@ -502,31 +502,31 @@ fn bullet_list_04 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[2].data {
+  match doctree.child(1).child(0).child(2).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
-  match doctree.tree.node.children[2].data {
+  match doctree.child(2).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("No empty line after bullet list!\n")
   }
@@ -559,19 +559,19 @@ fn bullet_list_05 () {
 
   doctree = parser.parse().unwrap_tree();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[4].data {
+  match doctree.child(1).child(0).child(4).get_data() {
     TreeNodeType::BulletList{..} => (),
     _ => panic!("Second child of BulletList wasn't a sublist!\n")
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Third child of BulletList wasn't a ListItem!\n")
   }
@@ -609,41 +609,41 @@ fn bullet_list_06 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("First non-whitespace child of BulletList wasn't a ListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph{..} => (),
     _ => panic!("No Paragraph!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[4].data {
+  match doctree.child(1).child(0).child(4).get_data() {
     TreeNodeType::BulletList{..} => (),
     _ => panic!("No BulletList!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[4].children[0].data {
+  match doctree.child(1).child(0).child(4).child(0).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("No BulletListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[4].children[1].data {
+  match doctree.child(1).child(0).child(4).child(1).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("No BulletListItem!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[4].children[1].children[2].data {
+  match doctree.child(1).child(0).child(4).child(1).child(2).get_data() {
     TreeNodeType::BulletList{..} => (),
     _ => panic!("No BulletListItem!\n")
   }
   
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n")
   }
@@ -667,21 +667,21 @@ fn enumerated_list_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem{..} => (),
     _ => panic!("No EnumeratedListItem as child of EnumeratedList!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!("No Paragraph as child of EnumeratdListItem!\n")
   }
@@ -708,26 +708,26 @@ fn enumerated_list_02 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.tree.node.children[2].data {
+  match doctree.child(2).get_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph{..} => (),
     _ => panic!("No Paragraph detected!\n")
   }
 
-  match doctree.tree.node.children[1].children[0].children[2].data {
+  match doctree.child(1).child(0).child(2).get_data() {
     TreeNodeType::Paragraph{..} => (),
     _ => panic!("No second Paragraph detected!\n")
   }
@@ -754,51 +754,51 @@ fn enumerated_list_03 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[1].data {
+  match doctree.child(1).child(0).child(1).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].data {
+  match doctree.child(2).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].children[0].data {
+  match doctree.child(2).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].children[0].children[0].data {
+  match doctree.child(2).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
@@ -825,39 +825,39 @@ fn enumerated_list_04 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
-      if index_in_list != 1 { panic!() }
+      if *index_in_list != 1 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
-      if index_in_list != 2 { panic!() }
+      if *index_in_list != 2 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[2].data {
+  match doctree.child(1).child(2).get_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
-      if index_in_list != 3 { panic!() }
+      if *index_in_list != 3 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[3].data {
+  match doctree.child(1).child(3).get_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
-      if index_in_list != 4 { panic!() }
+      if *index_in_list != 4 { panic!() }
     },
     _ => panic!()
   }
@@ -889,70 +889,70 @@ fn enumerated_list_05 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList { n_of_items, .. } => {
-      if n_of_items != 3 { panic!() }
+      if *n_of_items != 3 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => {}
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::EnumeratedList{ .. } => {}
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
-      if kind != EnumKind::Arabic || index_in_list != 1 { panic!() }
+      if *kind != EnumKind::Arabic || *index_in_list != 1 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[1].data {
+  match doctree.child(1).child(0).child(1).get_data() {
     TreeNodeType::EnumeratedList { kind, start_index, .. } => {
-      if kind != EnumKind::LowerRoman || start_index != 2 { panic!() }
+      if *kind != EnumKind::LowerRoman || *start_index != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[1].children[0].data {
+  match doctree.child(1).child(0).child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
-      if kind != EnumKind::LowerRoman || index_in_list != 2 { panic!() }
+      if *kind != EnumKind::LowerRoman || *index_in_list != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[1].children[1].data {
+  match doctree.child(1).child(0).child(1).child(1).get_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
-      if kind != EnumKind::LowerRoman || index_in_list != 3 { panic!() }
+      if *kind != EnumKind::LowerRoman || *index_in_list != 3 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[2].data {
+  match doctree.child(1).child(0).child(2).get_data() {
     TreeNodeType::Paragraph => {}
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
-      if kind != EnumKind::LowerRoman || index_in_list != 2 { panic!() }
+      if *kind != EnumKind::LowerRoman || *index_in_list != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[2].data {
+  match doctree.child(1).child(2).get_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
-      if kind != EnumKind::LowerRoman || index_in_list != 3 { panic!() }
+      if *kind != EnumKind::LowerRoman || *index_in_list != 3 { panic!() }
     }
     _ => panic!()
   }
@@ -983,46 +983,46 @@ fn mixed_nested_lists_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).child(0).get_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[1].data {
+  match doctree.child(1).child(0).child(0).child(1).get_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].children[1].children[2].data {
+  match doctree.child(1).child(0).child(0).child(1).child(2).get_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[1].data {
+  match doctree.child(1).child(0).child(1).get_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
@@ -1056,36 +1056,36 @@ An ending paragraph...
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::FieldList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].children[0].data {
+  match doctree.child(1).child(1).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].children[2].data {
+  match doctree.child(1).child(1).child(2).get_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
@@ -1110,31 +1110,31 @@ An ending paragraph...
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::FieldList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].data {
+  match doctree.child(2).get_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[3].data {
+  match doctree.child(3).get_data() {
     TreeNodeType::EmptyLine => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[4].data {
+  match doctree.child(4).get_data() {
     TreeNodeType::EmptyLine => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[5].data {
+  match doctree.child(5).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
@@ -1163,62 +1163,62 @@ fn field_list_03 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::FieldList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].children[0].data {
+  match doctree.child(1).child(0).child(0).get_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].children[0].data {
+  match doctree.child(1).child(1).child(0).get_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[2].data {
+  match doctree.child(1).child(2).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[2].children[0].data {
+  match doctree.child(1).child(2).child(0).get_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[3].data {
+  match doctree.child(1).child(3).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[3].children[0].data {
+  match doctree.child(1).child(3).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[4].data {
+  match doctree.child(1).child(4).get_data() {
     TreeNodeType::FieldListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[4].children[0].data {
+  match doctree.child(1).child(4).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
@@ -1241,26 +1241,26 @@ fn footnote_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::Footnote { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[1].data {
+  match doctree.child(1).child(1).get_data() {
     TreeNodeType::EmptyLine => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[2].data {
+  match doctree.child(1).child(2).get_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
@@ -1283,26 +1283,26 @@ fn footnote_02 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::Footnote { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[1].children[0].data {
+  match doctree.child(1).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].data {
+  match doctree.child(2).get_data() {
     TreeNodeType::Footnote { .. } => (),
     _ => panic!()
   }
 
-  match doctree.tree.node.children[2].children[0].data {
+  match doctree.child(2).child(0).get_data() {
     TreeNodeType::Paragraph => (),
     _ => panic!()
   }
@@ -1350,46 +1350,46 @@ fn footnote_03 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match &doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "*" {} else {panic!()}
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[3].data {
+  match doctree.child(3).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "‡" {} else {panic!()}
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[11].data {
+  match doctree.child(11).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "**" {} else {panic!()}
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[13].data {
+  match doctree.child(13).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "‡‡" {} else {panic!()}
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[21].data {
+  match doctree.child(21).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "***" {} else {panic!()}
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[29].data {
+  match doctree.child(29).get_data() {
     TreeNodeType::Footnote {label, ..} => {
       if label == "♦♦♦" {} else {panic!()}
     }
@@ -1415,39 +1415,39 @@ fn footnote_04 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match &doctree.tree.node.children[1].data {
+  match doctree.child(1).get_data() {
     TreeNodeType::Footnote { label, target, ..} => {
       if label == "2" && target == "2" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[2].data {
+  match &doctree.child(2).get_data() {
     TreeNodeType::Footnote { label, target, ..} => {
       if label == "1" && target == "test-with-mixed" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[3].data {
+  match &doctree.child(3).get_data() {
     TreeNodeType::Footnote { label, target, ..} => {
       if label == "3" && target == "3" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[4].data {
+  match &doctree.child(4).get_data() {
     TreeNodeType::Footnote { label, target, ..} => {
       if label == "4" && target == "second" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[5].data {
+  match &doctree.child(5).get_data() {
     TreeNodeType::Footnote { label, target, ..} => {
       if label == "5" && target == "5" {} else { panic!() }
     }
@@ -1473,46 +1473,46 @@ fn footnote_05 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match &doctree.tree.node.children[1].data {
+  match &doctree.child(1).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "2" && target == "2" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[2].data {
+  match &doctree.child(2).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "1" && target == "test-with-mixed" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[3].data {
+  match &doctree.child(3).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "*" && target == "*" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[3].children[0].data {
+  match &doctree.child(3).child(0).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "3" && target == "nested" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[4].data {
+  match &doctree.child(4).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "†" && target == "†" {} else { panic!() }
     }
     _ => panic!()
   }
 
-  match &doctree.tree.node.children[5].data {
+  match &doctree.child(5).get_data() {
     TreeNodeType::Footnote { label, target, .. } => {
       if label == "2" && target == "2" {} else { panic!() }
     }
@@ -1534,18 +1534,18 @@ fn citation_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match &doctree.tree.node.children[1].data {
+  match &doctree.child(1).get_data() {
     TreeNodeType::Citation {label, .. } => {
       if !(label == "CIT2005") { panic!() }
     }
      _=> panic!()
   }
 
-  match &doctree.tree.node.children[1].children[0].data {
+  match &doctree.child(1).child(0).get_data() {
     TreeNodeType::Paragraph => {}
      _=> panic!()
   }
@@ -1567,23 +1567,23 @@ fn citation_02 () {
   let mut parser = Parser::new(src, doctree, None, 0, None);
 
   doctree = parser.parse().unwrap_tree();
-  doctree.tree = doctree.tree.walk_to_root();
+  doctree = doctree.walk_to_root();
 
-  eprintln!("{:#?}", doctree.tree);
+  doctree.print_tree();
 
-  match &doctree.tree.node.children[1].data {
+  match &doctree.child(1).get_data() {
     TreeNodeType::Citation {label, .. } => {
       if !(label == "one") { panic!() }
     }
      _=> panic!()
   }
 
-  match &doctree.tree.node.children[1].children[0].data {
+  match &doctree.child(1).child(0).get_data() {
     TreeNodeType::Paragraph => {}
      _=> panic!()
   }
 
-  match &doctree.tree.node.children[2].data {
+  match &doctree.child(2).get_data() {
     TreeNodeType::Citation {label, .. } => {
       if !(label == "three") { panic!() }
     }
