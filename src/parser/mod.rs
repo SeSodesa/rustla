@@ -278,10 +278,13 @@ impl Parser {
           return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
         };
 
-        let mut doctree = self.doctree.take().unwrap();
-        doctree = doctree.focus_on_parent();
-        self.doctree.replace(doctree);
-
+        if let Some(doctree) = self.doctree.take() {
+          self.doctree = Some(doctree.focus_on_parent());
+        } else {
+          return ParsingResult::Failure {
+            message: format!("Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total())
+          }
+        }
       }
 
       if self.line_cursor.relative_offset() >= self.src_lines.len() {
