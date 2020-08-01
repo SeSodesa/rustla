@@ -142,8 +142,6 @@ impl Parser {
 
           StateMachine::EOF => {
             eprintln!("Moved past EOF...\n");
-
-            // Walk to doctree root before returning it
             match self.doctree.take() {
               Some(doctree) => {
                 return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
@@ -160,16 +158,13 @@ impl Parser {
 
           _ => {
             if let Ok(transitions_ref) = machine.get_transitions() {
-              transitions_ref.clone()
+              transitions_ref
             } else {
               return ParsingResult::Failure { message: String::from("No transitions for this state...\n") }
             }
           }
         }
-
-      } else {
-        break
-      };
+      } else { break };
 
       // Iterating over a clone of the transitions
       for (pattern_name, regex, method) in latest_state_transitions.iter() {
@@ -192,7 +187,6 @@ impl Parser {
           let captures = regex.captures(src_line).unwrap();
 
           eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
-
           eprintln!("Executing transition method...\n");
 
           let line_before_transition = self.line_cursor.sum_total();
@@ -355,10 +349,7 @@ impl Parser {
   /// The default step used by the functions
   /// `nth_{previous|next}_line`.
   const DEFAULT_LINE_STEP: usize = 1;
-
-
 }
-
 
 
 /// ===========================
