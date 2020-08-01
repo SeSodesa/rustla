@@ -57,10 +57,9 @@ pub enum TransitionResult {
   /// its line cursor.
   Success {
     doctree: DocTree,
-    next_state: Option<StateMachine>,
+    next_states: Option<Vec<StateMachine>>,
     push_or_pop: PushOrPop,
     line_advance: LineAdvance,
-    nested_state_stack: Option<Vec<StateMachine>>,
   },
 
   /// #### Failure

@@ -199,29 +199,17 @@ impl Parser {
 
           self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
 
-            TransitionResult::Success{doctree, next_state, push_or_pop, line_advance, nested_state_stack} => {
+            TransitionResult::Success{doctree, next_states, push_or_pop, line_advance} => {
 
-              match (push_or_pop, next_state, nested_state_stack) {
+              match (push_or_pop, next_states) {
 
-                (_, next_state, nested_state_stack) if next_state.is_some() && nested_state_stack.is_some() => {
-                  return ParsingResult::Failure {
-                    message: String::from("Transition returned both, a single next state and the state stack of a nested parser.\nComputer says no...\n")
-                  }
-                }
-
-                (PushOrPop::Push, next_state, nested_state_stack)  if next_state.is_some() && nested_state_stack.is_none() => {
-                  let next_state = next_state.unwrap();
-                  eprintln!("Pushing {:#?} on top of stack...\n", next_state);
-                  self.state_stack.push(next_state);
-                },
-
-                (PushOrPop::Push, next_state, nested_state_stack)  if next_state.is_none() && nested_state_stack.is_some() => {
-                  let mut next_states = nested_state_stack.unwrap();
+                (PushOrPop::Push, next_states) if next_states.is_some() => {
+                  let mut next_states = next_states.unwrap();
                   eprintln!("Appending {:#?} to stack...\n", next_states);
                   self.state_stack.append(&mut next_states);
                 },
 
-                (PushOrPop::Pop, _, _) => {
+                (PushOrPop::Pop, _) => {
                   eprintln!("Received POP instruction...\n");
                   match self.state_stack.pop() {
                     Some(machine) => (),
@@ -231,20 +219,10 @@ impl Parser {
                   };
                 }
 
-                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_some() && nested_state_stack.is_none() => {
-                  let machine = match self.state_stack.last_mut() {
-                    Some(opt_machine) => *opt_machine = next_state.unwrap(),
-                    None => {
-                      eprintln!("No machine on top of stack.\nCan't perform transition after executing transition method...\n");
-                      return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..).collect() }
-                    }
-                  };
-                }
-
-                (PushOrPop::Neither, next_state, nested_state_stack) if next_state.is_none() && nested_state_stack.is_some() => {
+                (PushOrPop::Neither, next_states) if next_states.is_some() => {
 
                   if let Some(state) = self.state_stack.pop() {
-                    self.state_stack.append(&mut nested_state_stack.unwrap());
+                    self.state_stack.append(&mut next_states.unwrap());
                   } else {
                     return ParsingResult::Failure {
                       message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor.sum_total())
@@ -252,12 +230,12 @@ impl Parser {
                   }
                 }
 
-                (PushOrPop::Neither, None, None) => {
+                (PushOrPop::Neither, None) => {
                   // No need to do anything to the stack...
                 }
 
-                (push_or_pop, next_state, nested_state_stack) => {
-                  eprintln!("No action for received (PushOrPop, StateMachine, Vec<Statemachine>) = ({:#?}, {:#?}, {:#?}) triplet...\n", push_or_pop, next_state, nested_state_stack);
+                (push_or_pop, next_states) => {
+                  eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
                   return ParsingResult::Failure {
                     message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor.sum_total())
                   }
@@ -277,7 +255,6 @@ impl Parser {
               }
 
               Some(doctree)
-
             }
 
             TransitionResult::Failure {message} => {
@@ -313,7 +290,6 @@ impl Parser {
     };
 
     ParsingResult::EOF { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
-
   }
 
 

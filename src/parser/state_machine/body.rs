@@ -27,19 +27,17 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
     tree_wrapper = tree_wrapper.push_and_focus(sublist_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: Some(StateMachine::BulletList),
+      next_states: Some(vec![StateMachine::BulletList]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 
@@ -91,19 +89,17 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
     tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: Some(StateMachine::EnumeratedList),
+      next_states: Some(vec![StateMachine::EnumeratedList]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
@@ -127,19 +123,17 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
     tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: Some(StateMachine::FieldList),
+      next_states: Some(vec![StateMachine::FieldList]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
@@ -201,19 +195,17 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
   return TransitionResult::Success {
     doctree: tree_wrapper,
-    next_state: None,
+    next_states: Some(state_stack),
     push_or_pop: PushOrPop::Push,
     line_advance: LineAdvance::Some(offset),
-    nested_state_stack: Some(state_stack)
   }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
@@ -266,20 +258,18 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: Some(state_stack),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(offset),
-      nested_state_stack: Some(state_stack)
     }
   } else {
 
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
@@ -322,10 +312,9 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
     doctree = doctree.focus_on_parent();
     return TransitionResult::Success {
       doctree: doctree,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
@@ -379,19 +368,17 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
     tree_wrapper.push_child(paragraph_node);
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::Some(1),
-      nested_state_stack: None
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 

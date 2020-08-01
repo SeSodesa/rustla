@@ -26,7 +26,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
   // Make sure we are inside a FieldList and that indentations match
   match tree_wrapper.get_node_data() {
 
-    TreeNodeType::FieldList { marker_indent} => {
+    TreeNodeType::FieldList { marker_indent } => {
 
       // Parse the marker for inline nodes
       if *marker_indent == detected_marker_indent {
@@ -56,10 +56,9 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
 
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_state: None,
+          next_states: Some(state_stack),
           push_or_pop: PushOrPop::Push,
           line_advance: LineAdvance::Some(offset),
-          nested_state_stack: Some(state_stack)
         }
 
       } else {
@@ -67,10 +66,9 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
         tree_wrapper = tree_wrapper.focus_on_parent();
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_state: None,
+          next_states: None,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
-          nested_state_stack: None
         }
       }
     }

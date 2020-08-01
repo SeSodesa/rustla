@@ -59,10 +59,9 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
 
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: Some(state_stack),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(offset),
-      nested_state_stack: Some(state_stack)
     }
 
   } else {
@@ -70,10 +69,9 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
 
     return TransitionResult::Success {
       doctree: tree_wrapper,
-      next_state: None,
+      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
-      nested_state_stack: None
     }
   }
 }
