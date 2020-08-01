@@ -224,9 +224,7 @@ impl Parser {
                   }
                 }
 
-                (PushOrPop::Neither, None) => {
-                  // No need to do anything to the stack...
-                }
+                (PushOrPop::Neither, None) => {} // No need to do anything to the stack...
 
                 (push_or_pop, next_states) => {
                   eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
@@ -409,9 +407,7 @@ impl Parser {
         }
       },
 
-      None => {
-        // eprintln!("No match on line {}, col {}.\nProceeding to consume next character...\n", current_line, col);
-      }
+      None => {} // No match, do nothing
     }
 
     while let Some(c) = src_chars.next() {
@@ -442,9 +438,7 @@ impl Parser {
       }
     }
 
-    if nodes.is_empty() {
-      return None
-    }
+    if nodes.is_empty() { return None }
 
     Some(nodes)
   }
@@ -458,12 +452,7 @@ impl Parser {
 
     let src_str = chars_iter.as_str();
 
-    if src_str.is_empty() {
-      // eprintln!("Source has been drained of characters.\n");
-      return None
-    }
-
-    // eprintln!("Matching against {:#?}\n", src_str);
+    if src_str.is_empty() { return None }
 
     for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
 
@@ -474,9 +463,7 @@ impl Parser {
           return Some((node, offset));
         },
 
-        None => {
-          continue // no match, do nothing
-        }
+        None => { continue } // no match, do nothing
       };
     }
 
