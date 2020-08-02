@@ -27,7 +27,7 @@ use crate::doctree::{self, TreeNode};
 
 /// ### StateMachine
 /// An enum of `MachineWithState`s.
-/// Enclosing machine variants with different states in an enum allows us
+/// Enclosing state variants in an enum allows us
 /// to give ownership of a generic machine to an arbitrary structure,
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
@@ -37,23 +37,83 @@ use crate::doctree::{self, TreeNode};
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum StateMachine {
+
+  /// #### Body
+  /// A state for recognizing body elements such as lists or footnotes when focused on document root.
   Body,
+
+  /// #### BulletList
+  /// In this state, the parser only recognizes empty lines and bullet list items.
   BulletList,
+
+  /// #### Citation
+  /// Citation nodes may contain arbitrary body elements.
+  /// This state is therefore reserved for recognizing them when focused on a citation node.
   Citation,
+  
+  /// ### DefinitionList
+  /// Definition lists may only contain empty lines and definition list items.
   DefinitionList,
+
+  /// #### EnumeratedList
+  /// When in this state, the parser only recognizes empty lines and enumerated list items.
   EnumeratedList,
+
+  /// #### ListItem
+  /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
+  /// This state is reserved for recognizing them when focused on one of the list item type nodes.
   ListItem,
+  
+  /// #### FieldList
+  /// When focused on a field list node, the parser only recognizes empty lines and field list items.
   FieldList,
+
+  /// #### Footnote
+  /// Footnotes can contain arbitrary body elements.
+  /// This state is reserved for recognizing them when focused on a footnote node.
   Footnote,
+  
+  /// #### HyperlinkTarget
+  /// There are 3 different types of hyperlink targets:
+  /// 
+  /// 1. *internal*, which link to body elements that directly follow them,
+  /// 2. *external*, that reference external URIs and
+  /// 3. *indirect*, which reference other hyperlink targets inside the same document.
+  /// 
+  /// ??? Normally, an external or indirect hyperlink target would simply be a node on its own, that simply contains a reference label
+  /// of some kind. However, chained *internal* hyperlinks all reference the same target node,
+  /// so a state of its own (this one) is reserved for parsing them until a node of a different kind (including other types
+  /// of hyperlink targets) is encountered. Once this happens, all of the internal hyperlinks are set to point
+  /// to this same target node. ???
+  InternalHyperlinkTarget,
+
+  /// #### OptionList
+  /// When focused on an option list, only empty lines and option list items are recognized.
+  /// This state is reserved for that purpose.
   OptionList,
+
+  /// #### LineBlock
+  /// Empty and line block lines (lines beginning with '`|`') are recognized in this state.
   LineBlock,
+
+  /// #### ExtensionOptions
+  /// A state for parsing field lists inside diretives. Field lists located inside directive nodes
+  /// work as directive parameters or settings.
   ExtensionOptions,
-  ExplicitMarkup,
-  Text,
-  Definition,
+
+  /// #### Line
+  /// A state for parsing section titles and document transitions (a.k.a. `\ḩrulefill` commands in LaTeX terms).
   Line,
-  SubstitutionDef,
+
+  /// #### Failure
+  /// An explicit failure state. Allows explicit signalling of transition failures.
   Failure,
+
+  /// #### EOF
+  /// An End of File state. Could have also been named EOI, as in end of input,
+  /// as this state is transitioned to when a parser reaches the end of its source input:
+  /// This does not neecssarily correspond to the end of the given file during nested parsing sessions,
+  /// as nested parsers are usually limited to a parsijng single block of text behind a node indentifier.
   EOF
 }
 
@@ -162,20 +222,8 @@ lazy_static! {
     let extension_option_actions = StateMachine::compile_state_transitions(&StateMachine::EXTENSION_OPTION_TRANSITIONS);
     action_map.insert(StateMachine::ExtensionOptions, extension_option_actions);
 
-    let explicit_markup_actions = StateMachine::compile_state_transitions(&StateMachine::EXPLICIT_MARKUP_TRANSITIONS);
-    action_map.insert(StateMachine::ExplicitMarkup, explicit_markup_actions);
-
-    let text_actions = StateMachine::compile_state_transitions(&StateMachine::TEXT_TRANSITIONS);
-    action_map.insert(StateMachine::Text, text_actions);
-
-    let definition_actions = StateMachine::compile_state_transitions(&StateMachine::DEFINITION_TRANSITIONS);
-    action_map.insert(StateMachine::Definition, definition_actions);
-
     let line_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_TRANSITIONS);
-    action_map.insert(StateMachine::Line, line_actions);    
-
-    let subst_def_actions = StateMachine::compile_state_transitions(&StateMachine::SUBSTITUTION_DEF_TRANSITIONS);
-    action_map.insert(StateMachine::SubstitutionDef, subst_def_actions);    
+    action_map.insert(StateMachine::Line, line_actions);
 
     action_map
 
