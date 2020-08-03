@@ -70,12 +70,25 @@ impl DocTree {
   }
 
 
+  /// ### print_tree
+  /// Mainly for debugging purposes.
+  /// 
+  /// Prints the contaiend tree, focused on the current node.
   pub fn print_tree (&self) {
     eprintln!("The Document Tree\n=================");
     eprintln!("{:#?}", self.tree)
   }
 
 
+  /// ### print_internal_labels
+  /// mainly for debugging purposes
+  /// 
+  /// Prints out the internal targe labels stored in `self.hyperref_data` currently being worked on.
+  pub fn print_internal_labels (&self) {
+    eprintln!("{:#?}", self.hyperref_data.shared_accumulated_internal_target_label());
+  }
+  
+  
   /// ### focus_on_parent
   /// Focuses `self.tree` on its parent node if there is one.
   pub fn focus_on_parent (mut self) -> Self {
@@ -91,29 +104,58 @@ impl DocTree {
     self
   }
 
+
   /// ### push_and_focus
   /// Creates a new node from given data, pushes it to the
   /// children of currently focused on node and focuses on the new node.
   /// If this succeeds, also increments `self.node_count`.
   pub fn push_and_focus (mut self, node_data: TreeNodeType) -> Self {
 
+    // Check if there is an incoming internal target label
     let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
 
     let target_label = if acc_target_label.is_empty() { None } else {
-      let label = Some(acc_target_label.join("-"));
-      acc_target_label.clear();
-      label
+
+      match node_data {
+
+        // TODO: add an internal hyperlink target to unallowed owners of internal target labels
+        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
+
+        _ => {
+          let label = Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR));
+          acc_target_label.clear();
+          label
+        }
+      }
     };
 
     self.tree = self.tree.push_and_focus(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
+
     self
   }
 
 
   /// ### push_child
   /// Pushes a new node to the children of the node currently focused on.
-  pub fn push_child (&mut self, node: TreeNode) {
+  pub fn push_child (&mut self, mut node: TreeNode) {
+
+    // Check if there is an incoming internal target label and if there is, add it to the node being processed.
+    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
+    if !acc_target_label.is_empty() {
+
+      match node.get_data() {
+
+        // TODO: add an internal hyperlink target to unallowed owners of internal target labels
+        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
+
+        _ => {
+          node.set_target_label(Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR)));
+          acc_target_label.clear();
+        }
+      }
+    };
+
     self.tree.push_child(node);
     self.node_count += 1;
   }
@@ -214,6 +256,15 @@ impl DocTree {
         self.increment_symbolic_footnotes();
       }
     }
+  }
+
+
+  /// ### push_to_internal_target_stack
+  /// Pushes a given label to the chain of detected internal target labels.
+  /// Once a non-internal target is encountered, this array of labels will be
+  /// made to point to the newly detected node and cleared.
+  pub fn push_to_internal_target_stack (&mut self, label: String) {
+    self.hyperref_data.add_internal_target_label(label);
   }
 
 

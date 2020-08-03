@@ -1596,7 +1596,10 @@ fn citation_02 () {
 fn hyperlink_target_01 () {
   
   let src = String::from("
-  .. _target:
+  .. _target1:
+  .. _target2:
+
+  Paragraph here. please give me the label \"target\".
 
   ");
 
@@ -1609,7 +1612,7 @@ fn hyperlink_target_01 () {
 
   doctree.print_tree();
 
-  todo!()
+  assert_eq!(doctree.child(2).target_label.as_ref().unwrap().as_str(), "target1--target2");
 }
 
 

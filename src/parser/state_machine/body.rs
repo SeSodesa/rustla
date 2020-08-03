@@ -309,20 +309,27 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
     let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
       Ok(( block, _, offset, _)) => (block.join("\n").chars().filter(|c| !c.is_whitespace()).collect(), offset),
       Err(e) => {
-        return TransitionResult::Failure {
-          message: e
-        }
+        return TransitionResult::Failure { message: e }
       }
     };
 
     eprintln!("Block string: {:#?}\n", block_string);
 
-    if block_string.is_empty() {
+    if block_string.is_empty() { // ... the target is internal
+
+      // We simply add the detected label into the queue of internal target labels and proceed with parsing in the current state.
+      // Should a non-internal target or other type of target node be detected next,
+      // this set of labels will be set to reference that node.
+
+      doctree.push_to_internal_target_stack(detected_target_label.to_string());
+
+      doctree.print_internal_labels();
+
       return TransitionResult::Success {
-        doctree:doctree,
-        next_states: Some(vec![StateMachine::HyperlinkTarget]),
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::None,
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(1), // Jump to the next line so we don't just keep trying to parse the same internal target.
       }
     }
 
@@ -335,7 +342,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
         match nodes.get(0) {
           Some(node) => {
             match node.get_data() {
-              TreeNodeType::WhiteSpace { .. } => "internal",
               TreeNodeType::AbsoluteURI { .. } => "external",
               TreeNodeType::StandaloneEmail { .. } => "external",
               TreeNodeType::Reference { .. } => "indirect",

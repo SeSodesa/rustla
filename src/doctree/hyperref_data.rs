@@ -67,10 +67,39 @@ impl HyperrefData {
   }
 
 
+  /// ### add_internal_target_label
+  /// Adds a label to the line of currently processed internal target labels.
+  /// These will all reference the same target node, once a node differing from
+  /// internal targets is encountered.
+  pub fn add_internal_target_label (&mut self, label: String) {
+    self.accumulated_internal_target_label.push(label);
+  }
+
+
   /// ### mut_accumulated_internal_target_label
   /// Returns a mutable reference to the contained accumulated internal target label.
   pub fn mut_accumulated_internal_target_label (&mut self) -> &mut Vec<String> {
     &mut self.accumulated_internal_target_label
   }
+
+
+  /// ### shard_accumulated_internal_target_label
+  /// Returns a mutable reference to the contained accumulated internal target label.
+  pub fn shared_accumulated_internal_target_label (&self) -> &Vec<String> {
+    &self.accumulated_internal_target_label
+  }
+
+
+  /// ### internal_labels_as_string
+  /// Returns the accumulated internal target labels as a string,
+  /// connected with the connector string "--".
+  pub fn internal_labels_as_string (&self) -> String {
+    self.accumulated_internal_target_label.join(Self::INTERNAL_TARGET_CONNECTOR)
+  }
+
+
+  /// ### INTERNAL_TARGET_CONNECTOR
+  /// A string for connecting internal target labels into a single String.
+  pub const INTERNAL_TARGET_CONNECTOR: &'static str = "--"; 
 }
 
