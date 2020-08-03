@@ -51,9 +51,7 @@ impl DocTree {
   pub fn new(doc_name: String) -> Self {
 
     let root_id: NodeId = 0;
-
     let root_data = TreeNodeType::Root{doc_name};
-
     let root_node = TreeNode::new(root_data, root_id, None);
 
     DocTree {
