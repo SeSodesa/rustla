@@ -447,6 +447,9 @@ impl TreeNode {
   }
 
 
+  /// ### child
+  /// Returns a reference to a child node of a given index.
+  /// Panics, if the child does not exist.
   pub fn child (&self, index: usize) -> &Self {
     match self.children.get(index) {
       Some(node) => node,
