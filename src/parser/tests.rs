@@ -1626,7 +1626,7 @@ fn hyperlink_target_02 () {
 
     .. _another-target-referencing-below-item:
   
-  * The above internal target that belongs to the
+  * The above internal targets that belong to the
     previous list item should reference this item.
 
   ");
