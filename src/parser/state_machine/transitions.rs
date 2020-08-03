@@ -108,7 +108,7 @@ impl StateMachine {
   ];
 
 
-  const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 3] = [
+  const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 0] = [
     
   ];
 
