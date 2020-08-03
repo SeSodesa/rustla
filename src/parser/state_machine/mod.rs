@@ -59,6 +59,9 @@ pub enum StateMachine {
   /// When in this state, the parser only recognizes empty lines and enumerated list items.
   EnumeratedList,
 
+  
+  HyperlinkTarget,
+
   /// #### ListItem
   /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
   /// This state is reserved for recognizing them when focused on one of the list item type nodes.

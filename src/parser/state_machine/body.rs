@@ -306,6 +306,49 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
 
     // Read in the following block of text here and parse it to find out the type of hyperref target in question
 
+    let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
+      Ok(( block, _, offset, _)) => (block.join("\n").chars().filter(|c| !c.is_whitespace()).collect(), offset),
+      Err(e) => {
+        return TransitionResult::Failure {
+          message: e
+        }
+      }
+    };
+
+    eprintln!("Block string: {:#?}\n", block_string);
+
+    if block_string.is_empty() {
+      return TransitionResult::Success {
+        doctree:doctree,
+        next_states: Some(vec![StateMachine::HyperlinkTarget]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
+
+    let node_type: &str = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
+      Some(nodes) => {
+        if nodes.len() != 1 {
+          return TransitionResult::Failure { message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n") }
+        }
+
+        match nodes.get(0) {
+          Some(node) => {
+            match node.get_data() {
+              TreeNodeType::WhiteSpace { .. } => "internal",
+              TreeNodeType::AbsoluteURI { .. } => "external",
+              TreeNodeType::StandaloneEmail { .. } => "external",
+              TreeNodeType::Reference { .. } => "indirect",
+              _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
+            }
+          }
+
+          None => panic!("No nodes received from hyperlink target body\n")
+        }
+      }
+      None => return TransitionResult::Failure { message: String::from("No valid inline nodes inside hyperlink target.\nComputer says no...\n") }
+    };
+
     todo!()
   } else {
 
@@ -505,4 +548,9 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
     eprintln!("No footnote pattern inside a footnote transition function.\nComputer says no...\n");
     None
   }
+}
+
+
+fn hyperref_target_type () {
+  todo!()
 }

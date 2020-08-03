@@ -107,6 +107,11 @@ impl StateMachine {
     (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, field_list::field_marker),
   ];
 
+
+  const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 3] = [
+    
+  ];
+
   /// ### OPTION_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::OptionList`.
   pub const OPTION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [

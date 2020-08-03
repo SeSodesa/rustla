@@ -1593,6 +1593,27 @@ fn citation_02 () {
 
 
 #[test]
+fn hyperlink_target_01 () {
+  
+  let src = String::from("
+  .. _target:
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  todo!()
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";
