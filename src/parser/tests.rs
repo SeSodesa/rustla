@@ -1599,7 +1599,7 @@ fn hyperlink_target_01 () {
   .. _target1:
   .. _target2:
 
-  Paragraph here. please give me the label \"target\".
+  Paragraph here. Please give me the label \"target1--target2\".
 
   ");
 
@@ -1613,6 +1613,34 @@ fn hyperlink_target_01 () {
   doctree.print_tree();
 
   assert_eq!(doctree.child(2).target_label.as_ref().unwrap().as_str(), "target1--target2");
+}
+
+
+#[test]
+fn hyperlink_target_02 () {
+  
+  let src = String::from("
+  * This here is a bulleted list
+
+    .. _internal-target-referencing-below-item:
+
+    .. _another-target-referencing-below-item:
+  
+  * The above internal target that belongs to the
+    previous list item should reference this item.
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  assert_eq!(doctree.child(1).child(1).target_label.as_ref().unwrap().as_str(), "internal-target-referencing-below-item--another-target-referencing-below-item");
 }
 
 

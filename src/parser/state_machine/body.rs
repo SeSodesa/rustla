@@ -333,7 +333,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       }
     }
 
-    let node_type: &str = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
+    let node_type: HyperlinkTargetKind = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
       Some(nodes) => {
         if nodes.len() != 1 {
           return TransitionResult::Failure { message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n") }
@@ -342,9 +342,8 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
         match nodes.get(0) {
           Some(node) => {
             match node.get_data() {
-              TreeNodeType::AbsoluteURI { .. } => "external",
-              TreeNodeType::StandaloneEmail { .. } => "external",
-              TreeNodeType::Reference { .. } => "indirect",
+              TreeNodeType::AbsoluteURI { .. }  |  TreeNodeType::StandaloneEmail { .. }  =>  HyperlinkTargetKind::External,
+              TreeNodeType::Reference { .. }                                             =>  HyperlinkTargetKind::Indirect,
               _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
             }
           }

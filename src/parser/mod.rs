@@ -36,7 +36,7 @@ mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
-use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName};
+use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName};
 
 #[cfg(test)]
 mod tests;
