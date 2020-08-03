@@ -290,7 +290,7 @@ impl DocTree {
 #[derive(Debug)]
 pub struct TreeNode {
   pub id: NodeId,
-  pub target_label: Option<String>,
+  target_label: Option<String>,
   pub data : TreeNodeType,
   pub children: Children,
 
@@ -330,6 +330,16 @@ impl TreeNode {
 
   }
 
+
+  /// ### shared_target_label
+  /// Returns a shared (immutable) reference to the optional target label.
+  /// If the label is `None`, as is hasn't been set, returns an
+  /// empty string slice instead.
+  pub fn shared_target_label (&self) -> &str {
+    if let Some(label) = self.target_label.as_ref() { label } else { "" }
+  }
+  
+  
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
   pub fn push_child (&mut self, node : TreeNode) {

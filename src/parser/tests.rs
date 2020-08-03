@@ -1612,7 +1612,7 @@ fn hyperlink_target_01 () {
 
   doctree.print_tree();
 
-  assert_eq!(doctree.child(2).target_label.as_ref().unwrap().as_str(), "target1--target2");
+  assert_eq!(doctree.child(2).shared_target_label(), "target1--target2");
 }
 
 
@@ -1640,7 +1640,7 @@ fn hyperlink_target_02 () {
 
   doctree.print_tree();
 
-  assert_eq!(doctree.child(1).child(1).target_label.as_ref().unwrap().as_str(), "internal-target-referencing-below-item--another-target-referencing-below-item");
+  assert_eq!(doctree.child(1).child(1).shared_target_label(), "internal-target-referencing-below-item--another-target-referencing-below-item");
 }
 
 
