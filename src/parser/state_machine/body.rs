@@ -378,7 +378,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   let paragraph_data = TreeNodeType::Paragraph;
-  let mut paragraph_node = TreeNode::new_from_id_ref(paragraph_data, &mut tree_wrapper.node_count);
+  let mut paragraph_node = TreeNode::new_from_id_ref(paragraph_data, &mut tree_wrapper.node_count, None);
 
   let relative_indent = detected_indent - base_indent;
 

@@ -54,7 +54,7 @@ impl DocTree {
 
     let root_data = TreeNodeType::Root{doc_name};
 
-    let root_node = TreeNode::new(root_data, root_id);
+    let root_node = TreeNode::new(root_data, root_id, None);
 
     DocTree {
       tree: TreeZipper::new(root_node, None, None),
@@ -98,7 +98,16 @@ impl DocTree {
   /// children of currently focused on node and focuses on the new node.
   /// If this succeeds, also increments `self.node_count`.
   pub fn push_and_focus (mut self, node_data: TreeNodeType) -> Self {
-    self.tree = self.tree.push_and_focus(node_data, self.node_count).unwrap();
+
+    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
+
+    let target_label = if acc_target_label.is_empty() { None } else {
+      let label = Some(acc_target_label.join("-"));
+      acc_target_label.clear();
+      label
+    };
+
+    self.tree = self.tree.push_and_focus(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
     self
   }
@@ -178,7 +187,7 @@ impl DocTree {
 
 
   /// ### has_footnote_label
-  /// Checks whether the doctree already contains a footnote with the given label.
+  /// Checks whether the doctree already contains a hyperlink target with the given label.
   pub fn has_target_label (&self, label_to_be_inspected_for: &str) -> bool {
     self.hyperref_data.targets.contains_key(label_to_be_inspected_for)
   }
@@ -232,6 +241,7 @@ impl DocTree {
 #[derive(Debug)]
 pub struct TreeNode {
   pub id: NodeId,
+  pub target_label: Option<String>,
   pub data : TreeNodeType,
   pub children: Children,
 
@@ -241,10 +251,11 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  pub fn new(data: TreeNodeType, id: NodeId) -> Self {
+  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<String>) -> Self {
     
     TreeNode {
       id: id,
+      target_label: target_label,
       children: Vec::new(),
       data: data
     }
@@ -255,10 +266,11 @@ impl TreeNode {
   /// Works similarly to `TreeNode::new`, except also increments the id
   /// behind the given address in addition to assignning the previous value
   /// to the node being constructred.
-  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId) -> Self {
+  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId, target_label: Option<String>) -> Self {
 
     let node = Self {
-      id: *id_ref, // assign current id value to ndoe
+      id: *id_ref, // assign current id value to node
+      target_label: target_label,
       children: Vec::new(),
       data: data,
     };
@@ -297,21 +309,13 @@ impl TreeNode {
     }
 
     self.children.append(children);
-
   }
 
-  /// ### traverse
-  /// Traverses `TreeNode`s recursively.
-  fn traverse(&mut self) {
 
-    eprintln!("Entering {:?}", self.get_data());
-
-    let children = &mut self.children;
-
-    for child in children {
-      child.traverse();
-    }
-
+  /// ### set_target_label
+  /// Sets the target label of the node to given `Option<String>`.
+  pub fn set_target_label (&mut self, label: Option<String>) {
+    self.target_label = label;
   }
 
 

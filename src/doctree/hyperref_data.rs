@@ -39,7 +39,14 @@ pub struct HyperrefData {
 
   /// #### n_of_anon_refs
   /// The number of anonymous targets entered into the document.
-  pub n_of_anon_refs: u32
+  pub n_of_anon_refs: u32,
+
+  /// #### accumulated_internal_target_label
+  /// This label is accumulated when an internal hyperlink target is encountered
+  /// with the detected label of the target. If a non-internal target is encountered
+  /// and this is not empty, the elements are joined with a hyphen, and the resulting
+  /// String is given to the detected node as a target label.
+  accumulated_internal_target_label: Vec<String>,
 }
 
 
@@ -54,8 +61,16 @@ impl HyperrefData {
       references: HashMap::new(),
       n_of_sym_footnotes: 0,
       n_of_anon_targets: 0,
-      n_of_anon_refs: 0
+      n_of_anon_refs: 0,
+      accumulated_internal_target_label: Vec::new()
     }
+  }
+
+
+  /// ### mut_accumulated_internal_target_label
+  /// Returns a mutable reference to the contained accumulated internal target label.
+  pub fn mut_accumulated_internal_target_label (&mut self) -> &mut Vec<String> {
+    &mut self.accumulated_internal_target_label
   }
 }
 

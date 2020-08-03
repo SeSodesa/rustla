@@ -10,7 +10,7 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: &usize, current_line: &
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let node = TreeNode::new(TreeNodeType::EmptyLine, tree_wrapper.node_count);
+  let node = TreeNode::new(TreeNodeType::EmptyLine, tree_wrapper.node_count, None);
 
   tree_wrapper.push_child(node);
 

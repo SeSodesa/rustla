@@ -14,10 +14,10 @@ pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures, 
   let data = String::from(content.as_str());
 
   let node = match pattern_name {
-    PatternName::StrongEmphasis => TreeNode::new_from_id_ref(TreeNodeType::StrongEmphasis{text: data}, node_id),
-    PatternName::Emphasis => TreeNode::new_from_id_ref(TreeNodeType::Emphasis{text: data}, node_id),
-    PatternName::Literal => TreeNode::new_from_id_ref(TreeNodeType::Literal{text: data}, node_id),
-    PatternName::InlineTarget => TreeNode::new_from_id_ref(TreeNodeType::InlineTarget{target_label: data}, node_id),
+    PatternName::StrongEmphasis => TreeNode::new_from_id_ref(TreeNodeType::StrongEmphasis{text: data}, node_id, None),
+    PatternName::Emphasis => TreeNode::new_from_id_ref(TreeNodeType::Emphasis{text: data}, node_id, None),
+    PatternName::Literal => TreeNode::new_from_id_ref(TreeNodeType::Literal{text: data}, node_id, None),
+    PatternName::InlineTarget => TreeNode::new_from_id_ref(TreeNodeType::InlineTarget{target_label: data}, node_id, None),
     _ => panic!("No such paired delimiter type!")
   };
 
@@ -38,7 +38,7 @@ pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures, node_id
 
   let data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
 
-  let node = TreeNode::new_from_id_ref(data, node_id);
+  let node = TreeNode::new_from_id_ref(data, node_id, None);
 
   let match_len = content.as_str().chars().count();
 
@@ -95,7 +95,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id:
           if email == MISSING {
             let match_str = whole_match.as_str();
             let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
-            let text_node = TreeNode::new_from_id_ref(data, node_id);
+            let text_node = TreeNode::new_from_id_ref(data, node_id, None);
             return (text_node, match_str.chars().count())
           }
 
@@ -193,7 +193,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id:
     _ => panic!("No such reference pattern.\n")
   };
 
-  let node = TreeNode::new_from_id_ref(data, node_id);
+  let node = TreeNode::new_from_id_ref(data, node_id, None);
 
   let match_len = whole_match.as_str().chars().count();
 
@@ -212,7 +212,7 @@ pub fn text (pattern_name: PatternName, captures: &regex::Captures, node_id: &mu
 
   let data = String::from(content.as_str());
 
-  let node = TreeNode::new_from_id_ref(TreeNodeType::Text{text: data}, node_id);
+  let node = TreeNode::new_from_id_ref(TreeNodeType::Text{text: data}, node_id, None);
 
   assert!(node.children.is_empty());
 
