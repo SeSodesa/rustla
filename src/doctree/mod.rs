@@ -381,9 +381,7 @@ impl TreeNode {
     };
 
     *id_ref += 1; // increment the id before returning with new node
-
     node
-
   }
 
 
