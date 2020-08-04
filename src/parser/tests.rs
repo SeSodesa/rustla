@@ -1665,15 +1665,21 @@ fn hyperlink_target_03 () {
   doctree.print_tree();
 
   match doctree.child(1).get_data() {
-    TreeNodeType::ExternalHyperlinkTarget { uri, .. } => {
-      if uri != "https://www.address.fi//" { panic!() }
+    TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
+      if target != "an-external-hyperlink" || uri != "https://www.address.fi//" {
+        eprintln!("Target: {:#?}\nURI: {:#?}\n", target, uri);
+        panic!()
+      }
     }
     _ => {}
   }
 
   match doctree.child(3).get_data() {
-    TreeNodeType::IndirectHyperlinkTarget { target, .. } => {
-      if target != "an-external-hyperlink" { panic!() }
+    TreeNodeType::IndirectHyperlinkTarget { target, indirect_target, .. } => {
+      if target != "indirect_hyperlink" || indirect_target != "an-external-hyperlink" {
+        eprintln!("Target: {:#?}\nIndirect target: {:#?}\n", target, indirect_target);
+        panic!()
+      }
     }
     _ => {}
   }

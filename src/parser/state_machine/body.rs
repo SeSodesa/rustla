@@ -165,6 +165,12 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
     detected_text_indent
   };
 
+  let detected_kind = if let PatternName::Footnote { kind } = pattern_name {
+    kind
+  } else {
+    panic!("No footnote type information inside footnote transition function.\nComputer says no...\n")
+  };
+
   let (label, target) = if let Some( label_and_target ) = detected_footnote_label_to_ref_label(&tree_wrapper, pattern_name, detected_label_str) {
     (label_and_target.0, label_and_target.1)
   } else {
@@ -179,12 +185,11 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
     let footnote_data = TreeNodeType::Footnote {
       body_indent: detected_body_indent,
+      kind: *detected_kind,
       label: label.clone(),
       target: target.clone()
     };
     tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
-
-    tree_wrapper.add_target(line_cursor.relative_offset(), pattern_name, label, tree_wrapper.current_node_id());
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -253,8 +258,6 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
     };
 
     tree_wrapper = doctree;
-
-    tree_wrapper.add_target(line_cursor.sum_total(), pattern_name, detected_label_str.to_string(), tree_wrapper.current_node_id());
 
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -350,20 +353,18 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
 
               TreeNodeType::AbsoluteURI { text }  |  TreeNodeType::StandaloneEmail { text }  =>  {
 
-                doctree.add_target(line_cursor.sum_total(), pattern_name, text.clone(), doctree.node_count());
-
                 TreeNodeType::ExternalHyperlinkTarget {
                   uri: text.clone(),
+                  target: detected_target_label.to_string(),
                   marker_indent: detected_marker_indent
                 }
               }
 
               TreeNodeType::Reference { target_label } =>  {
 
-                doctree.add_target(line_cursor.sum_total(), pattern_name, target_label.clone(), doctree.node_count());
-
                 TreeNodeType::IndirectHyperlinkTarget {
-                  target: target_label.clone(),
+                  target: detected_target_label.to_string(),
+                  indirect_target: target_label.clone(),
                   marker_indent: detected_marker_indent
                 }
               }

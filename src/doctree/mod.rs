@@ -125,7 +125,6 @@ impl DocTree {
 
       match node_data {
 
-        // TODO: add an internal hyperlink target to unallowed owners of internal target labels
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
 
         _ => {
@@ -135,6 +134,21 @@ impl DocTree {
         }
       }
     };
+
+        // Check for target or reference nodes...
+        match &node_data {
+          TreeNodeType::Footnote {target, label, .. } => {
+            self.add_target(&node_data, label, self.node_count);
+          }
+          TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
+            self.add_target(&node_data, target, self.node_count);
+          }
+          TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
+            self.add_target(&node_data, target, self.node_count);
+            self.add_reference(&node_data, indirect_target, self.node_count);
+          }
+          _ => {}
+        };
 
     self.tree = self.tree.push_and_focus(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
@@ -153,7 +167,6 @@ impl DocTree {
 
       match node.get_data() {
 
-        // TODO: add an internal hyperlink target to unallowed owners of internal target labels
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
 
         _ => {
@@ -162,6 +175,24 @@ impl DocTree {
         }
       }
     };
+
+
+    // Check for target or reference nodes...
+    match node.get_data() {
+      TreeNodeType::Footnote {target, label, .. } => {
+        self.add_target(node.get_data(), label, node.id);
+      }
+      TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
+        self.add_target(node.get_data(), target, node.id);
+      }
+      TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
+        self.add_target(node.get_data(), target, node.id);
+        self.add_reference(node.get_data(), indirect_target, node.id);
+      }
+      _ => {}
+    };
+
+
 
     self.tree.push_child(node);
     self.node_count += 1;
@@ -250,19 +281,37 @@ impl DocTree {
   /// ### add_target
   /// Adds a given label to the known hyperref targets or updates the actual targe node id
   /// if a label is already in the known labels.
-  pub fn add_target (&mut self, current_line: usize, pattern_name: &PatternName, label: String, id: NodeId) {
+  pub fn add_target (&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
+
     match self.hyperref_data.targets.insert(label.clone(), id) {
       Some(node_id) => {
-        eprintln!("Found an existing node with the target label \"{}\" on line {}.\nReplacing duplicate node id value {} with {}...\n", label, current_line, node_id, id);
+        eprintln!("Found an existing node with the target label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
       }
       None => {}
     };
 
-    if let PatternName::Footnote { kind } = pattern_name {
-      if let FootnoteKind::AutoSymbol = kind {
+    if let TreeNodeType::Footnote { kind, .. } = node_data {
+
+      eprintln!("kind: {:#?}", kind);
+
+      if let &FootnoteKind::AutoSymbol = kind {
         self.increment_symbolic_footnotes();
       }
     }
+  }
+
+
+  /// ### add_target
+  /// Adds a given label to the known hyperref targets or updates the actual targe node id
+  /// if a label is already in the known labels.
+  pub fn add_reference (&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
+
+    match self.hyperref_data.references.insert(label.clone(), id) {
+      Some(node_id) => {
+        eprintln!("Found an existing node with the reference label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
+      }
+      None => {}
+    };
   }
 
 
@@ -720,6 +769,7 @@ pub enum TreeNodeType {
   /// A foonote citation target. Contains a label and the foornote text itself.
   Footnote {
     body_indent: usize,
+    kind: FootnoteKind,
     label: String, // Displayed label
     target: String // Reference target
   },
@@ -736,6 +786,7 @@ pub enum TreeNodeType {
   /// Contains a URI pointing  to an external resource
   ExternalHyperlinkTarget {
     marker_indent: usize,
+    target: String,
     uri: String,
   },
 
@@ -745,6 +796,7 @@ pub enum TreeNodeType {
   IndirectHyperlinkTarget {
     marker_indent: usize,
     target: String,
+    indirect_target: String,
   },
 
   /// #### Directive
