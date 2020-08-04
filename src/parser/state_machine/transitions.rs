@@ -217,9 +217,9 @@ impl StateMachine {
             prospero|rdar|res|rtsp|rvp|rwhois|rx|sdp|service|shttp|sip|sips|smb|snews|snmp|soap.beep|soap.beeps|ssh|t120|tag|tcp|tel|telephone|
             telnet|tftp|tip|tn3270|tv|urn|uuid|vemmi|videotex|view-source|wais|whodp|whois++|x-man-page|xmlrpc.beep|xmlrpc.beeps|z39.50r|z39.50s
           )
-          :
+          ://?
         )
-        (?://
+        (?:
           (?P<authority>
             (?:(?P<userinfo>[A-Za-z0-9]+(?:.[A-Za-z0-9]+)*)@)?
             (?P<host>[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*)
@@ -227,7 +227,7 @@ impl StateMachine {
           )
         )?
         (?P<path>
-          /?[a-zA-Z0-9]+(?:/[A-Za-z0-9]+)*/?
+          /?[a-zA-Z0-9]*(?:/[A-Za-z0-9]+)*/?
         )
         (?:\?
           (?P<query>

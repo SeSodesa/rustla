@@ -333,17 +333,41 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       }
     }
 
-    let node_type: HyperlinkTargetKind = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
+    let node_type: TreeNodeType = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
       Some(nodes) => {
+
+        eprintln!("Target nodes: {:#?}\n", nodes);
+
         if nodes.len() != 1 {
-          return TransitionResult::Failure { message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n") }
+          return TransitionResult::Failure {
+            message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n")
+          }
         }
 
         match nodes.get(0) {
           Some(node) => {
             match node.get_data() {
-              TreeNodeType::AbsoluteURI { .. }  |  TreeNodeType::StandaloneEmail { .. }  =>  HyperlinkTargetKind::External,
-              TreeNodeType::Reference { .. }                                             =>  HyperlinkTargetKind::Indirect,
+
+              TreeNodeType::AbsoluteURI { text }  |  TreeNodeType::StandaloneEmail { text }  =>  {
+
+                doctree.add_target(line_cursor.sum_total(), pattern_name, text.clone(), doctree.node_count());
+
+                TreeNodeType::ExternalHyperlinkTarget {
+                  uri: text.clone(),
+                  marker_indent: detected_marker_indent
+                }
+              }
+
+              TreeNodeType::Reference { target_label } =>  {
+
+                doctree.add_target(line_cursor.sum_total(), pattern_name, target_label.clone(), doctree.node_count());
+
+                TreeNodeType::IndirectHyperlinkTarget {
+                  target: target_label.clone(),
+                  marker_indent: detected_marker_indent
+                }
+              }
+
               _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
             }
           }
@@ -354,7 +378,17 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       None => return TransitionResult::Failure { message: String::from("No valid inline nodes inside hyperlink target.\nComputer says no...\n") }
     };
 
-    todo!()
+    let node = TreeNode::new(node_type, doctree.node_count(), None);
+
+    doctree.push_child(node);
+
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(1)
+    }
+
   } else {
 
     doctree = doctree.focus_on_parent();

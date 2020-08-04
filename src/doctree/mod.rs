@@ -80,6 +80,13 @@ impl DocTree {
   }
 
 
+  /// ### node_count
+  /// Returns a copy of the current node count in the DocTree.
+  pub fn node_count (&self) -> NodeId {
+    self.node_count
+  }
+
+
   /// ### print_internal_labels
   /// mainly for debugging purposes
   /// 
@@ -389,12 +396,13 @@ impl TreeNode {
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {
-          TreeNodeType::Paragraph             | TreeNodeType::BulletList { .. } | TreeNodeType::EnumeratedList { .. }
-          | TreeNodeType::DefinitionList      | TreeNodeType::FieldList { .. }  | TreeNodeType::OptionList
-          | TreeNodeType::LiteralBlock { .. } | TreeNodeType::LineBlock         | TreeNodeType::BlockQuote
-          | TreeNodeType::DoctestBlock        | TreeNodeType::Footnote  { .. }  | TreeNodeType::Citation { .. }
-          | TreeNodeType::HyperlinkTarget     | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment             | TreeNodeType::EmptyLine         => true,
+          TreeNodeType::Paragraph                         | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
+          | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
+          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
+          | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
+          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+            => true,
           _ => false
         }
       },
@@ -723,9 +731,21 @@ pub enum TreeNodeType {
     label: String,
   },
 
-  /// #### HyperlinkTarget
-  /// A target for a hyperlink.
-  HyperlinkTarget,
+  /// #### ExternalHyperlinkTarget
+  /// A target for an external hyperlink.
+  /// Contains a URI pointing  to an external resource
+  ExternalHyperlinkTarget {
+    marker_indent: usize,
+    uri: String,
+  },
+
+  /// #### IndirectHyperlinkTarget
+  /// An indirect hyperlink target. Contains a hyperlink reference pointing
+  /// to an internal or and external hyperlink.
+  IndirectHyperlinkTarget {
+    marker_indent: usize,
+    target: String,
+  },
 
   /// #### Directive
   /// One of many differents kinds of directives.
