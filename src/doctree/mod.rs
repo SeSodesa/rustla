@@ -510,7 +510,7 @@ impl TreeNode {
   pub fn child (&self, index: usize) -> &Self {
     match self.children.get(index) {
       Some(node) => node,
-      None => panic!("{}", index)
+      None => panic!("No child at index {}.\nComputer says no...\n", index)
     }
   }
 
