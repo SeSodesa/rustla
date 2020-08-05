@@ -376,7 +376,7 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, line_cursor: &mut LineCursor, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
+  fn inline_parse (inline_src_block: String, doctree: Option<DocTree>, line_cursor: &mut LineCursor, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
 
     let mut nodes: Vec<TreeNode> = Vec::new();
 

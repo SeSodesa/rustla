@@ -343,7 +343,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       }
     }
 
-    let node_type: TreeNodeType = match Parser::inline_parse(block_string, line_cursor, &mut doctree.node_count) {
+    let node_type: TreeNodeType = match Parser::inline_parse(block_string, None, line_cursor, &mut doctree.node_count) {
       Some(nodes) => {
 
         eprintln!("Target nodes: {:#?}\n", nodes);
@@ -443,7 +443,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
   };
 
   // Pass text to inline parser as a string
-  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, line_cursor, &mut tree_wrapper.node_count) {
+  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, None, line_cursor, &mut tree_wrapper.node_count) {
     children
   } else {
     return TransitionResult::Failure {
