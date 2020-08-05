@@ -294,6 +294,13 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
   let detected_target_label = captures.get(2).unwrap().as_str();
 
+  // Check for anonymous target
+  let label_as_string = if detected_target_label == "_" {
+    doctree.next_anon_target_label()
+  } else {
+    detected_target_label.to_string()
+  };
+
   let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
     if line.trim().is_empty() {
       detected_text_indent
@@ -324,7 +331,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       // Should a non-internal target or other type of target node be detected next,
       // this set of labels will be set to reference that node.
 
-      doctree.push_to_internal_target_stack(detected_target_label.to_string());
+      doctree.push_to_internal_target_stack(label_as_string);
 
       doctree.print_internal_labels();
 
@@ -355,7 +362,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
 
                 TreeNodeType::ExternalHyperlinkTarget {
                   uri: text.clone(),
-                  target: detected_target_label.to_string(),
+                  target: label_as_string,
                   marker_indent: detected_marker_indent
                 }
               }
@@ -363,7 +370,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
               TreeNodeType::Reference { target_label } =>  {
 
                 TreeNodeType::IndirectHyperlinkTarget {
-                  target: detected_target_label.to_string(),
+                  target: label_as_string,
                   indirect_target: target_label.clone(),
                   marker_indent: detected_marker_indent
                 }
@@ -376,6 +383,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
           None => panic!("No nodes received from hyperlink target body\n")
         }
       }
+
       None => return TransitionResult::Failure { message: String::from("No valid inline nodes inside hyperlink target.\nComputer says no...\n") }
     };
 

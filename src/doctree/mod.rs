@@ -11,7 +11,7 @@ use tree_zipper::TreeZipper;
 mod directives;
 use directives::DirectiveType;
 mod hyperref_data;
-use hyperref_data::HyperrefData;
+use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 
 use crate::common::{EnumDelims, EnumKind, NodeId, EnumAsInt, PatternName, FootnoteKind};
 
@@ -192,8 +192,6 @@ impl DocTree {
       _ => {}
     };
 
-
-
     self.tree.push_child(node);
     self.node_count += 1;
   }
@@ -207,7 +205,7 @@ impl DocTree {
   }
 
 
-    /// ### get_node_data
+  /// ### get_node_data
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
   pub fn get_mut_node_data (&mut self) -> &mut TreeNodeType {
@@ -335,6 +333,79 @@ impl DocTree {
   /// Increments symbolic footnote counter of the doctree by 1.
   pub fn increment_symbolic_footnotes (&mut self) {
     self.hyperref_data.n_of_sym_footnotes += 1;
+  }
+
+
+  /// ### increment_anon_targets
+  /// Increases the counter for anonymous targets entered into the doctree thus far by one.
+  pub fn increment_anon_targets (&mut self) {
+    self.hyperref_data.n_of_anon_targets += 1;
+  }
+
+
+  /// ### increment_anon_references
+  /// Increases the counter for anonymous targets entered into the doctree thus far by one.
+  pub fn increment_anon_references (&mut self) {
+    self.hyperref_data.n_of_anon_references += 1;
+  }
+
+  /// ### next_anon_target_n
+  /// Increments the anon target counter and returns a copy of the result.
+  pub fn next_anon_target_n (&mut self) -> u32 {
+    self.increment_anon_targets();
+    self.hyperref_data.n_of_anon_targets
+  }
+
+
+  /// ### next_anon_reference_n
+  /// Increments the anon reference counter and returns a copy of the result.
+  pub fn next_anon_reference_n (&mut self) -> u32 {
+    self.increment_anon_references();
+    self.hyperref_data.n_of_anon_references
+  }
+
+  /// ### next_anon_target_label
+  /// Returns an allocated String representation of the next anonymous target label.
+  pub fn next_anon_target_label (&mut self) -> String {
+
+
+
+
+    format!("{}{}{}", ANON_REF_LABEL_PREFIX, self.next_anon_target_n(), ANON_REF_LABEL_SUFFIX)
+  }
+
+
+  /// ### next_anon_reference_label
+  /// Returns an allocated String representation of the next anonymous reference label.
+  pub fn next_anon_reference_label (&mut self) -> String {
+    format!("{}{}{}", ANON_REF_LABEL_PREFIX, self.next_anon_reference_n(), ANON_REF_LABEL_SUFFIX)
+  }
+
+
+    /// ### shared_targets
+  /// Returns a shared reference to `self.targets`.
+  pub fn shared_targets (&self) -> &HashMap<String, NodeId> {
+    self.hyperref_data.shared_targets()
+  }
+
+  /// ### mut_targets
+  /// Returns a mutable reference to `self.targets`.
+  pub fn mut_targets (&mut self) -> &mut HashMap<String, NodeId> {
+    self.hyperref_data.mut_targets()
+  }
+
+
+  /// ### shared_references
+  /// Returns a shared reference to `self.references`.
+  pub fn shared_references (&self) -> &HashMap<String, NodeId> {
+    self.hyperref_data.shared_references()
+  }
+
+
+  /// ### mut_references
+  /// Returns a mutable reference to `self.references`.
+  pub fn mut_references (&mut self) -> &mut HashMap<String, NodeId> {
+    self.hyperref_data.mut_references()
   }
 
 }

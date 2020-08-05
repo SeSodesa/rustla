@@ -1687,6 +1687,32 @@ fn hyperlink_target_03 () {
 
 
 #[test]
+fn hyperlink_target_04 () {
+
+  let src = String::from("
+  .. __: https://www.address.fi//
+
+  .. __: anon-target__
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  eprintln!("Doctree targets: {:#?}", doctree.shared_targets());
+  eprintln!("Doctree references: {:#?}", doctree.shared_references());
+
+  todo!()
+}
+
+
+#[test]
 fn upper_roman_to_usize_01 () {
 
   let iii = "III";

@@ -39,13 +39,13 @@ pub struct HyperrefData {
 
   /// #### n_of_anon_refs
   /// The number of anonymous targets entered into the document.
-  pub n_of_anon_refs: u32,
+  pub n_of_anon_references: u32,
 
   /// #### accumulated_internal_target_label
   /// This label is accumulated when an internal hyperlink target is encountered
   /// with the detected label of the target. If a non-internal target is encountered
-  /// and this is not empty, the elements are joined with a hyphen, and the resulting
-  /// String is given to the detected node as a target label.
+  /// and this is not empty, the elements are joined with the string `Self::INTERNAL_TARGET_CONNECTOR`,
+  /// and the resulting String is given to the detected node as a target label.
   accumulated_internal_target_label: Vec<String>,
 }
 
@@ -61,9 +61,36 @@ impl HyperrefData {
       references: HashMap::new(),
       n_of_sym_footnotes: 0,
       n_of_anon_targets: 0,
-      n_of_anon_refs: 0,
+      n_of_anon_references: 0,
       accumulated_internal_target_label: Vec::new()
     }
+  }
+
+
+  /// ### shared_targets
+  /// Returns a shared reference to `self.targets`.
+  pub fn shared_targets (&self) -> &HashMap<String, NodeId> {
+    &self.targets
+  }
+
+  /// ### mut_targets
+  /// Returns a mutable reference to `self.targets`.
+  pub fn mut_targets (&mut self) -> &mut HashMap<String, NodeId> {
+    &mut self.targets
+  }
+
+
+  /// ### shared_references
+  /// Returns a shared reference to `self.references`.
+  pub fn shared_references (&self) -> &HashMap<String, NodeId> {
+    &self.references
+  }
+
+
+  /// ### mut_references
+  /// Returns a mutable reference to `self.references`.
+  pub fn mut_references (&mut self) -> &mut HashMap<String, NodeId> {
+    &mut self.references
   }
 
 
@@ -101,5 +128,23 @@ impl HyperrefData {
   /// ### INTERNAL_TARGET_CONNECTOR
   /// A string for connecting internal target labels into a single String.
   pub const INTERNAL_TARGET_CONNECTOR: &'static str = "--"; 
+
 }
 
+
+  /// ### ANON_REF_LABEL_PREFIX
+  /// The prefix of an anonymous reference target label.
+  /// This is inserted into the label of an anonymous reference target
+  /// to differentiate between automatically numbered footnotes and
+  /// anonymous or automatically labeled hyperlink targets.
+  /// The suffix will be the arabic ordinal of the anonymous target.
+  pub const ANON_REF_LABEL_PREFIX: &'static str = "[[-ANON-LABEL-";
+
+
+  /// ### ANON_REF_LABEL_SUFFIX
+  /// The suffix of an anonymous reference target label.
+  /// This is inserted into the label of an anonymous reference target
+  /// to differentiate between automatically numbered footnotes and
+  /// anonymous or automatically labeled hyperlink targets.
+  /// The suffix will be the arabic ordinal of the anonymous target.
+  pub const ANON_REF_LABEL_SUFFIX: &'static str = "-]]";

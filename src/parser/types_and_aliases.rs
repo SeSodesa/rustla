@@ -88,16 +88,3 @@ pub enum LineAdvance {
   Some(usize),
   None
 }
-
-
-/// ### ANON_REF_LABEL_START
-/// The prefix of an anonymous reference target label.
-/// This is inserted into the label of an anonymous reference target
-/// to differentiate between automatically numbered footnotes and
-/// anonymous or automatically labeled hyperlink targets.
-/// The suffix will be the arabic ordinal of the anonymous target.
-/// 
-/// #### Note
-/// Each character in this string needs to be compatible with
-/// LaTeX's `\label` and `\ref` commands.
-const ANON_REF_LABEL_PREFIX: &'static str = "anonymous-reference-label-";
