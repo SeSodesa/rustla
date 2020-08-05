@@ -13,3 +13,4 @@ test-rust-latest:
   image: rust:latest
   script:
     - cargo test --verbose
+  allow_failure: true
