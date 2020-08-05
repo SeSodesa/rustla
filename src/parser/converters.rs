@@ -1,5 +1,5 @@
 /// ## Converters
-/// A submodule for converters functiosn related to the parser.
+/// A submodule for converters functions related to the parser.
 /// These include Roman numeral -> integer transofrmations and the like.
 
 

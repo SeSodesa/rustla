@@ -719,3 +719,29 @@ impl ParsingResult {
     }
   }
 }
+
+
+/// ### InlineParsingResult
+/// An enumeration of the different ways an inline parsing function might succeed or fail.
+enum InlineParsingResult {
+
+  /// #### SuccessWithDoctree
+  /// Returned when a document tree was handed over to the inline parsing function for modification purposes
+  /// and no errors occurred.
+  SuccessWithDoctree {
+    doctree: DocTree,
+  },
+
+  /// #### SuccessWithNodes
+  /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
+  /// the data of the generated nodes is given to the caller stored in a vector.
+  SuccessWithNodes {
+    nodes: Vec<TreeNodeType>
+  },
+
+  /// #### Failure
+  /// If something went wrong, a message is returned with this failure result variant.
+  Failure {
+    message: String
+  },
+}
