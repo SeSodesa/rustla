@@ -411,10 +411,6 @@ impl DocTree {
   /// ### next_anon_target_label
   /// Returns an allocated String representation of the next anonymous target label.
   pub fn next_anon_target_label (&mut self) -> String {
-
-
-
-
     format!("{}{}{}", ANON_REF_LABEL_PREFIX, self.next_anon_target_n(), ANON_REF_LABEL_SUFFIX)
   }
 
