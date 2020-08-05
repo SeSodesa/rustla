@@ -42,7 +42,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
           text_indent: detected_text_indent
         };
 
-        tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
+        tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
 
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),

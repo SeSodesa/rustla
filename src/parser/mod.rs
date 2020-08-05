@@ -376,9 +376,9 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, doctree: Option<DocTree>, line_cursor: &mut LineCursor, node_counter: &mut NodeId) -> Option<Vec<TreeNode>> {
+  fn inline_parse (inline_src_block: String, doctree: Option<DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
 
-    let mut nodes: Vec<TreeNode> = Vec::new();
+    let mut nodes_data: Vec<TreeNodeType> = Vec::new();
 
     let mut col: usize = 0;
 
@@ -387,10 +387,10 @@ impl Parser {
 
     let src_chars = &mut src_without_escapes.chars();
 
-    match Parser::match_inline_str(&src_chars, node_counter) {
-      Some((node, offset)) => {
+    match Parser::match_inline_str(&src_chars) {
+      Some((node_data, offset)) => {
 
-        nodes.push(node);
+        nodes_data.push(node_data);
 
         // Move iterator to start of next possible match
         for _ in 0..offset - 1 {
@@ -418,10 +418,10 @@ impl Parser {
         col = 0;
       }
 
-      match Parser::match_inline_str(&src_chars, node_counter) {
+      match Parser::match_inline_str(&src_chars) {
         Some((node, offset)) => {
 
-          nodes.push(node);
+          nodes_data.push(node);
 
           // Move iterator to start of next possible match
           for _ in 0..offset - 1 {
@@ -438,9 +438,27 @@ impl Parser {
       }
     }
 
-    if nodes.is_empty() { return None }
+    if doctree.is_some() {
 
-    Some(nodes)
+      let mut doctree = doctree.unwrap();
+
+      if nodes_data.is_empty() {
+        return InlineParsingResult::NoNodesWithDoctree(doctree)
+      } else {
+        for data in nodes_data {
+          doctree = doctree.push_data(data);
+        }
+        return InlineParsingResult::SuccessWithDoctree(doctree)
+      }
+
+    } else {
+
+      if nodes_data.is_empty() {
+        return InlineParsingResult::NoNodesWithoutDoctree
+      } else {
+        return InlineParsingResult::SuccessWithNodes(nodes_data)
+      }
+    }
   }
 
   /// ### match_inline_str
@@ -448,7 +466,7 @@ impl Parser {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars, node_id: &mut NodeId) -> Option<(TreeNode, usize)> {
+  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNodeType, usize)> {
 
     let src_str = chars_iter.as_str();
 
@@ -459,8 +477,8 @@ impl Parser {
       match regexp.captures(src_str) {
 
         Some(capts) => {
-          let (node, offset) = parsing_function(*pattern_name, &capts, node_id);
-          return Some((node, offset));
+          let (node_type, offset) = parsing_function(*pattern_name, &capts);
+          return Some((node_type, offset));
         },
 
         None => { continue } // no match, do nothing
@@ -718,30 +736,4 @@ impl ParsingResult {
       _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
     }
   }
-}
-
-
-/// ### InlineParsingResult
-/// An enumeration of the different ways an inline parsing function might succeed or fail.
-enum InlineParsingResult {
-
-  /// #### SuccessWithDoctree
-  /// Returned when a document tree was handed over to the inline parsing function for modification purposes
-  /// and no errors occurred.
-  SuccessWithDoctree {
-    doctree: DocTree,
-  },
-
-  /// #### SuccessWithNodes
-  /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
-  /// the data of the generated nodes is given to the caller stored in a vector.
-  SuccessWithNodes {
-    nodes: Vec<TreeNodeType>
-  },
-
-  /// #### Failure
-  /// If something went wrong, a message is returned with this failure result variant.
-  Failure {
-    message: String
-  },
 }

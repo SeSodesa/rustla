@@ -1,7 +1,7 @@
 /// ## type_aliases
 /// A submodule that contains Parser-related type aliases.
 
-use super::*;
+use super::{*};
 
 // =====================================
 //   Type aliases needed by the parser
@@ -33,7 +33,7 @@ pub type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 /// Returns a node a length of the match, so that the inline parser
 /// could determine how many characters to eat off the start of the
 /// source string.
-pub type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize);
+pub type InlineParsingMethod = fn (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize);
 
 
 /// ### InlineTransition
@@ -87,4 +87,34 @@ pub enum PushOrPop {
 pub enum LineAdvance {
   Some(usize),
   None
+}
+
+
+/// ### InlineParsingResult
+/// An enumeration of the different ways an inline parsing function might succeed or fail.
+pub enum InlineParsingResult {
+
+  /// #### SuccessWithDoctree
+  /// Returned when a document tree was handed over to the inline parsing function for modification purposes
+  /// and no errors occurred.
+  SuccessWithDoctree (DocTree),
+
+  /// #### SuccessWithNodes
+  /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
+  /// the data of the generated nodes is given to the caller stored in a vector.
+  SuccessWithNodes (Vec<TreeNodeType>),
+
+  /// #### NoNodesWithDoctree
+  /// If no nodes were discovered and a doctree was given, return with the doctree wrapped in this variant.
+  NoNodesWithDoctree(DocTree),
+
+  /// #### NoNodesWithoutDoctree
+  /// If no nodes were discovered and no doctree was given to be modified, this empty variant is returned.
+  NoNodesWithoutDoctree,
+
+  /// #### Failure
+  /// If something went wrong, a message is returned with this failure result variant.
+  Failure {
+    message: String
+  },
 }

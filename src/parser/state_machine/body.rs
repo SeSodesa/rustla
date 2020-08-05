@@ -24,7 +24,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   };
 
   if parent_indent_matches(tree_wrapper.get_node_data(), detected_bullet_indent) {
-    tree_wrapper = tree_wrapper.push_and_focus(sublist_data);
+    tree_wrapper = tree_wrapper.push_data_and_focus(sublist_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_states: Some(vec![StateMachine::BulletList]),
@@ -86,7 +86,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
   };
 
   if parent_indent_matches(tree_wrapper.get_node_data(), detected_enumerator_indent) {
-    tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
+    tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_states: Some(vec![StateMachine::EnumeratedList]),
@@ -120,7 +120,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   if parent_indent_matches(tree_wrapper.get_node_data(), detected_marker_indent) {
-    tree_wrapper = tree_wrapper.push_and_focus(list_node_data);
+    tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_states: Some(vec![StateMachine::FieldList]),
@@ -189,7 +189,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
       label: label.clone(),
       target: target.clone()
     };
-    tree_wrapper = tree_wrapper.push_and_focus(footnote_data);
+    tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -250,7 +250,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
       body_indent: detected_body_indent,
       label: detected_label_str.to_string(),
     };
-    tree_wrapper = tree_wrapper.push_and_focus(citation_data);
+    tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
@@ -343,48 +343,42 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
       }
     }
 
-    let node_type: TreeNodeType = match Parser::inline_parse(block_string, None, line_cursor, &mut doctree.node_count) {
-      Some(nodes) => {
+    let node_type: TreeNodeType = match Parser::inline_parse(block_string, None, line_cursor) {
+      
+      InlineParsingResult::SuccessWithNodes(nodes_data) => {
 
-        eprintln!("Target nodes: {:#?}\n", nodes);
+        eprintln!("Target nodes: {:#?}\n", nodes_data);
 
-        if nodes.len() != 1 {
+        if nodes_data.len() != 1 {
           return TransitionResult::Failure {
             message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n")
           }
         }
 
-        match nodes.get(0) {
-          Some(node) => {
-            match node.get_data() {
+        match nodes_data.get(0) {
 
-              TreeNodeType::AbsoluteURI { text }  |  TreeNodeType::StandaloneEmail { text }  =>  {
+          Some(TreeNodeType::AbsoluteURI { text })  |  Some(TreeNodeType::StandaloneEmail { text })  =>  {
 
-                TreeNodeType::ExternalHyperlinkTarget {
-                  uri: text.clone(),
-                  target: label_as_string,
-                  marker_indent: detected_marker_indent
-                }
-              }
-
-              TreeNodeType::Reference { target_label } =>  {
-
-                TreeNodeType::IndirectHyperlinkTarget {
-                  target: label_as_string,
-                  indirect_target: target_label.clone(),
-                  marker_indent: detected_marker_indent
-                }
-              }
-
-              _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
+            TreeNodeType::ExternalHyperlinkTarget {
+              uri: text.clone(),
+              target: label_as_string,
+              marker_indent: detected_marker_indent
             }
           }
 
-          None => panic!("No nodes received from hyperlink target body\n")
+          Some(TreeNodeType::Reference { target_label }) =>  {
+
+            TreeNodeType::IndirectHyperlinkTarget {
+              target: label_as_string,
+              indirect_target: target_label.clone(),
+              marker_indent: detected_marker_indent
+            }
+          }
+
+          _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
         }
       }
-
-      None => return TransitionResult::Failure { message: String::from("No valid inline nodes inside hyperlink target.\nComputer says no...\n") }
+      _ => panic!("Inline parser failed when parsing a hyperlink target on line {}\n.Computer says no...\n", line_cursor.sum_total())
     };
 
     let node = TreeNode::new(node_type, doctree.node_count(), None);
@@ -425,38 +419,34 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
   let mut tree_wrapper = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
-  let paragraph_data = TreeNodeType::Paragraph;
-  let mut paragraph_node = TreeNode::new_from_id_ref(paragraph_data, &mut tree_wrapper.node_count, None);
-
-  let relative_indent = detected_indent - base_indent;
-
-  let block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
-    Ok((lines, line_offset)) => {
-      lines.join("\n")
-    }
-    Err(e) => {
-      eprintln!("{}", e);
-      return TransitionResult::Failure {
-        message: String::from("Error when reading paragraph block in Body.\n")
-      }
-    }
-  };
-
-  // Pass text to inline parser as a string
-  let mut inline_nodes = if let Some(children) = Parser::inline_parse(block, None, line_cursor, &mut tree_wrapper.node_count) {
-    children
-  } else {
-    return TransitionResult::Failure {
-      message: String::from("Couldn't parse paragraph for inline nodes\n")
-    }
-  };
-
-  // Add inline nodes to paragraph...
-  paragraph_node.append_children(&mut inline_nodes);
-
   // Check if we are inside a node that cares about indentation
   if parent_indent_matches(tree_wrapper.get_node_data(), detected_indent) {
-    tree_wrapper.push_child(paragraph_node);
+    
+    tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::Paragraph);
+
+    let relative_indent = detected_indent - base_indent;
+  
+    let block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
+      Ok((lines, line_offset)) => {
+        lines.join("\n")
+      }
+      Err(e) => {
+        eprintln!("{}", e);
+        return TransitionResult::Failure {
+          message: String::from("Error when reading paragraph block in Body.\n")
+        }
+      }
+    };
+  
+    // Pass text to inline parser as a string
+    tree_wrapper = if let InlineParsingResult::SuccessWithDoctree(doctree) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
+      doctree.focus_on_parent()
+    } else {
+      return TransitionResult::Failure {
+        message: String::from("Couldn't parse paragraph for inline nodes\n")
+      }
+    };
+
     return TransitionResult::Success {
       doctree: tree_wrapper,
       next_states: None,

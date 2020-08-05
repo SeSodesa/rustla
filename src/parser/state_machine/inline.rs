@@ -7,49 +7,43 @@ use super::*;
 /// ### paired_delimiter
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
+pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
   
   let content = captures.get(1).unwrap();
 
   let data = String::from(content.as_str());
 
-  let node = match pattern_name {
-    PatternName::StrongEmphasis => TreeNode::new_from_id_ref(TreeNodeType::StrongEmphasis{text: data}, node_id, None),
-    PatternName::Emphasis => TreeNode::new_from_id_ref(TreeNodeType::Emphasis{text: data}, node_id, None),
-    PatternName::Literal => TreeNode::new_from_id_ref(TreeNodeType::Literal{text: data}, node_id, None),
-    PatternName::InlineTarget => TreeNode::new_from_id_ref(TreeNodeType::InlineTarget{target_label: data}, node_id, None),
+  let node_data = match pattern_name {
+    PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: data},
+    PatternName::Emphasis => TreeNodeType::Emphasis{text: data},
+    PatternName::Literal => TreeNodeType::Literal{text: data},
+    PatternName::InlineTarget => TreeNodeType::InlineTarget{target_label: data},
     _ => panic!("No such paired delimiter type!")
   };
 
-  assert!(node.children.is_empty());
-
   let match_len = captures.get(0).unwrap().as_str().chars().count();
 
-  (node, match_len)
-
+  (node_data, match_len)
 }
 
 
 /// ### whitespace
 /// Parses inline whitespace
-pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
+pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let content = captures.get(0).unwrap();
 
-  let data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
-
-  let node = TreeNode::new_from_id_ref(data, node_id, None);
+  let node_data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
 
   let match_len = content.as_str().chars().count();
 
-  (node, match_len)
-
+  (node_data, match_len)
 }
 
 
 /// ### reference
 /// Parses reference type inline elements based on their pattern name.
-pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
+pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
 
@@ -95,8 +89,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id:
           if email == MISSING {
             let match_str = whole_match.as_str();
             let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
-            let text_node = TreeNode::new_from_id_ref(data, node_id, None);
-            return (text_node, match_str.chars().count())
+            return (data, match_str.chars().count())
           }
 
           let match_str = whole_match.as_str();
@@ -193,29 +186,19 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures, node_id:
     _ => panic!("No such reference pattern.\n")
   };
 
-  let node = TreeNode::new_from_id_ref(data, node_id, None);
-
   let match_len = whole_match.as_str().chars().count();
 
-  (node, match_len)
+  (data, match_len)
 }
 
 
 /// ### text
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn text (pattern_name: PatternName, captures: &regex::Captures, node_id: &mut NodeId) -> (TreeNode, usize) {
+pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let content = captures.get(1).unwrap();
-
   let match_len = content.as_str().chars().count();
-
-  let data = String::from(content.as_str());
-
-  let node = TreeNode::new_from_id_ref(TreeNodeType::Text{text: data}, node_id, None);
-
-  assert!(node.children.is_empty());
-
-  (node, match_len)
-
+  let node_data = TreeNodeType::Text { text: String::from(content.as_str()) };
+  (node_data, match_len)
 }

@@ -31,8 +31,8 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
       // Parse the marker for inline nodes
       if *marker_indent == detected_marker_indent {
 
-        let marker_inline_nodes = if let Some(nodes) = Parser::inline_parse(detected_marker_name.to_string(), None, line_cursor, &mut tree_wrapper.node_count) {
-          nodes
+        let marker_inline_nodes = if let InlineParsingResult::SuccessWithNodes(nodes_data) = Parser::inline_parse(detected_marker_name.to_string(), None, line_cursor) {
+          nodes_data
         } else {
           return TransitionResult::Failure { // Should not happen in the first place, if a field marker was detected...
             message: format!("Tried parsing a field marker on line {} for inline nodes but none found.\nMarker not valid...\n", line_cursor.sum_total())
@@ -45,7 +45,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
           marker_indent: detected_marker_indent,
           body_indent: detected_body_indent
         };
-        tree_wrapper = tree_wrapper.push_and_focus(item_node_data);
+        tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
 
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),

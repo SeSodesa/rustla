@@ -112,11 +112,11 @@ impl DocTree {
   }
 
 
-  /// ### push_and_focus
+  /// ### push_data_and_focus
   /// Creates a new node from given data, pushes it to the
   /// children of currently focused on node and focuses on the new node.
   /// If this succeeds, also increments `self.node_count`.
-  pub fn push_and_focus (mut self, node_data: TreeNodeType) -> Self {
+  pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Self {
 
     // Check if there is an incoming internal target label
     let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
@@ -135,22 +135,66 @@ impl DocTree {
       }
     };
 
-        // Check for target or reference nodes...
-        match &node_data {
-          TreeNodeType::Footnote {target, label, .. } => {
-            self.add_target(&node_data, label, self.node_count);
-          }
-          TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-            self.add_target(&node_data, target, self.node_count);
-          }
-          TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-            self.add_target(&node_data, target, self.node_count);
-            self.add_reference(&node_data, indirect_target, self.node_count);
-          }
-          _ => {}
-        };
+    // Check for target or reference nodes...
+    match &node_data {
+      TreeNodeType::Footnote {target, label, .. } => {
+        self.add_target(&node_data, label, self.node_count);
+      }
+      TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
+        self.add_target(&node_data, target, self.node_count);
+      }
+      TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
+        self.add_target(&node_data, target, self.node_count);
+        self.add_reference(&node_data, indirect_target, self.node_count);
+      }
+      _ => {}
+    };
 
-    self.tree = self.tree.push_and_focus(node_data, self.node_count, target_label).unwrap();
+    self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_label).unwrap();
+    self.node_count += 1;
+
+    self
+  }
+
+
+  /// ### push_data
+  /// Creates a new node from given data and pushes it to the
+  /// children of currently focused on node.
+  /// If this succeeds, also increments `self.node_count`.
+  pub fn push_data (mut self, node_data: TreeNodeType) -> Self {
+
+    // Check if there is an incoming internal target label
+    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
+    let target_label = if acc_target_label.is_empty() { None } else {
+
+      match node_data {
+
+        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
+
+        _ => {
+          let label = Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR));
+          acc_target_label.clear();
+          label
+        }
+      }
+    };
+
+    // Check for target or reference nodes...
+    match &node_data {
+      TreeNodeType::Footnote {target, label, .. } => {
+        self.add_target(&node_data, label, self.node_count);
+      }
+      TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
+        self.add_target(&node_data, target, self.node_count);
+      }
+      TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
+        self.add_target(&node_data, target, self.node_count);
+        self.add_reference(&node_data, indirect_target, self.node_count);
+      }
+      _ => {}
+    };
+
+    self.tree = self.tree.push_data(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
 
     self
@@ -725,7 +769,7 @@ pub enum TreeNodeType {
   /// ```
   FieldListItem {
     raw_marker_name: String,
-    marker_name_as_inline_nodes: Vec<TreeNode>,
+    marker_name_as_inline_nodes: Vec<TreeNodeType>,
     marker_indent: usize,
     body_indent: usize,
   },
