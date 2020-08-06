@@ -441,7 +441,12 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
     };
   
     // Pass text to inline parser as a string
-    tree_wrapper = if let InlineParsingResult::DoctreeAndNodes(returned_doctree, nodes_data) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
+    tree_wrapper = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
+
+      for data in nodes_data {
+        returned_doctree = returned_doctree.push_data(data);
+      }
+
       returned_doctree.focus_on_parent()
     } else {
       return TransitionResult::Failure {

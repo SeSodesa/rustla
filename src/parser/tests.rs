@@ -394,8 +394,7 @@ fn bullet_list_01 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
-  //eprintln!("{:#?}", doctree.tree.walk_to_root());
+  doctree.print_tree();
 
   match doctree.child(1).get_data() {
     TreeNodeType::BulletList{..}=> (),
@@ -423,7 +422,6 @@ fn bullet_list_02 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
   match doctree.child(1).child(0).child(0).get_data() {
@@ -456,7 +454,6 @@ fn bullet_list_03 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
   match doctree.child(1).child(0).get_data() {
@@ -1164,7 +1161,6 @@ fn field_list_03 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
 
