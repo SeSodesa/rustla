@@ -38,7 +38,7 @@ fn inline_parse_01 () {
 #[test]
 fn inline_parse_02 () {
 
-  let src = String::from("This is a string with a simple-reference+with:punctuation__\nand a `phrase reference`_");
+  let src = String::from("This is a string with a simple-reference+with:punctuation_\nand a `phrase reference`_");
 
   let mut lc = LineCursor::new(0,0);
 

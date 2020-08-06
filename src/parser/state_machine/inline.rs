@@ -7,7 +7,7 @@ use super::*;
 /// ### paired_delimiter
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
   
   let content = captures.get(1).unwrap();
 
@@ -29,12 +29,10 @@ pub fn paired_delimiter (pattern_name: PatternName, captures: &regex::Captures) 
 
 /// ### whitespace
 /// Parses inline whitespace
-pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let content = captures.get(0).unwrap();
-
   let node_data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
-
   let match_len = content.as_str().chars().count();
 
   (node_data, match_len)
@@ -43,29 +41,44 @@ pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (Tre
 
 /// ### reference
 /// Parses reference type inline elements based on their pattern name.
-pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
   let displayed_text = captures.get(1).unwrap().as_str();
+  let target_label = if  let Some(type_match) = captures.get(2) {
+    match type_match.as_str() {
+      "_"   => displayed_text.to_string(),
+      "__"  => {
+        if let Some(doctree_ref) = opt_doctree_ref {
+          doctree_ref.next_anon_reference_label()
+        } else {
+          panic!("No doctree reference where one was expected while parsing an inline reference...\n")
+        }
+      },
+      _     => panic!("No matching reference type when parsing an inline reference...\n")
+    }
+  } else {
+    panic!("No reference type suffix (\"_\" or \"__\") when parsing an inline reference...\n")
+  };
 
   let data = match pattern_name {
     PatternName::SimpleRef | PatternName::PhraseRef => {
 
       TreeNodeType::Reference{
         displayed_text: displayed_text.to_string(),
-        target_label: displayed_text.to_string()
+        target_label: target_label
       }
     },
     PatternName::FootNoteRef => {
       TreeNodeType::FootnoteReference{
         displayed_text: displayed_text.to_string(),
-        target_label: displayed_text.to_string()
+        target_label: target_label
       }
     },
     PatternName::SubstitutionRef => {
       TreeNodeType::SubstitutionReference{
         displayed_text: displayed_text.to_string(),
-        target_label: displayed_text.to_string()
+        target_label: target_label
       }
     },
     _ => panic!("No such reference pattern.\n")
@@ -77,7 +90,7 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (Tree
 }
 
 
-pub fn uri (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
 
@@ -210,7 +223,7 @@ pub fn uri (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeT
 /// ### text
 /// Parses inline text elements that have simple opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn text (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let content = captures.get(1).unwrap();
   let match_len = content.as_str().chars().count();

@@ -169,7 +169,7 @@ impl StateMachine {
 
 
   /// ### INLINE_TRANSITIONS
-  /// An array of transitions related to `StateMachine::DefinitionList`.
+  /// An array of inline transitions.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
     (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
     (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", inline::paired_delimiter),

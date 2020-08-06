@@ -1664,6 +1664,9 @@ fn hyperlink_target_03 () {
 
   doctree.print_tree();
 
+  eprintln!("Doctree targets: {:#?}\n", doctree.shared_targets());
+  eprintln!("Doctree references: {:#?}\n", doctree.shared_references());
+
   match doctree.child(1).get_data() {
     TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
       if target != "an-external-hyperlink" || uri != "https://www.address.fi//" {
@@ -1671,7 +1674,7 @@ fn hyperlink_target_03 () {
         panic!()
       }
     }
-    _ => {}
+    _ => panic!()
   }
 
   match doctree.child(3).get_data() {
@@ -1681,7 +1684,7 @@ fn hyperlink_target_03 () {
         panic!()
       }
     }
-    _ => {}
+    _ => panic!()
   }
 }
 
@@ -1692,7 +1695,7 @@ fn hyperlink_target_04 () {
   let src = String::from("
   .. __: https://www.address.fi//
 
-  .. __: anon-target__
+  .. __: anon-target-ref__
 
   ");
 
@@ -1708,7 +1711,25 @@ fn hyperlink_target_04 () {
   eprintln!("Doctree targets: {:#?}", doctree.shared_targets());
   eprintln!("Doctree references: {:#?}", doctree.shared_references());
 
-  todo!()
+  match doctree.child(1).get_data() {
+    TreeNodeType::ExternalHyperlinkTarget { target, uri, .. } => {
+      if target != "[[-ANON-LABEL-1-]]" || uri != "https://www.address.fi//" {
+        eprintln!("Target: {:#?}\nURI: {:#?}\n", target, uri);
+        panic!()
+      }
+    }
+    _ => panic!()
+  }
+
+  match doctree.child(3).get_data() {
+    TreeNodeType::IndirectHyperlinkTarget { target, indirect_target, .. } => {
+      if target != "[[-ANON-LABEL-2-]]" || indirect_target != "[[-ANON-LABEL-1-]]" {
+        eprintln!("Target: {:#?}\nIndirect target: {:#?}\n", target, indirect_target);
+        panic!()
+      }
+    }
+    _ => panic!()
+  }
 }
 
 

@@ -376,7 +376,7 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, doctree: Option<DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
+  fn inline_parse (inline_src_block: String, mut doctree: Option<DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
 
     let mut nodes_data: Vec<TreeNodeType> = Vec::new();
 
@@ -387,7 +387,7 @@ impl Parser {
 
     let src_chars = &mut src_without_escapes.chars();
 
-    match Parser::match_inline_str(&src_chars) {
+    match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
       Some((node_data, offset)) => {
 
         nodes_data.push(node_data);
@@ -418,7 +418,7 @@ impl Parser {
         col = 0;
       }
 
-      match Parser::match_inline_str(&src_chars) {
+      match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
         Some((node, offset)) => {
 
           nodes_data.push(node);
@@ -439,20 +439,9 @@ impl Parser {
     }
 
     if doctree.is_some() {
-
-      let mut doctree = doctree.unwrap();
-
-      if nodes_data.is_empty() {
-        return InlineParsingResult::UnmodifiedDoctree(doctree)
-      } else {
-        for data in nodes_data {
-          doctree = doctree.push_data(data);
-        }
-        return InlineParsingResult::ModifiedDoctree(doctree)
-      }
-
+      let doctree = doctree.unwrap();
+      return InlineParsingResult::DoctreeAndNodes(doctree, nodes_data)
     } else {
-
       if nodes_data.is_empty() {
         return InlineParsingResult::NoNodes
       } else {
@@ -466,7 +455,7 @@ impl Parser {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (chars_iter: &'chars str::Chars) -> Option<(TreeNodeType, usize)> {
+  fn match_inline_str <'chars> (opt_doctree_ref: Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(TreeNodeType, usize)> {
 
     let src_str = chars_iter.as_str();
 
@@ -477,7 +466,7 @@ impl Parser {
       match regexp.captures(src_str) {
 
         Some(capts) => {
-          let (node_type, offset) = parsing_function(*pattern_name, &capts);
+          let (node_type, offset) = parsing_function(opt_doctree_ref, *pattern_name, &capts);
           return Some((node_type, offset));
         },
 
