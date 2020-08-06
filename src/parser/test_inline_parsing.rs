@@ -1,3 +1,6 @@
+/// ## test_inline_parsing
+/// Unit tests related to parsing inline text.
+
 use super::*;
 
 use crate::doctree::TreeNodeType;

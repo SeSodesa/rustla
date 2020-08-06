@@ -38,8 +38,16 @@ use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 use crate::doctree::{DocTree, TreeNode, TreeNodeType};
 use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName};
 
-#[cfg(test)]
-mod tests;
+// Unit test modules
+// -----------------
+mod test_converters;
+mod test_block_reading;
+mod test_bullet_lists;
+mod test_enumerated_lists;
+mod test_field_lists;
+mod test_hyperlink_targets;
+mod test_mixed_structures;
+mod test_inline_parsing;
 
 
 // ==========================

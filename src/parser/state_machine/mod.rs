@@ -11,7 +11,6 @@ mod enumerated_list;
 mod field_list;
 mod inline;
 pub mod transitions;
-mod tests;
 
 use std::cmp;
 use std::collections::HashMap;

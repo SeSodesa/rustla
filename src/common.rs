@@ -213,7 +213,7 @@ pub enum InterpretedTextKind {
 /// 
 /// As the next autosymbol is detected the next unused item
 /// from this list will be used as the footnote label character.
-/// If `n` is the number of times this list has been iteratred over
+/// If `n` is the number of times this list has been iterated over
 /// and `s` the current autosymbol, then the actual label
 /// of the footnote is `s^(n+1)`. For example, if a document has
 /// `12` automatically symboled footnotes and a new one is constructed,
