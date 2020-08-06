@@ -60,134 +60,141 @@ pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (Tree
       let target_label = captures.get(1).unwrap();
       TreeNodeType::SubstitutionReference{target_label: String::from(target_label.as_str())}
     },
-    PatternName::StandaloneHyperlink => {
-
-      let mut is_valid = true;
-
-      const MISSING: &str = "!!!MISSING!!!";
-
-      // Retrieving the relevant parts of the URI as &str
-      let scheme = if let Some(scheme) = captures.name("scheme") {
-        scheme.as_str()
-      } else {
-        MISSING
-      };
-
-      eprintln!("Scheme: {:#?}", scheme);
-
-      match scheme {
-        MISSING => {
-          let email = if let Some(email) = captures.name("email") {
-            email.as_str()
-          } else {
-            MISSING
-          };
-  
-          eprintln!("Email: {:#?}", email);
-
-          // If no email when missing a scheme, simply return match as string
-          if email == MISSING {
-            let match_str = whole_match.as_str();
-            let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
-            return (data, match_str.chars().count())
-          }
-
-          let match_str = whole_match.as_str();
-
-          // If a successful email recognition, prepend a mailto scheme to email.
-          TreeNodeType::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)}
-
-        }
-
-        _ => {
-
-          let authority = if let Some(authority) = captures.name("authority") {
-            authority.as_str()
-          } else {
-            MISSING
-          };
-          let userinfo = if let Some(userinfo) = captures.name("userinfo") {
-            userinfo.as_str()
-          } else {
-            MISSING
-          };
-          let host = if let Some(host) = captures.name("host") {
-            host.as_str()
-          } else {
-            MISSING
-          };
-          let port = if let Some(port) = captures.name("port") {
-            port.as_str()
-          } else {
-            MISSING
-          };
-  
-          eprintln!("Authority: {:#?}", authority);
-          eprintln!("  userinfo: {:#?}", userinfo);
-          eprintln!("  host: {:#?}", host);
-          eprintln!("  port: {:#?}", port);
-  
-          let path = if let Some(path) = captures.name("path")  {
-            path.as_str()
-          } else {
-            MISSING
-          };
-  
-          eprintln!("path: {:#?}", path);
-  
-          let query = if let Some(query) = captures.name("query") {
-            query.as_str()
-          } else {
-            MISSING
-          };
-  
-          eprintln!("query: {:#?}", query);
-  
-          let fragment = if let Some(fragment) = captures.name("fragment") {
-            fragment.as_str()
-          } else {
-            MISSING
-          };
-  
-          eprintln!("fragment: {:#?}", fragment);
-
-          // Validity checks
-
-          if authority != MISSING  {
-            let has_slash = if let Some(c) = path.chars().next() {
-              eprintln!("First char of path is {}\n", c);
-              
-              let mut has_slash: bool = false;
-              if c == '/' {
-                has_slash = true;
-              }
-              has_slash
-
-            } else {
-              false
-            };
-
-            if !has_slash {
-              eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match.as_str());
-              is_valid = false;
-            }
-          }
-
-          // If URI is valid, return it as URI, else as text
-          if is_valid {
-            TreeNodeType::AbsoluteURI{text: String::from(whole_match.as_str())}
-          } else {
-            TreeNodeType::Text{text: String::from(whole_match.as_str())}
-          }
-
-        }
-      }
-    }
     _ => panic!("No such reference pattern.\n")
   };
 
   let match_len = whole_match.as_str().chars().count();
 
+  (data, match_len)
+}
+
+
+pub fn uri (pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let whole_match = captures.get(0).unwrap();
+
+  let mut is_valid = true;
+
+  const MISSING: &str = "!!!MISSING!!!";
+
+  // Retrieving the relevant parts of the URI as &str
+  let scheme = if let Some(scheme) = captures.name("scheme") {
+    scheme.as_str()
+  } else {
+    MISSING
+  };
+
+  eprintln!("Scheme: {:#?}", scheme);
+
+  let data = match scheme {
+    MISSING => {
+      let email = if let Some(email) = captures.name("email") {
+        email.as_str()
+      } else {
+        MISSING
+      };
+
+      eprintln!("Email: {:#?}", email);
+
+      // If no email when missing a scheme, simply return match as string
+      if email == MISSING {
+        let match_str = whole_match.as_str();
+        let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
+        return (data, match_str.chars().count())
+      }
+
+      let match_str = whole_match.as_str();
+
+      // If a successful email recognition, prepend a mailto scheme to email.
+      TreeNodeType::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)}
+
+    }
+
+    _ => {
+
+      let authority = if let Some(authority) = captures.name("authority") {
+        authority.as_str()
+      } else {
+        MISSING
+      };
+      let userinfo = if let Some(userinfo) = captures.name("userinfo") {
+        userinfo.as_str()
+      } else {
+        MISSING
+      };
+      let host = if let Some(host) = captures.name("host") {
+        host.as_str()
+      } else {
+        MISSING
+      };
+      let port = if let Some(port) = captures.name("port") {
+        port.as_str()
+      } else {
+        MISSING
+      };
+
+      eprintln!("Authority: {:#?}", authority);
+      eprintln!("  userinfo: {:#?}", userinfo);
+      eprintln!("  host: {:#?}", host);
+      eprintln!("  port: {:#?}", port);
+
+      let path = if let Some(path) = captures.name("path")  {
+        path.as_str()
+      } else {
+        MISSING
+      };
+
+      eprintln!("path: {:#?}", path);
+
+      let query = if let Some(query) = captures.name("query") {
+        query.as_str()
+      } else {
+        MISSING
+      };
+
+      eprintln!("query: {:#?}", query);
+
+      let fragment = if let Some(fragment) = captures.name("fragment") {
+        fragment.as_str()
+      } else {
+        MISSING
+      };
+
+      eprintln!("fragment: {:#?}", fragment);
+
+      // Validity checks
+
+      if authority != MISSING  {
+        let has_slash = if let Some(c) = path.chars().next() {
+          eprintln!("First char of path is {}\n", c);
+
+          let mut has_slash: bool = false;
+          if c == '/' {
+            has_slash = true;
+          }
+          has_slash
+
+        } else {
+          false
+        };
+
+        if !has_slash {
+          eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match.as_str());
+          is_valid = false;
+        }
+      }
+
+      // If URI is valid, return it as URI, else as text
+      if is_valid {
+        TreeNodeType::AbsoluteURI{text: String::from(whole_match.as_str())}
+      } else {
+        TreeNodeType::Text{text: String::from(whole_match.as_str())}
+      }
+
+    }
+  };
+
+  let match_len = whole_match.as_str().chars().count();
   (data, match_len)
 }
 

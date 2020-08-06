@@ -248,7 +248,7 @@ impl StateMachine {
         [-_a-zA-Z0-9]+
         (?:[.-][a-zA-Z0-9]+)*
       )
-      ", inline::reference),
+      ", inline::uri),
     //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
     (PatternName::Text, r"^([\S]+)", inline::text)
   ];
