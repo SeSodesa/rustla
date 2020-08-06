@@ -50,14 +50,14 @@ fn inline_parse_02 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::Reference{target_label} = &nodes[12] {
+    if let TreeNodeType::Reference{target_label, ..} = &nodes[12] {
       target_label.as_str()
     } else {panic!()},
     "simple-reference+with:punctuation"
   );
 
   assert_eq!(
-    if let TreeNodeType::Reference{target_label} = &nodes[18] {
+    if let TreeNodeType::Reference{target_label, ..} = &nodes[18] {
       target_label.as_str()
     } else {panic!()},
     "phrase reference"
@@ -81,7 +81,7 @@ fn inline_parse_03 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::Reference{target_label} = &nodes[6] {
+    if let TreeNodeType::Reference{target_label, ..} = &nodes[6] {
       target_label.as_str()
     } else {panic!()},
     "simple-reference"
@@ -112,7 +112,7 @@ fn inline_parse_04 () {
   eprintln!("{:#?}", nodes);
 
   assert_eq!(
-    if let TreeNodeType::SubstitutionReference{target_label} = &nodes[6] {
+    if let TreeNodeType::SubstitutionReference{target_label, ..} = &nodes[6] {
       target_label.as_str()
     } else {panic!()},
     "substitution reference"

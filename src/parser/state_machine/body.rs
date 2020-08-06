@@ -366,7 +366,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
             }
           }
 
-          Some(TreeNodeType::Reference { target_label }) =>  {
+          Some(TreeNodeType::Reference { target_label, displayed_text }) =>  {
 
             TreeNodeType::IndirectHyperlinkTarget {
               target: label_as_string,

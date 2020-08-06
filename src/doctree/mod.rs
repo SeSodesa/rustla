@@ -961,30 +961,35 @@ pub enum TreeNodeType {
   /// #### Reference
   /// A general reference to a reference target.
   Reference {
+    displayed_text: String,
     target_label: String
   },
 
   /// #### FootnoteReference
   /// A reference to a foot note.
   FootnoteReference {
+    displayed_text: String,
     target_label: String
   },
 
   /// #### CitationReference
   /// A reference to a bibliographic citation.
   CitationReference {
+    displayed_text: String,
     target_label: String
   },
 
   /// #### SubstitutionReference
   /// A reference that is to be substituted with the reference target directive output.
   SubstitutionReference {
+    displayed_text: String,
     target_label: String
   },
 
   /// #### TitleReference
   /// A reference to a title.
   TitleReference {
+    displayed_text: String,
     target_label: String
   },
 

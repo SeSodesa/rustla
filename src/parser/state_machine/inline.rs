@@ -46,19 +46,27 @@ pub fn whitespace(pattern_name: PatternName, captures: &regex::Captures) -> (Tre
 pub fn reference(pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
+  let displayed_text = captures.get(1).unwrap().as_str();
 
   let data = match pattern_name {
     PatternName::SimpleRef | PatternName::PhraseRef => {
-      let target_label = captures.get(1).unwrap();
-      TreeNodeType::Reference{target_label: String::from(target_label.as_str())}
+
+      TreeNodeType::Reference{
+        displayed_text: displayed_text.to_string(),
+        target_label: displayed_text.to_string()
+      }
     },
     PatternName::FootNoteRef => {
-      let target_label = captures.get(1).unwrap();
-      TreeNodeType::FootnoteReference{target_label: String::from(target_label.as_str())}
+      TreeNodeType::FootnoteReference{
+        displayed_text: displayed_text.to_string(),
+        target_label: displayed_text.to_string()
+      }
     },
     PatternName::SubstitutionRef => {
-      let target_label = captures.get(1).unwrap();
-      TreeNodeType::SubstitutionReference{target_label: String::from(target_label.as_str())}
+      TreeNodeType::SubstitutionReference{
+        displayed_text: displayed_text.to_string(),
+        target_label: displayed_text.to_string()
+      }
     },
     _ => panic!("No such reference pattern.\n")
   };
