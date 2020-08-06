@@ -31,7 +31,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
       // Parse the marker for inline nodes
       if *marker_indent == detected_marker_indent {
 
-        let marker_inline_nodes = if let InlineParsingResult::SuccessWithNodes(nodes_data) = Parser::inline_parse(detected_marker_name.to_string(), None, line_cursor) {
+        let marker_inline_nodes = if let InlineParsingResult::Nodes(nodes_data) = Parser::inline_parse(detected_marker_name.to_string(), None, line_cursor) {
           nodes_data
         } else {
           return TransitionResult::Failure { // Should not happen in the first place, if a field marker was detected...

@@ -443,20 +443,20 @@ impl Parser {
       let mut doctree = doctree.unwrap();
 
       if nodes_data.is_empty() {
-        return InlineParsingResult::NoNodesWithDoctree(doctree)
+        return InlineParsingResult::UnmodifiedDoctree(doctree)
       } else {
         for data in nodes_data {
           doctree = doctree.push_data(data);
         }
-        return InlineParsingResult::SuccessWithDoctree(doctree)
+        return InlineParsingResult::ModifiedDoctree(doctree)
       }
 
     } else {
 
       if nodes_data.is_empty() {
-        return InlineParsingResult::NoNodesWithoutDoctree
+        return InlineParsingResult::NoNodes
       } else {
-        return InlineParsingResult::SuccessWithNodes(nodes_data)
+        return InlineParsingResult::Nodes(nodes_data)
       }
     }
   }

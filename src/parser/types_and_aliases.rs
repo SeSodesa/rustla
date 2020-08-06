@@ -94,27 +94,22 @@ pub enum LineAdvance {
 /// An enumeration of the different ways an inline parsing function might succeed or fail.
 pub enum InlineParsingResult {
 
-  /// #### SuccessWithDoctree
+  /// #### ModifiedDoctree
   /// Returned when a document tree was handed over to the inline parsing function for modification purposes
   /// and no errors occurred.
-  SuccessWithDoctree (DocTree),
+  ModifiedDoctree (DocTree),
 
-  /// #### SuccessWithNodes
+  /// #### UnmodifiedDoctree
+  /// If no nodes were discovered and a doctree was given, return with the doctree wrapped in this variant.
+  UnmodifiedDoctree(DocTree),
+  
+  /// #### Nodes
   /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
   /// the data of the generated nodes is given to the caller stored in a vector.
-  SuccessWithNodes (Vec<TreeNodeType>),
+  Nodes (Vec<TreeNodeType>),
 
-  /// #### NoNodesWithDoctree
-  /// If no nodes were discovered and a doctree was given, return with the doctree wrapped in this variant.
-  NoNodesWithDoctree(DocTree),
-
-  /// #### NoNodesWithoutDoctree
+  /// #### NoNodes
   /// If no nodes were discovered and no doctree was given to be modified, this empty variant is returned.
-  NoNodesWithoutDoctree,
+  NoNodes,
 
-  /// #### Failure
-  /// If something went wrong, a message is returned with this failure result variant.
-  Failure {
-    message: String
-  },
 }

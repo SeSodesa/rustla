@@ -12,7 +12,7 @@ fn inline_parse_01 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
@@ -43,7 +43,7 @@ fn inline_parse_02 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src,  None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
@@ -74,7 +74,7 @@ fn inline_parse_03 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
@@ -105,7 +105,7 @@ fn inline_parse_04 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
@@ -128,7 +128,7 @@ fn inline_parse_05 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
@@ -151,7 +151,7 @@ fn inline_parse_06 () {
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
-    InlineParsingResult::SuccessWithNodes(nodes) => nodes,
+    InlineParsingResult::Nodes(nodes) => nodes,
     _ => panic!("No nodes to be found!")
   };
 
