@@ -410,7 +410,301 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
 /// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
 pub fn directive (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
-  todo!()
+
+  let mut doctree = doctree.unwrap();
+
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
+  let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
+  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+    if line.trim().is_empty() {
+      detected_text_indent
+    } else {
+      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+      if indent < detected_marker_indent + 1 { detected_text_indent } else { indent }
+    }
+  } else { detected_text_indent };
+
+  if parent_indent_matches(doctree.get_node_data(), detected_marker_indent) {
+
+    match detected_directive_label.as_str() {
+
+      "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
+
+        todo!("Parse admonition here...")
+      }
+
+      "image" => {
+
+        todo!("Parse image here...")
+      }
+
+      "figure" => {
+
+        todo!("Parse figure here...")
+      }
+
+      "topic" => {
+
+        todo!("Parse topic here...")
+      }
+
+      "sidebar" => {
+
+        todo!("Parse sidebar here...")
+      }
+
+      "line-block" => {
+
+        todo!("Parse line block here...")
+      }
+
+      "parsed-literal" => {
+
+        todo!("Parse literal block with inlin elements here...")
+      }
+
+
+      "code" => {
+
+        todo!("Parse code block here...")
+      }
+
+
+      "math" => {
+        todo!("Parse display math block here...")
+      }
+
+      "rubric" => {
+
+        todo!("Parse rubric here...")
+      }
+
+      "epigraph" => {
+
+        todo!("Parse epigraph here...")
+      }
+
+      "highlights" => {
+
+        todo!("Parse highlights here...")
+      }
+
+      "pull-quote" => {
+
+        todo!("Parse pull-quote here...")
+      }
+
+      "compound" => {
+
+        todo!("Parse compound paragraph here...")
+      }
+
+      "container" => {
+
+        todo!("parse container here...")
+      }
+
+      "table" => {
+
+        todo!("Parse table here...")
+      }
+
+      "csv-table" => {
+
+        todo!("Parse CSV table here...")
+      }
+
+      "list-table" => {
+        todo!("Parse list table here...")
+      }
+
+      // DOCUMENT PARTS
+
+      "contents" => {
+
+        todo!("Parse table of contents here...")
+      }
+
+      "sectnum" | "section-numbering" => {
+
+        todo!("Parse automatic section number generator here...")
+      }
+
+      "header" => {
+
+        todo!("Parse header here...")
+      }
+
+      "footer" => {
+
+        todo!("Parse footer here...")
+      }
+
+      "target-notes" => {
+
+        todo!("Parse target footnotes here...")
+      }
+
+      "footnotes" => {
+
+        unimplemented!("Footnotes (plural) directive is mentioned in the rST specification but is not implemented yet.")
+      }
+
+      "citations" => {
+
+        unimplemented!("Citations (plural) directive is mentioned in the rST specification but is not implemented yet.")
+      }
+
+      "meta" => {
+
+        todo!("Parse HTML metadata here...")
+      }
+
+      // MISCELLANEOUS
+
+      "include" => {
+
+        todo!("Include document here...")
+      }
+
+      "raw" => {
+
+        todo!("Parse raw data pass-through here...")
+      }
+
+      "class" => {
+
+        todo!("Assign specific CSS class to a block here...")
+      }
+
+      "role" => {
+
+        todo!("Create a new interpreted text here...")
+      }
+
+      "default-role" => {
+
+        todo!("Assign a default role to interpreted text here...")
+      }
+
+      "title" => {
+
+        todo!("Assign a document metadata title here...")
+      }
+
+      "restructuredtext-test-directive" => {
+
+        todo!("Only for test purposes...")
+      }
+
+      // A+ SPECIFIC DIRECTIVES
+
+      "questionnaire" => {
+
+        todo!("Parse graded and feedback questionnaires here...")
+      }
+
+      "submit" => {
+
+        todo!("Parse submittable (external) exercises here...")
+      }
+
+      "toctree" => {
+
+        todo!("Parse round metadata here...")
+      }
+
+      "ae-input" => {
+
+        todo!("Parse active element input here...")
+      }
+
+      "ae-output" => {
+
+        todo!("Parse active element output here...")
+      }
+
+      "hidden_block" => {
+
+        todo!("Parse hidden block here...")
+      }
+
+      "point-of-interest" => {
+
+        todo!("Parse point of interest here...")
+      }
+
+      "annotated" => {
+
+        todo!("Parse annotated code blocks here...")
+      }
+
+      "lineref-code-block" => {
+
+        todo!("Parse code blocks with line references here...")
+      }
+
+      "repl-res-count-reset" => {
+
+        todo!("Parse an interactiv REPL session here...")
+      }
+
+      "acos-submit" => {
+
+        todo!("parse submitttable ACOS exercise here...")
+      }
+
+      "div" => {
+
+        todo!("Assign CSS classes (div) to text blocks here...")
+      }
+
+      "styled-topic" => {
+
+        todo!("Parse styled topic here...")
+      }
+
+      // A+ MEDIA DIRECTIVES
+
+      "story" => {
+
+        todo!("Story embedded in a iframe...")
+      }
+
+      "jsvee" => {
+
+        todo!("JSVee program visualization...")
+      }
+
+      "youtube" => {
+
+        todo!("Youtube video...")
+      }
+
+      "local-video" => {
+
+        todo!("A local video...")
+      }
+
+      "embedded-page" => {
+
+        todo!("An embedded page...")
+      }
+
+      _ => todo!("Return the unknown or not yet implemented directive as a literal block...")
+    }
+
+  } else {
+
+    doctree = doctree.focus_on_parent();
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+    }
+  }
 }
 
 
@@ -593,9 +887,4 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
     eprintln!("No footnote pattern inside a footnote transition function.\nComputer says no...\n");
     None
   }
-}
-
-
-fn hyperref_target_type () {
-  todo!()
 }
