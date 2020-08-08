@@ -49,12 +49,12 @@ fn bullet_list_02 () {
   doctree.print_tree();
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
   match doctree.child(1).child(0).child(2).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 }
@@ -91,12 +91,12 @@ fn bullet_list_03 () {
   }
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
   match doctree.child(1).child(0).child(2).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
@@ -138,17 +138,17 @@ fn bullet_list_04 () {
   }
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("First non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
   match doctree.child(1).child(0).child(2).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n")
   }
 
   match doctree.child(2).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("No empty line after bullet list!\n")
   }
 
@@ -240,17 +240,17 @@ fn bullet_list_06 () {
   }
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph{..} => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("No Paragraph!\n")
   }
 
   match doctree.child(1).child(0).child(4).get_data() {
-    TreeNodeType::BulletList{..} => (),
+    TreeNodeType::BulletList { .. } => (),
     _ => panic!("No BulletList!\n")
   }
 
   match doctree.child(1).child(0).child(4).child(0).get_data() {
-    TreeNodeType::BulletListItem{..} => (),
+    TreeNodeType::BulletListItem { .. } => (),
     _ => panic!("No BulletListItem!\n")
   }
 

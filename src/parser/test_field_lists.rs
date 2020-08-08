@@ -47,7 +47,7 @@ An ending paragraph...
   }
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -57,7 +57,7 @@ An ending paragraph...
   }
 
   match doctree.child(1).child(1).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -111,7 +111,7 @@ An ending paragraph...
   }
 
   match doctree.child(5).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 }
@@ -184,7 +184,7 @@ fn field_list_03 () {
   }
 
   match doctree.child(1).child(3).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -194,7 +194,7 @@ fn field_list_03 () {
   }
 
   match doctree.child(1).child(4).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 }

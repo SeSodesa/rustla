@@ -32,7 +32,7 @@ fn footnote_01 () {
   }
 
   match doctree.child(1).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -74,7 +74,7 @@ fn footnote_02 () {
   }
 
   match doctree.child(1).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -84,7 +84,7 @@ fn footnote_02 () {
   }
 
   match doctree.child(2).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 }
@@ -327,7 +327,7 @@ fn citation_01 () {
   }
 
   match &doctree.child(1).child(0).get_data() {
-    TreeNodeType::Paragraph => {}
+    TreeNodeType::Paragraph { .. } => {}
      _=> panic!()
   }
 }
@@ -360,7 +360,7 @@ fn citation_02 () {
   }
 
   match &doctree.child(1).child(0).get_data() {
-    TreeNodeType::Paragraph => {}
+    TreeNodeType::Paragraph { .. } => {}
      _=> panic!()
   }
 

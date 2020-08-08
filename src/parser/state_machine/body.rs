@@ -718,7 +718,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
   // Check if we are inside a node that cares about indentation
   if parent_indent_matches(tree_wrapper.get_node_data(), detected_indent) {
     
-    tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::Paragraph);
+    tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
 
     let relative_indent = detected_indent - base_indent;
   

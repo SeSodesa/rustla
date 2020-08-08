@@ -37,7 +37,7 @@ fn enumerated_list_01 () {
   }
 
   match doctree.child(1).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!("No Paragraph as child of EnumeratdListItem!\n")
   }
 
@@ -134,12 +134,12 @@ fn enumerated_list_03 () {
   }
 
   match doctree.child(1).child(0).child(0).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
   match doctree.child(1).child(0).child(1).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -154,7 +154,7 @@ fn enumerated_list_03 () {
   }
 
   match doctree.child(2).child(0).child(0).get_data() {
-    TreeNodeType::Paragraph => (),
+    TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
@@ -294,7 +294,7 @@ fn enumerated_list_05 () {
   }
 
   match doctree.child(1).child(0).child(2).get_data() {
-    TreeNodeType::Paragraph => {}
+    TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 

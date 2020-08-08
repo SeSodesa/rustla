@@ -554,7 +554,7 @@ impl TreeNode {
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {
-          TreeNodeType::Paragraph                         | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
+          TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
@@ -598,7 +598,7 @@ impl TreeNode {
       }
 
       // Only paragraphs may contain inline nodes
-      TreeNodeType::Paragraph => {
+      TreeNodeType::Paragraph { .. } => {
         match node_data {
           TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
           | TreeNodeType::Literal { .. }            | TreeNodeType::InlineTarget { .. }           | TreeNodeType::FootnoteReference { .. }
@@ -679,7 +679,9 @@ pub enum TreeNodeType {
   /// #### Paragraph
   /// A node constructed of a left-aligned block of text
   /// with no special starter markers.
-  Paragraph,
+  Paragraph {
+    indent: usize,
+  },
 
   /// #### BulletList
   /// An unnumbered list node. These may only contain `BulletListItem` nodes
