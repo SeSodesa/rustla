@@ -3,8 +3,6 @@
 
 use super::*;
 
-use crate::doctree::TreeNodeType;
-
 #[cfg(test)]
 
 

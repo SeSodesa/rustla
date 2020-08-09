@@ -1,0 +1,192 @@
+/// ## tree_node
+/// A submodule for the TreeNode type.
+
+use super::*;
+
+/// ### TreeNode
+/// A tree node that contains a struct of `TreeNodeType`
+/// plus the information needed to traverse the tree.
+#[derive(Debug)]
+pub struct TreeNode {
+  pub id: NodeId,
+  target_label: Option<String>,
+  pub data : TreeNodeType,
+  pub children: Children,
+
+}
+
+impl TreeNode {
+
+  /// ### new
+  /// A `TreeNode` constructor.
+  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<String>) -> Self {
+    
+    TreeNode {
+      id: id,
+      target_label: target_label,
+      children: Vec::new(),
+      data: data
+    }
+  }
+
+
+  /// ### new_from_id_ref
+  /// Works similarly to `TreeNode::new`, except also increments the id
+  /// behind the given address in addition to assignning the previous value
+  /// to the node being constructred.
+  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId, target_label: Option<String>) -> Self {
+
+    let node = Self {
+      id: *id_ref, // assign current id value to node
+      target_label: target_label,
+      children: Vec::new(),
+      data: data,
+    };
+
+    *id_ref += 1; // increment the id before returning with new node
+    node
+  }
+
+
+  /// ### shared_target_label
+  /// Returns a shared (immutable) reference to the optional target label.
+  /// If the label is `None`, as is hasn't been set, returns an
+  /// empty string slice instead.
+  pub fn shared_target_label (&self) -> &str {
+    if let Some(label) = self.target_label.as_ref() { label } else { "" }
+  }
+  
+  
+  /// ### push_child
+  /// Pushes a given child node the the end of `self.children`.
+  pub fn push_child (&mut self, node : TreeNode) {
+
+    if self.child_is_allowed(&node.data) {
+      self.children.push(node);
+    } else {
+      eprintln!("Child of type {:#?} not allowed inside a {:#?}.\nComputer says no...\n", node.data, self.data);
+      panic!();
+    }
+  }
+
+
+  /// ### append_children
+  /// Appends multiple children to `self.children`.
+  pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
+
+    // Check whether all children are valid
+    for child in children.iter() {
+      if self.child_is_allowed(&child.data) {
+        continue
+      } else {
+        eprintln!("Found incompatible child {:#?} when appending children to {:#?}.\nComputer says no...\n", child.data, self.data);
+        panic!();
+      }
+    }
+
+    self.children.append(children);
+  }
+
+
+  /// ### set_target_label
+  /// Sets the target label of the node to given `Option<String>`.
+  pub fn set_target_label (&mut self, label: Option<String>) {
+    self.target_label = label;
+  }
+
+
+  /// ### child_is_allowed
+  /// Checks whether a node is allowed to be inserted into another node.
+  pub fn child_is_allowed (&self, node_data: &TreeNodeType) -> bool {
+
+    match self.data {
+
+      // These elements are allowed to contain body level nodes
+      TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
+      | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
+      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
+        match node_data {
+          TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
+          | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
+          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
+          | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
+          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+            => true,
+          _ => false
+        }
+      },
+
+      // Bullet lists may only contain empty lines or bullet list items
+      TreeNodeType::BulletList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      // Enumerated lists may only contain empty lines or enumerated list items
+      TreeNodeType::EnumeratedList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::EnumeratedListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      // Field lists may only contain empty lines or field list items
+      TreeNodeType::FieldList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      // Option lists may only contain empty lines or option list items
+      TreeNodeType::OptionList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::OptionListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      // Only paragraphs may contain inline nodes
+      TreeNodeType::Paragraph { .. } => {
+        match node_data {
+          TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
+          | TreeNodeType::Literal { .. }            | TreeNodeType::InlineTarget { .. }           | TreeNodeType::FootnoteReference { .. }
+          | TreeNodeType::CitationReference { .. }  | TreeNodeType::SubstitutionReference { .. }  | TreeNodeType::AbsoluteURI { .. }
+          | TreeNodeType::StandaloneEmail { .. }    | TreeNodeType::Text { .. }                   | TreeNodeType::WhiteSpace { .. }
+            => true,
+          _ => false
+        }
+      },
+      _ => false
+    }
+  }
+
+
+  /// ### child
+  /// Returns a reference to a child node of a given index.
+  /// Panics, if the child does not exist.
+  pub fn child (&self, index: usize) -> &Self {
+    match self.children.get(index) {
+      Some(node) => node,
+      None => panic!("No child at index {}.\nComputer says no...\n", index)
+    }
+  }
+
+  /// ### get_data_type
+  /// For retrieving an immutable reference to the data type of a node.
+  /// Mainly for printing purposes.
+  pub fn get_data (&self) -> &TreeNodeType {
+    &self.data
+  }
+
+
+  /// ### get_data_type
+  /// For retrieving an immutable reference to the data type of a node.
+  /// Mainly for printing purposes.
+  pub fn get_mut_data (&mut self) -> &mut TreeNodeType {
+    &mut self.data
+  }
+}

@@ -35,7 +35,9 @@ use line_cursor::{LineCursor, Line};
 mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
-use crate::doctree::{DocTree, TreeNode, TreeNodeType};
+use crate::doctree::DocTree;
+use crate::doctree::tree_node::TreeNode;
+use crate::doctree::tree_node_types::TreeNodeType;
 use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName};
 
 // Unit test modules

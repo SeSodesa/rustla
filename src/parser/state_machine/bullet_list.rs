@@ -18,7 +18,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
   let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.get_node_data() {
-    doctree::TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
+    TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
     _ => {
       return TransitionResult::Failure {
         message: String::from("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
