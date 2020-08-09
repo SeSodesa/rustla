@@ -110,8 +110,8 @@ impl TreeNode {
           | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
-          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Directive { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Directive { .. }
+          | TreeNodeType::SubstitutionDefinition          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
             => true,
           _ => false
         }
