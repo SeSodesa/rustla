@@ -722,24 +722,45 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
 
     let relative_indent = detected_indent - base_indent;
   
-    let block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
+    let mut block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
       Ok((lines, line_offset)) => {
-        lines.join("\n")
+        lines.join("\n").trim_end().to_string()
       }
       Err(e) => {
         eprintln!("{}", e);
         return TransitionResult::Failure {
-          message: String::from("Error when reading paragraph block in Body.\n")
+          message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
         }
       }
     };
+
+    /// If this is found at the end of a paragraph block with trailing whitespace removed,
+    /// the next indented block of text will be interpreted as a literal block.
+    const LITERAL_BLOCK_INDICATOR: &str = "::";
+
+    let literal_block_next: bool = if block.ends_with(LITERAL_BLOCK_INDICATOR) {
+
+      // Remove literal block indicator
+      for _ in 0..LITERAL_BLOCK_INDICATOR.chars().count() {
+        if let None = block.pop() {
+          return TransitionResult::Failure { // This should not ever be triggered
+            message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total())
+          }
+        }
+      }
+      true
+    } else { false };
+
   
     // Pass text to inline parser as a string
     tree_wrapper = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
 
+
       for data in nodes_data {
         returned_doctree = returned_doctree.push_data(data);
       }
+
+
 
       returned_doctree.focus_on_parent()
     } else {
