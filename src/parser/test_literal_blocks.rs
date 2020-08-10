@@ -14,6 +14,7 @@ fn literal_block_01 () {
     
    > This is a literal block of text,
    > indicated by the \"::\" at the end of last paragraph.
+
   ");
 
   let mut doctree = DocTree::new(String::from("test"));

@@ -842,6 +842,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
       // Read in a block with minimal indentation as-is with Parser::read_indented_block
       // and feed it to a LiteralBlock node.
 
+
+
       todo!("Implement indented literal block parsing...")
     }
 
@@ -850,9 +852,23 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
       // Read in an aligned contiguous block of text and check that all its lines start with one of the symbols in
       // `common::SECTION_AND_QUOTING_CHARS`, such as a '>'.
 
+      use crate::common::SECTION_AND_QUOTING_CHARS;
+
       let quote_char = if let Some(c) = captures.get(2) { c.as_str().chars().next().unwrap() } else {
         return TransitionResult::Failure {
           message: format!("Supposed quoted literal block found on line {} but no quote symbol?\nComputer says no...\n", line_cursor.sum_total())
+        }
+      };
+
+      // Double checking that the used quotation symbol is in the accepted symbols
+      let mut i = 0 as usize;
+      loop {
+        if let Some(c) = SECTION_AND_QUOTING_CHARS.get(i) {
+          if *c == quote_char { break} else { i += 1; }
+        } else {
+          return TransitionResult::Failure {
+            message: format!("Unknown char '{}' used to quote literal block starting on line {}.\nComputer says no...\n", quote_char, line_cursor.sum_total())
+          }
         }
       };
 
@@ -866,7 +882,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
                 *line = chars.as_str().trim_start().to_string()
               } else {
                 return TransitionResult::Failure {
-                  message: format!("Found mismatching line start symbol in a quoted literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+                  message: format!("Found mismatching line start symbol in a quoted literal block starting on line {}.\nComputer says no...\n", line_cursor.sum_total())
                 }
               }
             }
