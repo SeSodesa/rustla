@@ -740,12 +740,10 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       /// 2. not preceded by whitespace
       /// 
       /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
-      static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::").unwrap();
+      static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::$").unwrap();
     }
 
     let literal_block_next: bool = if let Some(capts) = LITERAL_BLOCK_INDICATOR.captures(block.as_str()) {
-
-      eprintln!("Captures: {:#?}\n", capts.get(1));
 
       // Remove literal block indicator from paragraph
       let indicator_len = if capts.get(1).unwrap().as_str().trim().is_empty() {
@@ -763,15 +761,14 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       }
       true
     } else { false };
-
-    eprintln!("Lietral block next: {}\n", literal_block_next);
   
     // Pass text to inline parser as a string
     tree_wrapper = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
 
-
-      for data in nodes_data {
-        returned_doctree = returned_doctree.push_data(data);
+      if !nodes_data.is_empty() {
+        for data in nodes_data {
+          returned_doctree = returned_doctree.push_data(data);
+        }
       }
 
       returned_doctree.focus_on_parent()
@@ -813,22 +810,91 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
 /// A function for parsing indented literal block nodes.
 pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let doctree = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
-  // Retrieve preceding paragraph indetantion here. No literal blocks alllwoed if not preceded by (empty) paragraph.
+  let n_of_children = doctree.n_of_children();
+
+  let paragraph_indent = if n_of_children == 0 {
+    return TransitionResult::Failure {
+      message: format!("No preceding node before literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+    }
+  } else {
+
+    let mut par_indent = 0 as usize;
+    for sibling_index in (0..n_of_children).rev() {
+      match doctree.get_child_data(sibling_index) {
+        TreeNodeType::Paragraph { indent } => { par_indent = *indent; break }
+        TreeNodeType::EmptyLine => continue,
+        _ => return TransitionResult::Failure {
+          message: format!("No paragraph preceding a literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+        }
+      }
+    }
+    par_indent
+  };
 
   match pattern_name {
-    PatternName::IndentedLiteralBlock => {}
 
-    PatternName::QuotedLiteralBlock   => {}
+    PatternName::IndentedLiteralBlock if detected_indent > paragraph_indent => {
+
+      // Read in a block with minimal indentation as-is with Parser::read_indented_block
+      // and feed it to a LiteralBlock node.
+
+      todo!("Implement indented literal block parsing...")
+    }
+
+    PatternName::QuotedLiteralBlock if detected_indent == paragraph_indent => {
+
+      // Read in an aligned contiguous block of text and check that all its lines start with one of the symbols in
+      // `common::SECTION_AND_QUOTING_CHARS`, such as a '>'.
+
+      let quote_char = if let Some(c) = captures.get(2) { c.as_str().chars().next().unwrap() } else {
+        return TransitionResult::Failure {
+          message: format!("Supposed quoted literal block found on line {} but no quote symbol?\nComputer says no...\n", line_cursor.sum_total())
+        }
+      };
+
+      let (literal_string, block_length) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(detected_indent)) {
+        Ok((mut lines, line_offset)) => {
+
+          for line in lines.iter_mut() {
+            let mut chars = line.chars();
+            if let Some(c) = chars.next() {
+              if c == quote_char {
+                *line = chars.as_str().trim_start().to_string()
+              } else {
+                return TransitionResult::Failure {
+                  message: format!("Found mismatching line start symbol in a quoted literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+                }
+              }
+            }
+          }
+          (lines.join("\n"), line_offset)
+        }
+        Err(e) => {
+          eprintln!("{}", e);
+          return TransitionResult::Failure {
+            message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
+          }
+        }
+      };
+
+      doctree = doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string });
+
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::Some(block_length)
+      }
+    }
 
     _ => return TransitionResult::Failure {
-        message: format!("Why is there a non-literal pattern name for a literal block on line {}?\nComputer says no...\n", line_cursor.sum_total())
+        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name,detected_indent, paragraph_indent, line_cursor.sum_total())
     }
   }
-  todo!()
 }
 
 

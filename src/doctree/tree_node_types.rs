@@ -173,7 +173,9 @@ pub enum TreeNodeType {
   /// Paragraph (possibly empty) ending in a "::" signifies the start of a literal block of text.
   /// Text contained in a literal block is not interpreted in any way,
   /// but simply stored in this node as is.
-  LiteralBlock,
+  LiteralBlock {
+    text: String
+  },
 
   /// #### DoctestBlock
   /// These are interactive Python sessions contained in Python docstrings.
