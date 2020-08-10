@@ -2,15 +2,15 @@ stages:
   - build
   - test
 
-build-rust-latest:
+image: rust:latest
+
+build:
   stage: build
-  image: rust:latest
   script:
     - cargo build --verbose
 
-test-rust-latest:
+test:
   stage: test
-  image: rust:latest
   script:
     - cargo test --verbose
   allow_failure: true
