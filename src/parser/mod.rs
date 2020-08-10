@@ -50,6 +50,7 @@ mod test_field_lists;
 mod test_hyperlink_targets;
 mod test_mixed_structures;
 mod test_inline_parsing;
+mod test_literal_blocks;
 
 
 // ==========================

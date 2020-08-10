@@ -734,14 +734,27 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       }
     };
 
-    /// If this is found at the end of a paragraph block with trailing whitespace removed,
-    /// the next indented block of text will be interpreted as a literal block.
-    const LITERAL_BLOCK_INDICATOR: &str = "::";
+    lazy_static! {
+      /// There are two kinds of literal block indicators:
+      /// 1. preceded by whitespace
+      /// 2. not preceded by whitespace
+      /// 
+      /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
+      static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::").unwrap();
+    }
 
-    let literal_block_next: bool = if block.ends_with(LITERAL_BLOCK_INDICATOR) {
+    let literal_block_next: bool = if let Some(capts) = LITERAL_BLOCK_INDICATOR.captures(block.as_str()) {
 
-      // Remove literal block indicator
-      for _ in 0..LITERAL_BLOCK_INDICATOR.chars().count() {
+      eprintln!("Captures: {:#?}\n", capts.get(1));
+
+      // Remove literal block indicator from paragraph
+      let indicator_len = if capts.get(1).unwrap().as_str().trim().is_empty() {
+        "::".chars().count()
+      } else {
+        ":".chars().count()
+      };
+
+      for _ in 0..indicator_len {
         if let None = block.pop() {
           return TransitionResult::Failure { // This should not ever be triggered
             message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total())
@@ -751,6 +764,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       true
     } else { false };
 
+    eprintln!("Lietral block next: {}\n", literal_block_next);
   
     // Pass text to inline parser as a string
     tree_wrapper = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(tree_wrapper), line_cursor) {
@@ -760,20 +774,28 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
         returned_doctree = returned_doctree.push_data(data);
       }
 
-
-
       returned_doctree.focus_on_parent()
+
     } else {
       return TransitionResult::Failure {
         message: String::from("Couldn't parse paragraph for inline nodes\n")
       }
     };
 
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Neither,
-      line_advance: LineAdvance::Some(1),
+    if literal_block_next {
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::LiteralBlock]),
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(1),
+      }
+    } else {
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(1),
+      }
     }
   } else {
     tree_wrapper = tree_wrapper.focus_on_parent();
@@ -784,7 +806,6 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       line_advance: LineAdvance::None,
     }
   }
-
 }
 
 

@@ -104,8 +104,14 @@ pub enum StateMachine {
   ExtensionOptions,
 
   /// #### Line
-  /// A state for parsing section titles and document transitions (a.k.a. `\ḩrulefill` commands in LaTeX terms).
+  /// A state for parsing section titles and document transitions (a.k.a. `\hrulefill` commands in LaTeX terms).
   Line,
+
+  /// #### LiteralBlock
+  /// A state for parsing empty lines and literal blocks of text.
+  /// Literal blocks are (non-contiguous) indented or "quoted" blocks of text that
+  /// are  preceded by a paragraph ending in a `::`.
+  LiteralBlock,
 
   /// #### Failure
   /// An explicit failure state. Allows explicit signalling of transition failures.
