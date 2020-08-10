@@ -4,6 +4,8 @@ stages:
 
 image: rust:latest
 
+pull_policy: if-not-present
+
 build:
   stage: build
   script:
