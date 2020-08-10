@@ -329,7 +329,7 @@ impl StateMachine {
 
   /// #### INDENTED_LITERAL_BLOCK_PATTERN
   /// A pattern for matching against an indented block of text when in `StateMachine::LiteralBlock`.
-  const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s*)\S";
+  const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
 
 
   /// #### QUOTED_LITERAL_BLOCK_PATTERN
