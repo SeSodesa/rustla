@@ -274,6 +274,11 @@ impl DocTree {
   }
 
 
+  pub fn n_of_children (&self) -> usize {
+    self.tree.n_of_children ()
+  }
+
+
   /// ### get_mut_child_data
   /// Retrieves a mutable reference to the data of the given child of the current node.
   pub fn get_mut_child_data (&mut self, index: usize) -> &mut TreeNodeType {

@@ -255,4 +255,11 @@ impl TreeZipper {
   pub fn index_in_parent (&self) -> Option<usize> {
     self.index_in_parent
   }
+
+
+  /// ### n_of_children
+  /// Returns the number of children of the current node.
+  pub fn n_of_children (&self) -> usize {
+    self.node.children.len()
+  }
 }
