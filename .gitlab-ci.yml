@@ -2,16 +2,14 @@ stages:
   - build
   - test
 
-image:
-  name: rust:latest
-  pull_policy: if-not-present
+image: rust:latest
 
-build:
+build-rust-latest:
   stage: build
   script:
     - cargo build --verbose
 
-test:
+test-rust-latest:
   stage: test
   script:
     - cargo test --verbose
