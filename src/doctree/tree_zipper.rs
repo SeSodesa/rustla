@@ -216,4 +216,43 @@ impl TreeZipper {
     node_result
   }
 
+
+  /// shared_parent_ref
+  /// Returns a shared reference to the parent of the node.
+  /// Else returns `None`.
+  pub fn shared_parent_ref (&self) -> Option<&TreeZipper>  {
+
+    use std::borrow::Borrow;
+
+    if let Some(parent) = &self.parent {
+      Some(parent.borrow())
+    } else {
+      None
+    }
+  }
+
+  /// ### shared_sibling_data
+  /// Returns a shared reference to the sibling of the current node at a given index,
+  /// if there is one. Else returns `None`.
+  pub fn shared_sibling_data (&self, sibling_index: usize) -> Option<&TreeNodeType> {
+
+    let parent_ref = if let Some(parent) = self.shared_parent_ref() {
+      parent
+    } else {
+      return None
+    };
+
+    if let Some(sibling) = parent_ref.node.children.get(sibling_index) {
+      Some(&sibling.data)
+    } else {
+      None
+    }
+  }
+
+
+  /// ### index_in_parent
+  /// Returns the index of the focused-on node in its parent, if there is a parent available.
+  pub fn index_in_parent (&self) -> Option<usize> {
+    self.index_in_parent
+  }
 }

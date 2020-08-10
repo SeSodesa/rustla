@@ -130,8 +130,8 @@ impl StateMachine {
   /// An array of transitions related to `StateMachine::Line`.
   pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::IndentedLiteralBlock, Self::INDENTED_LITERAL_BLOCK_PATTERN, literal_block::indented_literal_block),
-    (PatternName::QuotedLiteralBlock, Self::QUOTED_LITERAL_BLOCK_PATTERN, literal_block::indented_literal_block),
+    (PatternName::IndentedLiteralBlock, Self::INDENTED_LITERAL_BLOCK_PATTERN, body::literal_block),
+    (PatternName::QuotedLiteralBlock, Self::QUOTED_LITERAL_BLOCK_PATTERN, body::literal_block),
   ];
 
 

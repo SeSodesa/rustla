@@ -300,6 +300,25 @@ impl DocTree {
   }
 
 
+  /// ### shared_sibling_data
+  /// Retrieves the node data of a sibling of the currently focused-on node with the given index.
+  pub fn shared_sibling_data (&self, sibling_index: usize) -> Option<&TreeNodeType> {
+    if let Some(sibling_data) = self.tree.shared_sibling_data(sibling_index) {
+      Some(sibling_data)
+    } else {
+      eprintln!("Warning: No sibling with index {}...\n", sibling_index);
+      None
+    }
+  }
+
+
+  /// ### index_in_parent
+  /// Retrieves the index of the current node with respect to its parent.
+  pub fn index_in_parent (&self) -> Option<usize> {
+    self.tree.index_in_parent()
+  }
+
+
   /// ### append_children
   /// Appends the nodes given in a given vector of nodes to the currently
   /// focused on node in `self.tree`.

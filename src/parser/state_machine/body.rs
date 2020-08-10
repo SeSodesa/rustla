@@ -809,10 +809,32 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
 }
 
 
+/// ### literal_block
+/// A function for parsing indented literal block nodes.
+pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let doctree = doctree.unwrap();
+
+  let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+
+  // Retrieve preceding paragraph indetantion here. No literal blocks alllwoed if not preceded by (empty) paragraph.
+
+  match pattern_name {
+    PatternName::IndentedLiteralBlock => {}
+
+    PatternName::QuotedLiteralBlock   => {}
+
+    _ => return TransitionResult::Failure {
+        message: format!("Why is there a non-literal pattern name for a literal block on line {}?\nComputer says no...\n", line_cursor.sum_total())
+    }
+  }
+  todo!()
+}
+
+
 // ==================
 //  Helper functions
 // ==================
-
 
 /// ### parent_indent_matches
 /// Checks the indentation of the given parent (current) node and whether the relevant detected indent matches with it.

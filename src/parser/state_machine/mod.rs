@@ -10,7 +10,6 @@ mod common;
 mod enumerated_list;
 mod field_list;
 mod inline;
-mod literal_block;
 pub mod transitions;
 
 use std::cmp;
