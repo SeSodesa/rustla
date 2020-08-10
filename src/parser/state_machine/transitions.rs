@@ -334,7 +334,7 @@ impl StateMachine {
 
   /// #### QUOTED_LITERAL_BLOCK_PATTERN
   /// A pattern for matching against an "quoted" block of text when in `StateMachine::LiteralBlock`.
-  const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|.|/|:|;|<|=|>|\?|@|[|\\|]|\^|_|`|\{|\||\}|~)"#;
+  const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
 
 
   // ========================

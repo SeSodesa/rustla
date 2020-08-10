@@ -783,7 +783,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::LiteralBlock]),
-        push_or_pop: PushOrPop::Neither,
+        push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::Some(1),
       }
     } else {
@@ -842,9 +842,24 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
       // Read in a block with minimal indentation as-is with Parser::read_indented_block
       // and feed it to a LiteralBlock node.
 
+      let (literal_string, offset): (String, usize) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(detected_indent), None, false) {
 
+        (lines.join("\n"), offset)
 
-      todo!("Implement indented literal block parsing...")
+      } else {
+        return TransitionResult::Failure {
+          message: format!("Error when reading an indented block of literal text on line {}.\nComputer says no...\n", line_cursor.sum_total())
+        }
+      };
+
+      doctree = doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string } );
+
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::Some(offset)
+      }
     }
 
     PatternName::QuotedLiteralBlock if detected_indent == paragraph_indent => {
@@ -908,7 +923,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
     }
 
     _ => return TransitionResult::Failure {
-        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name,detected_indent, paragraph_indent, line_cursor.sum_total())
+        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name, detected_indent, paragraph_indent, line_cursor.sum_total())
     }
   }
 }
