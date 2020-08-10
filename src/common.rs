@@ -87,16 +87,17 @@ pub enum PatternName {
   Bullet,
   Citation,
   Enumerator {delims: EnumDelims, kind: EnumKind},
-
+  ExplicitMarkup,
+  DocTest,
   FieldMarker,
   Footnote { kind: FootnoteKind },
-  OptionMarker,
-  DocTest,
-  LineBlock,
-  ExplicitMarkup,
   HyperlinkTarget,
+  IndentedLiteralBlock,
   Line,
+  LineBlock,
+  OptionMarker,
   Paragraph,
+  QuotedLiteralBlock,
   Text,
 
   // Inline Elements for parsing Strings
@@ -221,3 +222,16 @@ pub enum InterpretedTextKind {
 pub const FOOTNOTE_SYMBOLS: [char; 10] = [
   '*', '†','‡','§','¶','#','♠','♥','♦','♣'
 ];
+
+
+/// #### SECTION_AND_QUOTING_CHARS
+/// 
+/// These are the characters that can be used in underlining section titles,
+///  marking the lines of literal text blocks and creating transitions.
+pub const SECTION_AND_QUOTING_CHARS: [char; 32] = [
+  '!',  '"',  '#',  '$',  '%',  '&',  '\'', '(',  ')',  '*',
+  '+',  ',',  '-',  '.',  '/',  ':',  ';',  '<',  '=',  '>',
+  '?',  '@',  '[',  '\\', ']',  '^',  '_',  '`',  '{',  '|',
+  '}',  '~'
+];
+

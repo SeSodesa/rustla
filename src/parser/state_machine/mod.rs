@@ -10,6 +10,7 @@ mod common;
 mod enumerated_list;
 mod field_list;
 mod inline;
+mod literal_block;
 pub mod transitions;
 
 use std::cmp;
@@ -204,7 +205,7 @@ lazy_static! {
   /// With this regexes are only compiled into automata once.
   pub static ref TRANSITION_MAP: HashMap<StateMachine, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
 
-    let mut action_map = collections::HashMap::new();
+    let mut action_map = collections::HashMap::with_capacity(10);
 
     let body_actions = StateMachine::compile_state_transitions(&StateMachine::BODY_TRANSITIONS);
     action_map.insert(StateMachine::Body, body_actions);
@@ -226,6 +227,9 @@ lazy_static! {
 
     let line_block_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_BLOCK_TRANSITIONS);
     action_map.insert(StateMachine::LineBlock, line_block_actions);
+
+    let literal_block_actions = StateMachine::compile_state_transitions(&StateMachine::LITERAL_BLOCK_TRANSITIONS);
+    action_map.insert(StateMachine::LiteralBlock, literal_block_actions);
 
     let extension_option_actions = StateMachine::compile_state_transitions(&StateMachine::EXTENSION_OPTION_TRANSITIONS);
     action_map.insert(StateMachine::ExtensionOptions, extension_option_actions);

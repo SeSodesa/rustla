@@ -126,6 +126,15 @@ impl StateMachine {
   ];
 
 
+  /// ### LITERAL_BLOCK_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Line`.
+  pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
+    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::IndentedLiteralBlock, Self::INDENTED_LITERAL_BLOCK_PATTERN, literal_block::indented_literal_block),
+    (PatternName::QuotedLiteralBlock, Self::QUOTED_LITERAL_BLOCK_PATTERN, literal_block::indented_literal_block),
+  ];
+
+
   /// ### EXTENSION_OPTIONS_TRANSITIONS
   /// An array of transitions related to `StateMachine::ExtensionOptions`.
   pub const EXTENSION_OPTION_TRANSITIONS: [UncompiledTransition; 0] = [
@@ -316,6 +325,13 @@ impl StateMachine {
   /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
   /// as ": " signifies the end of a list marker.
   const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):((?:\S|\S.*\S)):(?: +|$)";
+
+
+  /// #### INDENTED_LITERAL_BLOCK_PATTERN
+  const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s*)\S";
+
+  /// #### QUOTED_LITERAL_BLOCK_PATTERN
+  const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|.|/|:|;|<|=|>|\?|@|[|\\|]|\^|_|`|\{|\||\}|~)"#;
 
 
   // ========================
