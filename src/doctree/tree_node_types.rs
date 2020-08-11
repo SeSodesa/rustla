@@ -18,7 +18,9 @@ pub enum NodeData {
   /// #### Document
   /// This is the root node of the document. Simply contains the path to the document being parsed,
   /// which will be used to generate the object file.
-  Document,
+  Document {
+    file_path: String,
+  },
 
   /// #### Structural
   /// The category of structural nodes like Section titles and transitions.
@@ -26,12 +28,16 @@ pub enum NodeData {
 
   /// #### BodyContainer
   /// These nodes are body level elements that can have other nodes as children.
-  BodyContainer ( BodyContainer ) ,
+  BodyContainer ( BodyContainer ),
 
   /// #### BodyLinkTarget
   /// These nodes are reference targets. The distinction between BodyContainers was made,
   /// because these nodes may not have children, but contain the reference labels as data.
   BodyLinkTarget ( BodyLinkTarget ),
+
+  /// #### Directive
+  /// These are reStructuredText extensions.
+  Directive ( DirectiveNode ),
 
   /// #### InlineNode
   /// Nodes that can be located inside paragraphs.
@@ -42,24 +48,128 @@ pub enum NodeData {
   /// #### StructuralNode
   /// The category of structural nodes like Section titles and transitions.
 pub enum StructuralNode {
-  Section,
+  Section {
+    level: usize,
+  },
   Transition,
+  EmptyLine
 }
 
 /// #### BodyContainer
 /// These nodes are body level elements that can have other nodes as children.
 pub enum BodyContainer {
-  Paragraph,
-  BulletList,
-  EnumeratedList,
+
+  /// #### Paragraph
+  /// A node constructed of a left-aligned block of text
+  /// with no special starter markers.
+  Paragraph {
+    indent: usize,
+  },
+
+  /// #### BulletList
+  /// An unnumbered list node. These may only contain `BulletListItem` nodes
+  /// or `EmptyLine`s as their direct children.
+  BulletList {
+    bullet: char,
+    bullet_indent: usize,
+    text_indent: usize,
+  },
+
+  /// #### EnumeratedList
+  /// An enumerated list node. Can only contain `EnumeratedListItem` and `EmptyLine`
+  /// nodes as its direct children.
+  EnumeratedList {
+    delims: EnumDelims,
+    kind: EnumKind,
+    start_index: usize,
+    n_of_items: usize,
+    enumerator_indent: usize,
+  },
+
+  /// #### DefinitionList
+  /// A list of definitions. Contains `DefinitionListItems` or `EmptyLine` nodes
+  /// as its direct children.
   DefinitionList,
-  FieldList,
+
+  /// #### FieldList
+  /// A list of fields, that are used as a part of the
+  /// reStructuredText extension syntax, such as directives.
+  /// Bibliographies are a special case of these types of lists.
+  FieldList {
+    marker_indent: usize,
+  },
+
+  /// #### OptionList
+  /// A two-column list of command line options, such as the ones typically seen on unix `man` pages.
+  /// Four types of options are supported:
+  ///
+  /// 1. short POSIX options with one '-' and an opion letter,
+  /// 2. Long POSIX options with "--", followed by an option word.
+  ///    Some systems might use a single dash.
+  /// 3. Old GNU-style options starting with a '+', followed by an option letter (!!!deprecated!!!)
+  /// 4. DOS/VMS options starting with a '/', followed by an option letter or a word.
+  /// 
+  /// The recognized syntax is based on Python's `getopt.py` module.
   OptionList,
-  LiteralBlock,
+
+  /// #### LiteralBlock
+  /// Paragraph (possibly empty) ending in a "::" signifies the start of a literal block of text.
+  /// Text contained in a literal block is not interpreted in any way,
+  /// but simply stored in this node as is.
+  LiteralBlock {
+    text: String
+  },
+
+  /// #### LineBlock
+  /// A block of text where each new line begins with an unindented '|',
+  /// followed be text with specific left-alignment, used as a reference
+  /// for the rest of the block.
+  /// Allows writing blocks of text, where the struture of the lines
+  /// is meaningful, such as poetry.
+  /// 
+  /// The symbols '|' may be omitted, as they signify the start of a new
+  /// line in the rendered output.
+  /// ```txt
+  /// +------+-----------------------+
+  /// | "| " | line                  |
+  /// +------| continuation line     |
+  ///        +-----------------------+
+  /// ```
   LineBlock,
+
+  /// #### BlockQuote
+  /// Text indented relative to previous text,
+  /// without markup indicating the start of
+  /// a list or other container nodes.
+  /// A block quote may end with an `Attribution`,
+  /// which allows placing multiple block quotes
+  /// in a sequence.
   BlockQuote,
+
+  /// #### DoctestBlock
+  /// These are interactive Python sessions contained in Python docstrings.
+  /// Based on the Python standard library [doctest](http://www.python.org/doc/current/lib/module-doctest.html) module.
+  /// 
+  /// Doctest blocks begin with ">>>", the python REPL main prompt and end with a blank line.
+  /// They are a special case of the literal block and if both are present,
+  /// the literal block takes precedence.
   DoctestBlock,
 
+  /// #### Footnote
+  /// A foonote citation target. Contains a label and the foornote text itself.
+  Footnote {
+    body_indent: usize,
+    kind: FootnoteKind,
+    label: String, // Displayed label
+    target: String // Reference target
+  },
+
+  /// #### Citation
+  /// A generic citation target.
+  Citation {
+    body_indent: usize,
+    label: String,
+  },
 }
 
 
@@ -67,29 +177,100 @@ pub enum BodyContainer {
 /// These nodes are reference targets. The distinction between BodyContainers was made,
 /// because these nodes may not have children, but contain the reference labels as data.
 pub enum BodyLinkTarget {
-  External,
-  Indirect
+
+  /// #### External
+  /// A link to an external resource such as a website. Contains the target URI.
+  External {
+    marker_indent: usize,
+    target: String,
+    uri: String,
+  },
+
+  /// #### Indirect
+  /// An indirect hyperlink target. Contains a hyperlink reference pointing
+  /// to an internal or and external hyperlink.
+  Indirect {
+    marker_indent: usize,
+    target: String,
+    indirect_target: String,
+  }
 }
 
 
 /// #### InlineNode
 /// Nodes that can be located inside paragraphs.
 pub enum InlineNode {
-  Emphasis,
-  StrongEmphasis,
-  InterpretedText ( InterpretedText ),
-  InlineLiteral,
-  HyperlinkRef,
-  InternalTarget,
-  FootnoteRef,
-  CitationRef,
-  SubstitutionRef,
-  StandaloneHyperlink ( StandaloneHyperlink ),
+
+  /// #### Emphasis
+  /// Emphasised or italicized text.
+  Emphasis {
+    text: String
+  },
+
+  /// #### StrongEmphasis
+  /// Strongly emphasised text, usually rendered in bold.
+  StrongEmphasis {
+    text: String
+  },
+
+  /// #### InterpretedText
+  /// Text, whose meaning depends entirely on the given `role`:
+  /// (:role:`content`|`content`:role:). There are predefined roles
+  /// such as `math` or `emphasis`, but others may be defined by applications.
+  InterpretedText (
+    InterpretedText
+  ),
+
+  /// #### Literal
+  /// Literal text, usually reserved for code.
+  Literal {
+    text: String
+  },
+
+  HyperlinkRef {
+    target: String
+  },
+
+  /// #### InlineTarget
+  /// An inline reference target.
+  InternalTarget {
+    target: String
+  },
+
+  /// #### FootnoteRef
+  /// A reference to a foot note.
+  FootnoteRef {
+    target: String
+  },
+
+  /// #### CitationReference
+  /// A reference to a bibliographic citation.
+  CitationRef {
+    target: String
+  },
+
+  /// #### SubstitutionReference
+  /// A reference that is to be substituted with the reference target directive output.
+  SubstitutionRef {
+    target: String
+  },
+
+  /// #### StandaloneHyperlink
+  /// These are wither URLs or Email addresses.
+  StandaloneHyperlink (
+    StandaloneHyperlink
+  ),
+
+  /// #### Text
+  /// A plain text node, that contains no special markup.
+  Text {
+    text: String
+  }
 }
 
 
 /// ### InterpretedText
-/// These are essentially inline directives.
+/// These are essentially inline directives. This enumeration contains the standard rST roles.
 pub enum InterpretedText {
   Emphasis,
   Literal,
@@ -174,7 +355,7 @@ pub enum TreeNodeType {
   },
 
   /// #### EnumeratedList
-  /// An enumerated list node. Cna only contain `EnumeratedListItem` and `EmptyLine`
+  /// An enumerated list node. Can only contain `EnumeratedListItem` and `EmptyLine`
   /// nodes as its direct children.
   EnumeratedList {
     delims: EnumDelims,
@@ -387,7 +568,7 @@ pub enum TreeNodeType {
   /// #### Directive
   /// One of many differents kinds of directives.
   Directive {
-    dir_type: DirectiveType,
+    dir_type: DirectiveNode,
   },
 
   /// #### Comment

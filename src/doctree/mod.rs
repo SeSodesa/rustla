@@ -13,7 +13,7 @@ use tree_node::TreeNode;
 pub mod tree_node_types;
 use tree_node_types::TreeNodeType;
 mod directives;
-use directives::DirectiveType;
+use directives::DirectiveNode;
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 

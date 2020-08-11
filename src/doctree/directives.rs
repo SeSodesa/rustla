@@ -8,7 +8,7 @@ use super::*;
 /// ### DirectiveType
 /// An enumeration of the different directive types found in reStructuredText and LarST.
 #[derive(Debug)]
-pub enum DirectiveType {
+pub enum DirectiveNode {
   Admonition (AdmonitionDirective),
   Image (ImageDirective),
   BodyElement (BodyElementDirective),
