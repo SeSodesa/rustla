@@ -60,7 +60,8 @@ impl TreeNode {
       | TreeNodeType::SubstitutionReference { .. }    | TreeNodeType::TitleReference { .. }
       | TreeNodeType::AbsoluteURI { .. }              | TreeNodeType::StandaloneEmail { .. }
       | TreeNodeType::WhiteSpace { .. }               | TreeNodeType::ExternalHyperlinkTarget { .. }
-      | TreeNodeType::IndirectHyperlinkTarget { .. }
+      | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Text { .. }
+      | TreeNodeType::EmptyLine
         => None,
       _ => Some(Vec::<TreeNode>::new())
     }

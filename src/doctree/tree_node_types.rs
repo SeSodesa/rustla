@@ -3,6 +3,115 @@
 
 use super::*;
 
+/// ### NodeData
+/// 
+/// An enumeration of the different categories of nodes in reStructuredText.
+/// Generally there are three:
+/// 1. structural,
+/// 2. body and
+/// 3. inline
+/// 
+/// nodes. However, for practical purposes like type checks,
+/// this enum contains more categories than just those.
+pub enum NodeData {
+
+  /// #### Document
+  /// This is the root node of the document. Simply contains the path to the document being parsed,
+  /// which will be used to generate the object file.
+  Document,
+
+  /// #### Structural
+  /// The category of structural nodes like Section titles and transitions.
+  Structral ( StructuralNode ),
+
+  /// #### BodyContainer
+  /// These nodes are body level elements that can have other nodes as children.
+  BodyContainer ( BodyContainer ) ,
+
+  /// #### BodyLinkTarget
+  /// These nodes are reference targets. The distinction between BodyContainers was made,
+  /// because these nodes may not have children, but contain the reference labels as data.
+  BodyLinkTarget ( BodyLinkTarget ),
+
+  /// #### InlineNode
+  /// Nodes that can be located inside paragraphs.
+  InlineNode ( InlineNode ),
+}
+
+
+  /// #### StructuralNode
+  /// The category of structural nodes like Section titles and transitions.
+pub enum StructuralNode {
+  Section,
+  Transition,
+}
+
+/// #### BodyContainer
+/// These nodes are body level elements that can have other nodes as children.
+pub enum BodyContainer {
+  Paragraph,
+  BulletList,
+  EnumeratedList,
+  DefinitionList,
+  FieldList,
+  OptionList,
+  LiteralBlock,
+  LineBlock,
+  BlockQuote,
+  DoctestBlock,
+
+}
+
+
+/// #### BodyLinkTarget
+/// These nodes are reference targets. The distinction between BodyContainers was made,
+/// because these nodes may not have children, but contain the reference labels as data.
+pub enum BodyLinkTarget {
+  External,
+  Indirect
+}
+
+
+/// #### InlineNode
+/// Nodes that can be located inside paragraphs.
+pub enum InlineNode {
+  Emphasis,
+  StrongEmphasis,
+  InterpretedText ( InterpretedText ),
+  InlineLiteral,
+  HyperlinkRef,
+  InternalTarget,
+  FootnoteRef,
+  CitationRef,
+  SubstitutionRef,
+  StandaloneHyperlink ( StandaloneHyperlink ),
+}
+
+
+/// ### InterpretedText
+/// These are essentially inline directives.
+pub enum InterpretedText {
+  Emphasis,
+  Literal,
+  Code,
+  Math, // LaTeX
+  PEPRef,
+  RFCRef,
+  Strong,
+  Subscript,
+  Supscript,
+  TitleRef,
+  Raw
+}
+
+/// ### StandaloneHyperlink
+/// Inline URLs and email addresses.
+pub enum StandaloneHyperlink {
+  URI,
+  Email,
+}
+
+
 /// ### TreeNodeType
 /// An enumaration of the different possible document
 /// node types.
