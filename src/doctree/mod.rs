@@ -250,15 +250,15 @@ impl DocTree {
   }
 
 
-  /// ### get_node_data
+  /// ### shared_node_data
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
-  pub fn get_node_data (&self) -> &TreeNodeType {
+  pub fn shared_node_data (&self) -> &TreeNodeType {
     self.tree.node.get_data()
   }
 
 
-  /// ### get_node_data
+  /// ### mut_node_data
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
   pub fn get_mut_node_data (&mut self) -> &mut TreeNodeType {

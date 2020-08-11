@@ -24,7 +24,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
   } else { detected_text_indent };
 
   // Make sure we are inside a FieldList and that indentations match
-  match tree_wrapper.get_node_data() {
+  match tree_wrapper.shared_node_data() {
 
     TreeNodeType::FieldList { marker_indent } => {
 

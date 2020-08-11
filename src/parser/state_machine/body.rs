@@ -23,7 +23,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
     text_indent: detected_text_indent,
   };
 
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_bullet_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
     tree_wrapper = tree_wrapper.push_data_and_focus(sublist_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -85,7 +85,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
     //latest_text_indent: detected_text_indent,
   };
 
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_enumerator_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
     tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -119,7 +119,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_marker_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
     tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -181,7 +181,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_marker_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
     let footnote_data = TreeNodeType::Footnote {
       body_indent: detected_body_indent,
@@ -244,7 +244,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_body_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_body_indent) {
 
     let citation_data = TreeNodeType::Citation {
       body_indent: detected_body_indent,
@@ -312,7 +312,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
     detected_text_indent
   };
 
-  if parent_indent_matches(doctree.get_node_data(), detected_marker_indent) {
+  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     // Read in the following block of text here and parse it to find out the type of hyperref target in question
 
@@ -425,7 +425,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
     }
   } else { detected_text_indent };
 
-  if parent_indent_matches(doctree.get_node_data(), detected_marker_indent) {
+  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     match detected_directive_label.as_str() {
 
@@ -716,7 +716,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   // Check if we are inside a node that cares about indentation
-  if parent_indent_matches(tree_wrapper.get_node_data(), detected_indent) {
+  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_indent) {
     
     tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
 

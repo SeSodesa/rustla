@@ -17,7 +17,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
-  let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.get_node_data() {
+  let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.shared_node_data() {
     TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
     _ => {
       return TransitionResult::Failure {
@@ -27,7 +27,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut L
   };
 
 
-  match tree_wrapper.get_node_data() {
+  match tree_wrapper.shared_node_data() {
 
     TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
 
