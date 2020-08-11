@@ -5,11 +5,16 @@
 
 use super::*;
 
+
 /// ### DirectiveType
 /// An enumeration of the different directive types found in reStructuredText and LarST.
 #[derive(Debug)]
 pub enum DirectiveNode {
-  Admonition (AdmonitionDirective),
+  Admonition {
+    classes: Option<String>,
+    name: Option<String>,
+    variant: AdmonitionDirective
+  },
   Image (ImageDirective),
   BodyElement (BodyElementDirective),
   Table (TableDirective),
@@ -63,14 +68,43 @@ pub enum ImageDirective {
   /// An "image" is a simple picture.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#image
-  Image,
+  Image {
+    name:   Option<String>,
+    class:  Option<String>,
+    alt:    Option<String>,
+    height: Option<String>,
+    width:  Option<String>,
+    scale:  Option<String>,
+    align:  Option<HTMLAlignment>,
+    target: Option<String>
+  },
 
   /// #### Figure
   /// A "figure" consists of image data (including image options), an optional caption (a single paragraph), and an optional legend (arbitrary body elements). For page-based output media,
   /// figures might float to a different position if this helps the page layout.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
-  Figure,
+  Figure {
+    name:     Option<String>,
+    class:    Option<String>,
+    alt:      Option<String>,
+    height:   Option<String>,
+    width:    Option<String>,
+    scale:    Option<String>,
+    align:    Option<HorizontalAlignment>,
+    target:   Option<String>,
+    figwidth: Option<FigWidth>,
+    figclass: Option<String>
+  },
+}
+
+/// ### FigWidth
+/// Alternatives to `Figure` width settings.
+#[derive(Debug)]
+pub enum FigWidth {
+  Image,
+  Length (u32),
+  Percentage(u32)
 }
 
 
@@ -85,7 +119,11 @@ pub enum BodyElementDirective {
   /// Topics may occur anywhere a section or transition may occur. Body elements and topics may not contain nested topics.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#topic
-  Topic,
+  Topic {
+    title:  String,
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### SideBar
   /// Sidebars are like miniature, parallel documents that occur inside other documents, providing related or reference material.
@@ -93,7 +131,11 @@ pub enum BodyElementDirective {
   /// their content is outside of the flow of the document's main text.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#sidebar
-  SideBar,
+  SideBar {
+    title:  Option<String>,
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### LineBlock
   ///
@@ -108,7 +150,10 @@ pub enum BodyElementDirective {
   /// and verse (poetry, song lyrics), where the structure of lines is significant.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#line-block
-  LineBlock,
+  LineBlock {
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### ParsedLiteralBlock
   /// Unlike an ordinary literal block, the "parsed-literal" directive constructs a literal block
@@ -117,7 +162,11 @@ pub enum BodyElementDirective {
   /// Parsed literal blocks are useful for adding hyperlinks to code examples.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#parsed-literal-block
-  ParsedLiteralBlock,
+  ParsedLiteralBlock {
+    inline_nodes: Vec<TreeNodeType>,
+    name:         Option<String>,
+    class:        Option<String>,
+  },
 
   /// #### Code
   /// The "code" directive constructs a literal block.
@@ -133,7 +182,12 @@ pub enum BodyElementDirective {
   /// For inline code, use the "code" role.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#code
-  Code,
+  Code {
+    language:     Option<String>,
+    name:         Option<String>,
+    class:        Option<String>,
+    number_lines: Option<u32>
+  },
 
   /// #### Math
   /// The "math" directive inserts blocks with mathematical content (display formulas, equations)
@@ -141,7 +195,10 @@ pub enum BodyElementDirective {
   /// For inline formulas, use the "math" role.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#math
-  Math,
+  Math {
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
 
   /// #### Rubric
@@ -149,7 +206,10 @@ pub enum BodyElementDirective {
   /// heading that doesn't correspond to the document's structure.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#rubric
-  Rubric,
+  Rubric {
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### Epigraph
   /// An epigraph is an apposite (suitable, apt, or pertinent) short inscription, often a quotation or poem,
@@ -184,7 +244,10 @@ pub enum BodyElementDirective {
   /// instead of directly containing text and inline elements. For example:
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#compound-paragraph
-  CompoundParagraph,
+  CompoundParagraph {
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### Container
   /// The "container" directive surrounds its contents (arbitrary body elements) with a generic block-level "container" element.
@@ -193,8 +256,17 @@ pub enum BodyElementDirective {
   /// or application-specific purposes.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#container
-  Container,
+  Container {
+    class_names: Option<Vec<String>>,
+    name:   Option<String>,
+  },
 
+}
+
+
+pub enum TableWidth {
+  Length(u32),
+  Percentage(u32)
 }
 
 
@@ -209,7 +281,13 @@ pub enum TableDirective {
   /// The "table" directive is used to associate a title with a table or specify options.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#table
-  Table,
+  Table {
+    name:   Option<String>,
+    class:  Option<String>,
+    align:  Option<HorizontalAlignment>,
+    widths: Option<Vec<usize>>,
+    width:  Option<LenghtUnit>
+  },
 
   /// #### CSVTable
   /// The "csv-table" directive is used to create a table from CSV (comma-separated values) data. CSV is
@@ -217,14 +295,36 @@ pub enum TableDirective {
   /// The data may be internal (an integral part of the document) or external (a separate file).
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#id4
-  CSVTable,
+  CSVTable {
+    name:         Option<String>,
+    class:        Option<String>,
+    widths:       Option<TableColWidths>,
+    width:        Option<MetricType>,
+    header_rows:  Option<u32>,
+    stub_columns: Option<u32>,
+    header:       Option<Vec<String>>,
+    file:         Option<String>,
+    url:          Option<String>,
+    encoding:     Option<String>,
+    delim:        Option<char>,
+    quote:        Option<char>,
+    keepspace:    Option<bool>,
+    escape:       Option<char>,
+    align:        Option<HorizontalAlignment>
+  },
 
   /// #### ListTable
   /// The "list-table" directive is used to create a table from data in a uniform two-level bullet list.
   /// "Uniform" means that each sublist (second-level list) must contain the same number of list items.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table
-  ListTable
+  ListTable {
+    widths:       Option<TableColWidths>,
+    width:        Option<MetricType>,
+    header_rows:  Option<u32>,
+    stub_columns: Option<u32>,
+    align:        Option<HorizontalAlignment>
+  }
 }
 
 
@@ -240,7 +340,12 @@ pub enum DocumentPartDirective {
   /// Topics, and therefore tables of contents, may occur anywhere a section or transition may occur. Body elements and topics may not contain tables of contents.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
-  TableOfContents,
+  TableOfContents {
+    depth:      Option<u32>,
+    local:      Option<bool>,
+    backlinks:  Option<ToCBacklinks>,
+    class:      Option<String>
+  },
 
   /// #### AutomaticSectionNumbering
   /// The "sectnum" (or "section-numbering") directive automatically numbers sections and subsections in a document (if not disabled by the
@@ -255,7 +360,12 @@ pub enum DocumentPartDirective {
   /// enclosed in a "generated" element, and titles have their "auto" attribute set to "1".
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#automatic-section-numbering
-  AutomaticSectionNumbering,
+  AutomaticSectionNumbering {
+    depth:  Option<u32>,
+    prefix: Option<String>,
+    suffix: Option<String>,
+    start:  Option<u32>,
+  },
 
   /// #### DocumentHeader
   /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
@@ -282,7 +392,10 @@ pub enum ReferenceDirective {
   /// a footnote will be generated containing the visible URL as content.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#target-footnotes
-  TargetFootnote,
+  TargetFootnote {
+    class:  Option<String>,
+    name:   Option<String>
+  },
 
   /// #### Footnote
   /// Not implemented in docutils!
@@ -388,7 +501,19 @@ pub enum MiscellaneousDirective {
   /// the file is parsed in the current document's context at the point of the directive.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#including-an-external-document-fragment
-  Include,
+  Include {
+    start_line:   Option<usize>,
+    end_line:     Option<usize>,
+    start_after:  Option<String>,
+    end_before:   Option<String>,
+    literal:      Option<bool>,
+    code:         Option<String>,
+    number_lines: Option<String>,
+    encoding:     Option<String>,
+    tab_width:    Option<usize>,
+    class:        Option<String>,
+    name:         Option<String>,
+  },
 
   /// #### RawDataPassthrough
   ///
@@ -407,7 +532,11 @@ pub enum MiscellaneousDirective {
   /// The interpretation of the raw data is up to the Writer. A Writer may ignore any raw output not matching its format.
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#raw-data-pass-through
-  RawDataPassthrough,
+  RawDataPassthrough {
+    file:     Option<String>,
+    url:      Option<String>,
+    encoding: Option<String>,
+  },
 
   /// #### Class
   ///
@@ -416,7 +545,9 @@ pub enum MiscellaneousDirective {
   /// The names are transformed to conform to the regular expression [a-z](-?[a-z0-9]+)* (see Identifier Normalization below).
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#class
-  Class,
+  Class {
+    class_names: Option<Vec<String>>
+  },
 
   /// #### CustomInterpretedTextRole
   /// The "role" directive dynamically creates a custom interpreted text

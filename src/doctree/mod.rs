@@ -17,7 +17,12 @@ use directives::DirectiveNode;
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 
-use crate::common::{EnumDelims, EnumKind, NodeId, EnumAsInt, PatternName, FootnoteKind};
+use crate::common::{
+  EnumDelims, EnumKind, NodeId,
+  EnumAsInt, PatternName, FootnoteKind,
+  HTMLAlignment, HorizontalAlignment, LenghtUnit,
+  TableColWidths, MetricType, ToCBacklinks
+};
 
 /// ### DocTree
 /// A container for the document tree.

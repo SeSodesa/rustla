@@ -192,6 +192,95 @@ pub enum InterpretedTextKind {
   ContentThenRole
 }
 
+
+/// ### MetricType
+/// An enumeration of how lengths can be interpreted.
+/// This includes precentages of current context and absolute length
+#[derive(Debug)]
+pub enum MetricType {
+  Percentage(u32),
+  Lenght(f32),
+}
+
+/// ### LengthUnit
+/// Units of length recognized by reStructuredText.
+#[derive(Debug)]
+pub enum LenghtUnit {
+
+  /// #### Em
+  /// em unit, the element's font size
+  Em,
+
+  /// ### Ex
+  /// ex unit, x-height of the element's font size
+  Ex,
+
+  /// ### Mn
+  /// Millimeters
+  Mm,
+
+  /// #### Cm
+  /// Centimeters.
+  Cm,
+
+  /// #### In
+  /// Inches. 1in == 2.54 cm == 96 px.
+  In,
+
+  /// #### Px
+  /// Pixels. 1px == 1/96 in
+  /// 
+  /// ##### Note!
+  /// In LaTeX, 1 px == 1/72 in.
+  Px,
+
+  /// #### Pt
+  /// Points. 1pt == 1/72 in
+  Pt,
+
+  /// #### Pc
+  /// Picas. 1 pc == 1/6 in == 12 pt
+  Pc,
+}
+
+
+/// ### TableColWidths
+/// An enumeration of different horizontal alignment options.
+#[derive(Debug)]
+pub enum TableColWidths {
+  Vals(Vec<u32>),
+  Auto
+}
+
+
+/// ### HorizontalAlignment
+/// An enumeration of different horizontal alignment options:
+/// `Left`, `Middle` or `Right`.
+#[derive(Debug)]
+pub enum HorizontalAlignment {
+  Left, Middle, Right
+}
+
+
+/// ### ToCBacklinks
+/// An enumeration of different backlinking alternatives for a table of contents node.
+/// Instructs the doctree to generate links from section headers back to the table of
+/// contents entries, the table of contents itself, or generate no backlinks.
+#[derive(Debug)]
+pub enum ToCBacklinks {
+  Entry, Top, None
+}
+
+
+/// #### HTMLAlignment
+/// An enumeration of the (deprecated) "align" attribute alternatives
+/// recognized by the HTML `<img>` tag.
+#[derive(Debug)]
+pub enum HTMLAlignment {
+  Top, Middle, Bottom, Left, Center, Right
+}
+
+
 // ===========
 //  Constants
 // ===========
