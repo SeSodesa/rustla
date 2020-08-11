@@ -264,12 +264,17 @@ impl DocTree {
   /// ### get_child_data
   /// Retrieves a shared reference to the data of the given child of the current node.
   pub fn get_child_data (&self, index: usize) -> &TreeNodeType {
-    match self.tree.node.children.get(index) {
-      Some(node) => &node.data,
-      None => {
-        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
-        panic!()
+
+    if let Some(children) = &self.tree.node.children {
+      match children.get(index) {
+        Some(node) => &node.data,
+        None => {
+          eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+          panic!()
+        }
       }
+    } else {
+      panic!("Cannot retrieve shared child data from a node that cannot have children. Computer says no...")
     }
   }
 
@@ -282,12 +287,17 @@ impl DocTree {
   /// ### get_mut_child_data
   /// Retrieves a mutable reference to the data of the given child of the current node.
   pub fn get_mut_child_data (&mut self, index: usize) -> &mut TreeNodeType {
-    match self.tree.node.children.get_mut(index) {
-      Some(node) => &mut node.data,
-      None => {
-        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
-        panic!()
+
+    if let Some(children) = &mut self.tree.node.children {
+      match children.get_mut(index) {
+        Some(node) => &mut node.data,
+        None => {
+          eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+          panic!()
+        }
       }
+    } else {
+      panic!("Cannot retrieve mutable child data from a node that cannot have children. Computer says no...")
     }
   }
 
@@ -295,13 +305,16 @@ impl DocTree {
   /// ### child
   /// Retrieves a shared reference to a given child.
   pub fn child (&self, index: usize) -> &TreeNode {
-    match self.tree.node.children.get(index) {
-      Some(node) => node,
-      None => {
-        eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
-        panic!()
+
+    if let Some(children) = &self.tree.node.children {
+      match children.get(index) {
+        Some(node) => node,
+        None => {
+          eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
+          panic!()
+        }
       }
-    }
+    } else { panic!("Cannot retrieve child from a node that cannot have children. Computer says no...") }
   }
 
 

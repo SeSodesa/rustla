@@ -11,7 +11,7 @@ pub struct TreeNode {
   pub id: NodeId,
   target_label: Option<String>,
   pub data : TreeNodeType,
-  pub children: Children,
+  pub children: Option<Children>,
 
 }
 
@@ -20,11 +20,11 @@ impl TreeNode {
   /// ### new
   /// A `TreeNode` constructor.
   pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<String>) -> Self {
-    
+
     TreeNode {
       id: id,
       target_label: target_label,
-      children: Vec::new(),
+      children: Self::children_or_none(&data),
       data: data
     }
   }
@@ -39,12 +39,31 @@ impl TreeNode {
     let node = Self {
       id: *id_ref, // assign current id value to node
       target_label: target_label,
-      children: Vec::new(),
+      children: Self::children_or_none(&data),
       data: data,
     };
 
     *id_ref += 1; // increment the id before returning with new node
     node
+  }
+
+
+  /// ### children_or_none
+  /// Set the children of a `TreeNode` to `Some(Children)` or `None`,
+  /// depending on the given node data variant.
+  fn children_or_none (data_variant: &TreeNodeType) -> Option<Children> {
+    match data_variant {
+      TreeNodeType::Emphasis { .. }                   | TreeNodeType::StrongEmphasis { .. }
+      | TreeNodeType::InterpretedText { .. }          | TreeNodeType::Literal { .. }
+      | TreeNodeType::InlineTarget { .. }             | TreeNodeType::Reference { .. }
+      | TreeNodeType::FootnoteReference { .. }        | TreeNodeType::CitationReference { .. }
+      | TreeNodeType::SubstitutionReference { .. }    | TreeNodeType::TitleReference { .. }
+      | TreeNodeType::AbsoluteURI { .. }              | TreeNodeType::StandaloneEmail { .. }
+      | TreeNodeType::WhiteSpace { .. }               | TreeNodeType::ExternalHyperlinkTarget { .. }
+      | TreeNodeType::IndirectHyperlinkTarget { .. }
+        => None,
+      _ => Some(Vec::<TreeNode>::new())
+    }
   }
 
 
@@ -62,7 +81,12 @@ impl TreeNode {
   pub fn push_child (&mut self, node : TreeNode) {
 
     if self.child_is_allowed(&node.data) {
-      self.children.push(node);
+      if let Some(children) = &mut self.children {
+        children.push(node);
+      } else {
+        panic!("This type of node is not allowed to have children.\nComputer says no...\n")
+      }
+      
     } else {
       eprintln!("Child of type {:#?} not allowed inside a {:#?}.\nComputer says no...\n", node.data, self.data);
       panic!();
@@ -84,7 +108,11 @@ impl TreeNode {
       }
     }
 
-    self.children.append(children);
+    if let Some(child_vec) = &mut self.children {
+      child_vec.append(children);
+    } else {
+
+    }
   }
 
 
@@ -169,10 +197,14 @@ impl TreeNode {
   /// Returns a reference to a child node of a given index.
   /// Panics, if the child does not exist.
   pub fn child (&self, index: usize) -> &Self {
-    match self.children.get(index) {
-      Some(node) => node,
-      None => panic!("No child at index {}.\nComputer says no...\n", index)
-    }
+    if let Some(children) = &self.children {
+      match children.get(index) {
+        Some(node) => node,
+        None => panic!("No child at index {}.\nComputer says no...\n", index)
+      }
+    } else {
+      panic!("Current node cannot have children. Computer says no...")
+    }    
   }
 
   /// ### get_data_type

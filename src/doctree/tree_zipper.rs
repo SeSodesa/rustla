@@ -53,14 +53,16 @@ impl TreeZipper {
 
     let child: TreeNode;
 
-    if !self.node.children.is_empty() && !index >= self.node.children.len() {
-
-      child = self.node.children.swap_remove(index);
-
+    if let Some(children) = &mut self.node.children {
+      if !children.is_empty() && !index >= children.len() {
+        child = children.swap_remove(index);
+      } else {
+        eprintln!("Child with given index does not exist.\nReturning parent...\n");
+        return Err(self);
+      }
     } else {
-      eprintln!("Child with given index does not exist.\nReturning parent...\n");
-      return Err(self);
-
+      eprintln!("Tried accessing chidlren in a node that can't have them.\nComputer says no...\n");
+      return Err(self)
     }
 
     Ok(
@@ -70,7 +72,6 @@ impl TreeZipper {
         index_in_parent: Some(index),
       }
     )
-
   }
 
 
@@ -105,9 +106,14 @@ impl TreeZipper {
     };
 
     // Perform the opposite of Vec::swap_remove
-    parent_node.children.push(node);
-    let len = parent_node.children.len();
-    parent_node.children.swap(index, len - 1);
+    if let Some(children) = &mut parent_node.children {
+      children.push(node);
+      let len = children.len();
+      children.swap(index, len - 1);
+    } else {
+      return Err(Self{node: node, parent: parent_parent, index_in_parent: index_in_parent})
+    }
+
 
     Ok(
       Self {
@@ -141,7 +147,12 @@ impl TreeZipper {
   /// Moves the focus to the last child of the current focus.
   pub fn focus_on_last_child (self) -> Result<Self, Self> {
 
-    let children_len = self.node.children.len();
+    let children_len = if let Some(children) = &self.node.children {
+      self.n_of_children()
+    } else {
+      eprintln!("Cannot focus on last child, as current node is not allowed any children.\nComputer says no...\n");
+      return Err(self)
+    };
 
     let with_focus_on_latest_child = match self.focus_on_child(children_len - 1) {
       Ok(tree_zipper) => tree_zipper,
@@ -152,7 +163,6 @@ impl TreeZipper {
     };
 
     Ok(with_focus_on_latest_child)
-
   }
 
 
@@ -242,8 +252,12 @@ impl TreeZipper {
       return None
     };
 
-    if let Some(sibling) = parent_ref.node.children.get(sibling_index) {
-      Some(&sibling.data)
+    if let Some(children) = &parent_ref.node.children {
+      if let Some(sibling) = children.get(sibling_index) {
+        Some(&sibling.data)
+      } else {
+        None
+      }
     } else {
       None
     }
@@ -260,6 +274,10 @@ impl TreeZipper {
   /// ### n_of_children
   /// Returns the number of children of the current node.
   pub fn n_of_children (&self) -> usize {
-    self.node.children.len()
+    if let Some(children) = &self.node.children {
+      children.len()
+    } else {
+      panic!("Tried retrieving the number of children for node, but children not allowed.\nComputer says no...\n")
+    }
   }
 }
