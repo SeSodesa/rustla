@@ -134,7 +134,7 @@ impl TreeNode {
     match self.data {
 
       // These elements are allowed to contain body level nodes
-      TreeNodeType::Root { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
+      TreeNodeType::Document { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {

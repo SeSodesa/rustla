@@ -945,7 +945,7 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
   // inside any other container it makes a difference.
   match parent_data {
 
-    TreeNodeType::Root { .. } => true,
+    TreeNodeType::Document { .. } => true,
 
     TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
       if relevant_detected_indent == *text_indent { true } else { false }

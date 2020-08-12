@@ -17,7 +17,7 @@ use tree_node::TreeNode;
 pub mod tree_node_types;
 use tree_node_types::TreeNodeType;
 mod directives;
-use directives::DirectiveNode;
+use directives::{DirectiveNode, AdmonitionDirective, ImageDirective, BodyElementDirective, TableDirective, DocumentPartDirective, ReferenceDirective, HTMLSpecificDirective, SubstitutionDefDirective, MiscellaneousDirective, AplusDirective};
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 
@@ -64,7 +64,7 @@ impl DocTree {
   pub fn new(doc_name: String) -> Self {
 
     let root_id: NodeId = 0;
-    let root_data = TreeNodeType::Root{doc_name};
+    let root_data = TreeNodeType::Document{doc_name};
     let root_node = TreeNode::new(root_data, root_id, None);
 
     DocTree {

@@ -26,7 +26,6 @@ pub enum DirectiveNode {
   HTMLspecific (HTMLSpecificDirective),
   SubstitutionDef (SubstitutionDefDirective),
   Miscellaneous (MiscellaneousDirective),
-  CommonOptions (CommonOptionDirective),
 
   APlusrSTTools(AplusDirective)
 }
@@ -568,7 +567,7 @@ pub enum MiscellaneousDirective {
   /// a "classes" attribute, as in the first example above.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#custom-interpreted-text-roles
-  Role,
+  CustomInterpretedTextRole,
 
   /// #### DefaultRole
   /// 
@@ -589,15 +588,14 @@ pub enum MiscellaneousDirective {
   /// in the title bar of the browser window.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#metadata-document-title
-  MetadataDocTitle
-}
+  MetadataDocTitle,
 
-
-/// ### CommonOptionDirective
-/// An enumeration of different common option directive types.
-#[derive(Debug)]
-pub enum CommonOptionDirective {
-
+  /// #### ReStructuredTextTestDirective
+  /// This directive is provided for test purposes only.
+  /// (Nobody is expected to type in a name that long!)
+  /// It is converted into a level-1 (info) system message showing the directive data,
+  /// possibly followed by a literal block containing the rest of the directive block.
+  ReStructuredTextTestDirective
 }
 
 

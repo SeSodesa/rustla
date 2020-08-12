@@ -16,7 +16,7 @@ fn new_doctree() {
   let dt = DocTree::new(doc_name);
 
   let root_is_root:bool = match dt.tree.node.data {
-    TreeNodeType::Root{..} => true,
+    TreeNodeType::Document{..} => true,
     _ => false
   };
 

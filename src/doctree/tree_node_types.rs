@@ -18,7 +18,7 @@ pub enum TreeNodeType {
   /// The root node of an reStructuredText document tree.
   /// Contains the (name|absolute path) of the document
   /// as its only field.
-  Root{
+  Document{
     doc_name: String
   },
 
@@ -388,4 +388,277 @@ pub enum TreeNodeType {
   WhiteSpace{
     text: String
   },
+}
+
+
+impl TreeNodeType {
+
+  /// ### node_categories
+  /// According to the [reStructuredText DTD](https://docutils.sourceforge.io/docs/ref/doctree.html)
+  /// each node type is associated with a set of categories.
+  /// This function returns that set for each defined node type.
+  pub fn node_categories (&self) {
+
+    match self {
+      Self::Document { .. }   => {
+
+      }
+
+      Self::Section { .. }    => {
+
+      }
+
+      Self::Transition {}     => {
+
+      }
+
+      Self::Paragraph { .. } => {
+
+      }
+
+      Self::BulletList { .. } => {
+
+      }
+
+      Self::EnumeratedList { .. } => {
+
+      }
+
+      Self::DefinitionList { .. } => {
+
+      }
+
+      Self::FieldList { .. }  => {
+
+      }
+
+      Self::OptionList { .. } => {
+
+      }
+
+      Self::LiteralBlock { .. } => {
+
+      }
+
+      Self::LineBlock { .. } => {
+
+      }
+
+      Self::BlockQuote { .. } => {
+
+      }
+
+      Self::DoctestBlock{ .. } => {
+
+      }
+
+      Self::Footnote { .. } => {
+
+      }
+
+      Self::Citation { .. } => {
+
+      }
+
+      Self::ExternalHyperlinkTarget { .. } => {
+
+      }
+
+      Self::IndirectHyperlinkTarget { .. } => {
+
+      }
+
+      Self::Directive { dir_type, .. } => {
+
+        match dir_type {
+
+          DirectiveNode::Admonition { variant, .. } => {
+
+            match variant {
+              AdmonitionDirective::Attention  => {},
+              AdmonitionDirective::Caution    => {},
+              AdmonitionDirective::Danger     => {},
+              AdmonitionDirective::Error      => {},
+              AdmonitionDirective::Hint       => {},
+              AdmonitionDirective::Important  => {},
+              AdmonitionDirective::Note       => {},
+              AdmonitionDirective::Tip        => {},
+              AdmonitionDirective::Warning    => {},
+              AdmonitionDirective::Admonition => {},
+            }
+
+          }
+
+          DirectiveNode::Image (node_type) => {
+
+            match node_type {
+              ImageDirective::Image { .. }  => {}
+              ImageDirective::Figure { .. } => {}
+            }
+          }
+          DirectiveNode::BodyElement (node_type) => {
+
+            match node_type {
+              BodyElementDirective::Topic { .. }              => {}
+              BodyElementDirective::SideBar { .. }            => {}
+              BodyElementDirective::LineBlock { .. }          => {}
+              BodyElementDirective::ParsedLiteralBlock { .. } => {}
+              BodyElementDirective::Code { .. }               => {}
+              BodyElementDirective::Math { .. }               => {}
+              BodyElementDirective::Rubric { .. }             => {}
+              BodyElementDirective::Epigraph { .. }           => {}
+              BodyElementDirective::Highlights { .. }         => {}
+              BodyElementDirective::PullQuote { .. }          => {}
+              BodyElementDirective::CompoundParagraph { .. }  => {}
+              BodyElementDirective::Container { .. }          => {}
+            }
+          }
+          DirectiveNode::Table (node_type) => {
+
+            match node_type {
+
+              TableDirective::Table { .. }      => {}
+              TableDirective::CSVTable { .. }   => {}
+              TableDirective::ListTable { .. }  => {}
+            }
+          }
+          DirectiveNode::DocumentPart (node_type) => {
+
+            match node_type {
+
+              DocumentPartDirective::TableOfContents { .. }           => {}
+              DocumentPartDirective::AutomaticSectionNumbering { .. } => {}
+              DocumentPartDirective::DocumentHeader { .. }            => {}
+              DocumentPartDirective::DocumentFooter { .. }            => {}
+            }
+          }
+          DirectiveNode::Reference (node_type) => {
+
+            match node_type {
+
+              ReferenceDirective::TargetFootnote { .. } => {}
+              ReferenceDirective::Footnote { .. }       => {}
+              ReferenceDirective::Citation { .. }       => {}
+            }
+          }
+          DirectiveNode::HTMLspecific (node_type) => {
+
+            match node_type {
+
+              HTMLSpecificDirective::Meta { .. }      => {}
+              HTMLSpecificDirective::ImageMap { .. }  => {}
+            }
+          }
+          DirectiveNode::SubstitutionDef (node_type) => {
+
+            match node_type {
+
+              SubstitutionDefDirective::ReplacementText { .. }  => {}
+              SubstitutionDefDirective::UnicodeCharCode { .. }  => {}
+              SubstitutionDefDirective::Date { .. }             => {}
+            }
+          }
+          DirectiveNode::Miscellaneous (node_type) => {
+
+            match node_type {
+
+              MiscellaneousDirective::Include { .. }                        => {}
+              MiscellaneousDirective::RawDataPassthrough { .. }             => {}
+              MiscellaneousDirective::Class { .. }                          => {}
+              MiscellaneousDirective::CustomInterpretedTextRole { .. }      => {}
+              MiscellaneousDirective::DefaultRole { .. }                    => {}
+              MiscellaneousDirective::MetadataDocTitle { .. }               => {}
+              MiscellaneousDirective::ReStructuredTextTestDirective { .. }  => {}
+            }
+          }
+
+          DirectiveNode::APlusrSTTools(node_type) => {
+
+            match node_type {
+
+              AplusDirective::GradedQuestionnaire { .. }        => {}
+              AplusDirective::FeedbackQuestionnaire { .. }      => {}
+              AplusDirective::SubmittableExercise { .. }        => {}
+              AplusDirective::LTIExercise { .. }                => {}
+              AplusDirective::RoundSettings { .. }              => {}
+              AplusDirective::ActiveElementInput { .. }         => {}
+              AplusDirective::ActiveElementOutput { .. }        => {}
+              AplusDirective::HiddenBlock { .. }                => {}
+              AplusDirective::PointOfInterest { .. }            => {}
+              AplusDirective::AnnotatedCodeBlock { .. }         => {}
+              AplusDirective::CodeBlockWithLineReference { .. } => {}
+              AplusDirective::REPLSession { .. }                => {}
+              AplusDirective::SubmittableACOSExercise { .. }    => {}
+              AplusDirective::HTMLDiv { .. }                    => {}
+              AplusDirective::CSSStyledTopic { .. }             => {}
+              AplusDirective::Media { .. }                      => {}
+            }
+          }
+        }
+      }
+
+      Self::SubstitutionDefinition { .. } => {
+
+      }
+
+      Self::Comment { .. } => {}
+
+      _ => unreachable!("All nodes have a set of related categories.")
+    }
+  }
+
+}
+
+/// ### NodeCategory
+/// 
+/// An anumeration of the different kinds of categories a node might belong to.
+pub enum NodeCategory {
+
+  Root,
+
+  Titular,
+
+  PreBibliographic(PreBibliographic),
+
+  Bibliograhic,
+
+  Decorative,
+
+  Structural,
+
+  Body(Body),
+
+  General,
+
+  Sequential,
+
+  Admonition,
+
+  Special,
+
+  Invisible,
+
+  Part,
+
+  Inline,
+
+  Referential,
+
+  Targetable,
+
+  Label,
+}
+
+pub enum PreBibliographic {
+  PreBibliographic,
+  Invisible
+}
+
+pub enum Body {
+  Body,
+  General,
+  Sequential,
+  Admonition,
+  Special,
+
 }
