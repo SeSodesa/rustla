@@ -377,7 +377,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, line_curs
             }
           }
 
-          _ => panic!("Hyperlink target didn't match any known types.\nComputer says no...\n")
+          _ => panic!("Hyperlink target on line {} didn't match any known types.\nComputer says no...\n", line_cursor.sum_total())
         }
       }
       _ => panic!("Inline parser failed when parsing a hyperlink target on line {}\n.Computer says no...\n", line_cursor.sum_total())
