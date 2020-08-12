@@ -1,5 +1,9 @@
 /// ## tree_node_types
+/// 
 /// A submodule that contains the different tree node types.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

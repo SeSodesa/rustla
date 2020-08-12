@@ -1,8 +1,8 @@
 #![allow(dead_code, unused_variables, unused_imports)]
 /// This is ruSTLa
 /// 
-/// author: Santtu Söderholm
-///  email: santtu.soderholm@tuni.fi
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 
 mod parser;

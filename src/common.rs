@@ -1,5 +1,10 @@
+/// ## common
+/// 
 /// This submoddule contains useful functions and other constructs that don't
 /// sensibly belong to any specific entity in the program.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use std::{str, path, fs, io, convert::TryFrom};
 use std::io::BufRead;

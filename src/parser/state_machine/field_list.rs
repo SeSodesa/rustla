@@ -1,5 +1,8 @@
 /// ## field_list
 /// A submodule that contains transition functions responsible for creating FieldListItem nodes.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

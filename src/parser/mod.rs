@@ -1,4 +1,9 @@
+/// ## parser
 /// This is the `parser` module of ruSTLa
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
+
 
 // =========
 //  Imports

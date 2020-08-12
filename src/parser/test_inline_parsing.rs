@@ -1,5 +1,8 @@
 /// ## test_inline_parsing
 /// Unit tests related to parsing inline text.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

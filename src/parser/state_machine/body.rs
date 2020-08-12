@@ -1,5 +1,8 @@
 /// ## body
 /// This module contains the transition functions related to `StateMachine::Body`.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

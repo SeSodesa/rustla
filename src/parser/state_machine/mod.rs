@@ -1,5 +1,11 @@
+/// ## state_machine
+/// 
 /// This module contains specifications
 /// of state machines used by the parser.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
+
 
 // ===============================================
 // Submodules for namespacing transition functions

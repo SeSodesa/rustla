@@ -1,5 +1,9 @@
 /// ## test_hyperlink_targets
+/// 
 /// A submodule for tests related to parsing hyperlink targets.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

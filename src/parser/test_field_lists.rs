@@ -1,5 +1,8 @@
 /// ## test_field_lists
 /// A submodule for tests related to field lists.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

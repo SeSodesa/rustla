@@ -1,5 +1,8 @@
 /// ## test_literal_block
 /// A submodule for testing the parsing of literal blocks of text|code.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

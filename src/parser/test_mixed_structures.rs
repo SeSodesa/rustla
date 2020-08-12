@@ -1,5 +1,9 @@
 /// ## test_mixed_structures
-/// A submodule for tests related to bullet lists.
+/// 
+/// A submodule for tests related to mixed document structures.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

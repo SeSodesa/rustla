@@ -7,6 +7,9 @@
 /// 
 /// For full details, see
 /// https://doc.rust-lang.org/cargo/reference/build-scripts.html
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 fn main() {
   println!("cargo:rustc-env=AUTHOR_NAME=Santtu Söderholm");

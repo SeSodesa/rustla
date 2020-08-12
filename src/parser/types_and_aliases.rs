@@ -1,5 +1,10 @@
 /// ## type_aliases
+/// 
 /// A submodule that contains Parser-related type aliases.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
+
 
 use super::{*};
 

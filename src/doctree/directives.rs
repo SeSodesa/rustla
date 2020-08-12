@@ -2,6 +2,9 @@
 /// A submodule that contains an enumeration for the different directive types recognized by reStructuredText
 /// and associated functions and metods. The documentation found in the comments in this file was taken from
 /// https://docutils.sourceforge.io/docs/ref/rst/directives.html
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

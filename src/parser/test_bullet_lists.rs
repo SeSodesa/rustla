@@ -1,5 +1,8 @@
 /// ## test_bullet_lists
 /// A submodule for tests related to bullet lists.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

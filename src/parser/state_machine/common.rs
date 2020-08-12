@@ -1,5 +1,8 @@
 /// ## common
 /// A submodule for transition functions common to all states, such as blank line detection.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

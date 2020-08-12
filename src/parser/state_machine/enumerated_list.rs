@@ -1,5 +1,8 @@
 /// ## enumerated_list
 /// A submodule for `Statemachine::EnumeratedList` related transition functions.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

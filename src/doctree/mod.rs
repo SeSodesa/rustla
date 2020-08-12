@@ -1,4 +1,8 @@
+/// ## doctree
 /// This module defines the document tree and its nodes
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use std::rc::{Rc, Weak};
 use std::cell::{Cell, RefCell};

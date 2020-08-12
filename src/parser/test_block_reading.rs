@@ -1,5 +1,8 @@
 /// ## test_block_reading
 /// A submodule for tests related to reading blocks of text.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

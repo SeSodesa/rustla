@@ -1,5 +1,8 @@
+/// ## tests
 /// This is the test module for the DocTree struct.
-
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 use super::*;
 
 #[cfg(test)]

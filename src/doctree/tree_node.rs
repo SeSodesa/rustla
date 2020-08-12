@@ -1,5 +1,8 @@
 /// ## tree_node
 /// A submodule for the TreeNode type.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

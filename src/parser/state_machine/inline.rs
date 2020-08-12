@@ -1,5 +1,8 @@
 /// ## inline
 /// A submodule related to parsing blocks of text for inline elements.
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 

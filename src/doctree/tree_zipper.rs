@@ -1,5 +1,8 @@
 /// A zipper module for accessing `TreeNode`s.
 /// Inspired by https://stackoverflow.com/a/36168919/6449910
+/// 
+/// Author: Santtu Söderholm
+/// email:  santtu.soderholm@tuni.fi
 
 use super::*;
 
