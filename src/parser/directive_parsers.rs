@@ -10,7 +10,7 @@ use super::*;
 
 impl Parser {
 
-  pub fn parse_standard_admonition () {
+  pub fn parse_standard_admonition (admonition_type: &str) {
     todo!()
   }
 
@@ -215,7 +215,7 @@ impl Parser {
   }
 
 
-  pub fn parse_aplus_lineref_codeblock () {
+  pub fn parse_aplus_lineref_codeblock () {
     todo!()
   }
 

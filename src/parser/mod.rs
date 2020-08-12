@@ -40,6 +40,8 @@ use line_cursor::{LineCursor, Line};
 mod state_machine;
 use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
 
+mod directive_parsers;
+
 use crate::doctree::DocTree;
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
