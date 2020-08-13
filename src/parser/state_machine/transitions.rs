@@ -16,7 +16,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 28] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 29] = [
     (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
@@ -53,6 +53,8 @@ impl StateMachine {
     (PatternName::Citation, StateMachine::CITATION_PATTERN, body::citation),
 
     (PatternName::HyperlinkTarget, StateMachine::HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
+
+    (PatternName::Line, Self::LINE_PATTERN, body::line),
 
     (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
   ];
@@ -389,7 +391,7 @@ impl StateMachine {
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
-  const LINE_PATTERN: &'static str = r#"(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *"#;
+  const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *"#;
 
 
   /// #### PARAGRAPH_PATTERN
