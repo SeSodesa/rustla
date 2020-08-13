@@ -377,7 +377,7 @@ impl StateMachine {
 
 
   /// #### SUBSTITUTION_DEF_PATTERN
-  /// A patterns for matching substitution definitions, a.k.a. macros.
+  /// A pattern for matching substitution definitions, a.k.a. macros.
   const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
 
 
@@ -385,6 +385,11 @@ impl StateMachine {
   /// A pattern for matching directives. The directive label is used to determine the type of directive
   /// inside a transition function. The label itself if a simple reference name (an identifier).
   const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
+
+
+  /// #### LINE_PATTERN
+  /// A pattern for recognizing lines related to section titles and transitions.
+  const LINE_PATTERN: &'static str = r#"(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *"#;
 
 
   /// #### PARAGRAPH_PATTERN
