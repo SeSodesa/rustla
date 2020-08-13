@@ -17,54 +17,54 @@ impl StateMachine {
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
   pub const BODY_TRANSITIONS: [UncompiledTransition; 29] = [
-    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, Self::BULLET_PATTERN, body::bullet),
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, StateMachine::ARABIC_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, StateMachine::ARABIC_PERIOD_PATTERN, body::enumerator),
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, ARABIC_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_PARENS_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
 
-    (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, body::field_marker),
+    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
 
-    (PatternName::Footnote { kind: FootnoteKind::Manual }, StateMachine::MANUAL_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, StateMachine::AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, StateMachine::SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, StateMachine::AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
 
-    (PatternName::Citation, StateMachine::CITATION_PATTERN, body::citation),
+    (PatternName::Citation, CITATION_PATTERN, body::citation),
 
-    (PatternName::HyperlinkTarget, StateMachine::HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
+    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
 
-    (PatternName::Line, Self::LINE_PATTERN, body::line),
+    (PatternName::Line, LINE_PATTERN, body::line),
 
-    (PatternName::Text, Self::PARAGRAPH_PATTERN, body::paragraph)
+    (PatternName::Text, TEXT_PATTERN, body::paragraph)
   ];
 
 
   /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
   /// An array of transitions related to `StateMachine::BulletList`.
   pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
-    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, Self::BULLET_PATTERN, bullet_list::bullet)
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, BULLET_PATTERN, bullet_list::bullet)
   ];
 
 
@@ -77,39 +77,39 @@ impl StateMachine {
   /// ### ENUMERATED_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::EnumeratedList`.
   pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 19] = [
-    (PatternName::EmptyLine, StateMachine::BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, StateMachine::ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, StateMachine::ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, StateMachine::ARABIC_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, ARABIC_PERIOD_PATTERN, enumerated_list::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, StateMachine::LOWER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, StateMachine::UPPER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, StateMachine::LOWER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, LOWER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, StateMachine::UPPER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, UPPER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
 
-    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
-    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, StateMachine::AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
   ];
 
 
   /// ### FIELD_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::FieldList`.
   pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
-    (PatternName::EmptyLine, StateMachine::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::FieldMarker, StateMachine::FIELD_MARKER_PATTERN, field_list::field_marker),
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, field_list::field_marker),
   ];
 
 
@@ -134,9 +134,9 @@ impl StateMachine {
   /// ### LITERAL_BLOCK_TRANSITIONS
   /// An array of transitions related to `StateMachine::Line`.
   pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
-    (PatternName::EmptyLine, Self::BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::QuotedLiteralBlock, Self::QUOTED_LITERAL_BLOCK_PATTERN, body::literal_block),
-    (PatternName::IndentedLiteralBlock, Self::INDENTED_LITERAL_BLOCK_PATTERN, body::literal_block),
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::QuotedLiteralBlock, QUOTED_LITERAL_BLOCK_PATTERN, body::literal_block),
+    (PatternName::IndentedLiteralBlock, INDENTED_LITERAL_BLOCK_PATTERN, body::literal_block),
   ];
 
 
@@ -267,6 +267,8 @@ impl StateMachine {
     (PatternName::Text, r"^([\S]+)", inline::text)
   ];
 
+}
+
 
   // ==================================
   // Patterns common to multiple states
@@ -391,13 +393,11 @@ impl StateMachine {
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
-  const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *"#;
+  pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *"#;
 
 
-  /// #### PARAGRAPH_PATTERN
+  /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
   /// This pattern should generally be tested against only after all other
   /// possibilities have been eliminated. 
-  const PARAGRAPH_PATTERN: &'static str = r"^(\s*)\S";
-
-}
+  pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";

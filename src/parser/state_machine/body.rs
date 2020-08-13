@@ -934,6 +934,40 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
 
 pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
+  let doctree = doctree.unwrap();
+
+  let detected_line_char = captures.get(1).unwrap().as_str().chars().next().unwrap();
+  
+  let previous_line = src_lines.get(line_cursor.relative_offset() - 1);
+  let next_line = src_lines.get(line_cursor.relative_offset() + 1);
+
+  let at_input_start = previous_line.is_none();
+  let at_input_end = next_line.is_none();
+
+  if at_input_end {
+    return TransitionResult::Failure {
+      message: format!("Discovered a transition or an incomplete section at the end of (nested) input on line {}.\nComputer says no...\n", line_cursor.sum_total())
+    }
+  }
+
+  use parser::state_machine::transitions::{TEXT_PATTERN, LINE_PATTERN};
+  use regex::Regex;
+
+  lazy_static! {
+    static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
+  }
+
+  if let Some(n_line) = previous_line {
+
+    if n_line.trim().is_empty() {
+      // This is a transition
+    } else if TEXT_RE.is_match(n_line) {
+      // A possible section title.
+      // Check next line for line pattern and its length.
+    }
+  }
+
+
   todo!()
 }
 
@@ -1058,3 +1092,16 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
     None
   }
 }
+
+fn is_section () -> bool {
+
+  todo!()
+}
+
+/// ### is_transition
+/// A helper for checking whether a line is a transition.
+fn is_transition (previous_line: Option<&String>, next_line: Option<&String>, line_cursor: &LineCursor) -> bool {
+  
+  todo!()
+}
+
