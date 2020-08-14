@@ -122,6 +122,15 @@ pub enum PatternName {
 }
 
 
+/// ### SectionLineStyle
+/// A section can be underlined, or over- and underlined with a certain character.
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub enum SectionLineStyle {
+  OverAndUnder(char),
+  Under(char)
+}
+
+
 /// ### EnumFormat
 /// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
 /// A third option is to enclose them in matching parentheses `(` and `)`.
