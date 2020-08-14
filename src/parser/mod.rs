@@ -45,7 +45,7 @@ mod directive_parsers;
 use crate::doctree::DocTree;
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
-use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName};
+use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName, SectionLineStyle};
 
 // Unit test modules
 // -----------------

@@ -10,7 +10,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &m
 
   let mut tree_wrapper = doctree.unwrap();
 
-  let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match tree_wrapper.get_mut_node_data() {
+  let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match tree_wrapper.mut_node_data() {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (delims, kind, start_index, n_of_items, enumerator_indent),
     _ => return TransitionResult::Failure {
       message: String::from("Not focused on EnumeratedList...\n")

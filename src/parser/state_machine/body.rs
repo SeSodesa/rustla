@@ -934,13 +934,20 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
 
 pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let doctree = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
-  let detected_line_char = captures.get(1).unwrap().as_str().chars().next().unwrap();
+  /// #### TRANSITION_LINE_LENGTH
+  /// The minimum length of a transition line.
+  const TRANSITION_LINE_LENGTH: usize = 4;
+
+  let detected_line = captures.get(1).unwrap().as_str();
+  let detected_line_char = detected_line.chars().next().unwrap();
+  let detected_line_length = detected_line.chars().count();
   
   let previous_line = src_lines.get(line_cursor.relative_offset() - 1);
   let next_line = src_lines.get(line_cursor.relative_offset() + 1);
 
+  let at_doc_root = if let TreeNodeType::Document { .. } = doctree.shared_node_data() { true } else { false };
   let at_input_start = previous_line.is_none();
   let at_input_end = next_line.is_none();
 
@@ -955,16 +962,67 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
 
   lazy_static! {
     static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
+    static ref LINE_RE: Regex = Regex::new(LINE_PATTERN).unwrap();
   }
 
-  if let Some(n_line) = previous_line {
+  if let (Some(p_line), Some(n_line)) = (previous_line, next_line) {
 
-    if n_line.trim().is_empty() {
-      // This is a transition
+    if p_line.trim().is_empty() && n_line.trim().is_empty() && detected_line_length >= TRANSITION_LINE_LENGTH {
+
+      doctree = doctree.push_data(TreeNodeType::Transition);
+
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
+      }
+
     } else if TEXT_RE.is_match(n_line) {
       // A possible section title.
       // Check next line for line pattern and its length.
+
+      if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset()) {
+
+        if let Some(capts) = LINE_RE.captures(next_next_line) {
+
+          let next_line_len = n_line.trim_end().chars().count(); // title text line
+          let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
+          let next_next_line_len = next_next_line.trim_end().chars().count();
+
+          if detected_line_char == next_next_line_char && detected_line_length == next_next_line_len && next_line_len <= detected_line_length {
+            // generate a section.
+
+            let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
+
+            let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
+
+
+          } else {
+            return TransitionResult::Failure {
+              message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+            }
+          }
+
+        } else {
+          return TransitionResult::Failure {
+            message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
+          }
+        }
+
+      } else {
+        return TransitionResult::Failure {
+          message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
+        }
+      }
+
+    } else {
+      panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
     }
+  } else {
+    return TransitionResult::Failure {
+      message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total())
+    };
   }
 
 

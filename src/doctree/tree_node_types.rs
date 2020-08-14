@@ -451,7 +451,8 @@ pub enum TreeNodeType {
   /// A section title node, that contains the title text,
   /// in addition to its marker type and (sub)section level.
   Section {
-
+    title_text: String,
+    level: usize
   },
 
   /// #### Sidebar
@@ -547,9 +548,7 @@ pub enum TreeNodeType {
 
   /// #### Transition
   /// A node corresponding to LaTeX's `\hrulefill` command.
-  Transition {
-
-  },
+  Transition,
 
   /// #### Version
   Version,
