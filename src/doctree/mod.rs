@@ -20,6 +20,8 @@ mod directives;
 use directives::{DirectiveNode, AdmonitionDirective, ImageDirective, BodyElementDirective, TableDirective, DocumentPartDirective, ReferenceDirective, HTMLSpecificDirective, SubstitutionDefDirective, MiscellaneousDirective, AplusDirective};
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
+mod section_data;
+use section_data::SectionData;
 
 use crate::common::{
   SectionLineStyle,
@@ -53,15 +55,9 @@ pub struct DocTree {
   /// Main use for this counter is in auto-numbering footnotes with a '#'.
   hyperref_data: HyperrefData,
 
-  /// #### section_levels
-  /// A mapping of the different encountered section styles to section levels.
-  section_levels: HashMap<SectionLineStyle, usize>,
-
-  /// #### highest_encountered_section_level
-  /// As the name implies, this counter is incremented as new types of sections
-  /// are encountered in the document. It is assigned to `self.levels` when a new
-  /// type is encountered and incremented.
-  highest_encountered_section_level: usize,
+  /// #### section_data
+  /// A container that keeps track of known section styles and section levels corresponding to them.
+  section_data: SectionData
 
 }
 
@@ -82,8 +78,7 @@ impl DocTree {
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id + 1,
       hyperref_data: HyperrefData::new(),
-      section_levels: HashMap::new(),
-      highest_encountered_section_level: 0
+      section_data: SectionData::new()
     }
   }
 
@@ -173,12 +168,14 @@ impl DocTree {
         self.add_target(&node_data, target, self.node_count);
         self.add_reference(&node_data, indirect_target, self.node_count);
       }
+      TreeNodeType::Section {title_text, .. } => {
+        self.add_target(&node_data, title_text, self.node_count)
+      }
       _ => {}
     };
 
     self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
-
     self
   }
 
@@ -205,7 +202,7 @@ impl DocTree {
       }
     };
 
-    // Check for target or reference nodes...
+    // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
     match &node_data {
       TreeNodeType::Footnote {target, label, .. } => {
         self.add_target(&node_data, label, self.node_count);
@@ -217,12 +214,14 @@ impl DocTree {
         self.add_target(&node_data, target, self.node_count);
         self.add_reference(&node_data, indirect_target, self.node_count);
       }
+      TreeNodeType::Section {title_text, .. } => {
+        self.add_target(&node_data, title_text, self.node_count)
+      }
       _ => {}
     };
 
     self.tree = self.tree.push_data(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
-
     self
   }
 
@@ -514,11 +513,19 @@ impl DocTree {
   /// ### new_section_data
   /// Generates a new section node data container by comparing the given `section_style` to known styles
   /// and corresponding levels via `self.section_levels`. If a section of such style already exists, the level of the section
-  /// is simply set to the level matching it. If not, the maximum known level is incremented and the new level
-  /// is assigned to the section and the newly detected section added to `self.section_levels`.
-  pub fn new_section_data (&mut self, title_text: &str, section_style: SectionLineStyle) -> TreeNodeType {
+  /// is simply set to the level matching it. If not, the maximum known level is plus 1
+  /// is assigned to the section data.
+  /// 
+  /// Note that this function does not yet modify known section data or hyperref targets.
+  /// This is donw only if pushing the node data to the tree succeeds, and is handled
+  /// by the related methods.
+  pub fn new_section_data (&self, title_text: &str, section_style: SectionLineStyle) -> TreeNodeType {
 
-    todo!()
+    let section_level = self.section_data.line_style_section_level(&section_style);
+    TreeNodeType::Section {
+      level: section_level,
+      title_text: title_text.to_string()
+    }
   }
 
 
@@ -526,22 +533,12 @@ impl DocTree {
   /// Adds a new section to the doctree, also taking care of adding the section title
   /// to the hyperref data of the tree, updating the section counter and mapping
   /// the section type to the appropriate section level.
-  pub fn add_section () {
-    todo!()
-  }
+  pub fn add_section (mut self, title_text: &str, section_style: SectionLineStyle) -> Self {
 
-  
-  /// ### highest_encountered_section_level
-  /// Returns a copy of the field of the same name.
-  pub fn highest_encountered_section_level (&self) -> usize {
-    self.highest_encountered_section_level
-  }
+    let section_data = self.new_section_data(title_text, section_style);
 
-
-  /// ### mut_highest_encountered_section_level
-  /// Returns a mutable reference to the field of the same name.
-  pub fn mut_highest_encountered_section_level (&mut self) -> &mut usize {
-    &mut self.highest_encountered_section_level
+    self = self.push_data(section_data);
+    self
   }
 
 }

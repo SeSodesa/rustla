@@ -124,7 +124,7 @@ pub enum PatternName {
 
 /// ### SectionLineStyle
 /// A section can be underlined, or over- and underlined with a certain character.
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum SectionLineStyle {
   OverAndUnder(char),
   Under(char)
