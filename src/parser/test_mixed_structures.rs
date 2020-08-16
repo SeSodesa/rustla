@@ -37,42 +37,42 @@ fn mixed_nested_lists_01 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).get_data() {
+  match doctree.child(1).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).get_data() {
+  match doctree.child(1).child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).get_data() {
+  match doctree.child(1).child(0).child(0).shared_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(0).get_data() {
+  match doctree.child(1).child(0).child(0).child(0).shared_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(1).get_data() {
+  match doctree.child(1).child(0).child(0).child(1).shared_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(1).child(2).get_data() {
+  match doctree.child(1).child(0).child(0).child(1).child(2).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(1).get_data() {
+  match doctree.child(1).child(0).child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(1).get_data() {
+  match doctree.child(1).child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }

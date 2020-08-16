@@ -234,7 +234,7 @@ impl DocTree {
     let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
     if !acc_target_label.is_empty() {
 
-      match node.get_data() {
+      match node.shared_data() {
 
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
 
@@ -247,16 +247,16 @@ impl DocTree {
 
 
     // Check for target or reference nodes...
-    match node.get_data() {
+    match node.shared_data() {
       TreeNodeType::Footnote {target, label, .. } => {
-        self.add_target(node.get_data(), label, node.id);
+        self.add_target(node.shared_data(), label, node.id);
       }
       TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-        self.add_target(node.get_data(), target, node.id);
+        self.add_target(node.shared_data(), target, node.id);
       }
       TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-        self.add_target(node.get_data(), target, node.id);
-        self.add_reference(node.get_data(), indirect_target, node.id);
+        self.add_target(node.shared_data(), target, node.id);
+        self.add_reference(node.shared_data(), indirect_target, node.id);
       }
       _ => {}
     };
@@ -270,7 +270,7 @@ impl DocTree {
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
   pub fn shared_node_data (&self) -> &TreeNodeType {
-    self.tree.node.get_data()
+    self.tree.node.shared_data()
   }
 
 
@@ -278,7 +278,7 @@ impl DocTree {
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
   pub fn mut_node_data (&mut self) -> &mut TreeNodeType {
-    self.tree.node.get_mut_data()
+    self.tree.node.mut_data()
   }
 
 
