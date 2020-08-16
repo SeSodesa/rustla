@@ -143,7 +143,7 @@ impl TreeNode {
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition
             => true,
           _ => false
         }
