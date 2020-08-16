@@ -156,24 +156,8 @@ impl DocTree {
       }
     };
 
-    // Check for target or reference nodes...
-    match &node_data {
-      TreeNodeType::Footnote {target, label, .. } => {
-        self.add_target(&node_data, label, self.node_count);
-      }
-      TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-        self.add_target(&node_data, target, self.node_count);
-      }
-      TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-        self.add_target(&node_data, target, self.node_count);
-        self.add_reference(&node_data, indirect_target, self.node_count);
-      }
-      TreeNodeType::Section {title_text, .. } => {
-        self.add_target(&node_data, title_text, self.node_count)
-      }
-      _ => {}
-    };
 
+    self.node_specific_actions(&node_data);
     self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
     self
@@ -202,24 +186,8 @@ impl DocTree {
       }
     };
 
-    // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
-    match &node_data {
-      TreeNodeType::Footnote {target, label, .. } => {
-        self.add_target(&node_data, label, self.node_count);
-      }
-      TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-        self.add_target(&node_data, target, self.node_count);
-      }
-      TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-        self.add_target(&node_data, target, self.node_count);
-        self.add_reference(&node_data, indirect_target, self.node_count);
-      }
-      TreeNodeType::Section {title_text, .. } => {
-        self.add_target(&node_data, title_text, self.node_count)
-      }
-      _ => {}
-    };
 
+    self.node_specific_actions(&node_data);
     self.tree = self.tree.push_data(node_data, self.node_count, target_label).unwrap();
     self.node_count += 1;
     self
@@ -245,24 +213,33 @@ impl DocTree {
       }
     };
 
+    self.node_specific_actions(node.shared_data());
+    self.tree.push_child(node);
+    self.node_count += 1;
+  }
 
-    // Check for target or reference nodes...
-    match node.shared_data() {
+
+  /// ### node_specific_actions
+  /// Performs any node specific actions to the doctree based on given node data.
+  fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) {
+
+    // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
+    match &shared_node_data {
       TreeNodeType::Footnote {target, label, .. } => {
-        self.add_target(node.shared_data(), label, node.id);
+        self.add_target(&shared_node_data, label, self.node_count);
       }
       TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-        self.add_target(node.shared_data(), target, node.id);
+        self.add_target(&shared_node_data, target, self.node_count);
       }
       TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-        self.add_target(node.shared_data(), target, node.id);
-        self.add_reference(node.shared_data(), indirect_target, node.id);
+        self.add_target(&shared_node_data, target, self.node_count);
+        self.add_reference(&shared_node_data, indirect_target, self.node_count);
+      }
+      TreeNodeType::Section {title_text, .. } => {
+        self.add_target(&shared_node_data, title_text, self.node_count)
       }
       _ => {}
     };
-
-    self.tree.push_child(node);
-    self.node_count += 1;
   }
 
 

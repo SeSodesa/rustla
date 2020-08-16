@@ -173,7 +173,6 @@ impl TreeZipper {
                 }
               }
             }
-
             _ => {
               self = match self.focus_on_parent() {
                 Ok(parent) => parent,
