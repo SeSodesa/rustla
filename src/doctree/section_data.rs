@@ -41,6 +41,13 @@ impl SectionData {
   }
 
 
+  /// ### highest_encountered_section_level
+  /// Returns the highest encountered section level.
+  pub fn highest_encountered_section_level (&self) -> usize {
+    self.highest_encountered_section_level
+  }
+
+
   /// ### line_style_section_level
   /// Asks the SectionData container for the section level that a given section
   /// line style corresponds to. If the line style has not been encountered before,

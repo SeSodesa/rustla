@@ -998,8 +998,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
             let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
             let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
 
-            eprintln!("Section data: {:#?}", section_data);
-
             if let TreeNodeType::Section { level, .. } = section_data {
               doctree = doctree.walk_to_parent_section_level(level - 1);
             }

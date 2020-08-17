@@ -70,3 +70,56 @@ not to the document root.
     _ => panic!()
   }
 }
+
+
+#[test]
+fn mixed_sections_01 () {
+
+  let src = String::from("
+===============
+ Section Title
+===============
+
+---------------
+ Section Title
+---------------
+
+Section Title
+=============
+
+Section Title
+-------------
+
+Section Title
+`````````````
+
+Section Title
+'''''''''''''
+
+Section Title
+.............
+
+Section Title
+~~~~~~~~~~~~~
+
+Section Title
+*************
+
+Section Title
++++++++++++++
+
+Section Title
+^^^^^^^^^^^^^
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  todo!()
+}

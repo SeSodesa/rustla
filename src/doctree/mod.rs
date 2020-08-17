@@ -235,8 +235,11 @@ impl DocTree {
         self.add_target(&shared_node_data, target, self.node_count);
         self.add_reference(&shared_node_data, indirect_target, self.node_count);
       }
-      TreeNodeType::Section {title_text, .. } => {
-        self.add_target(&shared_node_data, title_text, self.node_count)
+      TreeNodeType::Section {title_text, level } => {
+        self.add_target(&shared_node_data, title_text, self.node_count);
+        if *level > self.section_data.highest_encountered_section_level() {
+          self.section_data.increment_encountered_section_number();
+        }
       }
       _ => {}
     };
