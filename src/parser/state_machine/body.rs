@@ -711,9 +711,11 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
 }
 
 
-/// ### paragraph
-/// A function that handles the parsing of paragraphs of text.
-pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+/// ### text
+/// A function that handles the parsing of blocks that start with text.
+/// This includes paragraphs, but also underlined titles.
+/// These are detected via line lookahead.
+pub fn text (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;

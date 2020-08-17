@@ -56,7 +56,7 @@ impl StateMachine {
 
     (PatternName::Line, LINE_PATTERN, body::line),
 
-    (PatternName::Text, TEXT_PATTERN, body::paragraph)
+    (PatternName::Text, TEXT_PATTERN, body::text)
   ];
 
 
