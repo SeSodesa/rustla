@@ -518,6 +518,15 @@ impl DocTree {
     self
   }
 
+
+  /// ### walk_to_parent_section_level
+  /// Walks up the tree to a given section level.
+  pub fn walk_to_parent_section_level (mut self, level: usize) -> Self {
+
+    self.tree = self.tree.walk_to_parent_section_level(level);
+    self
+  }
+
 }
 
 

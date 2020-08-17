@@ -133,8 +133,25 @@ impl TreeNode {
 
     match self.data {
 
+      // Structural nodes
+      TreeNodeType::Document { .. } | TreeNodeType::Section { .. } | TreeNodeType::Topic
+      | TreeNodeType::Sidebar => {
+        match node_data {
+          TreeNodeType::Section { .. }                    | TreeNodeType::Transition                      | TreeNodeType::Topic
+          | TreeNodeType:: Sidebar
+          | TreeNodeType::Paragraph { .. }                | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
+          | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
+          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
+          | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
+          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+            => true,
+          _ => false
+        }
+      }
+
       // These elements are allowed to contain body level nodes
-      TreeNodeType::Document { .. }           | TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
+      TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {
@@ -144,6 +161,7 @@ impl TreeNode {
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition
+          | TreeNodeType::Section { .. }
             => true,
           _ => false
         }

@@ -48,7 +48,7 @@ impl SectionData {
   pub fn line_style_section_level (&self, line_style: &SectionLineStyle) -> usize {
     match self.section_levels.get(line_style) {
       Some(section_level) => *section_level,
-      None => self.highest_encountered_section_level
+      None => self.highest_encountered_section_level + 1
     }
   }
 

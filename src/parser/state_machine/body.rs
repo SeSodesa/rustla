@@ -994,9 +994,21 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
             // generate a section.
 
             let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
-
             let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
 
+            eprintln!("Section data: {:#?}", section_data);
+
+            if let TreeNodeType::Section { level, .. } = section_data {
+              doctree = doctree.walk_to_parent_section_level(level - 1);
+            }
+            doctree = doctree.push_data_and_focus(section_data);
+
+            return TransitionResult::Success {
+              doctree: doctree,
+              next_states: None,
+              push_or_pop: PushOrPop::Neither,
+              line_advance: LineAdvance::Some(3)
+            }
 
           } else {
             return TransitionResult::Failure {
