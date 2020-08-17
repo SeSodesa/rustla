@@ -5,6 +5,8 @@ ruSTLa is an implementation of the rSTLa
 written in the Rust programming language.
 rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ to reStructuredText) transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
 
+## Project structure
+
 The current structure of the project is given below.
 This is subject to change as the project advances further.
 ```bash
@@ -15,11 +17,15 @@ src/
 │   ├── directives.rs
 │   ├── hyperref_data.rs
 │   ├── mod.rs
+│   ├── section_data.rs
 │   ├── tests.rs
+│   ├── tree_node.rs
+│   ├── tree_node_types.rs
 │   └── tree_zipper.rs
 ├── main.rs
 └── parser
     ├── converters.rs
+    ├── directive_parsers.rs
     ├── line_cursor.rs
     ├── mod.rs
     ├── state_machine
@@ -39,9 +45,14 @@ src/
     ├── test_field_lists.rs
     ├── test_hyperlink_targets.rs
     ├── test_inline_parsing.rs
+    ├── test_literal_blocks.rs
     ├── test_mixed_structures.rs
+    ├── test_sections_and_transitions.rs
     └── types_and_aliases.rs
 
-4 directories, 28 files
+4 directories, 34 files
 ```
-If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo test`.
+
+## Build instructions
+
+If you wish to build the project yourself, the easiest way to do it is to install [rustup](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo test`. Running a specific test includes typing `cargo test path::to::test::function`. Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
