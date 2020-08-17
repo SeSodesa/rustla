@@ -720,6 +720,40 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
   let mut tree_wrapper = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
+  let next_line = if let Some(n_line) = src_lines.get(line_cursor.relative_offset() + 1) {
+    n_line
+  } else {
+    // At end of input
+    ""
+  };
+
+  
+  if !next_line.is_empty() {
+
+    if let Some(line_capts) = LINE_RE.captures(next_line) {
+
+      // Underlined section title
+
+    }
+
+    if let Some(text_capts) = TEXT_RE.captures(next_line) {
+
+      // Paragraph or definition list item
+
+      let next_line_indent = text_capts.get(1).unwrap().as_str().chars().count();
+
+      if next_line_indent == detected_indent {
+        // Paragraph
+      } else if next_line_indent > detected_indent {
+        // Definition list item
+      } else {
+        // paragraph line unaligned with previous lines => syntax error
+      }
+    }
+  } else {
+    // End of input, so parse current line as a paragraph and leave it at that.
+  }
+
   // Check if we are inside a node that cares about indentation
   if parent_indent_matches(tree_wrapper.shared_node_data(), detected_indent) {
     
@@ -959,14 +993,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
     return TransitionResult::Failure {
       message: format!("Discovered a transition or an incomplete section at the end of (nested) input on line {}.\nComputer says no...\n", line_cursor.sum_total())
     }
-  }
-
-  use parser::state_machine::transitions::{TEXT_PATTERN, LINE_PATTERN};
-  use regex::Regex;
-
-  lazy_static! {
-    static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
-    static ref LINE_RE: Regex = Regex::new(LINE_PATTERN).unwrap();
   }
 
   if let (Some(p_line), Some(n_line)) = (previous_line, next_line) {

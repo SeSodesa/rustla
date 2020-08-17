@@ -17,6 +17,8 @@ mod enumerated_list;
 mod field_list;
 mod inline;
 pub mod transitions;
+use transitions::{LINE_PATTERN, TEXT_PATTERN};
+
 
 use std::cmp;
 use std::collections::HashMap;
@@ -268,5 +270,15 @@ lazy_static! {
     inline_transitions
 
   };
+
+  // DFAs compiled from patterns found under self::transitions
+
+  /// ### LINE_RE
+  /// A DFA compiled from `LINE_PATTERN`
+  static ref LINE_RE: Regex = Regex::new(LINE_PATTERN).unwrap();
+
+  /// ### TEXT_RE
+  /// A DFA compiled from `TEXT_PATTERN`
+  static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
 
 }
