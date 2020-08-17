@@ -47,6 +47,10 @@ pub enum StateMachine {
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
   Body,
 
+  /// #### Section
+  /// A state for detecting boyd elements inside a section.
+  Section,
+
   /// #### BulletList
   /// In this state, the parser only recognizes empty lines and bullet list items.
   BulletList,
@@ -156,7 +160,8 @@ impl StateMachine {
     match self {
       StateMachine::EOF         => Err("Already moved past EOF. No transitions to perform.\n"),
       StateMachine::Failure     => Err("Failure state has no transitions\n"),
-      StateMachine::ListItem
+      StateMachine::Section
+      | StateMachine::ListItem
       | StateMachine::Footnote
       | StateMachine::Citation  => {
         Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())

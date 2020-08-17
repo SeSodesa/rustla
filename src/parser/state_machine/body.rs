@@ -798,6 +798,7 @@ pub fn paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mu
       }
     }
   } else {
+
     tree_wrapper = tree_wrapper.focus_on_parent();
     return TransitionResult::Success {
       doctree: tree_wrapper,
@@ -1005,8 +1006,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
 
             return TransitionResult::Success {
               doctree: doctree,
-              next_states: None,
-              push_or_pop: PushOrPop::Neither,
+              next_states: Some(vec![StateMachine::Section]),
+              push_or_pop: PushOrPop::Push,
               line_advance: LineAdvance::Some(3)
             }
 
@@ -1036,9 +1037,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
       message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total())
     };
   }
-
-
-  todo!()
 }
 
 
@@ -1051,11 +1049,11 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
 /// If the indent matches, we can push to the current node and focus on the new node. Otherwise
 fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize) -> bool {
 
-  // Match against the parent node. Only document root ignores indentation;
+  // Match against the parent node. Only document root  and sections ignore indentation;
   // inside any other container it makes a difference.
   match parent_data {
 
-    TreeNodeType::Document { .. } => true,
+    TreeNodeType::Document { .. } | TreeNodeType::Section { .. } => true,
 
     TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
       if relevant_detected_indent == *text_indent { true } else { false }
