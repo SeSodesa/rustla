@@ -63,5 +63,10 @@ not to the document root.
 
   doctree.print_tree();
 
-  todo!()
+  match doctree.child(4).shared_data() {
+    TreeNodeType::Section { level, .. } => {
+      if *level != 1 { panic!() }
+    }
+    _ => panic!()
+  }
 }

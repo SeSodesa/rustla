@@ -1009,7 +1009,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
               doctree: doctree,
               next_states: Some(vec![StateMachine::Section]),
               push_or_pop: PushOrPop::Push,
-              line_advance: LineAdvance::Some(3)
+              line_advance: LineAdvance::Some(3) // Jump over the section underline
             }
 
           } else {
