@@ -47,9 +47,10 @@ Below is an over- and underlined section title.
 
 =======================================
  This is Spart.. I mean a section title
-========================================
+=======================================
 
-The line is at least 4 symbols long.
+This paragraph belongs to the section started by the above title,
+not to the document root.
 
   ");
 

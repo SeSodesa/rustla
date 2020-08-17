@@ -933,6 +933,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, line_cursor:
 }
 
 
+/// ### line
 pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
@@ -943,7 +944,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
 
   let detected_line = captures.get(1).unwrap().as_str();
   let detected_line_char = detected_line.chars().next().unwrap();
-  let detected_line_length = detected_line.chars().count();
+  let detected_line_length = detected_line.trim_end().chars().count();
   
   let previous_line = src_lines.get(line_cursor.relative_offset() - 1);
   let next_line = src_lines.get(line_cursor.relative_offset() + 1);
@@ -983,7 +984,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut Lin
       // A possible section title.
       // Check next line for line pattern and its length.
 
-      if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset()) {
+      if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
 
         if let Some(capts) = LINE_RE.captures(next_next_line) {
 
