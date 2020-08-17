@@ -164,8 +164,8 @@ impl TreeZipper {
               // return self, else continue walking up the tree
               if *level == section_level {
                 break
-              } else if section_level >= *level {
-                panic!("Received instruction to walk down to a section level when walking up the doctree. Computer says no...")
+              } else if section_level < *level {
+                panic!("Received instruction to walk down to a section level {} when walking up the doctree to level {}. Computer says no...", section_level, level)
               } else {
                 self = match self.focus_on_parent() {
                   Ok(parent) => parent,
@@ -238,7 +238,6 @@ impl TreeZipper {
     };
 
     Ok(sibling)
-
   }
 
 
