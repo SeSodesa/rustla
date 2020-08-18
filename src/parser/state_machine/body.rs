@@ -801,13 +801,26 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 
       } else if next_line_indent > detected_indent { // Definition list item
 
-        doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
+        if parent_indent_matches(doctree.shared_data(), detected_indent) {
 
-        return TransitionResult::Success {
-          doctree: doctree,
-          next_states: Some(vec![StateMachine::DefinitionList]),
-          push_or_pop: PushOrPop::Push,
-          line_advance: LineAdvance::None
+          doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
+
+          return TransitionResult::Success {
+            doctree: doctree,
+            next_states: Some(vec![StateMachine::DefinitionList]),
+            push_or_pop: PushOrPop::Push,
+            line_advance: LineAdvance::None
+          }
+        } else {
+          
+          doctree = doctree.focus_on_parent();
+
+          return TransitionResult::Success {
+            doctree: doctree,
+            next_states: None,
+            push_or_pop: PushOrPop::Pop,
+            line_advance: LineAdvance::None
+          }
         }
 
       } else {
