@@ -22,7 +22,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
       }
     }
 
-    // Read in definition term, classifiers and parse firstnode block.
+    // Read in definition term, classifiers and parse first node block.
     let (term, classifiers): (String, Vec<String>) = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
       let mut term_and_classifiers= line.split(" : ");
@@ -39,12 +39,23 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
       }
     };
 
+    let list_item_node = TreeNodeType::DefinitionListItem {
+      term: term,
+      classifiers: classifiers,
+      body_indent: next_line_indent
+    };
 
+    doctree = doctree.push_data_and_focus(list_item_node);
+
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::ListItem]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   } else {
     return TransitionResult::Failure {
       message: format!("Found a definition list item candidate without a definition on line {}.\nComputer says no...\n", line_cursor.sum_total())
     }
   }
-
-  todo!()
 }
