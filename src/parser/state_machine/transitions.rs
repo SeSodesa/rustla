@@ -70,8 +70,9 @@ impl StateMachine {
 
   /// ### DEFINITION_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::DefinitionList`.
-  pub const DEFINITION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
-
+  pub const DEFINITION_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Text, TEXT_PATTERN, definition_list::text)
   ];
 
   /// ### ENUMERATED_LIST_TRANSITIONS
@@ -163,7 +164,7 @@ impl StateMachine {
 
   /// ### DEFINITION_TRANSITIONS
   /// An array of transitions related to `StateMachine::Definition`.
-  pub const DEFINITION_TRANSITIONS: [UncompiledTransition; 0] = [
+  pub const DEFINITION_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 

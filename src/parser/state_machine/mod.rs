@@ -13,6 +13,7 @@
 mod body;
 mod bullet_list;
 mod common;
+mod definition_list;
 mod enumerated_list;
 mod field_list;
 mod inline;
