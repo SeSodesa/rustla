@@ -32,6 +32,7 @@ src/
     │   ├── body.rs
     │   ├── bullet_list.rs
     │   ├── common.rs
+    │   ├── definition_list.rs
     │   ├── enumerated_list.rs
     │   ├── field_list.rs
     │   ├── footnote.rs
@@ -41,6 +42,7 @@ src/
     ├── test_block_reading.rs
     ├── test_bullet_lists.rs
     ├── test_converters.rs
+    ├── test_definition_lists.rs
     ├── test_enumerated_lists.rs
     ├── test_field_lists.rs
     ├── test_hyperlink_targets.rs
@@ -50,7 +52,7 @@ src/
     ├── test_sections_and_transitions.rs
     └── types_and_aliases.rs
 
-4 directories, 34 files
+4 directories, 36 files
 ```
 
 ## Build instructions
