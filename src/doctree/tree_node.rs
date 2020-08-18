@@ -133,14 +133,14 @@ impl TreeNode {
 
     match self.data {
 
-      // Structural nodes
+      // Structural nodes can other (sub)srutural elements
       TreeNodeType::Document { .. } | TreeNodeType::Section { .. } | TreeNodeType::Topic
       | TreeNodeType::Sidebar => {
         match node_data {
           TreeNodeType::Section { .. }                    | TreeNodeType::Transition                      | TreeNodeType::Topic
           | TreeNodeType:: Sidebar
           | TreeNodeType::Paragraph { .. }                | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
-          | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
+          | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
@@ -150,13 +150,13 @@ impl TreeNode {
         }
       }
 
-      // These elements are allowed to contain body level nodes
-      TreeNodeType::BulletListItem { .. } | TreeNodeType::EnumeratedListItem { .. }
-      | TreeNodeType::DefinitionListItem  | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote          | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
+      // These sub-body elements are allowed to contain body level nodes
+      TreeNodeType::BulletListItem { .. }       | TreeNodeType::EnumeratedListItem { .. }
+      | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
+      | TreeNodeType::BlockQuote                | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
         match node_data {
           TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
-          | TreeNodeType::DefinitionList                  | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
+          | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
@@ -187,6 +187,14 @@ impl TreeNode {
       TreeNodeType::FieldList { .. } => {
         match node_data {
           TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true,
+          _ => false
+        }
+      }
+
+      // Definition lists may only contain empty lines or definition list items
+      TreeNodeType::DefinitionList { .. } => {
+        match node_data {
+          TreeNodeType::EmptyLine | TreeNodeType::DefinitionListItem { .. } => true,
           _ => false
         }
       }

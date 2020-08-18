@@ -801,7 +801,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 
       } else if next_line_indent > detected_indent { // Definition list item
 
-        todo!("Add definition list node to tree and focus on it...");
+        doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
 
         return TransitionResult::Success {
           doctree: doctree,

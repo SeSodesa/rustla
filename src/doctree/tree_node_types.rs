@@ -146,13 +146,19 @@ pub enum TreeNodeType {
   /// #### DefinitionList
   /// A list of definitions. Contains `DefinitionListItems` or `EmptyLine` nodes
   /// as its direct children.
-  DefinitionList,
+  DefinitionList {
+    term_indent: usize,
+  },
 
   /// #### DefinitionListItem
   /// A child node type of `DefinitionList`.
   /// Contains a map of `DefinitionTerm`s and the corresponding
   /// `TermDefinitions`, in addition to optional term classifiers.
-  DefinitionListItem,
+  DefinitionListItem {
+    term: String,
+    classifiers: Vec<String>,
+    body_indent: usize,
+  },
 
   /// #### Description
   Description,
