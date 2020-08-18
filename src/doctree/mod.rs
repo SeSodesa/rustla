@@ -532,6 +532,25 @@ impl DocTree {
     self
   }
 
+
+  /// ### shared_parent_ref
+  /// Returns an `Option`al shared reference to the parent node.
+  pub fn shared_parent_ref (&self) -> Option<&TreeZipper> {
+    self.tree.shared_parent_ref()
+  }
+
+
+  /// ### shared_parent_data
+  /// Returns an `Option`al shared reference to parent node data.
+  pub fn shared_parent_data (&self) -> Option<&TreeNodeType> {
+
+    if let Some(parent_ref) = self.shared_parent_ref() {
+      Some(parent_ref.shared_data())
+    } else {
+      None
+    }
+  }
+
 }
 
 

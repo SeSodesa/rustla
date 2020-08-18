@@ -318,4 +318,11 @@ impl TreeZipper {
       panic!("Tried retrieving the number of children for node, but children not allowed.\nComputer says no...\n")
     }
   }
+
+
+  /// ### shared_data
+  /// Returns a shared reference to the data of the current node.
+  pub fn shared_data (&self) -> &TreeNodeType {
+    self.node.shared_data()
+  }
 }
