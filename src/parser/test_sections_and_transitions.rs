@@ -76,40 +76,49 @@ not to the document root.
 fn mixed_sections_01 () {
 
   let src = String::from("
-===============
- Section Title
-===============
+=======================
+ Level 1 Section Title
+=======================
 
----------------
- Section Title
----------------
+-----------------------
+ Level 2 Section Title
+-----------------------
 
-Section Title
-=============
+Level 3 Section Title
+=====================
 
-Section Title
--------------
+Level 4 Section Title
+---------------------
 
-Section Title
-`````````````
+Level 5 Section Title
+`````````````````````
 
-Section Title
-'''''''''''''
+---------------------
+Level 2 Section Title
+---------------------
 
-Section Title
-.............
+Level 6 Section Title
+'''''''''''''''''''''
 
-Section Title
-~~~~~~~~~~~~~
+Level 7 Section Title
+.....................
 
-Section Title
-*************
+Level 8 Section Title
+~~~~~~~~~~~~~~~~~~~~~
 
-Section Title
-+++++++++++++
+Level 9 Section Title
+*********************
 
-Section Title
-^^^^^^^^^^^^^
+Level 10 Section Title
+++++++++++++++++++++++
+
+Level 11 Section Title
+^^^^^^^^^^^^^^^^^^^^^^
+
+======================
+Level 1 Section Title
+======================
+
   ");
 
   let mut doctree = DocTree::new(String::from("test"));

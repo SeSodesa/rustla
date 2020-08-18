@@ -452,7 +452,8 @@ pub enum TreeNodeType {
   /// in addition to its marker type and (sub)section level.
   Section {
     title_text: String,
-    level: usize
+    level: usize,
+    line_style: SectionLineStyle
   },
 
   /// #### Sidebar

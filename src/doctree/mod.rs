@@ -235,8 +235,9 @@ impl DocTree {
         self.add_target(&shared_node_data, target, self.node_count);
         self.add_reference(&shared_node_data, indirect_target, self.node_count);
       }
-      TreeNodeType::Section {title_text, level } => {
+      TreeNodeType::Section {title_text, level, line_style } => {
         self.add_target(&shared_node_data, title_text, self.node_count);
+        self.section_data.add_section_level(*line_style);
         if *level > self.section_data.highest_encountered_section_level() {
           self.section_data.increment_encountered_section_number();
         }
@@ -504,7 +505,8 @@ impl DocTree {
     let section_level = self.section_data.line_style_section_level(&section_style);
     TreeNodeType::Section {
       level: section_level,
-      title_text: title_text.to_string()
+      title_text: title_text.to_string(),
+      line_style: section_style
     }
   }
 

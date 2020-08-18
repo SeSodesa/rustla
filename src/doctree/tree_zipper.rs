@@ -152,38 +152,29 @@ impl TreeZipper {
   pub fn walk_to_parent_section_level(mut self, section_level: usize) -> Self {
 
     loop {
-      match self.shared_parent_ref() {
-        Some(parent_ref) => {
+      match self.node.shared_data() {
 
-          match parent_ref.node.shared_data() {
-            TreeNodeType::Document { .. } => {
-              return self
-            }
-            TreeNodeType::Section { level, .. } => {
-              // If the parent section level is equal to the given section_level,
-              // return self, else continue walking up the tree
-              if *level == section_level {
-                break
-              } else if section_level < *level {
-                panic!("Received instruction to walk down to a section level {} when walking up the doctree to level {}. Computer says no...", section_level, level)
-              } else {
-                self = match self.focus_on_parent() {
-                  Ok(parent) => parent,
-                  Err(node_itself) => return node_itself
-                }
-              }
-            }
-            _ => {
-              self = match self.focus_on_parent() {
-                Ok(parent) => parent,
-                Err(node_itself) => return node_itself
-              }
+        TreeNodeType::Document { .. } => break,
+
+        TreeNodeType::Section { level, .. } => {
+          // If the parent section level is equal to the given section_level,
+          // return self, else continue walking up the tree
+          if *level <= section_level {
+            break
+          } else if section_level > *level {
+            panic!("Received instruction to walk down to a section level {} when walking up the doctree to level {}. Computer says no...", section_level, level)
+          } else {
+            self = match self.focus_on_parent() {
+              Ok(parent) => parent,
+              Err(node_itself) => return node_itself
             }
           }
         }
-
-        None => {
-          break // At document root
+        _ => {
+          self = match self.focus_on_parent() {
+            Ok(parent) => parent,
+            Err(node_itself) => return node_itself
+          }
         }
       }
     }
