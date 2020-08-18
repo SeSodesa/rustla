@@ -739,15 +739,53 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
       let section_data = doctree.new_section_data(title_text, section_style);
 
       if let TreeNodeType::Section { level, .. } = section_data {
-        doctree = doctree.walk_to_parent_section_level(level - 1);
-      }
-      doctree = doctree.push_data_and_focus(section_data);
 
-      return TransitionResult::Success {
-        doctree: doctree,
-        next_states: Some(vec![StateMachine::Section]),
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(2) // Jump over the section underline
+        let detected_level = level;
+
+        match doctree.shared_data() {
+
+          TreeNodeType::Document { .. } => {
+            doctree = doctree.push_data_and_focus(section_data);
+            *section_level = detected_level;
+          }
+
+          TreeNodeType::Section { level, .. } => {
+            if detected_level <= *level {
+              *section_level = *level;
+              doctree = doctree.focus_on_parent();
+              return TransitionResult::Success {
+                doctree: doctree,
+                next_states: None,
+                push_or_pop: PushOrPop::Pop,
+                line_advance: LineAdvance::None
+              }
+            } else {
+              *section_level = detected_level;
+              doctree = doctree.push_data_and_focus(section_data);
+            }
+          }
+
+          _ => {
+            doctree = doctree.focus_on_parent();
+            
+            if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
+              *section_level = *level;
+            }
+
+            return TransitionResult::Success {
+              doctree: doctree,
+              next_states: None,
+              push_or_pop: PushOrPop::Pop,
+              line_advance: LineAdvance::None
+            }
+          }
+        }
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: Some(vec![StateMachine::Section]),
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::Some(2) // Jump over the section underline
+        };
       }
     }
 
@@ -967,15 +1005,56 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
             let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
 
             if let TreeNodeType::Section { level, .. } = section_data {
-              doctree = doctree.walk_to_parent_section_level(level - 1);
-            }
-            doctree = doctree.push_data_and_focus(section_data);
 
-            return TransitionResult::Success {
-              doctree: doctree,
-              next_states: Some(vec![StateMachine::Section]),
-              push_or_pop: PushOrPop::Push,
-              line_advance: LineAdvance::Some(3) // Jump over the section underline
+              let detected_level = level;
+
+              match doctree.shared_data() {
+
+                TreeNodeType::Document { .. } => {
+                  doctree = doctree.push_data_and_focus(section_data);
+                  *section_level = detected_level;
+                }
+
+                TreeNodeType::Section { level, .. } => {
+
+                  if detected_level <= *level {
+                    *section_level = *level;
+                    doctree = doctree.focus_on_parent();
+                    return TransitionResult::Success {
+                      doctree: doctree,
+                      next_states: None,
+                      push_or_pop: PushOrPop::Pop,
+                      line_advance: LineAdvance::None
+                    }
+                  } else {
+                    *section_level = detected_level;
+                    doctree = doctree.push_data_and_focus(section_data);
+                  }
+                }
+
+                _ => {
+                  doctree = doctree.focus_on_parent();
+
+                  if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
+                    *section_level = *level;
+                  }
+
+                  return TransitionResult::Success {
+                    doctree: doctree,
+                    next_states: None,
+                    push_or_pop: PushOrPop::Pop,
+                    line_advance: LineAdvance::None
+                  }
+                }
+              }
+              return TransitionResult::Success {
+                doctree: doctree,
+                next_states: Some(vec![StateMachine::Section]),
+                push_or_pop: PushOrPop::Push,
+                line_advance: LineAdvance::Some(3) // Jump over the section underline
+              }
+            } else {
+              panic!("No generated section where one was expected. Computer says no...")
             }
 
           } else {

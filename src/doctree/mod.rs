@@ -540,6 +540,13 @@ impl DocTree {
   }
 
 
+  /// ### shared_data
+  /// Returns a shared reference to the data of the current node.
+  pub fn shared_data(&self) -> &TreeNodeType {
+    self.tree.shared_data()
+  }
+
+
   /// ### shared_parent_data
   /// Returns an `Option`al shared reference to parent node data.
   pub fn shared_parent_data (&self) -> Option<&TreeNodeType> {
