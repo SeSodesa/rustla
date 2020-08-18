@@ -89,6 +89,11 @@ pub struct Parser {
   /// needs to be passed to the nested parser for node comparison.
   base_indent: usize,
 
+  /// #### section_level
+  /// Keeps track of the section level the parser is currently focused on.
+  /// Level 0 indicates document root.
+  section_level: usize,
+
   /// #### doctree
   /// An `Option`al document tree. The optionality is necessary,
   /// as this needs to be given to transition functions for modification
@@ -113,12 +118,13 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>) -> Self {
+  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>, section_level: usize) -> Self {
 
     Self {
       src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       line_cursor: LineCursor::new(0, base_line),
       base_indent: base_indent.unwrap_or(0),
+      section_level: section_level,
       doctree: Some(doctree),
       state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
     }
@@ -139,6 +145,7 @@ impl Parser {
     // The parsing loop
     loop {
 
+      eprintln!("Section level: {:#?}", self.section_level);
       eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
       eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
 
@@ -210,7 +217,7 @@ impl Parser {
 
           let line_before_transition = self.line_cursor.sum_total();
 
-          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
+          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
 
             TransitionResult::Success{doctree, next_states, push_or_pop, line_advance} => {
 
@@ -500,7 +507,7 @@ impl Parser {
   /// ### first_list_item_block
   /// Parses the first block of a list item, in case it contains body level nodes
   /// right after the enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
@@ -522,7 +529,7 @@ impl Parser {
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), current_line.sum_total(), Some(start_state)).parse() {
+    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
       ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
         eprintln!("{:?}", message);

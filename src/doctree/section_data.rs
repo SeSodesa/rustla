@@ -20,6 +20,7 @@ pub struct SectionData {
   /// are encountered in the document. It is assigned to `self.levels` when a new
   /// type is encountered and incremented.
   highest_encountered_section_level: usize,
+
 }
 
 
@@ -30,7 +31,7 @@ impl SectionData {
   pub fn new () -> Self{
     Self {
       section_levels: HashMap::new(),
-      highest_encountered_section_level: 0
+      highest_encountered_section_level: 0,
     }
   }
 
@@ -64,8 +65,7 @@ impl SectionData {
 
 
   /// ### add_section_level
-  /// Adds a new section line style to known section levels.
-  /// Simply panics, if a section style is updated (for now).
+  /// Adds a new section line style to known section levels, if not present.
   pub fn add_section_level (&mut self, section_style: SectionLineStyle) {
 
     match self.section_levels.get(&section_style) {

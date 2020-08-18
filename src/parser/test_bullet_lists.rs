@@ -17,7 +17,7 @@ fn bullet_list_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -45,7 +45,7 @@ fn bullet_list_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -77,7 +77,7 @@ fn bullet_list_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -123,7 +123,7 @@ fn bullet_list_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -179,7 +179,7 @@ fn bullet_list_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
 
@@ -230,7 +230,7 @@ fn bullet_list_06 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();

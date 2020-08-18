@@ -9,7 +9,7 @@ use super::*;
 
 /// ### field_marker
 /// Creates FieldListItems, if parameters such as detected indentation and such match with the parent node ones.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -50,7 +50,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, line_cursor: 
         };
         tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
           None => return TransitionResult::Failure {message: format!("Could not parse the first block of field marker on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
         };

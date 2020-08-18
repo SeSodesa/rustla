@@ -23,7 +23,7 @@ fn footnote_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -65,7 +65,7 @@ fn footnote_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -132,7 +132,7 @@ fn footnote_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -197,7 +197,7 @@ fn footnote_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -255,7 +255,7 @@ fn footnote_05 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -316,7 +316,7 @@ fn citation_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -349,7 +349,7 @@ fn citation_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -390,7 +390,7 @@ fn hyperlink_target_01 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -418,7 +418,7 @@ fn hyperlink_target_02 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -442,7 +442,7 @@ fn hyperlink_target_03 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -486,7 +486,7 @@ fn hyperlink_target_04 () {
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();

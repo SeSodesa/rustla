@@ -24,7 +24,7 @@ The line is at least 4 symbols long.
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -56,7 +56,7 @@ not to the document root.
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
@@ -123,7 +123,7 @@ Level 1 Section Title
 
   let mut doctree = DocTree::new(String::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None);
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
