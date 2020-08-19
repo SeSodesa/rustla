@@ -22,6 +22,8 @@ impl Parser {
       None => directive_marker_line_indent
     };
 
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
 
     match admonition_type {
 
@@ -346,7 +348,7 @@ impl Parser {
   /// An empty line separates directive options from the directive content, so encountering one
   /// will terminate the scan. This means that the options have to start of the line following
   /// the directive marker.
-  fn scan_directive_options (src_lines: Vec<String>, line_cursor: &mut LineCursor, body_indent: usize) -> Option<HashMap<String, String>>{
+  fn scan_directive_options (src_lines: &Vec<String>, line_cursor: &mut LineCursor, body_indent: usize) -> Option<HashMap<String, String>>{
 
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
