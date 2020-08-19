@@ -364,9 +364,13 @@ impl Parser {
         let option_key = captures.get(2).unwrap().as_str().trim();
 
         let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
-        let option_val = line.chars().skip(option_val_indent).collect::<String>().as_str().trim().to_string(); // Allocations galore...
+        let index = match line.char_indices().nth(option_val_indent) {
+          Some((index, _)) => index,
+          None => panic!("Looks like a directive option might not have a value on line {}...", line_cursor.sum_total() + current_line)
+        };
+        let option_val = line[index..].trim();
 
-        if let Some(val) = option_map.insert(option_key.to_string(), option_val) {
+        if let Some(val) = option_map.insert(option_key.to_string(), option_val.to_string()) {
           eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total() + current_line)
         }
       } else {
