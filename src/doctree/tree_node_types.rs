@@ -163,9 +163,7 @@ pub enum TreeNodeType {
   /// #### Description
   Description,
 
-  Directive {
-    dir_type: DirectiveNode,
-  },
+  Directive (DirectiveNode),
 
   /// #### DocInfo
   DocInfo,
@@ -652,7 +650,7 @@ impl TreeNodeType {
 
       }
 
-      Self::Directive { dir_type, .. } => {
+      Self::Directive (dir_type) => {
 
         match dir_type {
 

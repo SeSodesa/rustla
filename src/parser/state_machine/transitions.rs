@@ -16,7 +16,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 29] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 30] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
@@ -53,6 +53,8 @@ impl StateMachine {
     (PatternName::Citation, CITATION_PATTERN, body::citation),
 
     (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
+
+    (PatternName::ExplicitMarkup, DIRECTIVE_PATTERN, body::directive),
 
     (PatternName::Line, LINE_PATTERN, body::line),
 

@@ -49,6 +49,7 @@ use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKin
 
 // Unit test modules
 // -----------------
+mod test_admonitions;
 mod test_converters;
 mod test_block_reading;
 mod test_bullet_lists;
@@ -505,9 +506,9 @@ impl Parser {
   }
 
 
-  /// ### first_list_item_block
-  /// Parses the first block of a list item, in case it contains body level nodes
-  /// right after the enumerator, on the same line.
+  /// ### parse_first_node_block
+  /// Parses the first block of a node, in case it contains body level nodes
+  /// right after a marker such as an enumerator, on the same line.
   fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;

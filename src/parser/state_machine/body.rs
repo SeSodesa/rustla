@@ -414,19 +414,27 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
 /// A transition function for parsing directives in a state that recognizes body elements.
 pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
+  use crate::doctree::directives::DirectiveNode;
+
   let mut doctree = doctree.unwrap();
 
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
   let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
-  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
-    if line.trim().is_empty() {
-      detected_text_indent
-    } else {
-      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-      if indent < detected_marker_indent + 1 { detected_text_indent } else { indent }
-    }
-  } else { detected_text_indent };
+
+  eprintln!("Text indent: {:#?}\n", detected_text_indent);
+
+  let empty_after_marker: bool = {
+    let line = src_lines.get(line_cursor.relative_offset()).unwrap(); // Unwrapping is not a problem here.
+
+    eprintln!("{:#?}\n", line);
+
+    let index = match line.char_indices().nth(detected_text_indent - 1) {
+      Some((index, _)) => index,
+      None => panic!("Tried scanning text after directive marker on line {} but no text found. Computer says no...", line_cursor.sum_total())
+    };
+    line[index..].trim().is_empty()
+  };
 
   if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
@@ -434,7 +442,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
       "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
 
-        Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str())
+        Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
       }
 
       "admonition" => {
@@ -1113,6 +1121,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 /// If the indent matches, we can push to the current node and focus on the new node. Otherwise
 fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize) -> bool {
 
+  use crate::doctree::directives::DirectiveNode;
+
   // Match against the parent node. Only document root  and sections ignore indentation;
   // inside any other container it makes a difference.
   match parent_data {
@@ -1128,11 +1138,14 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
       if relevant_detected_indent == *body_indent { true } else { false }
     },
 
+    TreeNodeType::Directive(DirectiveNode::Admonition {content_indent, ..}) => {
+      if relevant_detected_indent == *content_indent { true } else { false }
+    }
+
     // Add other cases here...
 
     _ => false
   }
-
 }
 
 
@@ -1230,6 +1243,8 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 /// A helper for parsing a paragraph node.
 fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, mut doctree: DocTree, detected_indent: usize) -> TransitionResult {
 
+  eprintln!("Base indent: {}\nDetected indent: {}\n", base_indent, detected_indent);
+
   if parent_indent_matches(doctree.shared_node_data(), detected_indent) {
           
     doctree = doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
@@ -1310,6 +1325,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &
     }
   } else {
 
+    eprintln!("Indent didn't match\n");
     doctree = doctree.focus_on_parent();
     return TransitionResult::Success {
       doctree: doctree,

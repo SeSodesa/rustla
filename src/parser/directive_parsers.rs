@@ -7,6 +7,7 @@
 /// email: santtu.soderholm@tuni.fi
 
 use super::*;
+use crate::doctree::directives::DirectiveNode;
 
 impl Parser {
 
@@ -15,53 +16,99 @@ impl Parser {
   const COMMON_OPTIONS: &'static [&'static str] = &["name", "class"];
 
 
-  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize,  mut section_level: usize, directive_marker_line_indent: usize, doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str) -> TransitionResult {
+  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize,  mut section_level: usize, directive_marker_line_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
 
-    let content_indent = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some(indent) => indent,
-      None => directive_marker_line_indent
-    };
+    use crate::doctree::directives::AdmonitionDirective;
 
-    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
-
-
-    match admonition_type {
+    let variant: AdmonitionDirective = match admonition_type {
 
       "attention" => {
-
+        AdmonitionDirective::Attention
       }
       "caution" => {
-
+        AdmonitionDirective::Caution
       }
       "danger" => {
-
+        AdmonitionDirective::Danger
       }
       "error" => {
-
+        AdmonitionDirective::Error
       }
       "hint" => {
-
+        AdmonitionDirective::Hint
       }
       "important" => {
-
+        AdmonitionDirective::Important
       }
       "note" => {
-
+        AdmonitionDirective::Note
       }
       "tip" => {
-
+        AdmonitionDirective::Tip
       }
       "warning" => {
-
+        AdmonitionDirective::Warning
       }
-      _ => unreachable!()
-    }
-
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, directive_marker_line_indent, None, StateMachine::ListItem, &mut section_level) {
-      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Could not parse the first block {} list item on line {:#?}", admonition_type, line_cursor.sum_total())}
+      _ => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
     };
-    todo!()
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => (directive_marker_line_indent, 0)
+    };
+
+    let first_block_lines: Vec<String> = if empty_after_marker {
+
+      // Jump to next contiguous block of text and read it
+
+      *line_cursor.relative_offset_mut_ref() += content_offset;
+
+      match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, false, Some(content_indent)) {
+        Ok((lines, _)) => lines,
+        Err(e) => panic!("{}", e)
+      }
+    } else {
+      // Read the indented block of text starting on the same line as the directive marker
+      match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(content_indent), Some(directive_marker_line_indent), false) {
+        Ok((lines, _, offset, _)) => lines,
+        Err(e) => panic!("{}", e)
+      }
+    };
+
+    let directive_options = Self::scan_directive_options(&first_block_lines, line_cursor, content_indent);
+
+    let (classes, name) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
+        eprintln!("Admonition on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+      let classes = options.remove("class");
+      let name = options.remove("name");
+      (classes, name)
+    } else {
+      (None, None)
+    };
+
+    let admonition_data = DirectiveNode::Admonition {
+      content_indent: content_indent,
+      classes: classes,
+      name: name,
+      variant: variant
+    };
+
+    doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));
+
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, content_indent, Some(directive_marker_line_indent), StateMachine::ListItem, &mut section_level) {
+      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+      None => return TransitionResult::Failure {message: format!("Could not parse the first block {} admonition on line {:#?}", admonition_type, line_cursor.sum_total())}
+    };
+   
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Admonition]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
 
@@ -321,7 +368,7 @@ impl Parser {
 
   /// ### indent_on_subsequent_lines
   /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
-  fn indent_on_subsequent_lines (src_lines: &Vec<String>, start_line: usize) -> Option<usize> {
+  fn indent_on_subsequent_lines (src_lines: &Vec<String>, start_line: usize) -> Option<(usize, usize)> {
 
     let mut current_line = start_line;
     loop {
@@ -330,7 +377,9 @@ impl Parser {
           current_line += 1;
           continue
         } else {
-          break Some(line.chars().take_while(|c| c.is_whitespace()).count())
+          break Some(
+            (line.chars().take_while(|c| c.is_whitespace()).count(), current_line - start_line)
+          )
         }
       } else {
         break None
@@ -352,7 +401,7 @@ impl Parser {
 
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
-    let mut current_line = line_cursor.relative_offset() + 1;
+    let mut current_line = line_cursor.relative_offset();
 
     let mut option_map: HashMap<String, String> = HashMap::new();
 
@@ -362,7 +411,7 @@ impl Parser {
 
       if let Some(captures) = FIELD_MARKER_RE.captures(line) {
         let line_indent = captures.get(1).unwrap().as_str().chars().count();
-        if line_indent < body_indent { panic!("Found a directive option list item with too little indent on line {}. Computer says no...", line_cursor.sum_total()) } // panic for now
+        if line_indent != body_indent { break } // Option lists need to be aligned
         let option_key = captures.get(2).unwrap().as_str().trim();
 
         let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
@@ -382,6 +431,16 @@ impl Parser {
     }
 
     if option_map.is_empty() { None } else { Some(option_map) }
+  }
+
+
+  fn all_options_recognized (option_map: &HashMap<String, String>, recognized_keys: &[&str]) -> bool {
+
+    let mut option_iter = option_map.keys();
+    let mut recognized_iter = recognized_keys.iter();
+
+    // All option keys should be found in recognized keys
+    option_iter.all( |option_key| recognized_iter.any(|recognized_key| option_key == recognized_key) )
   }
 }
 

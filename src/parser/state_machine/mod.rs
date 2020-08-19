@@ -46,6 +46,10 @@ use crate::doctree::{self};
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum StateMachine {
 
+  /// #### Admonition
+  /// A state for parsing body nodes inside admonitions.
+  Admonition,
+
   /// #### Body
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
   Body,
@@ -166,7 +170,8 @@ impl StateMachine {
       StateMachine::Section
       | StateMachine::ListItem
       | StateMachine::Footnote
-      | StateMachine::Citation  => {
+      | StateMachine::Citation
+      | Self::Admonition => {
         Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())
       }
       _ => {

@@ -144,16 +144,17 @@ impl TreeNode {
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Directive( .. )
             => true,
           _ => false
         }
       }
 
-      // These sub-body elements are allowed to contain body level nodes
+      // These (sub)body elements are allowed to contain body level nodes
       TreeNodeType::BulletListItem { .. }       | TreeNodeType::EnumeratedListItem { .. }
-      | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }  | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote                | TreeNodeType::Footnote { .. }       | TreeNodeType::Citation { .. }  => {
+      | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }      | TreeNodeType::OptionListItem
+      | TreeNodeType::BlockQuote                | TreeNodeType::Footnote { .. }           | TreeNodeType::Citation { .. }
+      | TreeNodeType::Directive( .. ) => {
         match node_data {
           TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
@@ -161,7 +162,7 @@ impl TreeNode {
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition
-          | TreeNodeType::Section { .. }
+          | TreeNodeType::Section { .. }                  | TreeNodeType::Directive( .. )
             => true,
           _ => false
         }

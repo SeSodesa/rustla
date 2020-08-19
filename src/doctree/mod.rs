@@ -16,7 +16,7 @@ pub mod tree_node;
 use tree_node::TreeNode;
 pub mod tree_node_types;
 use tree_node_types::TreeNodeType;
-mod directives;
+pub mod directives;
 use directives::{DirectiveNode, AdmonitionDirective, ImageDirective, BodyElementDirective, TableDirective, DocumentPartDirective, ReferenceDirective, HTMLSpecificDirective, SubstitutionDefDirective, MiscellaneousDirective, AplusDirective};
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
