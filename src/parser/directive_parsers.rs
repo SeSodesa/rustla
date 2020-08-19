@@ -22,34 +22,16 @@ impl Parser {
 
     let variant: AdmonitionDirective = match admonition_type {
 
-      "attention" => {
-        AdmonitionDirective::Attention
-      }
-      "caution" => {
-        AdmonitionDirective::Caution
-      }
-      "danger" => {
-        AdmonitionDirective::Danger
-      }
-      "error" => {
-        AdmonitionDirective::Error
-      }
-      "hint" => {
-        AdmonitionDirective::Hint
-      }
-      "important" => {
-        AdmonitionDirective::Important
-      }
-      "note" => {
-        AdmonitionDirective::Note
-      }
-      "tip" => {
-        AdmonitionDirective::Tip
-      }
-      "warning" => {
-        AdmonitionDirective::Warning
-      }
-      _ => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
+      "attention" => AdmonitionDirective::Attention,
+      "caution"   => AdmonitionDirective::Caution,
+      "danger"    => AdmonitionDirective::Danger,
+      "error"     => AdmonitionDirective::Error,
+      "hint"      => AdmonitionDirective::Hint,
+      "important" => AdmonitionDirective::Important,
+      "note"      => AdmonitionDirective::Note,
+      "tip"       => AdmonitionDirective::Tip,
+      "warning"   => AdmonitionDirective::Warning,
+      _           => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
     };
 
     // Fetch content indentation and option|content offset from directive marker line
