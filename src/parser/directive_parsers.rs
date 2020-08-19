@@ -10,7 +10,55 @@ use super::*;
 
 impl Parser {
 
-  pub fn parse_standard_admonition (admonition_type: &str) {
+  /// ### COMMON_OPTIONS
+  /// All directives support these options, even if they might override them.
+  const COMMON_OPTIONS: &'static [&'static str] = &["name", "class"];
+
+
+  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize,  mut section_level: usize, directive_marker_line_indent: usize, doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str) -> TransitionResult {
+
+    let content_indent = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some(indent) => indent,
+      None => directive_marker_line_indent
+    };
+
+
+    match admonition_type {
+
+      "attention" => {
+
+      }
+      "caution" => {
+
+      }
+      "danger" => {
+
+      }
+      "error" => {
+
+      }
+      "hint" => {
+
+      }
+      "important" => {
+
+      }
+      "note" => {
+
+      }
+      "tip" => {
+
+      }
+      "warning" => {
+
+      }
+      _ => unreachable!()
+    }
+
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, directive_marker_line_indent, None, StateMachine::ListItem, &mut section_level) {
+      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+      None => return TransitionResult::Failure {message: format!("Could not parse the first block {} list item on line {:#?}", admonition_type, line_cursor.sum_total())}
+    };
     todo!()
   }
 
@@ -263,4 +311,72 @@ impl Parser {
   pub fn parse_aplus_embedded_page () {
     todo!()
   }
+
+
+  // ---------
+  //  HELPERS
+  // ---------
+
+  /// ### indent_on_subsequent_lines
+  /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
+  fn indent_on_subsequent_lines (src_lines: &Vec<String>, start_line: usize) -> Option<usize> {
+
+    let mut current_line = start_line;
+    loop {
+      if let Some(line) = src_lines.get(current_line) {
+        if line.trim().is_empty() {
+          current_line += 1;
+          continue
+        } else {
+          break Some(line.chars().take_while(|c| c.is_whitespace()).count())
+        }
+      } else {
+        break None
+      }
+    }
+  }
+
+
+  /// ### scan_directive_options
+  /// Scans the lines following the directive marker for something resembling a field list,
+  /// and attempts to scan the contents of the list into an `Option`al `HashMap` of directive
+  /// option names and values. The calling directive parser will handle their validation,
+  /// as different directives have different options available to them.
+  /// 
+  /// An empty line separates directive options from the directive content, so encountering one
+  /// will terminate the scan. This means that the options have to start of the line following
+  /// the directive marker.
+  fn scan_directive_options (src_lines: Vec<String>, line_cursor: &mut LineCursor, body_indent: usize) -> Option<HashMap<String, String>>{
+
+    use crate::parser::state_machine::FIELD_MARKER_RE;
+
+    let mut current_line = line_cursor.relative_offset() + 1;
+
+    let mut option_map: HashMap<String, String> = HashMap::new();
+
+    while let Some(line) = src_lines.get(current_line) {
+
+      if line.trim().is_empty() { break } // End of option list
+
+      if let Some(captures) = FIELD_MARKER_RE.captures(line) {
+        let line_indent = captures.get(1).unwrap().as_str().chars().count();
+        if line_indent < body_indent { panic!("Found a directive option list item with too little indent on line {}. Computer says no...", line_cursor.sum_total()) } // panic for now
+        let option_key = captures.get(2).unwrap().as_str().trim();
+
+        let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
+        let option_val = line.chars().skip(option_val_indent).collect::<String>().as_str().trim().to_string(); // Allocations galore...
+
+        if let Some(val) = option_map.insert(option_key.to_string(), option_val) {
+          eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total() + current_line)
+        }
+      } else {
+        break // Found a line not conforming to field list item syntax 
+      }
+      current_line += 1;
+    }
+
+    if option_map.is_empty() { None } else { Some(option_map) }
+  }
 }
+
+use std::collections::HashMap;

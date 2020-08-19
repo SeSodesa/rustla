@@ -14,6 +14,7 @@ use super::*;
 #[derive(Debug)]
 pub enum DirectiveNode {
   Admonition {
+    content_indent: usize,
     classes: Option<String>,
     name: Option<String>,
     variant: AdmonitionDirective

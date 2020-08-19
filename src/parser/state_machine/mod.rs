@@ -18,7 +18,7 @@ mod enumerated_list;
 mod field_list;
 mod inline;
 pub mod transitions;
-use transitions::{LINE_PATTERN, TEXT_PATTERN};
+use transitions::{LINE_PATTERN, TEXT_PATTERN, FIELD_MARKER_PATTERN};
 
 
 use std::cmp;
@@ -281,5 +281,9 @@ lazy_static! {
   /// ### TEXT_RE
   /// A DFA compiled from `TEXT_PATTERN`
   static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
+
+  /// ### FIELD_MARKER_RE
+  /// A DFA compiled from `FIELD_MARKER_PATTERN`
+  pub static ref FIELD_MARKER_RE: Regex = Regex::new(FIELD_MARKER_PATTERN).unwrap();
 
 }

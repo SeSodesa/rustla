@@ -434,7 +434,12 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
       "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
 
-        todo!("Parse admonition here...")
+        Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str())
+      }
+
+      "admonition" => {
+
+        todo!("Parse generic admonition here...")
       }
 
       "image" => {
