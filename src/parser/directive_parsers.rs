@@ -390,13 +390,9 @@ impl Parser {
 
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
-    // let mut current_line = line_cursor.relative_offset();
-
     let mut option_map: HashMap<String, String> = HashMap::new();
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-
-      eprintln!("Potential option line: {:#?}", line);
 
       if line.trim().is_empty() { break } // End of option list
 
