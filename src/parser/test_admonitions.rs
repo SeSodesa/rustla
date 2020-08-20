@@ -2,7 +2,7 @@
 /// A submodule for admonition unit tests
 
 use super::*;
-
+use crate::doctree::directives::{DirectiveNode, AdmonitionDirective};
 
 #[cfg(test)]
 
@@ -17,6 +17,14 @@ fn admonition_01 () {
      This is another admonition.
      This is the second line of the first paragraph.
 
+  .. tip::
+    :name: test
+    :class: class
+    :extra: extra (this should be ignored)
+
+    This paragraph forms the contents of the tip admonition above.
+    If content is not found, the parser will panic.
+
   ");
 
   let mut doctree = DocTree::new(String::from("test"));
@@ -27,5 +35,48 @@ fn admonition_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  match doctree.child(1).shared_data() {
+    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+      match (classes, name, variant) {
+        (None, None, AdmonitionDirective::Note) => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::Paragraph {..} => {},
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+      match (classes, name, variant) {
+        (None, None, AdmonitionDirective::Warning) => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.child(2).child(0).shared_data() {
+    TreeNodeType::Paragraph {..} => {},
+    _ => panic!()
+  }
+
+  match doctree.child(3).shared_data() {
+    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+      match (classes, name, variant) {
+        (Some(class), Some(name), AdmonitionDirective::Tip) if class.as_str() == "class" && name.as_str() == "test" => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.child(3).child(0).shared_data() {
+    TreeNodeType::Paragraph {..} => {},
+    _ => panic!()
+  }
 }

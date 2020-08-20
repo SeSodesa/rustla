@@ -418,23 +418,23 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
   let mut doctree = doctree.unwrap();
 
-  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
-
-  eprintln!("Text indent: {:#?}\n", detected_text_indent);
+  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
   let empty_after_marker: bool = {
     let line = src_lines.get(line_cursor.relative_offset()).unwrap(); // Unwrapping is not a problem here.
 
     eprintln!("{:#?}\n", line);
 
-    let index = match line.char_indices().nth(detected_text_indent - 1) {
-      Some((index, _)) => index,
-      None => panic!("Tried scanning text after directive marker on line {} but no text found. Computer says no...", line_cursor.sum_total())
-    };
-    line[index..].trim().is_empty()
+    match line.char_indices().nth(detected_text_indent) {
+      Some((index, _)) => line[index..].trim().is_empty(),
+      None => true
+    }
+    
   };
+
+  eprintln!("Empty after marker: {}\n", empty_after_marker);
 
   if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 

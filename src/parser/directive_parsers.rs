@@ -40,25 +40,38 @@ impl Parser {
       None => (directive_marker_line_indent, 0)
     };
 
-    let first_block_lines: Vec<String> = if empty_after_marker {
+    eprintln!("Content indent: {}\nContent offset: {}\n", content_indent, content_offset);
+
+    let (first_block_lines, first_line_indent) = if empty_after_marker {
 
       // Jump to next contiguous block of text and read it
 
-      *line_cursor.relative_offset_mut_ref() += content_offset;
+      eprintln!("Reading text block...\n");
+
+      *line_cursor.relative_offset_mut_ref() += 1;
 
       match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, false, Some(content_indent)) {
-        Ok((lines, _)) => lines,
+        Ok((lines, _)) => (lines, content_indent),
         Err(e) => panic!("{}", e)
       }
     } else {
+
+      eprintln!("Reading indented block...\n");
+
+      *line_cursor.relative_offset_mut_ref() += 1;
+
       // Read the indented block of text starting on the same line as the directive marker
-      match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(content_indent), Some(directive_marker_line_indent), false) {
-        Ok((lines, _, offset, _)) => lines,
+      match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(false), Some(content_indent), Some(directive_marker_line_indent), false) {
+        Ok((lines, _, offset, _)) => (lines, directive_marker_line_indent),
         Err(e) => panic!("{}", e)
       }
     };
 
-    let directive_options = Self::scan_directive_options(&first_block_lines, line_cursor, content_indent);
+    eprintln!("First block lines: {:#?}\n", first_block_lines);
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    eprintln!("Directive options: {:#?}\n", directive_options);
 
     let (classes, name) = if let Some(mut options) = directive_options {
       if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
@@ -66,6 +79,9 @@ impl Parser {
       }
       let classes = options.remove("class");
       let name = options.remove("name");
+
+      *line_cursor.relative_offset_mut_ref() += 1; // Jump over empty line separating options from content
+
       (classes, name)
     } else {
       (None, None)
@@ -80,16 +96,18 @@ impl Parser {
 
     doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, content_indent, Some(directive_marker_line_indent), StateMachine::ListItem, &mut section_level) {
+
+
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, content_indent, Some(first_line_indent), StateMachine::Admonition, &mut section_level) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Could not parse the first block {} admonition on line {:#?}", admonition_type, line_cursor.sum_total())}
+      None => return TransitionResult::Failure {message: format!("Looks like {} admonition on line {:#?} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total())}
     };
    
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Admonition]),
+      next_states: Some(state_stack),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1)
+      line_advance: LineAdvance::Some(offset) // Jump over empty line separating options from contents
     }
   }
 
@@ -383,11 +401,13 @@ impl Parser {
 
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
-    let mut current_line = line_cursor.relative_offset();
+    // let mut current_line = line_cursor.relative_offset();
 
     let mut option_map: HashMap<String, String> = HashMap::new();
 
-    while let Some(line) = src_lines.get(current_line) {
+    while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+
+      eprintln!("Potential option line: {:#?}", line);
 
       if line.trim().is_empty() { break } // End of option list
 
@@ -399,17 +419,17 @@ impl Parser {
         let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
         let index = match line.char_indices().nth(option_val_indent) {
           Some((index, _)) => index,
-          None => panic!("Looks like a directive option might not have a value on line {}...", line_cursor.sum_total() + current_line)
+          None => panic!("Looks like a directive option might not have a value on line {}...", line_cursor.sum_total())
         };
         let option_val = line[index..].trim();
 
         if let Some(val) = option_map.insert(option_key.to_string(), option_val.to_string()) {
-          eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total() + current_line)
+          eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())
         }
       } else {
         break // Found a line not conforming to field list item syntax 
       }
-      current_line += 1;
+      *line_cursor.relative_offset_mut_ref() += 1;
     }
 
     if option_map.is_empty() { None } else { Some(option_map) }

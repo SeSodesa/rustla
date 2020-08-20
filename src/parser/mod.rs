@@ -534,7 +534,7 @@ impl Parser {
     let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
       ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
-        eprintln!("{:?}", message);
+        eprintln!("{}", message);
         eprintln!("Nested parse ended in failure...\n");
         return None
       }

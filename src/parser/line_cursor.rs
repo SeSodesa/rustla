@@ -12,6 +12,7 @@ use super::*;
 /// The relative offset cursor is used to actually access
 /// the source lines' contents, whereas the sum of relative and absolute cursors is
 /// used mainly for debug prints and|or error messages.
+#[derive(Debug)]
 pub struct LineCursor {
 
   /// #### offset
