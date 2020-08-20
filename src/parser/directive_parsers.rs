@@ -69,8 +69,6 @@ impl Parser {
       let classes = options.remove("class");
       let name = options.remove("name");
 
-      *line_cursor.relative_offset_mut_ref() += 1; // Jump over empty line separating options from content
-
       (classes, name)
     } else {
       (None, None)
@@ -392,13 +390,15 @@ impl Parser {
 
     let mut option_map: HashMap<String, String> = HashMap::new();
 
+    let mut ended_with_blank: bool = false;
+
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
-      if line.trim().is_empty() { break } // End of option list
+      if line.trim().is_empty() { ended_with_blank = true; break } // End of option list
 
       if let Some(captures) = FIELD_MARKER_RE.captures(line) {
         let line_indent = captures.get(1).unwrap().as_str().chars().count();
-        if line_indent != body_indent { break } // Option lists need to be aligned
+        if line_indent != body_indent {  break } // Option lists need to be aligned
         let option_key = captures.get(2).unwrap().as_str().trim();
 
         let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
@@ -412,12 +412,16 @@ impl Parser {
           eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())
         }
       } else {
+        ended_with_blank = false;
         break // Found a line not conforming to field list item syntax 
       }
       *line_cursor.relative_offset_mut_ref() += 1;
     }
 
-    if option_map.is_empty() { None } else { Some(option_map) }
+    if option_map.is_empty() { None } else {
+      if ended_with_blank { *line_cursor.relative_offset_mut_ref() += 1 }
+      Some(option_map)
+    }
   }
 
 
