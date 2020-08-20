@@ -40,15 +40,11 @@ impl Parser {
       None => (directive_marker_line_indent, 0)
     };
 
-    eprintln!("Content indent: {}\nContent offset: {}\n", content_indent, content_offset);
+    *line_cursor.relative_offset_mut_ref() += 1; // jump to next line
 
     let (first_block_lines, first_line_indent) = if empty_after_marker {
 
       // Jump to next contiguous block of text and read it
-
-      eprintln!("Reading text block...\n");
-
-      *line_cursor.relative_offset_mut_ref() += 1;
 
       match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, false, Some(content_indent)) {
         Ok((lines, _)) => (lines, content_indent),
@@ -56,22 +52,15 @@ impl Parser {
       }
     } else {
 
-      eprintln!("Reading indented block...\n");
-
-      *line_cursor.relative_offset_mut_ref() += 1;
-
       // Read the indented block of text starting on the same line as the directive marker
+
       match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(false), Some(content_indent), Some(directive_marker_line_indent), false) {
         Ok((lines, _, offset, _)) => (lines, directive_marker_line_indent),
         Err(e) => panic!("{}", e)
       }
     };
 
-    eprintln!("First block lines: {:#?}\n", first_block_lines);
-
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
-
-    eprintln!("Directive options: {:#?}\n", directive_options);
 
     let (classes, name) = if let Some(mut options) = directive_options {
       if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
