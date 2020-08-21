@@ -375,6 +375,53 @@ impl Parser {
   }
 
 
+  /// ### scan_directive_arguments
+  /// 
+  /// Reads the first block of text of a directive,
+  /// until an empty line or something like a list of options
+  /// (recognized by the automaton `FIELD_MAKRER_RE`) is encountered.
+  /// Combines the lines into a single string and `Option`ally returns it.
+  /// If no arguments are found, returns `None`.
+  /// 
+  /// In case the directive starts on the same line as the directive marker,
+  /// allows specifying first and block indents separately.
+  /// `first_indent` (on the first line) or `block_indent` are ignored on each line.
+  fn scan_directive_arguments (src_lines: &Vec<String>, line_cursor: &mut LineCursor, first_indent: Option<usize>, empty_after_marker: bool) -> Option<String> {
+
+    use crate::parser::state_machine::FIELD_MARKER_RE;
+
+    // The vector containing references to the argument lines.
+    let mut argument_lines: Vec<&str> = Vec::new();
+    let mut first_line_skipped = false;
+
+    // Jump to next line if line after directive marker is empty
+    if empty_after_marker {
+      *line_cursor.relative_offset_mut_ref() += 1;
+      first_line_skipped = true;
+    }
+
+    while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+
+      if line.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(line.as_str()) {
+        break
+      }
+
+      // Each collect allocates, but what the heck, it works.
+      let line_without_indent: String = match first_indent {
+        Some(indent) if !first_line_skipped => {
+          line.chars().skip(indent).collect()
+        }
+        _ => line.chars().skip_while(|c| c.is_whitespace()).collect()
+      };
+
+      argument_lines.push(line.as_str());
+      *line_cursor.relative_offset_mut_ref() += 1;
+    };
+
+    if argument_lines.is_empty() { None } else { Some(argument_lines.join("")) }
+  }
+
+
   /// ### scan_directive_options
   /// Scans the lines following the directive marker for something resembling a field list,
   /// and attempts to scan the contents of the list into an `Option`al `HashMap` of directive
