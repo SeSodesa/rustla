@@ -8,7 +8,7 @@ use crate::doctree::directives::{DirectiveNode, AdmonitionDirective};
 
 
 #[test]
-fn admonition_01 () {
+fn standard_admonition_01 () {
   let src = String::from("
   .. note:: This is a note admonition.
    This is the second line of the first paragraph.
@@ -77,6 +77,52 @@ fn admonition_01 () {
 
   match doctree.child(3).child(0).shared_data() {
     TreeNodeType::Paragraph {..} => {},
+    _ => panic!()
+  }
+}
+
+
+#[test]
+fn generic_admonition_01 () {
+  let src = String::from("
+  .. admonition:: This is a generic admonition with the argument on the first
+      line after the directive marker and extending on the following line as well.
+      :option1: This is not recognized as an admonition option, only \"class\" and \"name\" are valid.
+      :name: hyperref target name
+
+      This paragraph starts the admonition contents.
+      Here is a second line.
+
+  This paragraph no longer belongs to the above admonition.
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+      match (classes, name, variant) {
+        (classes, name, AdmonitionDirective::Admonition) if classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 }

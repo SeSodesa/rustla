@@ -274,7 +274,6 @@ lazy_static! {
     }
 
     inline_transitions
-
   };
 
   // DFAs compiled from patterns found under self::transitions

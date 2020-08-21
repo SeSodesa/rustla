@@ -447,7 +447,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
       "admonition" => {
 
-        todo!("Parse generic admonition here...")
+        Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
       }
 
       "image" => {

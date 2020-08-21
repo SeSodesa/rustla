@@ -16,7 +16,7 @@ impl Parser {
   const COMMON_OPTIONS: &'static [&'static str] = &["name", "class"];
 
 
-  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize,  mut section_level: usize, directive_marker_line_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
+  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize, mut section_level: usize, directive_marker_line_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
 
     use crate::doctree::directives::AdmonitionDirective;
 
@@ -99,8 +99,57 @@ impl Parser {
   }
 
 
-  pub fn parse_generic_admonition () {
-    todo!()
+  /// ### parse_generic admonition
+  /// 
+  /// Much like `parse_standard_admonition`, except
+  /// 1. first checks that the admonition contains an argument,
+  /// 2. then checks for possible options and
+  /// 3. focuses on the admonition itself.
+  pub fn parse_generic_admonition (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
+
+    use crate::parser::state_machine::FIELD_MARKER_RE;
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => panic!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+    };
+
+    let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      arg 
+    } else {
+      panic!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total())
+    };
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    let (classes, name) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
+        eprintln!("Admonition on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+      let classes = options.remove("class");
+      let name = options.remove("name");
+
+      (classes, name)
+    } else {
+      (None, None)
+    };
+
+    let admonition_data = DirectiveNode::Admonition {
+      content_indent: content_indent,
+      classes: classes,
+      name: name,
+      variant: doctree::directives::AdmonitionDirective::Admonition
+    };
+
+    doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));
+    
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Admonition]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None
+    }
   }
 
 
@@ -392,25 +441,33 @@ impl Parser {
 
     // The vector containing references to the argument lines.
     let mut argument_lines: Vec<String> = Vec::new();
-    let mut first_line_skipped = false;
+    let mut on_marker_line = true;
 
     // Jump to next line if line after directive marker is empty
     if empty_after_marker {
       *line_cursor.relative_offset_mut_ref() += 1;
-      first_line_skipped = true;
+      on_marker_line = false;
     }
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
       // Each collect allocates, but what the heck, it works.
-      let line_without_indent: String = match first_indent {
-        Some(indent) if !first_line_skipped => {
-          line.chars().skip(indent).collect()
+      let line_without_indent: String = if on_marker_line {
+        match first_indent {
+          Some(indent) => {
+            on_marker_line = false;
+            line.chars().skip(indent).collect()
+          }
+          _ => panic!("On directive marker line {} but couldn't skip the marker to parse line contents. Computer says no...", line_cursor.sum_total())
         }
-        _ => line.chars().skip_while(|c| c.is_whitespace()).collect()
+      } else {
+        line.chars().skip_while(|c| c.is_whitespace()).collect()
       };
 
-      if line_without_indent.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(&line_without_indent.as_str()) {
+      eprintln!("Line: {:#?}\n", line_without_indent);
+      eprintln!("Field marker matches: {}\n", FIELD_MARKER_RE.is_match(line_without_indent.as_str()));
+
+      if line_without_indent.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(line_without_indent.as_str()) {
         break
       }
 
@@ -418,7 +475,7 @@ impl Parser {
       *line_cursor.relative_offset_mut_ref() += 1;
     };
 
-    if argument_lines.is_empty() { None } else { Some(argument_lines.join("")) }
+    if argument_lines.is_empty() { None } else { Some(argument_lines.join(" ")) }
   }
 
 
@@ -441,7 +498,9 @@ impl Parser {
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
-      if line.trim().is_empty() { ended_with_blank = true; break } // End of option list
+      eprintln!("Line: {:#?}", line);
+
+      if line.trim().is_empty() { ended_with_blank = true; eprintln!("Ended with blank: {}\n", ended_with_blank); break } // End of option list
 
       if let Some(captures) = FIELD_MARKER_RE.captures(line) {
         let line_indent = captures.get(1).unwrap().as_str().chars().count();
@@ -460,7 +519,7 @@ impl Parser {
         }
       } else {
         ended_with_blank = false;
-        break // Found a line not conforming to field list item syntax 
+        break // Found a line not conforming to field list item syntax
       }
       *line_cursor.relative_offset_mut_ref() += 1;
     }
