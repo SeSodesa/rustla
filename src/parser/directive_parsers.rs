@@ -391,7 +391,7 @@ impl Parser {
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
     // The vector containing references to the argument lines.
-    let mut argument_lines: Vec<&str> = Vec::new();
+    let mut argument_lines: Vec<String> = Vec::new();
     let mut first_line_skipped = false;
 
     // Jump to next line if line after directive marker is empty
@@ -402,10 +402,6 @@ impl Parser {
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
-      if line.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(line.as_str()) {
-        break
-      }
-
       // Each collect allocates, but what the heck, it works.
       let line_without_indent: String = match first_indent {
         Some(indent) if !first_line_skipped => {
@@ -414,7 +410,11 @@ impl Parser {
         _ => line.chars().skip_while(|c| c.is_whitespace()).collect()
       };
 
-      argument_lines.push(line.as_str());
+      if line_without_indent.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(&line_without_indent.as_str()) {
+        break
+      }
+
+      argument_lines.push(line_without_indent);
       *line_cursor.relative_offset_mut_ref() += 1;
     };
 
