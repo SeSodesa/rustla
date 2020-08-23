@@ -80,7 +80,7 @@ pub enum ImageDirective {
     height: Option<String>,
     width:  Option<String>,
     scale:  Option<String>,
-    align:  Option<HTMLAlignment>,
+    align:  Option<String>,
     target: Option<String>
   },
 

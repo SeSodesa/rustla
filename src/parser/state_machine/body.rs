@@ -452,7 +452,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
       "image" => {
 
-        todo!("Parse image here...")
+        Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
       }
 
       "figure" => {

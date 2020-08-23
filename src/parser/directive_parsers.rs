@@ -114,7 +114,7 @@ impl Parser {
     };
 
     let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
-      arg 
+      arg
     } else {
       panic!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total())
     };
@@ -153,8 +153,66 @@ impl Parser {
   }
 
 
-  pub fn parse_image () {
-    todo!()
+  pub fn parse_image (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
+
+    use crate::doctree::directives::ImageDirective;
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+    };
+
+    let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      arg
+    } else {
+      panic!("Image on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total())
+    };
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    let (alt, height, width, scale, align, target, classes, name) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name"]) {
+        eprintln!("Image on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let alt = options.remove("class");
+      let height = options.remove("height");
+      let width = options.remove("width");
+      let scale = options.remove("scale");
+      let align = options.remove("align");
+      let target = options.remove("target");
+      let classes = options.remove("class");
+      let name = options.remove("name");
+
+      (alt, height, width, scale, align, target, classes, name)
+    } else {
+      (None, None, None, None, None, None, None, None)
+    };
+
+    let image_data = TreeNodeType::Directive (
+      DirectiveNode::Image (
+        ImageDirective::Image {
+          alt:    alt,
+          height: height,
+          width:  width,
+          scale:  scale,
+          align:  align,
+          target: target,
+          name:   name,
+          class:  classes,
+        }
+      )
+    );
+
+    doctree = doctree.push_data(image_data);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::None
+    }
   }
 
 
