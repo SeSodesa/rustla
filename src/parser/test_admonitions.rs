@@ -109,7 +109,7 @@ fn generic_admonition_01 () {
   match doctree.child(1).shared_data() {
     TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
       match (classes, name, variant) {
-        (classes, name, AdmonitionDirective::Admonition) if classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
+        (classes, name, AdmonitionDirective::Admonition {title}) if title.as_str() == "This is a generic admonition with the argument on the first line after the directive marker and extending on the following line as well." && classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
         _ => panic!()
       }
     },
@@ -123,6 +123,65 @@ fn generic_admonition_01 () {
 
   match doctree.child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+}
+
+
+#[test]
+fn generic_admonition_02 () {
+  let src = String::from("
+  .. admonition::
+    This is a generic admonition, the argument of which starts on
+    the following after the directive marker.
+    :class: options start here
+    :name: here is a reference name
+    :unrocognized: This option is discarded by the parsing function.
+
+    The admonition contents start here,
+    with a single paragraph.
+
+    - followed by
+    - a bullet list
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+      match (classes, name, variant) {
+        (classes, name, AdmonitionDirective::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the following after the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).shared_data() {
+    TreeNodeType::BulletList { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).child(0).shared_data() {
+    TreeNodeType::BulletListItem { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).child(1).shared_data() {
+    TreeNodeType::BulletListItem { .. } => {}
     _ => panic!()
   }
 }

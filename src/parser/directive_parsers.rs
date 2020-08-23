@@ -139,7 +139,9 @@ impl Parser {
       content_indent: content_indent,
       classes: classes,
       name: name,
-      variant: doctree::directives::AdmonitionDirective::Admonition
+      variant: doctree::directives::AdmonitionDirective::Admonition {
+        title: argument
+      }
     };
 
     doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));

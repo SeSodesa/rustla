@@ -53,7 +53,9 @@ pub enum AdmonitionDirective {
   Note,
   Tip,
   Warning,
-  Admonition,
+  Admonition {
+    title: String
+  },
 }
 
 

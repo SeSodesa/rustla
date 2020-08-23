@@ -657,16 +657,16 @@ impl TreeNodeType {
           DirectiveNode::Admonition { variant, .. } => {
 
             match variant {
-              AdmonitionDirective::Attention  => {},
-              AdmonitionDirective::Caution    => {},
-              AdmonitionDirective::Danger     => {},
-              AdmonitionDirective::Error      => {},
-              AdmonitionDirective::Hint       => {},
-              AdmonitionDirective::Important  => {},
-              AdmonitionDirective::Note       => {},
-              AdmonitionDirective::Tip        => {},
-              AdmonitionDirective::Warning    => {},
-              AdmonitionDirective::Admonition => {},
+              AdmonitionDirective::Attention          => {},
+              AdmonitionDirective::Caution            => {},
+              AdmonitionDirective::Danger             => {},
+              AdmonitionDirective::Error              => {},
+              AdmonitionDirective::Hint               => {},
+              AdmonitionDirective::Important          => {},
+              AdmonitionDirective::Note               => {},
+              AdmonitionDirective::Tip                => {},
+              AdmonitionDirective::Warning            => {},
+              AdmonitionDirective::Admonition { .. }  => {},
             }
 
           }
