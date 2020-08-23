@@ -133,10 +133,10 @@ fn generic_admonition_02 () {
   let src = String::from("
   .. admonition::
     This is a generic admonition, the argument of which starts on
-    the following after the directive marker.
+    the following line after the directive marker.
     :class: options start here
     :name: here is a reference name
-    :unrocognized: This option is discarded by the parsing function.
+    :unrecognized: This option is discarded by the parsing function.
 
     The admonition contents start here,
     with a single paragraph.
