@@ -133,7 +133,7 @@ fn generic_admonition_02 () {
   let src = String::from("
   .. admonition::
     This is a generic admonition, the argument of which starts on
-    the following line after the directive marker.
+    the line following the directive marker.
     :class: options start here
     :name: here is a reference name
     :unrecognized: This option is discarded by the parsing function.
@@ -158,7 +158,7 @@ fn generic_admonition_02 () {
   match doctree.child(1).shared_data() {
     TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
       match (classes, name, variant) {
-        (classes, name, AdmonitionDirective::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the following after the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
+        (classes, name, AdmonitionDirective::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the line following the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
         _ => panic!()
       }
     },

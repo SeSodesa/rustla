@@ -107,8 +107,6 @@ impl Parser {
   /// 3. focuses on the admonition itself.
   pub fn parse_generic_admonition (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
 
-    use crate::parser::state_machine::FIELD_MARKER_RE;
-
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
