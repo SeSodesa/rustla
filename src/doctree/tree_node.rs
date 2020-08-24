@@ -64,7 +64,7 @@ impl TreeNode {
       | TreeNodeType::AbsoluteURI { .. }              | TreeNodeType::StandaloneEmail { .. }
       | TreeNodeType::WhiteSpace { .. }               | TreeNodeType::ExternalHyperlinkTarget { .. }
       | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Text { .. }
-      | TreeNodeType::EmptyLine                       | TreeNodeType::Directive(DirectiveNode::Image (..))
+      | TreeNodeType::EmptyLine
         => None,
       _ => Some(Vec::<TreeNode>::new())
     }
@@ -134,14 +134,14 @@ impl TreeNode {
     match self.data {
 
       // Structural nodes can other (sub)srutural elements
-      TreeNodeType::Document { .. } | TreeNodeType::Section { .. } | TreeNodeType::Topic
+      TreeNodeType::Document { .. } | TreeNodeType::Section { .. }
       | TreeNodeType::Sidebar => {
         match node_data {
-          TreeNodeType::Section { .. }                    | TreeNodeType::Transition                      | TreeNodeType::Topic
+          TreeNodeType::Section { .. }                    | TreeNodeType::Transition                      | TreeNodeType::Topic { .. }
           | TreeNodeType:: Sidebar
           | TreeNodeType::Paragraph { .. }                | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
-          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
+          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote { .. }
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Admonition { .. }
@@ -154,12 +154,12 @@ impl TreeNode {
       // These (sub)body elements are allowed to contain body level nodes
       TreeNodeType::BulletListItem { .. }       | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }      | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote                | TreeNodeType::Footnote { .. }           | TreeNodeType::Citation { .. }
-      | TreeNodeType::Directive( .. )           | TreeNodeType::Admonition { .. } => {
+      | TreeNodeType::BlockQuote { .. }         | TreeNodeType::Footnote { .. }           | TreeNodeType::Citation { .. }
+      | TreeNodeType::Admonition { .. } => {
         match node_data {
           TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
-          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
+          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote { .. }
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition

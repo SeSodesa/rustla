@@ -154,24 +154,6 @@ pub enum BodyElementDirective {
     class:  Option<String>,
   },
 
-  /// #### LineBlock
-  ///
-  /// Deprecated!
-  ///
-  /// The "line-block" directive constructs an element where line breaks and
-  /// initial indentation is significant and inline markup is supported.
-  /// It is equivalent to a parsed literal block with different rendering
-  /// typically in an ordinary serif typeface instead of a typewriter/monospaced face,
-  /// and not automatically indented. (Have the line-block directive begin a block quote
-  /// to get an indented line block.) Line blocks are useful for address blocks
-  /// and verse (poetry, song lyrics), where the structure of lines is significant.
-  ///
-  /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#line-block
-  LineBlock {
-    name:   Option<String>,
-    class:  Option<String>,
-  },
-
   /// #### ParsedLiteralBlock
   /// Unlike an ordinary literal block, the "parsed-literal" directive constructs a literal block
   /// where the text is parsed for inline markup. It is equivalent to a line block with different
@@ -254,7 +236,7 @@ pub enum BodyElementDirective {
   /// Details https://docutils.sourceforge.io/docs/ref/rst/directives.html#pull-quote
   PullQuote,
 
-  /// #### CompundParagraph
+  /// #### CompoundParagraph
   /// The "compound" directive is used to create a compound paragraph,
   /// which is a single logical paragraph containing multiple physical body elements
   /// such as simple paragraphs,literal blocks, tables, lists, etc.,
@@ -352,49 +334,7 @@ pub enum TableDirective {
 #[derive(Debug)]
 pub enum DocumentPartDirective {
 
-  /// #### TableOfContents
-  /// The "contents" directive generates a table of contents (TOC) in a topic.
-  /// Topics, and therefore tables of contents, may occur anywhere a section or transition may occur. Body elements and topics may not contain tables of contents.
-  ///
-  /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents
-  TableOfContents {
-    depth:      Option<u32>,
-    local:      Option<bool>,
-    backlinks:  Option<ToCBacklinks>,
-    class:      Option<String>
-  },
 
-  /// #### AutomaticSectionNumbering
-  /// The "sectnum" (or "section-numbering") directive automatically numbers sections and subsections in a document (if not disabled by the
-  /// --no-section-numbering command line option or the sectnum_xform configuration setting).
-  ///
-  /// Section numbers are of the "multiple enumeration" form, where each level has a number, separated by periods. For example,
-  /// the title of section 1, subsection 2, subsubsection 3 would have "1.2.3" prefixed.
-  ///
-  /// The "sectnum" directive does its work in two passes: the initial parse and a transform. During the initial parse, a "pending" element is
-  /// generated which acts as a placeholder, storing any options internally.
-  /// At a later stage in the processing, the "pending" element triggers a transform, which adds section numbers to titles. Section numbers are
-  /// enclosed in a "generated" element, and titles have their "auto" attribute set to "1".
-  ///
-  /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#automatic-section-numbering
-  AutomaticSectionNumbering {
-    depth:  Option<u32>,
-    prefix: Option<String>,
-    suffix: Option<String>,
-    start:  Option<u32>,
-  },
-
-  /// #### DocumentHeader
-  /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
-  /// 
-  /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#document-header-footer
-  DocumentHeader,
-
-  /// #### DocumentFooter
-  /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
-  /// 
-  /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#document-header-footer
-  DocumentFooter,
 }
 
 
