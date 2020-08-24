@@ -866,46 +866,91 @@ impl TreeNodeType {
 /// ### NodeCategory
 /// 
 /// An anumeration of the different kinds of categories a node might belong to.
-#[derive(PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum NodeCategory {
 
+  /// #### Root
+  /// This property only belongs to the document itself.
   Root,
 
+  /// #### Titular
+  /// A type of title, such as a section or a topic.
   Titular,
 
+  /// #### PreBibliographic
+  /// Category of node which may occur before Bibliographic Nodes.
   PreBibliographic,
 
+  /// #### Bibliographic
+  /// The docinfo element is an optional child of document.
+  /// It groups bibliographic elements together.
+  /// All bibliographic elements except authors and field contain text data.
+  /// `Authors` contains further bibliographic elements (most notably author). field contains field_name and field_body body subelements.
   Bibliograhic,
 
+  /// #### Decorative
+  /// The decoration element is also an optional child of document. It groups together elements used to generate page headers and footers.
   Decorative,
 
+  /// #### Structural
+  /// Structural elements may only contain child elements;
+  /// they do not directly contain text data.
+  /// Structural elements may contain body elements or further structural elements.
+  /// Structural elements can only be child elements of other structural elements.
   Structural,
 
+  /// #### SubStructural
+  /// Structural subelements are child elements of structural elements.
+  /// Simple structuctural subelements (title, subtitle) contain text data;
+  /// the others are compound and do not directly contain text data.
   SubStructural,
 
+  /// #### Body
+  /// Body elements can be located inside structural elements and compund body elements,
+  /// an may contain sub-body elements. For example, bullet lists are located inside sections
+  /// and may contain bullet list items.
   Body,
 
+  /// #### SubBody
+  /// Compound body elements contain specific subelements (e.g. `BulletList` contains `BulletListItem`s).
+  /// Subelements may themselves be compound elements (containing further child elements, like field)
+  /// or simple data elements (containing text data, like field_name).
+  /// These subelements always occur within specific parent elements,
+  /// never at the body element level (beside paragraphs, etc.).
+  SubBody,
+
+  /// #### SimpleBody
+  /// Simple body elements are empty or directly contain text data.
+  /// Those that contain text data may also contain inline elements. Such elements therefore have a "mixed content model".
   SimpleBody,
 
+  /// #### CompoundBody
+  /// Compound body elements contain local substructure (body subelements) and further body elements.
+  /// They do not directly contain text data.
   CompoundBody,
 
-  General,
-
+  /// #### Sequential
+  /// Any node that might be placed in a sequence with similar nodes,
+  /// such as bullet list items.
   Sequential,
 
-  Admonition,
-
+  /// #### Special
+  /// Special internal body elements.
   Special,
 
-  Invisible,
-
-  Part,
-
+  /// #### Inline
+  /// Inline elements directly contain text data,
+  /// and may also contain further inline elements.
+  /// Inline elements are contained within simple body elements.
+  /// Most inline elements have a "mixed content model".
   Inline,
 
+  /// #### Referential
+  /// Any node that can be referenced.
   Referential,
 
-  Targetable,
 
-  Label,
+  /// #### Raw
+  /// Raw data that is to be passed untouched to the writer.
+  Raw,
 }
