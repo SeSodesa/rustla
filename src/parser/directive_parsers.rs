@@ -74,14 +74,14 @@ impl Parser {
       (None, None)
     };
 
-    let admonition_data = DirectiveNode::Admonition {
+    let admonition_data = TreeNodeType::Admonition {
       content_indent: content_indent,
       classes: classes,
       name: name,
       variant: variant
     };
 
-    doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));
+    doctree = doctree.push_data_and_focus(admonition_data);
 
 
 
@@ -133,7 +133,7 @@ impl Parser {
       (None, None)
     };
 
-    let admonition_data = DirectiveNode::Admonition {
+    let admonition_data = TreeNodeType::Admonition {
       content_indent: content_indent,
       classes: classes,
       name: name,
@@ -142,7 +142,7 @@ impl Parser {
       }
     };
 
-    doctree = doctree.push_data_and_focus(TreeNodeType::Directive(admonition_data));
+    doctree = doctree.push_data_and_focus(admonition_data);
     
     TransitionResult::Success {
       doctree: doctree,
@@ -190,21 +190,17 @@ impl Parser {
       (None, None, None, None, None, None, None, None)
     };
 
-    let image_data = TreeNodeType::Directive (
-      DirectiveNode::Image (
-        ImageDirective::Image {
-          uri: argument,
-          alt:    alt,
-          height: height,
-          width:  width,
-          scale:  scale,
-          align:  align,
-          target: target,
-          name:   name,
-          class:  classes,
-        }
-      )
-    );
+    let image_data = TreeNodeType::Image {
+      uri: argument,
+      alt:    alt,
+      height: height,
+      width:  width,
+      scale:  scale,
+      align:  align,
+      target: target,
+      name:   name,
+      class:  classes,
+    };
 
     doctree = doctree.push_data(image_data);
 

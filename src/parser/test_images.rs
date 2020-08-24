@@ -38,13 +38,9 @@ fn image_01 () {
 
   match doctree.child(1).shared_data() {
 
-    TreeNodeType::Directive (
-      DirectiveNode::Image (
-        ImageDirective::Image {
+    TreeNodeType::Image {
           uri, alt, height, width, scale, align, target, name, class
-        }
-      )
-    ) => match (uri, alt, height, width, scale, align, target, name, class) {
+        } => match (uri, alt, height, width, scale, align, target, name, class) {
         (
           uri, Some(alt), Some(height), Some(width), Some(scale), Some(align), Some(target), Some(name), Some(class)
         ) if

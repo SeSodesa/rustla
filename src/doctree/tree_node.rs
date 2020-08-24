@@ -144,7 +144,8 @@ impl TreeNode {
           | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Directive( .. )
+          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Admonition { .. }
+          | TreeNodeType::Image { .. }
             => true,
           _ => false
         }
@@ -154,7 +155,7 @@ impl TreeNode {
       TreeNodeType::BulletListItem { .. }       | TreeNodeType::EnumeratedListItem { .. }
       | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }      | TreeNodeType::OptionListItem
       | TreeNodeType::BlockQuote                | TreeNodeType::Footnote { .. }           | TreeNodeType::Citation { .. }
-      | TreeNodeType::Directive( .. ) => {
+      | TreeNodeType::Directive( .. )           | TreeNodeType::Admonition { .. } => {
         match node_data {
           TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
           | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
@@ -162,7 +163,7 @@ impl TreeNode {
           | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
           | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
           | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition
-          | TreeNodeType::Section { .. }                  | TreeNodeType::Directive( .. )
+          | TreeNodeType::Section { .. }                  | TreeNodeType::Admonition { .. }               | TreeNodeType::Figure { .. }
             => true,
           _ => false
         }

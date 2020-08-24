@@ -87,6 +87,8 @@ pub enum StateMachine {
   /// When focused on a field list node, the parser only recognizes empty lines and field list items.
   FieldList,
 
+  Figure,
+
   /// #### Footnote
   /// Footnotes can contain arbitrary body elements.
   /// This state is reserved for recognizing them when focused on a footnote node.

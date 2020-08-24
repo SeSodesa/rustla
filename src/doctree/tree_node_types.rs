@@ -41,8 +41,27 @@ pub enum TreeNodeType {
   Address,
 
   /// #### Admonition
-  /// This element is a generic, titled admonition. Also see the specific admonition elements Docutils offers (in alphabetical order): caution, danger, error, hint, important, note, tip, warning.
-  Admonition,
+  /// Covers all of the standard admonition types of reStructuredText:
+  /// 
+  /// 1. attention,
+  /// 2. caution,
+  /// 3. danger,
+  /// 4. error,
+  /// 5. hint,
+  /// 6. important,
+  /// 7. note,
+  /// 8. tip and
+  /// 9. warning,
+  /// 10. admonition
+  /// 
+  /// All of these have the same fields, and vary only in how they will be displayed.
+  /// The last variant "admonition" may also contain a title. as one of its fields.
+  Admonition {
+    content_indent: usize,
+    classes: Option<String>,
+    name: Option<String>,
+    variant: AdmonitionDirective
+  },
 
   /// #### Attention
   Attention,
@@ -272,7 +291,28 @@ pub enum TreeNodeType {
   },
 
   /// #### Figure
-  Figure,
+  Figure {
+
+    /// ##### body_indent
+    /// The indentation of the caption and legend of this `Figure`.
+    body_indent: usize,
+
+    /// #### uri
+    /// A compulsory image location.
+    uri: String,
+
+    // Options
+    name:     Option<String>,
+    class:    Option<String>,
+    alt:      Option<String>,
+    height:   Option<String>,
+    width:    Option<String>,
+    scale:    Option<String>,
+    align:    Option<String>,
+    target:   Option<String>,
+    figwidth: Option<String>,
+    figclass: Option<String>
+  },
 
   /// #### Footer
   Footer,
@@ -303,7 +343,21 @@ pub enum TreeNodeType {
   Hint,
 
   /// #### Image
-  Image,
+  Image {
+
+    uri: String,
+
+    // Options
+
+    alt:    Option<String>,
+    height: Option<String>,
+    width:  Option<String>,
+    scale:  Option<String>,
+    align:  Option<String>,
+    target: Option<String>,
+    name:   Option<String>,
+    class:  Option<String>,
+  },
 
   /// #### Important
   Important,

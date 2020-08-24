@@ -35,7 +35,7 @@ fn standard_admonition_01 () {
   doctree.print_tree();
 
   match doctree.child(1).shared_data() {
-    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (None, None, AdmonitionDirective::Note) => {}
         _ => panic!()
@@ -50,7 +50,7 @@ fn standard_admonition_01 () {
   }
 
   match doctree.child(2).shared_data() {
-    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (None, None, AdmonitionDirective::Warning) => {}
         _ => panic!()
@@ -65,7 +65,7 @@ fn standard_admonition_01 () {
   }
 
   match doctree.child(3).shared_data() {
-    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (Some(class), Some(name), AdmonitionDirective::Tip) if class.as_str() == "class" && name.as_str() == "test" => {}
         _ => panic!()
@@ -106,7 +106,7 @@ fn generic_admonition_01 () {
 
 
   match doctree.child(1).shared_data() {
-    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionDirective::Admonition {title}) if title.as_str() == "This is a generic admonition with the argument on the first line after the directive marker and extending on the following line as well." && classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
         _ => panic!()
@@ -155,7 +155,7 @@ fn generic_admonition_02 () {
 
 
   match doctree.child(1).shared_data() {
-    TreeNodeType::Directive( DirectiveNode::Admonition { content_indent, classes, name, variant } ) => {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionDirective::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the line following the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
         _ => panic!()

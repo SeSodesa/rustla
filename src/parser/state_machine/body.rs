@@ -1138,7 +1138,7 @@ fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: 
       if relevant_detected_indent == *body_indent { true } else { false }
     },
 
-    TreeNodeType::Directive(DirectiveNode::Admonition {content_indent, ..}) => {
+    TreeNodeType::Admonition {content_indent, ..} => {
       if relevant_detected_indent == *content_indent { true } else { false }
     }
 
