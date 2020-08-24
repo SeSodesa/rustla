@@ -96,13 +96,19 @@ pub enum ImageDirective {
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#figure
   Figure {
+
+    /// #### uri
+    /// A compulsory image location.
+    uri: String,
+
+    // Options
     name:     Option<String>,
     class:    Option<String>,
     alt:      Option<String>,
     height:   Option<String>,
     width:    Option<String>,
     scale:    Option<String>,
-    align:    Option<HorizontalAlignment>,
+    align:    Option<String>,
     target:   Option<String>,
     figwidth: Option<FigWidth>,
     figclass: Option<String>
