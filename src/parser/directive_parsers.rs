@@ -123,7 +123,7 @@ impl Parser {
 
     let (classes, name) = if let Some(mut options) = directive_options {
       if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
-        eprintln!("Admonition on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+        eprintln!("Admonition preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
       }
       let classes = options.remove("class");
       let name = options.remove("name");
@@ -173,10 +173,10 @@ impl Parser {
 
     let (alt, height, width, scale, align, target, classes, name) = if let Some(mut options) = directive_options {
       if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name"]) {
-        eprintln!("Image on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
       }
 
-      let alt = options.remove("class");
+      let alt = options.remove("alt");
       let height = options.remove("height");
       let width = options.remove("width");
       let scale = options.remove("scale");
@@ -193,6 +193,7 @@ impl Parser {
     let image_data = TreeNodeType::Directive (
       DirectiveNode::Image (
         ImageDirective::Image {
+          uri: argument,
           alt:    alt,
           height: height,
           width:  width,
@@ -571,6 +572,8 @@ impl Parser {
           None => panic!("Looks like a directive option might not have a value on line {}...", line_cursor.sum_total())
         };
         let option_val = line[index..].trim();
+
+        eprintln!("Option value: {:#?}\n", option_val);
 
         if let Some(val) = option_map.insert(option_key.to_string(), option_val.to_string()) {
           eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())

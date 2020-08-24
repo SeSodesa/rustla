@@ -64,7 +64,7 @@ impl TreeNode {
       | TreeNodeType::AbsoluteURI { .. }              | TreeNodeType::StandaloneEmail { .. }
       | TreeNodeType::WhiteSpace { .. }               | TreeNodeType::ExternalHyperlinkTarget { .. }
       | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Text { .. }
-      | TreeNodeType::EmptyLine
+      | TreeNodeType::EmptyLine                       | TreeNodeType::Directive(DirectiveNode::Image (..))
         => None,
       _ => Some(Vec::<TreeNode>::new())
     }

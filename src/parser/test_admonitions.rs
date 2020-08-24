@@ -2,7 +2,6 @@
 /// A submodule for admonition unit tests
 
 use super::*;
-use crate::doctree::directives::{DirectiveNode, AdmonitionDirective};
 
 #[cfg(test)]
 
