@@ -752,114 +752,111 @@ impl TreeNodeType {
   /// ### node_categories
   /// According to the [reStructuredText DTD](https://docutils.sourceforge.io/docs/ref/doctree.html)
   /// each node type is associated with a set of categories.
-  /// This function returns that set for each defined node type.
-  pub fn node_categories (&self) {
+  /// This function returns that set (an immutable iterator) for each defined node type.
+  pub fn node_categories (&self) -> impl Iterator<Item=&NodeCategory> {
 
     match self {
-
-      Self::Abbreviation { .. } => {}
-      Self::AbsoluteURI { .. } => {}
-      Self::Acronym { .. } => {}
-      Self::Address => {}
-      Self::Admonition { .. } => {}
-      Self::Attribution => {}
-      Self::Author { .. } => {}
-      Self::Authors {..} => {}
-      Self::AutomaticSectionNumbering {..} => {}
-      Self::BlockQuote { .. } => {}
-      Self::BulletList { .. } => {}
-      Self::BulletListItem{ .. } => {}
-      Self::Caption { .. } => {}
-      Self::Citation { .. } => {}
-      Self::CitationReference { .. } => {}
-      Self::Classifier { .. } => {}
-      Self::Code { .. } => {}
-      Self::ColSpec { .. } => {}
-      Self::Comment => {}
-      Self::CompoundParagraph { .. } => {}
-      Self::Contact { .. } => {}
-      Self::Container { .. } => {}
-      Self::Copyright { .. } => {}
-      Self::CSVTable { .. } => {}
-      Self::Date => {}
-      Self::Decoration => {}
-      Self::Definition => {}
-      Self::DefinitionList { .. } => {}
-      Self::DefinitionListItem { .. } => {}
-      Self::Description => {}
-      Self::DocInfo => {}
-      Self::DoctestBlock{ .. } => {}
-      Self::Document { .. }   => {}
-      Self::Emphasis { .. } => {}
-      Self::EmptyLine => {}
-      Self::Entry => {}
-      Self::EnumeratedList { .. } => {}
-      Self::EnumeratedListItem { .. } => {}
-      Self::ExternalHyperlinkTarget { .. } => {}
-      Self::Field => {}
-      Self::FieldBody { .. } => {}
-      Self::FieldList { .. } => {}
-      Self::FieldListItem { .. } => {}
-      Self::Figure { .. } => {}
-      Self::Footer { .. } => {}
-      Self::Footnote { .. } => {}
-      Self::FootnoteReference { .. } => {}
-      Self::Header { .. } => {}
-      Self::Generated => {}
-      Self::Image { .. } => {}
-      Self::IndirectHyperlinkTarget { .. } => {}
-      Self::Inline { .. } => {}
-      Self::InlineTarget { .. } => {}
-      Self::InterpretedText { .. } => {}
-      Self::Label { .. } => {}
-      Self::Legend { .. } => {}
-      Self::Line { .. } => {}
-      Self::LineBlock { .. } => {}
-      Self::ListTable { .. } => {}
-      Self::Literal { .. } => {}
-      Self::LiteralBlock { .. } => {}
-      Self::Math { .. } => {}
-      Self::MathBlock { .. } => {}
-      Self::OptionList { .. } => {}
-      Self::OptionListItem { .. } => {}
-      Self::OptionString { .. } => {}
-      Self::Organization { .. } => {}
-      Self::Paragraph { .. } => {}
-      Self::ParsedLiteralBlock { .. } => {}
-      Self::Pending { .. } => {}
-      Self::Problematic { .. } => {}
-      Self::Raw { .. } => {}
-      Self::Reference { .. } => {}
-      Self::Revision { .. } => {}
-      Self::Row { .. } => {}
-      Self::Rubric { .. } => {}
-      Self::Section { .. }    => {}
-      Self::Sidebar { .. } => {}
-      Self::Status { .. } => {}
-      Self::StandaloneEmail { .. } => {}
-      Self::StrongEmphasis { .. } => {}
-      Self::Subscript { .. } => {}
-      Self::SubstitutionDefinition { .. } => {}
-      Self::SubstitutionReference { .. } => {}
-      Self::Subtitle { .. } => {}
-      Self::Superscript { .. } => {}
-      Self::SystemMessage { .. } => {}
-      Self::Table { .. } => {}
-      Self::Target { .. } => {}
-      Self::TBody { .. } => {}
-      Self::Term { .. } => {}
-      Self::Text { .. } => {}
-      Self::TGroup { .. } => {}
-      Self::THead { .. } => {}
-      Self::Title { .. } => {}
-      Self::TitleReference { .. } => {}
-      Self::Topic { .. } => {}
-      Self::Transition {}     => {}
-      Self::Version { .. } => {}
-      Self::WhiteSpace { .. } => {}
+      Self::Abbreviation { .. } => ABBREVIATION_CATEGORIES.iter(),
+      Self::AbsoluteURI { .. } => ABSOLUTE_URI_CATEGORIES.iter(),
+      Self::Acronym { .. } => ACRONYM_CATEGORIES.iter(),
+      Self::Address => ADDRESS_CATEGORIES.iter(),
+      Self::Admonition { .. } => ADMONITION_CATEGORIES.iter(),
+      Self::Attribution => ATTRIBUTION_CATEGORIES.iter(),
+      Self::Author { .. } => AUTHOR_CATEGORIES.iter(),
+      Self::Authors {..} => AUTHORS_CATEGORIES.iter(),
+      Self::AutomaticSectionNumbering {..} => AUTO_SECTION_NUMBERING_CATEGORIES.iter(),
+      Self::BlockQuote { .. } => BLOCK_QUOTE_CATEGORIES.iter(),
+      Self::BulletList { .. } => BULLET_LIST_CATEGORIES.iter(),
+      Self::BulletListItem{ .. } => BULLET_LIST_ITEM_CATEGORIES.iter(),
+      Self::Caption { .. } => CAPTION_CATEGORIES.iter(),
+      Self::Citation { .. } => CITATION_CATEGORIES.iter(),
+      Self::CitationReference { .. } => CITATION_REFERENCE_CATEGORIES.iter(),
+      Self::Classifier { .. } => CLASSIFIER_CATEGORIES.iter(),
+      Self::Code { .. } => CODE_CATEGORIES.iter(),
+      Self::ColSpec { .. } => COLSPEC_CATEGORIES.iter(),
+      Self::Comment => COMMENT_CATEGORIES.iter(),
+      Self::CompoundParagraph { .. } => COMPUND_PARAGRAPH_CATEGORIES.iter(),
+      Self::Contact { .. } => CONTACT_CATEGORIES.iter(),
+      Self::Container { .. } => CONTAINER_CATEGORIES.iter(),
+      Self::Copyright { .. } => COPYRIGHT_CATEGORIES.iter(),
+      Self::CSVTable { .. } => CSV_TABLE_CATEGORIES.iter(),
+      Self::Date => DATE_CATEGORIES.iter(),
+      Self::Decoration => DECORATION_CATEGORIES.iter(),
+      Self::Definition => DEFINITION_CATEGORIES.iter(),
+      Self::DefinitionList { .. } => DEFINITION_LIST_CATEGORIES.iter(),
+      Self::DefinitionListItem { .. } => DEFINITION_LIST_ITEM_CATEGORIES.iter(),
+      Self::Description => DESCRIPTION_CATEGORIES.iter(),
+      Self::DocInfo => DOC_INFO_CATEGORIES.iter(),
+      Self::DoctestBlock{ .. } => DOCTEST_BLOCK_CATEGORIES.iter(),
+      Self::Document { .. }   => DOCUMENT_CATEGORIES.iter(),
+      Self::Emphasis { .. } => EMPHASIS_CATEGORIES.iter(),
+      Self::EmptyLine => EMPTY_LINE_CATEGORIES.iter(),
+      Self::Entry => ENTRY_CATEGORIES.iter(),
+      Self::EnumeratedList { .. } => ENUMERATED_LIST_CATEGORIES.iter(),
+      Self::EnumeratedListItem { .. } => ENUMERATED_LIST_ITEM_CATEGORIES.iter(),
+      Self::ExternalHyperlinkTarget { .. } => EXTERNAL_HYPERLINK_TARGET_CATEGORIES.iter(),
+      Self::Field => FIELD_CATEGORIES.iter(),
+      Self::FieldBody { .. } => FIELD_BODY_CATEGORIES.iter(),
+      Self::FieldList { .. } => FIELD_LIST_CATEGORIES.iter(),
+      Self::FieldListItem { .. } => FIELD_LIST_ITEM_CATEGORIES.iter(),
+      Self::Figure { .. } => FIGURE_CATEGORIES.iter(),
+      Self::Footer { .. } => FOOTER_CATEGORIES.iter(),
+      Self::Footnote { .. } => FOOTNOTE_CATEGORIES.iter(),
+      Self::FootnoteReference { .. } => FOOTNOTE_REFERENCE_CATEGORIES.iter(),
+      Self::Header { .. } => HEADER_CATEGORIES.iter(),
+      Self::Generated => GENERATED_CATEGORIES.iter(),
+      Self::Image { .. } => IMAGE_CATEGORIES.iter(),
+      Self::IndirectHyperlinkTarget { .. } => INDIRECT_HYPERLINK_TARGET_CATEGORIES.iter(),
+      Self::Inline { .. } => INLINE_CATEGORIES.iter(),
+      Self::InlineTarget { .. } => INLINE_TARGET_CATEGORIES.iter(),
+      Self::InterpretedText { .. } => INTERPRETED_TEXT_CATEGORIES.iter(),
+      Self::Label { .. } => LABEL_CATEGORIES.iter(),
+      Self::Legend { .. } => LEGEND_CATEGORIES.iter(),
+      Self::Line { .. } => LINE_CATEGORIES.iter(),
+      Self::LineBlock { .. } => LINE_BLOCK_CATEGORIES.iter(),
+      Self::ListTable { .. } => LIST_TABLE_CATEGORIES.iter(),
+      Self::Literal { .. } => LITERAL_CATEGORIES.iter(),
+      Self::LiteralBlock { .. } => LITERAL_BLOCK_CATEGORIES.iter(),
+      Self::Math { .. } => MATH_CATEGORIES.iter(),
+      Self::MathBlock { .. } => MATH_BLOCK_CATEGORIES.iter(),
+      Self::OptionList { .. } => OPTION_LIST_CATEGORIES.iter(),
+      Self::OptionListItem { .. } => OPTION_LIST_ITEM_CATEGORIES.iter(),
+      Self::OptionString { .. } => OPTION_STRING_CATEGORIES.iter(),
+      Self::Organization { .. } => ORGANIZATION_CATEGORIES.iter(),
+      Self::Paragraph { .. } => PARAGRAPH_CATEGORIES.iter(),
+      Self::ParsedLiteralBlock { .. } => PARSED_LITERAL_BLOCK_CATEGORIES.iter(),
+      Self::Pending { .. } => PENDING_CATEGORIES.iter(),
+      Self::Problematic { .. } => PROBLEMATIC_CATEGORIES.iter(),
+      Self::Raw { .. } => RAW_CATEGORIES.iter(),
+      Self::Reference { .. } => REFERENCE_CATEGORIES.iter(),
+      Self::Revision { .. } => REVISION_CATEGORIES.iter(),
+      Self::Row { .. } => ROW_CATEGORIES.iter(),
+      Self::Rubric { .. } => RUBRIC_CATEGORIES.iter(),
+      Self::Section { .. }    => SECTION_CATEGORIES.iter(),
+      Self::Sidebar { .. } => SIDEBAR_CATEGORIES.iter(),
+      Self::Status { .. } => STATUS_CATEGORIES.iter(),
+      Self::StandaloneEmail { .. } => STANDALONE_EMAIL_CATEGORIES.iter(),
+      Self::StrongEmphasis { .. } => STRONG_EMPHASIS_CATEGORIES.iter(),
+      Self::Subscript { .. } => SUBSCRIPT_CATEGORIES.iter(),
+      Self::SubstitutionDefinition { .. } => SUBSTITUTION_DEF_CATEGORIES.iter(),
+      Self::SubstitutionReference { .. } => SSUBSITTUTION_REF_CATEGORIES.iter(),
+      Self::Subtitle { .. } => SUBTITLE_CATEGORIES.iter(),
+      Self::Superscript { .. } => SUPERSCRIPT_CATEGORIES.iter(),
+      Self::SystemMessage { .. } => SYSTEM_MESSAGE_CATEGORIES.iter(),
+      Self::Table { .. } => TABLE_CATEGORIES.iter(),
+      Self::Target { .. } => TARGET_CATEGORIES.iter(),
+      Self::TBody { .. } => T_BODY_CATEGORIES.iter(),
+      Self::Term { .. } => TERM_CATEGORIES.iter(),
+      Self::Text { .. } => TEXT_CATEGORIES.iter(),
+      Self::TGroup { .. } => T_GROUP_CATEGORIES.iter(),
+      Self::THead { .. } => T_HEAD_CATEGORIES.iter(),
+      Self::Title { .. } => TITLE_CATEGORIES.iter(),
+      Self::TitleReference { .. } => TITLE_REF_CATEGORIES.iter(),
+      Self::Topic { .. } => TOPIC_CATEGORIES.iter(),
+      Self::Transition {}     => TRANSITION_CATEGORIES.iter(),
+      Self::Version { .. } => VERSION_CATEGORIES.iter(),
+      Self::WhiteSpace { .. } => WHITESPACE_CATEGORIES.iter(),
     }
-
-    todo!()
   }
 }
 
@@ -1252,7 +1249,7 @@ const TOPIC_CATEGORIES: [NodeCategory; 0] = [
 
 ];
 const TRANSITION_CATEGORIES: [NodeCategory; 0] = [
-  
+
 ];
 const VERSION_CATEGORIES: [NodeCategory; 0] = [
 
