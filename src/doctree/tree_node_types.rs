@@ -865,7 +865,7 @@ impl TreeNodeType {
 
 /// ### NodeCategory
 /// 
-/// An anumeration of the different kinds of categories a node might belong to.
+/// An enumeration of the different kinds of categories a node might belong to.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum NodeCategory {
 
@@ -954,3 +954,309 @@ pub enum NodeCategory {
   /// Raw data that is to be passed untouched to the writer.
   Raw,
 }
+
+
+use std::iter::FromIterator;
+
+// Node category constants
+
+const ABBREVIATION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const ABSOLUTE_URI_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const ACRONYM_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const ADDRESS_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const ADMONITION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const ATTRIBUTION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const AUTHOR_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const AUTHORS_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const AUTO_SECTION_NUMBERING_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const BLOCK_QUOTE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const BULLET_LIST_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const BULLET_LIST_ITEM_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
+];
+const CAPTION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CITATION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CITATION_REFERENCE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CLASSIFIER_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CODE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const COLSPEC_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const COMMENT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const COMPUND_PARAGRAPH_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CONTACT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CONTAINER_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const COPYRIGHT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const CSV_TABLE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DATE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DECORATION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DEFINITION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DEFINITION_LIST_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DEFINITION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DESCRIPTION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DOC_INFO_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DOCTEST_BLOCK_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const DOCUMENT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const EMPHASIS_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const EMPTY_LINE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const ENTRY_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const ENUMERATED_LIST_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const ENUMERATED_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const EXTERNAL_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FIELD_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FIELD_BODY_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FIELD_LIST_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FIELD_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FIGURE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FOOTER_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FOOTNOTE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const FOOTNOTE_REFERENCE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const HEADER_CATEGORIES: [NodeCategory; 0] = [
+  
+];
+const GENERATED_CATEGORIES: [NodeCategory; 0] = [
+  
+];
+const IMAGE_CATEGORIES: [NodeCategory; 0] = [
+  
+];
+const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
+  
+];
+const INLINE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const INLINE_TARGET_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const INTERPRETED_TEXT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LABEL_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LEGEND_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LINE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LINE_BLOCK_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LIST_TABLE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LITERAL_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const MATH_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const MATH_BLOCK_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const OPTION_LIST_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const OPTION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const OPTION_STRING_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const ORGANIZATION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const PARAGRAPH_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const PARSED_LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const PENDING_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const PROBLEMATIC_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const RAW_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const REFERENCE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const REVISION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const ROW_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const RUBRIC_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SECTION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SIDEBAR_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const STATUS_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const STANDALONE_EMAIL_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const STRONG_EMPHASIS_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SUBSCRIPT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SUBSTITUTION_DEF_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SSUBSITTUTION_REF_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SUBTITLE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SUPERSCRIPT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const SYSTEM_MESSAGE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TABLE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TARGET_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const T_BODY_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TERM_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TEXT_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const T_GROUP_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const T_HEAD_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TITLE_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TITLE_REF_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TOPIC_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const TRANSITION_CATEGORIES: [NodeCategory; 0] = [
+  
+];
+const VERSION_CATEGORIES: [NodeCategory; 0] = [
+
+];
+const WHITESPACE_CATEGORIES: [NodeCategory; 0] = [
+
+];
