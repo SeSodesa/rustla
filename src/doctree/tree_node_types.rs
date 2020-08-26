@@ -775,7 +775,7 @@ impl TreeNodeType {
       Self::Code { .. } => CODE_CATEGORIES.iter(),
       Self::ColSpec { .. } => COLSPEC_CATEGORIES.iter(),
       Self::Comment => COMMENT_CATEGORIES.iter(),
-      Self::CompoundParagraph { .. } => COMPUND_PARAGRAPH_CATEGORIES.iter(),
+      Self::CompoundParagraph { .. } => COMPOUND_PARAGRAPH_CATEGORIES.iter(),
       Self::Contact { .. } => CONTACT_CATEGORIES.iter(),
       Self::Container { .. } => CONTAINER_CATEGORIES.iter(),
       Self::Copyright { .. } => COPYRIGHT_CATEGORIES.iter(),
@@ -883,7 +883,7 @@ pub enum NodeCategory {
   /// It groups bibliographic elements together.
   /// All bibliographic elements except authors and field contain text data.
   /// `Authors` contains further bibliographic elements (most notably author). field contains field_name and field_body body subelements.
-  Bibliograhic,
+  Bibliographic,
 
   /// #### Decorative
   /// The decoration element is also an optional child of document. It groups together elements used to generate page headers and footers.
@@ -967,28 +967,31 @@ const ACRONYM_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
 const ADDRESS_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+  NodeCategory::Bibliographic
 ];
-const ADMONITION_CATEGORIES: [NodeCategory; 1] = [
+const ADMONITION_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
   NodeCategory::CompoundBody,
 ];
 const ATTRIBUTION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
 const AUTHOR_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+  NodeCategory::Bibliographic
 ];
 const AUTHORS_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+  NodeCategory::Bibliographic
 ];
 const AUTO_SECTION_NUMBERING_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const BLOCK_QUOTE_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+const BLOCK_QUOTE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
-const BULLET_LIST_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+const BULLET_LIST_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const BULLET_LIST_ITEM_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
@@ -996,8 +999,9 @@ const BULLET_LIST_ITEM_CATEGORIES: [NodeCategory; 1] = [
 const CAPTION_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const CITATION_CATEGORIES: [NodeCategory; 0] = [
-
+const CITATION_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const CITATION_REFERENCE_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
@@ -1011,35 +1015,39 @@ const CODE_CATEGORIES: [NodeCategory; 0] = [
 const COLSPEC_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const COMMENT_CATEGORIES: [NodeCategory; 0] = [
-
+const COMMENT_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
-const COMPUND_PARAGRAPH_CATEGORIES: [NodeCategory; 0] = [
-
+const COMPOUND_PARAGRAPH_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
-const CONTACT_CATEGORIES: [NodeCategory; 0] = [
-
+const CONTACT_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
-const CONTAINER_CATEGORIES: [NodeCategory; 0] = [
-
+const CONTAINER_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
-const COPYRIGHT_CATEGORIES: [NodeCategory; 0] = [
-
+const COPYRIGHT_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const CSV_TABLE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const DATE_CATEGORIES: [NodeCategory; 0] = [
-
+const DATE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const DECORATION_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Structural,
+  NodeCategory::SubStructural,
 ];
 const DEFINITION_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const DEFINITION_LIST_CATEGORIES: [NodeCategory; 0] = [
-
+const DEFINITION_LIST_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const DEFINITION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1047,11 +1055,12 @@ const DEFINITION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 const DESCRIPTION_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const DOC_INFO_CATEGORIES: [NodeCategory; 0] = [
-
+const DOC_INFO_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::SubStructural
 ];
-const DOCTEST_BLOCK_CATEGORIES: [NodeCategory; 0] = [
-
+const DOCTEST_BLOCK_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const DOCUMENT_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Root,
@@ -1066,8 +1075,9 @@ const EMPTY_LINE_CATEGORIES: [NodeCategory; 0] = [
 const ENTRY_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const ENUMERATED_LIST_CATEGORIES: [NodeCategory; 0] = [
-
+const ENUMERATED_LIST_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const ENUMERATED_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1075,38 +1085,42 @@ const ENUMERATED_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 const EXTERNAL_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const FIELD_CATEGORIES: [NodeCategory; 0] = [
-
+const FIELD_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const FIELD_BODY_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const FIELD_LIST_CATEGORIES: [NodeCategory; 0] = [
-
+const FIELD_LIST_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const FIELD_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const FIGURE_CATEGORIES: [NodeCategory; 0] = [
-
+const FIGURE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
-const FOOTER_CATEGORIES: [NodeCategory; 0] = [
-
+const FOOTER_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Decorative
 ];
-const FOOTNOTE_CATEGORIES: [NodeCategory; 0] = [
-
+const FOOTNOTE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const FOOTNOTE_REFERENCE_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const HEADER_CATEGORIES: [NodeCategory; 0] = [
-  
+const HEADER_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Decorative
 ];
 const GENERATED_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const IMAGE_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline,
+const IMAGE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
   
@@ -1129,8 +1143,9 @@ const LEGEND_CATEGORIES: [NodeCategory; 0] = [
 const LINE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const LINE_BLOCK_CATEGORIES: [NodeCategory; 0] = [
-
+const LINE_BLOCK_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const LIST_TABLE_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1138,17 +1153,20 @@ const LIST_TABLE_CATEGORIES: [NodeCategory; 0] = [
 const LITERAL_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
-
+const LITERAL_BLOCK_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const MATH_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline,
 ];
-const MATH_BLOCK_CATEGORIES: [NodeCategory; 0] = [
-
+const MATH_BLOCK_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
-const OPTION_LIST_CATEGORIES: [NodeCategory; 0] = [
-
+const OPTION_LIST_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const OPTION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1156,46 +1174,50 @@ const OPTION_LIST_ITEM_CATEGORIES: [NodeCategory; 0] = [
 const OPTION_STRING_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const ORGANIZATION_CATEGORIES: [NodeCategory; 0] = [
-
+const ORGANIZATION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
-const PARAGRAPH_CATEGORIES: [NodeCategory; 0] = [
-
+const PARAGRAPH_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const PARSED_LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const PENDING_CATEGORIES: [NodeCategory; 0] = [
-
+const PENDING_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const PROBLEMATIC_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const RAW_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+const RAW_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const REFERENCE_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Inline,
   NodeCategory::Referential,
 ];
-const REVISION_CATEGORIES: [NodeCategory; 0] = [
-
+const REVISION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const ROW_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const RUBRIC_CATEGORIES: [NodeCategory; 0] = [
-
+const RUBRIC_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const SECTION_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Structural,
   NodeCategory::Titular,
 ];
-const SIDEBAR_CATEGORIES: [NodeCategory; 0] = [
-
+const SIDEBAR_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural
 ];
-const STATUS_CATEGORIES: [NodeCategory; 0] = [
-
+const STATUS_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const STANDALONE_EMAIL_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1206,23 +1228,26 @@ const STRONG_EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
 const SUBSCRIPT_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const SUBSTITUTION_DEF_CATEGORIES: [NodeCategory; 0] = [
-
+const SUBSTITUTION_DEF_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 const SUBSTITUTION_REF_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
 const SUBTITLE_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Structural,
+  NodeCategory::SubStructural,
 ];
 const SUPERSCRIPT_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const SYSTEM_MESSAGE_CATEGORIES: [NodeCategory; 0] = [
-
+const SYSTEM_MESSAGE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
-const TABLE_CATEGORIES: [NodeCategory; 0] = [
-
+const TABLE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 const TARGET_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
@@ -1243,19 +1268,19 @@ const T_HEAD_CATEGORIES: [NodeCategory; 0] = [
 
 ];
 const TITLE_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Structural
+  NodeCategory::SubStructural
 ];
 const TITLE_REF_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const TOPIC_CATEGORIES: [NodeCategory; 0] = [
-
+const TOPIC_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural
 ];
 const TRANSITION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Structural,
 ];
-const VERSION_CATEGORIES: [NodeCategory; 0] = [
-
+const VERSION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Bibliographic
 ];
 const WHITESPACE_CATEGORIES: [NodeCategory; 0] = [
 
