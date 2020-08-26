@@ -839,7 +839,7 @@ impl TreeNodeType {
       Self::StrongEmphasis { .. } => STRONG_EMPHASIS_CATEGORIES.iter(),
       Self::Subscript { .. } => SUBSCRIPT_CATEGORIES.iter(),
       Self::SubstitutionDefinition { .. } => SUBSTITUTION_DEF_CATEGORIES.iter(),
-      Self::SubstitutionReference { .. } => SSUBSITTUTION_REF_CATEGORIES.iter(),
+      Self::SubstitutionReference { .. } => SUBSTITUTION_REF_CATEGORIES.iter(),
       Self::Subtitle { .. } => SUBTITLE_CATEGORIES.iter(),
       Self::Superscript { .. } => SUPERSCRIPT_CATEGORIES.iter(),
       Self::SystemMessage { .. } => SYSTEM_MESSAGE_CATEGORIES.iter(),
@@ -970,7 +970,7 @@ const ADDRESS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
 const ADMONITION_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Inline
+  NodeCategory::CompoundBody,
 ];
 const ATTRIBUTION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
@@ -999,8 +999,8 @@ const CAPTION_CATEGORIES: [NodeCategory; 0] = [
 const CITATION_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const CITATION_REFERENCE_CATEGORIES: [NodeCategory; 0] = [
-
+const CITATION_REFERENCE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const CLASSIFIER_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1032,8 +1032,8 @@ const CSV_TABLE_CATEGORIES: [NodeCategory; 0] = [
 const DATE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const DECORATION_CATEGORIES: [NodeCategory; 0] = [
-
+const DECORATION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural,
 ];
 const DEFINITION_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1053,11 +1053,12 @@ const DOC_INFO_CATEGORIES: [NodeCategory; 0] = [
 const DOCTEST_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const DOCUMENT_CATEGORIES: [NodeCategory; 0] = [
-
+const DOCUMENT_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Root,
+  NodeCategory::Structural,
 ];
-const EMPHASIS_CATEGORIES: [NodeCategory; 0] = [
-
+const EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const EMPTY_LINE_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1095,17 +1096,17 @@ const FOOTER_CATEGORIES: [NodeCategory; 0] = [
 const FOOTNOTE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const FOOTNOTE_REFERENCE_CATEGORIES: [NodeCategory; 0] = [
-
+const FOOTNOTE_REFERENCE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const HEADER_CATEGORIES: [NodeCategory; 0] = [
   
 ];
-const GENERATED_CATEGORIES: [NodeCategory; 0] = [
-  
+const GENERATED_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
-const IMAGE_CATEGORIES: [NodeCategory; 0] = [
-  
+const IMAGE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline,
 ];
 const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
   
@@ -1134,14 +1135,14 @@ const LINE_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 const LIST_TABLE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const LITERAL_CATEGORIES: [NodeCategory; 0] = [
-
+const LITERAL_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const MATH_CATEGORIES: [NodeCategory; 0] = [
-
+const MATH_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline,
 ];
 const MATH_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1167,14 +1168,15 @@ const PARSED_LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
 const PENDING_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const PROBLEMATIC_CATEGORIES: [NodeCategory; 0] = [
-
+const PROBLEMATIC_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
-const RAW_CATEGORIES: [NodeCategory; 0] = [
-
+const RAW_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
-const REFERENCE_CATEGORIES: [NodeCategory; 0] = [
-
+const REFERENCE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Inline,
+  NodeCategory::Referential,
 ];
 const REVISION_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1185,8 +1187,9 @@ const ROW_CATEGORIES: [NodeCategory; 0] = [
 const RUBRIC_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const SECTION_CATEGORIES: [NodeCategory; 0] = [
-
+const SECTION_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Structural,
+  NodeCategory::Titular,
 ];
 const SIDEBAR_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1197,23 +1200,23 @@ const STATUS_CATEGORIES: [NodeCategory; 0] = [
 const STANDALONE_EMAIL_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const STRONG_EMPHASIS_CATEGORIES: [NodeCategory; 0] = [
-
+const STRONG_EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline,
 ];
-const SUBSCRIPT_CATEGORIES: [NodeCategory; 0] = [
-
+const SUBSCRIPT_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const SUBSTITUTION_DEF_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const SSUBSITTUTION_REF_CATEGORIES: [NodeCategory; 0] = [
-
+const SUBSTITUTION_REF_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
-const SUBTITLE_CATEGORIES: [NodeCategory; 0] = [
-
+const SUBTITLE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural,
 ];
-const SUPERSCRIPT_CATEGORIES: [NodeCategory; 0] = [
-
+const SUPERSCRIPT_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const SYSTEM_MESSAGE_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1221,8 +1224,8 @@ const SYSTEM_MESSAGE_CATEGORIES: [NodeCategory; 0] = [
 const TABLE_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const TARGET_CATEGORIES: [NodeCategory; 0] = [
-
+const TARGET_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const T_BODY_CATEGORIES: [NodeCategory; 0] = [
 
@@ -1239,17 +1242,17 @@ const T_GROUP_CATEGORIES: [NodeCategory; 0] = [
 const T_HEAD_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const TITLE_CATEGORIES: [NodeCategory; 0] = [
-
+const TITLE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural
 ];
-const TITLE_REF_CATEGORIES: [NodeCategory; 0] = [
-
+const TITLE_REF_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
 const TOPIC_CATEGORIES: [NodeCategory; 0] = [
 
 ];
-const TRANSITION_CATEGORIES: [NodeCategory; 0] = [
-
+const TRANSITION_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Structural,
 ];
 const VERSION_CATEGORIES: [NodeCategory; 0] = [
 
