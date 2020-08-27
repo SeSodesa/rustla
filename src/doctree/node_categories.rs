@@ -176,8 +176,9 @@ pub const CLASSIFIER_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
   NodeCategory::SimpleSubBody,
 ];
-pub const CODE_CATEGORIES: [NodeCategory; 0] = [
-
+pub const CODE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 pub const COLSPEC_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
