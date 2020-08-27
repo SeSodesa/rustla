@@ -55,18 +55,16 @@ impl TreeNode {
   /// Set the children of a `TreeNode` to `Some(Children)` or `None`,
   /// depending on the given node data variant.
   fn children_or_none (data_variant: &TreeNodeType) -> Option<Children> {
-    match data_variant {
-      TreeNodeType::Emphasis { .. }                   | TreeNodeType::StrongEmphasis { .. }
-      | TreeNodeType::InterpretedText { .. }          | TreeNodeType::Literal { .. }
-      | TreeNodeType::InlineTarget { .. }             | TreeNodeType::Reference { .. }
-      | TreeNodeType::FootnoteReference { .. }        | TreeNodeType::CitationReference { .. }
-      | TreeNodeType::SubstitutionReference { .. }    | TreeNodeType::TitleReference { .. }
-      | TreeNodeType::AbsoluteURI { .. }              | TreeNodeType::StandaloneEmail { .. }
-      | TreeNodeType::WhiteSpace { .. }               | TreeNodeType::ExternalHyperlinkTarget { .. }
-      | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::Text { .. }
-      | TreeNodeType::EmptyLine
-        => None,
-      _ => Some(Vec::<TreeNode>::new())
+
+    use crate::doctree::node_categories::NodeCategory;
+
+    let mut node_type_properties = data_variant.node_categories();
+
+    if node_type_properties.any( |cat| if let NodeCategory::Inline = cat { true } else { false } )
+    || match data_variant { TreeNodeType::EmptyLine | TreeNodeType::Transition {..} => true, _ => false } {
+      None
+    } else {
+      Some(Vec::new())
     }
   }
 

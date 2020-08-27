@@ -10,6 +10,7 @@ use std::collections::HashMap;
 
 mod tests;
 
+mod node_categories;
 mod tree_zipper;
 use tree_zipper::TreeZipper;
 pub mod tree_node;
