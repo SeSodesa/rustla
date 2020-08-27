@@ -80,7 +80,8 @@ pub enum NodeCategory {
 
   /// #### SimpleBody
   /// Simple body elements are empty or directly contain text data.
-  /// Those that contain text data may also contain inline elements. Such elements therefore have a "mixed content model".
+  /// Those that contain text data may also contain inline elements.
+  /// Such elements therefore have a "mixed content model".
   SimpleBody,
 
   /// #### CompoundBody
@@ -256,8 +257,9 @@ pub const ENUMERATED_LIST_ITEM_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
   NodeCategory::CompoundSubBody,
 ];
-pub const EXTERNAL_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
-
+pub const EXTERNAL_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
 pub const FIELD_CATEGORIES: [NodeCategory; 3] = [
   NodeCategory::Bibliographic,
@@ -299,17 +301,19 @@ pub const IMAGE_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::SimpleBody,
 ];
-pub const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 0] = [
-  
+pub const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
 ];
-pub const INLINE_CATEGORIES: [NodeCategory; 0] = [
-
+pub const INLINE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline // Isn't this supposed to be one of the categories?
 ];
 pub const INLINE_TARGET_CATEGORIES: [NodeCategory; 0] = [
-
+  // This isn't a node, but turns the following inline node into a ref target.
+  // To be removed...
 ];
-pub const INTERPRETED_TEXT_CATEGORIES: [NodeCategory; 0] = [
-
+pub const INTERPRETED_TEXT_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline,
 ];
 pub const LABEL_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
@@ -327,8 +331,9 @@ pub const LINE_BLOCK_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::CompoundBody,
 ];
-pub const LIST_TABLE_CATEGORIES: [NodeCategory; 0] = [
-
+pub const LIST_TABLE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 pub const LITERAL_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
@@ -363,8 +368,9 @@ pub const PARAGRAPH_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::SimpleBody,
 ];
-pub const PARSED_LITERAL_BLOCK_CATEGORIES: [NodeCategory; 0] = [
-
+pub const PARSED_LITERAL_BLOCK_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
 ];
 pub const PENDING_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
@@ -402,8 +408,8 @@ pub const SIDEBAR_CATEGORIES: [NodeCategory; 1] = [
 pub const STATUS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Bibliographic
 ];
-pub const STANDALONE_EMAIL_CATEGORIES: [NodeCategory; 0] = [
-
+pub const STANDALONE_EMAIL_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline,
 ];
 pub const STRONG_EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline,
