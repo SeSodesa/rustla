@@ -1093,8 +1093,10 @@ const DOCUMENT_CATEGORIES: [NodeCategory; 2] = [
 const EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-const EMPTY_LINE_CATEGORIES: [NodeCategory; 0] = [
-
+const EMPTY_LINE_CATEGORIES: [NodeCategory; 3] = [
+  NodeCategory::Structural,
+  NodeCategory::Body,
+  NodeCategory::SubBody,
 ];
 const ENTRY_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
@@ -1321,6 +1323,6 @@ const TRANSITION_CATEGORIES: [NodeCategory; 1] = [
 const VERSION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Bibliographic
 ];
-const WHITESPACE_CATEGORIES: [NodeCategory; 0] = [
-
+const WHITESPACE_CATEGORIES: [NodeCategory; 1] = [
+  NodeCategory::Inline
 ];
