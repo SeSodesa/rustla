@@ -17,6 +17,7 @@ src/
 │   ├── directives.rs
 │   ├── hyperref_data.rs
 │   ├── mod.rs
+│   ├── node_categories.rs
 │   ├── section_data.rs
 │   ├── tests.rs
 │   ├── tree_node.rs
@@ -39,6 +40,7 @@ src/
     │   ├── inline.rs
     │   ├── mod.rs
     │   └── transitions.rs
+    ├── test_admonitions.rs
     ├── test_block_reading.rs
     ├── test_bullet_lists.rs
     ├── test_converters.rs
@@ -46,13 +48,14 @@ src/
     ├── test_enumerated_lists.rs
     ├── test_field_lists.rs
     ├── test_hyperlink_targets.rs
+    ├── test_images.rs
     ├── test_inline_parsing.rs
     ├── test_literal_blocks.rs
     ├── test_mixed_structures.rs
     ├── test_sections_and_transitions.rs
     └── types_and_aliases.rs
 
-4 directories, 36 files
+4 directories, 39 files
 ```
 
 ## Build instructions
