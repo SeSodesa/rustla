@@ -9,7 +9,7 @@ use super::*;
 
 
 /// ### TreeNodeType
-/// An enumaration of the different possible document node types.
+/// An enumeration of the different possible document node types.
 /// 
 /// Some of the nodes listed here are redundant. This is because
 /// reStructuredText documentation also [lists](https://docutils.sourceforge.io/docs/ref/doctree.html#element-reference)
