@@ -298,9 +298,10 @@ pub const HEADER_CATEGORIES: [NodeCategory; 1] = [
 pub const GENERATED_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-pub const IMAGE_CATEGORIES: [NodeCategory; 2] = [
+pub const IMAGE_CATEGORIES: [NodeCategory; 3] = [
   NodeCategory::Body,
   NodeCategory::SimpleBody,
+  NodeCategory::Inline,
 ];
 pub const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
