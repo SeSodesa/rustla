@@ -261,7 +261,7 @@ impl Parser {
       height:height,
       width: width,
       scale: scale,
-      align: None,
+      align: None, // Image does not have alignenment inside a figure.
       target: target,
       class: classes,
       name: name,
@@ -274,7 +274,24 @@ impl Parser {
       figwidth: figwidth
     };
 
-    todo!()
+    // Add figure node to tree and focus on it
+    doctree = doctree.push_data_and_focus(figure);
+
+    // Add image to figure
+    doctree = doctree.push_data(image);
+
+    // Create caption from the block following the figure options,
+    // unless an empty comment is in place.
+
+
+    // Start scanning for body elements in Legend state...
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Figure]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1),
+    }
   }
 
 
