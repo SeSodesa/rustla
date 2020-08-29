@@ -546,6 +546,26 @@ impl Parser {
   }
 
 
+  /// ### skip_to_next_block
+  /// 
+  /// Skips empty lines until a non-empty one is found.
+  /// Panics (for now) if it runs over the end of input.
+  fn skip_to_next_block (src_lines: &Vec<String>, line_cursor: &mut LineCursor) {
+
+    loop {
+      if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        if line.trim().is_empty() {
+          line_cursor.increment_by(1);
+        } else {
+          break
+        }        
+      } else {
+        panic!("Encountered end of input while skipping lines...")
+      }
+    }
+  }
+
+
   /// ### read_text_block
   /// Reads in an contiguous set of lines of text.
   /// A text block in rST terms is a set of lines

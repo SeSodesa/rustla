@@ -280,17 +280,17 @@ impl Parser {
     // Add image to figure
     doctree = doctree.push_data(image);
 
-    // Create caption from the block following the figure options,
-    // unless an empty comment is in place.
 
-
-    // Start scanning for body elements in Legend state...
+    // Transition to figure state to scan for a possible caption
+    // (a simple paragraph). If an empty comment is encountered,
+    // interpret it as a missing caption and move on to
+    // parsing figure legend contents.
 
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(vec![StateMachine::Figure]),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1),
+      line_advance: LineAdvance::None,
     }
   }
 
