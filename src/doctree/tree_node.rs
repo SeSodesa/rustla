@@ -129,96 +129,109 @@ impl TreeNode {
   /// Checks whether a node is allowed to be inserted into another node.
   pub fn child_is_allowed (&self, node_data: &TreeNodeType) -> bool {
 
+    use crate::doctree::node_categories::NodeCategory;
+
     match self.data {
-
-      // Structural nodes can other (sub)srutural elements
-      TreeNodeType::Document { .. } | TreeNodeType::Section { .. }
-      | TreeNodeType::Sidebar => {
-        match node_data {
-          TreeNodeType::Section { .. }                    | TreeNodeType::Transition                      | TreeNodeType::Topic { .. }
-          | TreeNodeType:: Sidebar
-          | TreeNodeType::Paragraph { .. }                | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
-          | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
-          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote { .. }
-          | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
-          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Admonition { .. }
-          | TreeNodeType::Image { .. }
-            => true,
-          _ => false
-        }
-      }
-
-      // These (sub)body elements are allowed to contain body level nodes
-      TreeNodeType::BulletListItem { .. }       | TreeNodeType::EnumeratedListItem { .. }
-      | TreeNodeType::DefinitionListItem { .. } | TreeNodeType::FieldListItem { .. }      | TreeNodeType::OptionListItem
-      | TreeNodeType::BlockQuote { .. }         | TreeNodeType::Footnote { .. }           | TreeNodeType::Citation { .. }
-      | TreeNodeType::Admonition { .. } => {
-        match node_data {
-          TreeNodeType::Paragraph { .. }                  | TreeNodeType::BulletList { .. }               | TreeNodeType::EnumeratedList { .. }
-          | TreeNodeType::DefinitionList { .. }           | TreeNodeType::FieldList { .. }                | TreeNodeType::OptionList
-          | TreeNodeType::LiteralBlock { .. }             | TreeNodeType::LineBlock                       | TreeNodeType::BlockQuote { .. }
-          | TreeNodeType::DoctestBlock                    | TreeNodeType::Footnote  { .. }                | TreeNodeType::Citation { .. }
-          | TreeNodeType::ExternalHyperlinkTarget { .. }  | TreeNodeType::IndirectHyperlinkTarget { .. }  | TreeNodeType::SubstitutionDefinition
-          | TreeNodeType::Comment                         | TreeNodeType::EmptyLine                       | TreeNodeType::Transition
-          | TreeNodeType::Section { .. }                  | TreeNodeType::Admonition { .. }               | TreeNodeType::Figure { .. }
-            => true,
-          _ => false
-        }
-      },
-
-      // Bullet lists may only contain empty lines or bullet list items
-      TreeNodeType::BulletList { .. } => {
-        match node_data {
-          TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true,
-          _ => false
-        }
-      }
-
-      // Enumerated lists may only contain empty lines or enumerated list items
-      TreeNodeType::EnumeratedList { .. } => {
-        match node_data {
-          TreeNodeType::EmptyLine | TreeNodeType::EnumeratedListItem { .. } => true,
-          _ => false
-        }
-      }
-
-      // Field lists may only contain empty lines or field list items
-      TreeNodeType::FieldList { .. } => {
-        match node_data {
-          TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true,
-          _ => false
-        }
-      }
-
-      // Definition lists may only contain empty lines or definition list items
-      TreeNodeType::DefinitionList { .. } => {
-        match node_data {
-          TreeNodeType::EmptyLine | TreeNodeType::DefinitionListItem { .. } => true,
-          _ => false
-        }
-      }
-
-      // Option lists may only contain empty lines or option list items
-      TreeNodeType::OptionList { .. } => {
-        match node_data {
-          TreeNodeType::EmptyLine | TreeNodeType::OptionListItem { .. } => true,
-          _ => false
-        }
-      }
-
-      // Only paragraphs may contain inline nodes
-      TreeNodeType::Paragraph { .. } => {
-        match node_data {
-          TreeNodeType::Emphasis { .. }             | TreeNodeType::StrongEmphasis { .. }         | TreeNodeType::InterpretedText
-          | TreeNodeType::Literal { .. }            | TreeNodeType::InlineTarget { .. }           | TreeNodeType::FootnoteReference { .. }
-          | TreeNodeType::CitationReference { .. }  | TreeNodeType::SubstitutionReference { .. }  | TreeNodeType::AbsoluteURI { .. }
-          | TreeNodeType::StandaloneEmail { .. }    | TreeNodeType::Text { .. }                   | TreeNodeType::WhiteSpace { .. }
-            => true,
-          _ => false
-        }
-      },
-      _ => false
+      TreeNodeType::Abbreviation { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::AbsoluteURI { .. } => false,
+      TreeNodeType::Acronym { .. } => false, // No documentation on docutils!
+      TreeNodeType::Address => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Admonition { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Attribution => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Author { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Authors {..} => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::AutomaticSectionNumbering {..} => false, // Not really a node in rST
+      TreeNodeType::BlockQuote { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::Attribution = node_data { true } else { false },
+      TreeNodeType::BulletList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true, _ => false },
+      TreeNodeType::BulletListItem{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Caption { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Citation { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::CitationReference { .. } => false,
+      TreeNodeType::Classifier { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Code { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::ColSpec { .. } => false,
+      TreeNodeType::Comment => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::CompoundParagraph { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Contact { .. } => false,
+      TreeNodeType::Container { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Copyright { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::CSVTable { .. } => todo!(),
+      TreeNodeType::Date => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Decoration => match node_data { TreeNodeType::Footer { .. } | TreeNodeType::Header => true, _ => false },
+      TreeNodeType::Definition => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::DefinitionList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::DefinitionListItem { .. } => true, _ => false },
+      TreeNodeType::DefinitionListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Description => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::DocInfo => if node_data.node_categories().any(|cat| if let NodeCategory::Bibliographic = cat { true } else { false }) { true } else { false },
+      TreeNodeType::DoctestBlock{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Document { .. }   => if node_data.node_categories().any(|cat| match cat { NodeCategory::Structural | NodeCategory::SubStructural | NodeCategory::Body => true, _ => false }) { true } else { false },
+      TreeNodeType::Emphasis { .. } => false,
+      TreeNodeType::EmptyLine => false,
+      TreeNodeType::Entry => todo!(),
+      TreeNodeType::EnumeratedList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::EnumeratedListItem { .. } => true, _ => false },
+      TreeNodeType::EnumeratedListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::ExternalHyperlinkTarget { .. } => false,
+      TreeNodeType::Field => todo!(),
+      TreeNodeType::FieldBody { .. } => todo!(),
+      TreeNodeType::FieldList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true, _ => false },
+      TreeNodeType::FieldListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Figure { .. } => match node_data { TreeNodeType::Caption { .. } | TreeNodeType::Legend { .. } => true, _ => false },
+      TreeNodeType::Footer { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Footnote { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::FootnoteReference { .. } => todo!(),
+      TreeNodeType::Header { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Generated => todo!(),
+      TreeNodeType::Image { .. } => false,
+      TreeNodeType::IndirectHyperlinkTarget { .. } => false,
+      TreeNodeType::Inline { .. } => false,
+      TreeNodeType::InlineTarget { .. } => false,
+      TreeNodeType::InterpretedText { .. } => false,
+      TreeNodeType::Label { .. } => todo!(),
+      TreeNodeType::Legend { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Line { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::LineBlock { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::Line { .. } => true, _ => false },
+      TreeNodeType::ListTable { .. } => todo!(),
+      TreeNodeType::Literal { .. } => false,
+      TreeNodeType::LiteralBlock { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Math { .. } => false,
+      TreeNodeType::MathBlock { .. } => false,
+      TreeNodeType::OptionList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::OptionListItem{ .. } => true, _ => false },
+      TreeNodeType::OptionListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::OptionString { .. } => todo!(),
+      TreeNodeType::Organization { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Paragraph { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::ParsedLiteralBlock { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Pending { .. } => todo!("No information on \"Pending\" node children in docutils documentation..."),
+      TreeNodeType::Problematic { .. } => todo!("No information on \"Problematic\" node children in docutils documentation..."),
+      TreeNodeType::Raw { .. } => todo!("What is a \"Raw\" element supposed to be, exactly...?"),
+      TreeNodeType::Reference { .. } => false, // inline ref
+      TreeNodeType::Revision { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Row { .. } => todo!("No documentation on table rows in docutils..."),
+      TreeNodeType::Rubric { .. } => false,
+      TreeNodeType::Section { .. }    => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if match node_data { TreeNodeType:: Transition | TreeNodeType::Section { .. } | TreeNodeType::Topic { .. } | TreeNodeType::Sidebar { .. } => true, _ => false } { true } else { false },
+      TreeNodeType::Sidebar { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::Topic { .. } = node_data { true } else { false },
+      TreeNodeType::Status { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::StandaloneEmail { .. } => false,
+      TreeNodeType::StrongEmphasis { .. } => false,
+      TreeNodeType::Subscript { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::SubstitutionDefinition { .. } => false,
+      TreeNodeType::SubstitutionReference { .. } => false,
+      TreeNodeType::Subtitle { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Superscript { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::SystemMessage { .. } => todo!(),
+      TreeNodeType::Table { .. } => todo!(),
+      TreeNodeType::Target { .. } => false,
+      TreeNodeType::TBody { .. } => todo!(),
+      TreeNodeType::Term { .. } => todo!(),
+      TreeNodeType::Text { .. } => false,
+      TreeNodeType::TGroup { .. } => todo!(),
+      TreeNodeType::THead { .. } => todo!(),
+      TreeNodeType::Title { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::TitleReference { .. } => false,
+      TreeNodeType::Topic { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Transition {} => todo!(),
+      TreeNodeType::Version { .. } => false,
+      TreeNodeType::WhiteSpace { .. } => false,
     }
   }
 
