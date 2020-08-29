@@ -26,24 +26,27 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut
     text_indent: detected_text_indent,
   };
 
-  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
-    tree_wrapper = tree_wrapper.push_data_and_focus(sublist_data);
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: Some(vec![StateMachine::BulletList]),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None,
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
+
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(sublist_data);
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BulletList]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
     }
-  } else {
-    tree_wrapper = tree_wrapper.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    _ => {
+      tree_wrapper = tree_wrapper.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
-
 }
 
 
@@ -88,21 +91,25 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, section_level: 
     //latest_text_indent: detected_text_indent,
   };
 
-  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
-    tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: Some(vec![StateMachine::EnumeratedList]),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None,
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
+
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::EnumeratedList]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
     }
-  } else {
-    tree_wrapper = tree_wrapper.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    _ => {
+      tree_wrapper = tree_wrapper.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
 }
@@ -122,21 +129,25 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
-    tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: Some(vec![StateMachine::FieldList]),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None,
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
+
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::FieldList]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
     }
-  } else {
-    tree_wrapper = tree_wrapper.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    _ => {
+      tree_wrapper = tree_wrapper.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
 }
@@ -184,36 +195,39 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
-    let footnote_data = TreeNodeType::Footnote {
-      body_indent: detected_body_indent,
-      kind: *detected_kind,
-      label: label.clone(),
-      target: target.clone()
-    };
-    tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
-
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level) {
-      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
-    };
-
-    tree_wrapper = doctree;
-
-  return TransitionResult::Success {
-    doctree: tree_wrapper,
-    next_states: Some(state_stack),
-    push_or_pop: PushOrPop::Push,
-    line_advance: LineAdvance::Some(offset),
-  }
-  } else {
-    tree_wrapper = tree_wrapper.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      let footnote_data = TreeNodeType::Footnote {
+        body_indent: detected_body_indent,
+        kind: *detected_kind,
+        label: label.clone(),
+        target: target.clone()
+      };
+      tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
+  
+      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level) {
+        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+      };
+  
+      tree_wrapper = doctree;
+  
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(state_stack),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::Some(offset),
+      }
+    }
+    _ => {
+      tree_wrapper = tree_wrapper.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
 }
@@ -247,35 +261,38 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  if parent_indent_matches(tree_wrapper.shared_node_data(), detected_body_indent) {
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_body_indent) {
 
-    let citation_data = TreeNodeType::Citation {
-      body_indent: detected_body_indent,
-      label: detected_label_str.to_string(),
-    };
-    tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level) {
-      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
-    };
-
-    tree_wrapper = doctree;
-
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: Some(state_stack),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(offset),
+      let citation_data = TreeNodeType::Citation {
+        body_indent: detected_body_indent,
+        label: detected_label_str.to_string(),
+      };
+      tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
+  
+      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level) {
+        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
+        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+      };
+  
+      tree_wrapper = doctree;
+  
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(state_stack),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::Some(offset),
+      }
     }
-  } else {
-
-    tree_wrapper = tree_wrapper.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: tree_wrapper,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    _ => {
+      tree_wrapper = tree_wrapper.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
 }
@@ -315,96 +332,97 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
     detected_text_indent
   };
 
-  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    // Read in the following block of text here and parse it to find out the type of hyperref target in question
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      // Read in the following block of text here and parse it to find out the type of hyperref target in question
 
-    let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
-      Ok(( block, _, offset, _)) => (block.join("\n").chars().filter(|c| !c.is_whitespace()).collect(), offset),
-      Err(e) => {
-        return TransitionResult::Failure { message: e }
+      let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
+        Ok(( block, _, offset, _)) => (block.join("\n").chars().filter(|c| !c.is_whitespace()).collect(), offset),
+        Err(e) => {
+          return TransitionResult::Failure { message: e }
+        }
+      };
+
+      eprintln!("Block string: {:#?}\n", block_string);
+
+      if block_string.is_empty() { // ... the target is internal
+
+        // We simply add the detected label into the queue of internal target labels and proceed with parsing in the current state.
+        // Should a non-internal target or other type of target node be detected next,
+        // this set of labels will be set to reference that node.
+
+        doctree.push_to_internal_target_stack(label_as_string);
+
+        doctree.print_internal_labels();
+
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(1), // Jump to the next line so we don't just keep trying to parse the same internal target.
+        }
       }
-    };
 
-    eprintln!("Block string: {:#?}\n", block_string);
+      let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(doctree), line_cursor) {
+        
+        InlineParsingResult::DoctreeAndNodes(altered_doctree, nodes_data) => {
 
-    if block_string.is_empty() { // ... the target is internal
+          doctree = altered_doctree;
 
-      // We simply add the detected label into the queue of internal target labels and proceed with parsing in the current state.
-      // Should a non-internal target or other type of target node be detected next,
-      // this set of labels will be set to reference that node.
+          eprintln!("Target nodes: {:#?}\n", nodes_data);
 
-      doctree.push_to_internal_target_stack(label_as_string);
+          if nodes_data.len() != 1 {
+            return TransitionResult::Failure {
+              message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n")
+            }
+          }
 
-      doctree.print_internal_labels();
+          match nodes_data.get(0) {
+
+            Some(TreeNodeType::AbsoluteURI { text })  |  Some(TreeNodeType::StandaloneEmail { text })  =>  {
+
+              TreeNodeType::ExternalHyperlinkTarget {
+                uri: text.clone(),
+                target: label_as_string,
+                marker_indent: detected_marker_indent
+              }
+            }
+
+            Some(TreeNodeType::Reference { target_label, displayed_text }) =>  {
+
+              TreeNodeType::IndirectHyperlinkTarget {
+                target: label_as_string,
+                indirect_target: target_label.clone(),
+                marker_indent: detected_marker_indent
+              }
+            }
+
+            _ => panic!("Hyperlink target on line {} didn't match any known types.\nComputer says no...\n", line_cursor.sum_total())
+          }
+        }
+        _ => panic!("Inline parser failed when parsing a hyperlink target on line {}\n.Computer says no...\n", line_cursor.sum_total())
+      };
+
+      let node = TreeNode::new(node_type, doctree.node_count(), None);
+
+      doctree.push_child(node);
 
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(1), // Jump to the next line so we don't just keep trying to parse the same internal target.
+        line_advance: LineAdvance::Some(1)
       }
     }
-
-    let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(doctree), line_cursor) {
-      
-      InlineParsingResult::DoctreeAndNodes(altered_doctree, nodes_data) => {
-
-        doctree = altered_doctree;
-
-        eprintln!("Target nodes: {:#?}\n", nodes_data);
-
-        if nodes_data.len() != 1 {
-          return TransitionResult::Failure {
-            message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n")
-          }
-        }
-
-        match nodes_data.get(0) {
-
-          Some(TreeNodeType::AbsoluteURI { text })  |  Some(TreeNodeType::StandaloneEmail { text })  =>  {
-
-            TreeNodeType::ExternalHyperlinkTarget {
-              uri: text.clone(),
-              target: label_as_string,
-              marker_indent: detected_marker_indent
-            }
-          }
-
-          Some(TreeNodeType::Reference { target_label, displayed_text }) =>  {
-
-            TreeNodeType::IndirectHyperlinkTarget {
-              target: label_as_string,
-              indirect_target: target_label.clone(),
-              marker_indent: detected_marker_indent
-            }
-          }
-
-          _ => panic!("Hyperlink target on line {} didn't match any known types.\nComputer says no...\n", line_cursor.sum_total())
-        }
+    _ => {
+      doctree = doctree.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
       }
-      _ => panic!("Inline parser failed when parsing a hyperlink target on line {}\n.Computer says no...\n", line_cursor.sum_total())
-    };
-
-    let node = TreeNode::new(node_type, doctree.node_count(), None);
-
-    doctree.push_child(node);
-
-    return TransitionResult::Success {
-      doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Neither,
-      line_advance: LineAdvance::Some(1)
-    }
-
-  } else {
-
-    doctree = doctree.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
     }
   }
 }
@@ -436,289 +454,290 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
   eprintln!("Empty after marker: {}\n", empty_after_marker);
 
-  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    match detected_directive_label.as_str() {
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      match detected_directive_label.as_str() {
 
-      "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
-
-        Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
+        "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
+  
+          Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
+        }
+  
+        "admonition" => {
+  
+          Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
+        }
+  
+        "image" => {
+  
+          Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
+        }
+  
+        "figure" => {
+  
+          todo!("Parse figure here...")
+        }
+  
+        "topic" => {
+  
+          todo!("Parse topic here...")
+        }
+  
+        "sidebar" => {
+  
+          todo!("Parse sidebar here...")
+        }
+  
+        "line-block" => {
+  
+          todo!("Parse line block here...")
+        }
+  
+        "parsed-literal" => {
+  
+          todo!("Parse literal block with inlin elements here...")
+        }
+  
+  
+        "code" => {
+  
+          todo!("Parse code block here...")
+        }
+  
+  
+        "math" => {
+          todo!("Parse display math block here...")
+        }
+  
+        "rubric" => {
+  
+          todo!("Parse rubric here...")
+        }
+  
+        "epigraph" => {
+  
+          todo!("Parse epigraph here...")
+        }
+  
+        "highlights" => {
+  
+          todo!("Parse highlights here...")
+        }
+  
+        "pull-quote" => {
+  
+          todo!("Parse pull-quote here...")
+        }
+  
+        "compound" => {
+  
+          todo!("Parse compound paragraph here...")
+        }
+  
+        "container" => {
+  
+          todo!("parse container here...")
+        }
+  
+        "table" => {
+  
+          todo!("Parse table here...")
+        }
+  
+        "csv-table" => {
+  
+          todo!("Parse CSV table here...")
+        }
+  
+        "list-table" => {
+          todo!("Parse list table here...")
+        }
+  
+        // DOCUMENT PARTS
+  
+        "contents" => {
+  
+          todo!("Parse table of contents here...")
+        }
+  
+        "sectnum" | "section-numbering" => {
+  
+          todo!("Parse automatic section number generator here...")
+        }
+  
+        "header" => {
+  
+          todo!("Parse header here...")
+        }
+  
+        "footer" => {
+  
+          todo!("Parse footer here...")
+        }
+  
+        "target-notes" => {
+  
+          todo!("Parse target footnotes here...")
+        }
+  
+        "footnotes" => {
+  
+          unimplemented!("Footnotes (plural) directive is mentioned in the rST specification but is not implemented yet.")
+        }
+  
+        "citations" => {
+  
+          unimplemented!("Citations (plural) directive is mentioned in the rST specification but is not implemented yet.")
+        }
+  
+        "meta" => {
+  
+          todo!("Parse HTML metadata here...")
+        }
+  
+        // MISCELLANEOUS
+  
+        "include" => {
+  
+          todo!("Include document here...")
+        }
+  
+        "raw" => {
+  
+          todo!("Parse raw data pass-through here...")
+        }
+  
+        "class" => {
+  
+          todo!("Assign specific CSS class to a block here...")
+        }
+  
+        "role" => {
+  
+          todo!("Create a new interpreted text here...")
+        }
+  
+        "default-role" => {
+  
+          todo!("Assign a default role to interpreted text here...")
+        }
+  
+        "title" => {
+  
+          todo!("Assign a document metadata title here...")
+        }
+  
+        "restructuredtext-test-directive" => {
+  
+          todo!("Only for test purposes...")
+        }
+  
+        // A+ SPECIFIC DIRECTIVES
+  
+        "questionnaire" => {
+  
+          todo!("Parse graded and feedback questionnaires here...")
+        }
+  
+        "submit" => {
+  
+          todo!("Parse submittable (external) exercises here...")
+        }
+  
+        "toctree" => {
+  
+          todo!("Parse round metadata here...")
+        }
+  
+        "ae-input" => {
+  
+          todo!("Parse active element input here...")
+        }
+  
+        "ae-output" => {
+  
+          todo!("Parse active element output here...")
+        }
+  
+        "hidden_block" => {
+  
+          todo!("Parse hidden block here...")
+        }
+  
+        "point-of-interest" => {
+  
+          todo!("Parse point of interest here...")
+        }
+  
+        "annotated" => {
+  
+          todo!("Parse annotated code blocks here...")
+        }
+  
+        "lineref-code-block" => {
+  
+          todo!("Parse code blocks with line references here...")
+        }
+  
+        "repl-res-count-reset" => {
+  
+          todo!("Parse an interactiv REPL session here...")
+        }
+  
+        "acos-submit" => {
+  
+          todo!("parse submitttable ACOS exercise here...")
+        }
+  
+        "div" => {
+  
+          todo!("Assign CSS classes (div) to text blocks here...")
+        }
+  
+        "styled-topic" => {
+  
+          todo!("Parse styled topic here...")
+        }
+  
+        // A+ MEDIA DIRECTIVES
+  
+        "story" => {
+  
+          todo!("Story embedded in a iframe...")
+        }
+  
+        "jsvee" => {
+  
+          todo!("JSVee program visualization...")
+        }
+  
+        "youtube" => {
+  
+          todo!("Youtube video...")
+        }
+  
+        "local-video" => {
+  
+          todo!("A local video...")
+        }
+  
+        "embedded-page" => {
+  
+          todo!("An embedded page...")
+        }
+  
+        _ => todo!("Return the unknown or not yet implemented directive as a literal block...")
       }
-
-      "admonition" => {
-
-        Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
-      }
-
-      "image" => {
-
-        Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
-      }
-
-      "figure" => {
-
-        todo!("Parse figure here...")
-      }
-
-      "topic" => {
-
-        todo!("Parse topic here...")
-      }
-
-      "sidebar" => {
-
-        todo!("Parse sidebar here...")
-      }
-
-      "line-block" => {
-
-        todo!("Parse line block here...")
-      }
-
-      "parsed-literal" => {
-
-        todo!("Parse literal block with inlin elements here...")
-      }
-
-
-      "code" => {
-
-        todo!("Parse code block here...")
-      }
-
-
-      "math" => {
-        todo!("Parse display math block here...")
-      }
-
-      "rubric" => {
-
-        todo!("Parse rubric here...")
-      }
-
-      "epigraph" => {
-
-        todo!("Parse epigraph here...")
-      }
-
-      "highlights" => {
-
-        todo!("Parse highlights here...")
-      }
-
-      "pull-quote" => {
-
-        todo!("Parse pull-quote here...")
-      }
-
-      "compound" => {
-
-        todo!("Parse compound paragraph here...")
-      }
-
-      "container" => {
-
-        todo!("parse container here...")
-      }
-
-      "table" => {
-
-        todo!("Parse table here...")
-      }
-
-      "csv-table" => {
-
-        todo!("Parse CSV table here...")
-      }
-
-      "list-table" => {
-        todo!("Parse list table here...")
-      }
-
-      // DOCUMENT PARTS
-
-      "contents" => {
-
-        todo!("Parse table of contents here...")
-      }
-
-      "sectnum" | "section-numbering" => {
-
-        todo!("Parse automatic section number generator here...")
-      }
-
-      "header" => {
-
-        todo!("Parse header here...")
-      }
-
-      "footer" => {
-
-        todo!("Parse footer here...")
-      }
-
-      "target-notes" => {
-
-        todo!("Parse target footnotes here...")
-      }
-
-      "footnotes" => {
-
-        unimplemented!("Footnotes (plural) directive is mentioned in the rST specification but is not implemented yet.")
-      }
-
-      "citations" => {
-
-        unimplemented!("Citations (plural) directive is mentioned in the rST specification but is not implemented yet.")
-      }
-
-      "meta" => {
-
-        todo!("Parse HTML metadata here...")
-      }
-
-      // MISCELLANEOUS
-
-      "include" => {
-
-        todo!("Include document here...")
-      }
-
-      "raw" => {
-
-        todo!("Parse raw data pass-through here...")
-      }
-
-      "class" => {
-
-        todo!("Assign specific CSS class to a block here...")
-      }
-
-      "role" => {
-
-        todo!("Create a new interpreted text here...")
-      }
-
-      "default-role" => {
-
-        todo!("Assign a default role to interpreted text here...")
-      }
-
-      "title" => {
-
-        todo!("Assign a document metadata title here...")
-      }
-
-      "restructuredtext-test-directive" => {
-
-        todo!("Only for test purposes...")
-      }
-
-      // A+ SPECIFIC DIRECTIVES
-
-      "questionnaire" => {
-
-        todo!("Parse graded and feedback questionnaires here...")
-      }
-
-      "submit" => {
-
-        todo!("Parse submittable (external) exercises here...")
-      }
-
-      "toctree" => {
-
-        todo!("Parse round metadata here...")
-      }
-
-      "ae-input" => {
-
-        todo!("Parse active element input here...")
-      }
-
-      "ae-output" => {
-
-        todo!("Parse active element output here...")
-      }
-
-      "hidden_block" => {
-
-        todo!("Parse hidden block here...")
-      }
-
-      "point-of-interest" => {
-
-        todo!("Parse point of interest here...")
-      }
-
-      "annotated" => {
-
-        todo!("Parse annotated code blocks here...")
-      }
-
-      "lineref-code-block" => {
-
-        todo!("Parse code blocks with line references here...")
-      }
-
-      "repl-res-count-reset" => {
-
-        todo!("Parse an interactiv REPL session here...")
-      }
-
-      "acos-submit" => {
-
-        todo!("parse submitttable ACOS exercise here...")
-      }
-
-      "div" => {
-
-        todo!("Assign CSS classes (div) to text blocks here...")
-      }
-
-      "styled-topic" => {
-
-        todo!("Parse styled topic here...")
-      }
-
-      // A+ MEDIA DIRECTIVES
-
-      "story" => {
-
-        todo!("Story embedded in a iframe...")
-      }
-
-      "jsvee" => {
-
-        todo!("JSVee program visualization...")
-      }
-
-      "youtube" => {
-
-        todo!("Youtube video...")
-      }
-
-      "local-video" => {
-
-        todo!("A local video...")
-      }
-
-      "embedded-page" => {
-
-        todo!("An embedded page...")
-      }
-
-      _ => todo!("Return the unknown or not yet implemented directive as a literal block...")
     }
-
-  } else {
-
-    doctree = doctree.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
+    _ => {
+      doctree = doctree.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
     }
   }
 }
@@ -731,33 +750,36 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
   let empty_after_marker = if captures.get(2).unwrap().as_str().trim().is_empty() { true } else { false };
 
-  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
-      if line.trim().is_empty() && empty_after_marker { true } else { false }
-    } else {
-      if !empty_after_marker { false } else { true }
-    };
-  
-    if is_empty_comment {
-      doctree = doctree.push_data(TreeNodeType::Comment { text: None });
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+        if line.trim().is_empty() && empty_after_marker { true } else { false }
+      } else {
+        if !empty_after_marker { false } else { true }
+      };
+    
+      if is_empty_comment {
+        doctree = doctree.push_data(TreeNodeType::Comment { text: None });
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(1)
+        }
+      }
+    
+      todo!()
+    }
+    _ => {
+      doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
-        push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(1)
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
       }
-    }
-  
-    todo!()
-  } else {
-    doctree = doctree.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
-    }
+    } 
   }
 }
 

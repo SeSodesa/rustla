@@ -35,11 +35,11 @@ fn bullet_list_01 () {
 fn bullet_list_02 () {
 
   let src = String::from("
-  - List item 1
+- List item 1
 
-    Second paragraph of the list item.
-    
-    Third paragraph of this list item...
+  Second paragraph of the list item.
+  
+  Third paragraph of this list item...
     
   ");
 
