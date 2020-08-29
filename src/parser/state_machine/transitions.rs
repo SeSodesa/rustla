@@ -279,6 +279,7 @@ impl StateMachine {
 
 
   /// #### ATTRIBUTION_PATTERN
+  /// A pattern for matching attributions inside block quotes.
   const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *[^ \n]";
 
   /// #### BLANK_LINE_PATTERN
@@ -286,7 +287,7 @@ impl StateMachine {
   const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
 
 
-  /// #### BULLET_PATERN
+  /// #### BULLET_PATTERN
   /// A pattern for matching bullet list bullets.
   const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
