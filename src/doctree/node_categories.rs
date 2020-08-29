@@ -42,6 +42,16 @@ pub enum NodeCategory {
   /// Structural elements can only be child elements of other structural elements.
   Structural,
 
+  /// #### CompoundStructural
+  /// 
+  /// Structural nodes that may have children.
+  CompoundStructural,
+
+  /// #### SimpleStructural
+  /// 
+  /// Structural nodes that may not have children.
+  SimpleStructural,
+
   /// #### SubStructural
   /// Structural subelements are child elements of structural elements.
   /// Simple structuctural subelements (title, subtitle) contain text data;
@@ -234,17 +244,21 @@ pub const DOCTEST_BLOCK_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::SimpleBody,
 ];
-pub const DOCUMENT_CATEGORIES: [NodeCategory; 2] = [
+pub const DOCUMENT_CATEGORIES: [NodeCategory; 3] = [
   NodeCategory::Root,
   NodeCategory::Structural,
+  NodeCategory::CompoundStructural,
 ];
 pub const EMPHASIS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
-pub const EMPTY_LINE_CATEGORIES: [NodeCategory; 3] = [
+pub const EMPTY_LINE_CATEGORIES: [NodeCategory; 6] = [
   NodeCategory::Structural,
+  NodeCategory::SimpleStructural,
   NodeCategory::Body,
+  NodeCategory::SimpleBody,
   NodeCategory::SubBody,
+  NodeCategory::SimpleSubBody,
 ];
 pub const ENTRY_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
@@ -275,8 +289,9 @@ pub const FIELD_LIST_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::CompoundBody,
 ];
-pub const FIELD_LIST_ITEM_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::SubBody
+pub const FIELD_LIST_ITEM_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody,
 ];
 pub const FIGURE_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
@@ -400,12 +415,14 @@ pub const RUBRIC_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::SimpleBody,
 ];
-pub const SECTION_CATEGORIES: [NodeCategory; 2] = [
+pub const SECTION_CATEGORIES: [NodeCategory; 3] = [
   NodeCategory::Structural,
+  NodeCategory::CompoundStructural,
   NodeCategory::Titular,
 ];
-pub const SIDEBAR_CATEGORIES: [NodeCategory; 1] = [
-  NodeCategory::Structural
+pub const SIDEBAR_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Structural,
+  NodeCategory::CompoundStructural,
 ];
 pub const STATUS_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Bibliographic

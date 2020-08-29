@@ -60,11 +60,17 @@ impl TreeNode {
 
     let mut node_type_properties = data_variant.node_categories();
 
-    if node_type_properties.any( |cat| if let NodeCategory::Inline = cat { true } else { false } )
-    || match data_variant { TreeNodeType::EmptyLine | TreeNodeType::Transition {..} => true, _ => false } {
-      None
-    } else {
+    if node_type_properties.any( |cat|
+        match cat {
+          NodeCategory::CompoundStructural | NodeCategory::CompoundBody | NodeCategory::CompoundSubBody => true,
+          _ => false
+      }
+    ) {
       Some(Vec::new())
+    } else if let TreeNodeType::Paragraph { .. } = data_variant {
+      Some(Vec::new())
+    } else {
+      None
     }
   }
 
@@ -86,7 +92,7 @@ impl TreeNode {
       if let Some(children) = &mut self.children {
         children.push(node);
       } else {
-        panic!("This type of node is not allowed to have children.\nComputer says no...\n")
+        panic!("Node of type {:#?} is not allowed to have children. Computer says no...", node.data)
       }
       
     } else {

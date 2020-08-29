@@ -1243,8 +1243,6 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 /// A helper for parsing a paragraph node.
 fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, mut doctree: DocTree, detected_indent: usize) -> TransitionResult {
 
-  eprintln!("Base indent: {}\nDetected indent: {}\n", base_indent, detected_indent);
-
   if parent_indent_matches(doctree.shared_node_data(), detected_indent) {
           
     doctree = doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
