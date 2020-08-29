@@ -775,4 +775,23 @@ impl ParsingResult {
       _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
     }
   }
+
+
+  /// ### parent_indent_matches
+  /// 
+  /// Checks how a given indentation matches with the indentation of a given parent node type.
+  fn parent_indent_matches (parent: &TreeNodeType, relevant_child_indent: usize) -> IndentationMatch {
+
+    if let Some(indent) = parent.body_indent() {
+      if indent < relevant_child_indent {
+        IndentationMatch::TooLittle
+      } else if indent == relevant_child_indent {
+        IndentationMatch::JustRight
+      } else {
+        IndentationMatch::TooMuch
+      }
+    } else {
+      IndentationMatch::DoesNotMatter
+    }
+  }
 }

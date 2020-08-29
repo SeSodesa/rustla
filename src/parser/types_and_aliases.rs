@@ -114,3 +114,28 @@ pub enum InlineParsingResult {
   NoNodes,
 
 }
+
+
+/// ### IndentationMatch
+/// 
+/// A enumeration of the different ways a node's child indentation might
+/// interact with the indentation of the parent.
+pub enum IndentationMatch {
+
+  /// #### TooLittle
+  /// If a (sub)?body node has less indentation than its parent would require,
+  /// it is interpreted as not belonging to the currently focused on node.
+  TooLittle,
+
+  /// #### JustRight
+  /// This node belongs to the parent node.
+  JustRight,
+
+  /// #### TooMuch
+  /// This node is most likely a block quote.
+  TooMuch,
+
+  /// #### DoesNotMatter
+  /// Inline nodes do not care about indentation, for example.
+  DoesNotMatter,
+}
