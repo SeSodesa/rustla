@@ -6,8 +6,12 @@
 /// Author: Santtu Söderholm
 /// email: santtu.soderholm@tuni.fi
 
+use std::collections::HashMap;
+
 use super::*;
 use crate::doctree::directives::DirectiveNode;
+
+
 
 impl Parser {
 
@@ -213,7 +217,63 @@ impl Parser {
   }
 
 
-  pub fn parse_figure () {
+  pub fn parse_figure (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+    };
+    let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      arg
+    } else {
+      panic!("Image on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total())
+    };
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    let (alt, height, width, scale, align, target, classes, name, figwidth, figclass) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name", "figwidth", "figclass"]) {
+        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let alt = options.remove("alt");
+      let height = options.remove("height");
+      let width = options.remove("width");
+      let scale = options.remove("scale");
+      let align = options.remove("align");
+      let target = options.remove("target");
+      let classes = options.remove("class");
+      let name = options.remove("name");
+      let figwidth = options.remove("figwidth");
+      let figclass = options.remove("figclass");
+
+      (alt, height, width, scale, align, target, classes, name, figwidth, figclass)
+    } else {
+      (None, None, None, None, None, None, None, None, None, None)
+    };
+
+    // Construct the contained image
+    let image = TreeNodeType::Image {
+      uri: argument,
+
+      alt: alt,
+      height:height,
+      width: width,
+      scale: scale,
+      align: None,
+      target: target,
+      class: classes,
+      name: name,
+    };
+
+    let figure = TreeNodeType::Figure {
+      body_indent: content_indent,
+      align: align,
+      figclass: figclass,
+      figwidth: figwidth
+    };
+
     todo!()
   }
 
@@ -516,7 +576,7 @@ impl Parser {
           _ => panic!("On directive marker line {} but couldn't skip the marker to parse line contents. Computer says no...", line_cursor.sum_total())
         }
       } else {
-        line.chars().skip_while(|c| c.is_whitespace()).collect()
+        line.chars().skip_while(|c| c.is_whitespace()).collect::<String>().as_str().trim().to_string()
       };
 
       eprintln!("Line: {:#?}\n", line_without_indent);
@@ -588,6 +648,10 @@ impl Parser {
   }
 
 
+  /// ### all_options_recognized
+  /// 
+  /// Checks that a given hashmap only contains recognized option keys,
+  /// based on a given `&str` array slice.
   fn all_options_recognized (option_map: &HashMap<String, String>, recognized_keys: &[&str]) -> bool {
 
     let mut option_iter = option_map.keys();
@@ -597,5 +661,3 @@ impl Parser {
     option_iter.all( |option_key| recognized_iter.any(|recognized_key| option_key == recognized_key) )
   }
 }
-
-use std::collections::HashMap;

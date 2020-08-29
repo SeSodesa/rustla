@@ -370,25 +370,18 @@ pub enum TreeNodeType {
   },
 
   /// #### Figure
+  /// 
+  /// A "figure" consists of image data (including image options),
+  /// an optional caption (a single paragraph), and an optional legend (arbitrary body elements).
+  /// For page-based output media, figures might float to a different position if this helps the page layout.
   Figure {
 
     /// ##### body_indent
     /// The indentation of the caption and legend of this `Figure`.
     body_indent: usize,
 
-    /// #### uri
-    /// A compulsory image location.
-    uri: String,
-
     // Options
-    name:     Option<String>,
-    class:    Option<String>,
-    alt:      Option<String>,
-    height:   Option<String>,
-    width:    Option<String>,
-    scale:    Option<String>,
-    align:    Option<String>,
-    target:   Option<String>,
+    align:    Option<String>, // not passed to contained image
     figwidth: Option<String>,
     figclass: Option<String>
   },
