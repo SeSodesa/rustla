@@ -743,6 +743,8 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 }
 
 
+/// ### comment
+/// A function for parsing reST comments.
 pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
@@ -1303,93 +1305,96 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 /// A helper for parsing a paragraph node.
 fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, mut doctree: DocTree, detected_indent: usize) -> TransitionResult {
 
-  if parent_indent_matches(doctree.shared_node_data(), detected_indent) {
-          
-    doctree = doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
 
-    let relative_indent = detected_indent - base_indent;
-  
-    let mut block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
-      Ok((lines, line_offset)) => {
-        lines.join("\n").trim_end().to_string()
-      }
-      Err(e) => {
-        eprintln!("{}", e);
-        return TransitionResult::Failure {
-          message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
+    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+      doctree = doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
+
+      let relative_indent = detected_indent - base_indent;
+    
+      let mut block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
+        Ok((lines, line_offset)) => {
+          lines.join("\n").trim_end().to_string()
         }
-      }
-    };
-
-    lazy_static! {
-      /// There are two kinds of literal block indicators:
-      /// 1. preceded by whitespace
-      /// 2. not preceded by whitespace
-      /// 
-      /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
-      static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::$").unwrap();
-    }
-
-    let literal_block_next: bool = if let Some(capts) = LITERAL_BLOCK_INDICATOR.captures(block.as_str()) {
-
-      // Remove literal block indicator from paragraph
-      let indicator_len = if capts.get(1).unwrap().as_str().trim().is_empty() {
-        "::".chars().count()
-      } else {
-        ":".chars().count()
-      };
-
-      for _ in 0..indicator_len {
-        if let None = block.pop() {
-          return TransitionResult::Failure { // This should not ever be triggered
-            message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total())
+        Err(e) => {
+          eprintln!("{}", e);
+          return TransitionResult::Failure {
+            message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
           }
         }
-      }
-      true
-    } else { false };
+      };
   
-    // Pass text to inline parser as a string
-    doctree = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(doctree), line_cursor) {
-
-      if !nodes_data.is_empty() {
-        for data in nodes_data {
-          returned_doctree = returned_doctree.push_data(data);
+      lazy_static! {
+        /// There are two kinds of literal block indicators:
+        /// 1. preceded by whitespace
+        /// 2. not preceded by whitespace
+        /// 
+        /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
+        static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::$").unwrap();
+      }
+  
+      let literal_block_next: bool = if let Some(capts) = LITERAL_BLOCK_INDICATOR.captures(block.as_str()) {
+  
+        // Remove literal block indicator from paragraph
+        let indicator_len = if capts.get(1).unwrap().as_str().trim().is_empty() {
+          "::".chars().count()
+        } else {
+          ":".chars().count()
+        };
+  
+        for _ in 0..indicator_len {
+          if let None = block.pop() {
+            return TransitionResult::Failure { // This should not ever be triggered
+              message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total())
+            }
+          }
+        }
+        true
+      } else { false };
+    
+      // Pass text to inline parser as a string
+      doctree = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(doctree), line_cursor) {
+  
+        if !nodes_data.is_empty() {
+          for data in nodes_data {
+            returned_doctree = returned_doctree.push_data(data);
+          }
+        }
+  
+        returned_doctree.focus_on_parent()
+  
+      } else {
+        return TransitionResult::Failure {
+          message: String::from("Couldn't parse paragraph for inline nodes\n")
+        }
+      };
+  
+      if literal_block_next {
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: Some(vec![StateMachine::LiteralBlock]),
+          push_or_pop: PushOrPop::Push,
+          line_advance: LineAdvance::Some(1),
+        }
+      } else {
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(1),
         }
       }
+    }
 
-      returned_doctree.focus_on_parent()
-
-    } else {
-      return TransitionResult::Failure {
-        message: String::from("Couldn't parse paragraph for inline nodes\n")
-      }
-    };
-
-    if literal_block_next {
-      return TransitionResult::Success {
-        doctree: doctree,
-        next_states: Some(vec![StateMachine::LiteralBlock]),
-        push_or_pop: PushOrPop::Push,
-        line_advance: LineAdvance::Some(1),
-      }
-    } else {
+    _ => {
+      eprintln!("Indent didn't match\n");
+      doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
-        push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(1),
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
       }
-    }
-  } else {
-
-    eprintln!("Indent didn't match\n");
-    doctree = doctree.focus_on_parent();
-    return TransitionResult::Success {
-      doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
-      line_advance: LineAdvance::None,
     }
   }
 }
