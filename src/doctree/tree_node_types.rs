@@ -180,7 +180,9 @@ pub enum TreeNodeType {
   ColSpec,
 
   /// #### Comment
-  Comment,
+  Comment {
+    text: Option<String>
+  },
 
   /// #### CompoundParagraph
   /// The "compound" directive is used to create a compound paragraph,
@@ -780,7 +782,7 @@ impl TreeNodeType {
       Self::Classifier { .. } => &CLASSIFIER_CATEGORIES,
       Self::Code { .. } => &CODE_CATEGORIES,
       Self::ColSpec { .. } => &COLSPEC_CATEGORIES,
-      Self::Comment => &COMMENT_CATEGORIES,
+      Self::Comment { .. } => &COMMENT_CATEGORIES,
       Self::CompoundParagraph { .. } => &COMPOUND_PARAGRAPH_CATEGORIES,
       Self::Contact { .. } => &CONTACT_CATEGORIES,
       Self::Container { .. } => &CONTAINER_CATEGORIES,

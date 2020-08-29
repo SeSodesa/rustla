@@ -724,6 +724,44 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 }
 
 
+pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let mut doctree = doctree.unwrap();
+
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
+  let empty_after_marker = if captures.get(2).unwrap().as_str().trim().is_empty() { true } else { false };
+
+  if parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
+
+    let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+      if line.trim().is_empty() && empty_after_marker { true } else { false }
+    } else {
+      if !empty_after_marker { false } else { true }
+    };
+  
+    if is_empty_comment {
+      doctree = doctree.push_data(TreeNodeType::Comment { text: None });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(1)
+      }
+    }
+  
+    todo!()
+  } else {
+    doctree = doctree.focus_on_parent();
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None,
+    }
+  }
+}
+
+
 /// ### text
 /// A function that handles the parsing of blocks that start with text.
 /// This includes paragraphs, but also underlined titles.

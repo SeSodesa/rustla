@@ -16,7 +16,7 @@ impl StateMachine {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
-  pub const BODY_TRANSITIONS: [UncompiledTransition; 30] = [
+  pub const BODY_TRANSITIONS: [UncompiledTransition; 31] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
@@ -54,7 +54,9 @@ impl StateMachine {
 
     (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
 
-    (PatternName::ExplicitMarkup, DIRECTIVE_PATTERN, body::directive),
+    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+
+    (PatternName::Comment, COMMENT_PATTERN, body::comment),
 
     (PatternName::Line, LINE_PATTERN, body::line),
 
@@ -291,7 +293,6 @@ impl StateMachine {
   /// A pattern for matching bullet list bullets.
   const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
-
   /// A pattern for Arabic numerals with closing parentheses
   const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
   /// A pattern for Arabic numerals with a closing right parenthesis
@@ -397,11 +398,14 @@ impl StateMachine {
   /// inside a transition function. The label itself if a simple reference name (an identifier).
   const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
+  /// #### COMMENT_PATTERN
+  /// 
+  /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
+  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\. ( *$|.)";
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
   pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
-
 
   /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.

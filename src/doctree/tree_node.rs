@@ -156,7 +156,7 @@ impl TreeNode {
       TreeNodeType::Classifier { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Code { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::ColSpec { .. } => false,
-      TreeNodeType::Comment => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Comment { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::CompoundParagraph { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::Contact { .. } => false,
       TreeNodeType::Container { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
