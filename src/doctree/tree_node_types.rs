@@ -192,6 +192,9 @@ pub enum TreeNodeType {
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#compound-paragraph
   CompoundParagraph {
+
+    body_indent: usize,
+
     name:   Option<String>,
     class:  Option<String>,
   },
@@ -207,6 +210,9 @@ pub enum TreeNodeType {
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#container
   Container {
+
+    body_indent: usize,
+
     class_names: Option<Vec<String>>,
     name:   Option<String>,
   },
@@ -392,7 +398,9 @@ pub enum TreeNodeType {
   /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#document-header-footer
-  Footer,
+  Footer {
+    body_indent: usize,
+  },
 
   /// #### Footnote
   /// A foonote citation target. Contains a label and the foornote text itself.
@@ -423,7 +431,9 @@ pub enum TreeNodeType {
   /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#document-header-footer
-  Header,
+  Header {
+    body_indent: usize,
+  },
 
   /// #### Image
   Image {
@@ -552,7 +562,9 @@ pub enum TreeNodeType {
   /// 4. DOS/VMS options starting with a '/', followed by an option letter or a word.
   /// 
   /// The recognized syntax is based on Python's `getopt.py` module.
-  OptionList,
+  OptionList {
+    option_indent: usize,
+  },
 
   /// #### OptionListItem
   /// A single option in an `OptionList`. Consists of an option,
@@ -565,7 +577,9 @@ pub enum TreeNodeType {
   ///         | (body elements)+                 |
   ///         +----------------------------------+
   /// ```
-  OptionListItem,
+  OptionListItem {
+    body_indent: usize,
+  },
 
   /// #### OptionString
   OptionString,
@@ -626,7 +640,17 @@ pub enum TreeNodeType {
   },
 
   /// #### Sidebar
-  Sidebar,
+  /// 
+  /// Sidebars are like miniature, parallel documents that occur inside other documents, providing related or reference material.
+  /// A sidebar is typically offset by a border and "floats" to the side of the page; the document's main text may flow around it.
+  /// Sidebars can also be likened to super-footnotes; their content is outside of the flow of the document's main text.
+  ///
+  /// The sidebar element is a nonrecursive section-like construct which may occur at the top level of a section wherever a body element
+  /// (list, table, etc.) is allowed. In other words, sidebar elements cannot nest inside body elements, so you can't have a sidebar inside
+  /// a table or a list, or inside another sidebar (or topic).
+  Sidebar {
+    body_indent: usize,
+  },
 
   /// #### Status
   Status,
@@ -756,6 +780,116 @@ use lazy_static::lazy_static;
 use crate::doctree::node_categories::{*};
 
 impl TreeNodeType {
+
+  /// ### body_indent
+  /// 
+  /// Returns the relevant content indent of each node type.
+  /// This is useful, when one is trying to find out whether a node belongs to a parent node.
+  /// Node containerzation is determined by indentation in reStructuredText.
+  pub fn body_indent (&self) -> Option<usize> {
+    match self {
+      Self::Abbreviation { .. } => None,
+      Self::AbsoluteURI { .. } => None,
+      Self::Acronym { .. } => None,
+      Self::Address => None,
+      Self::Admonition { content_indent, .. } => Some(*content_indent),
+      Self::Attribution => None,
+      Self::Author { .. } => None,
+      Self::Authors {..} => None,
+      Self::AutomaticSectionNumbering {..} => None,
+      Self::BlockQuote { body_indent, .. } => Some(*body_indent),
+      Self::BulletList { bullet_indent, .. } => Some(*bullet_indent),
+      Self::BulletListItem{ text_indent, .. } => Some(*text_indent),
+      Self::Caption { .. } => None,
+      Self::Citation { body_indent, .. } => Some(*body_indent),
+      Self::CitationReference { .. } => None,
+      Self::Classifier { .. } => None,
+      Self::Code { .. } => None,
+      Self::ColSpec { .. } => None,
+      Self::Comment { .. } => None,
+      Self::CompoundParagraph { body_indent, .. } => Some(*body_indent),
+      Self::Contact { .. } => None,
+      Self::Container { body_indent, .. } => Some(*body_indent),
+      Self::Copyright { .. } => None,
+      Self::CSVTable { .. } => None,
+      Self::Date => None,
+      Self::Decoration => None,
+      Self::Definition => None,
+      Self::DefinitionList { term_indent, .. } => Some(*term_indent),
+      Self::DefinitionListItem { body_indent, .. } => Some(*body_indent),
+      Self::Description => None,
+      Self::DocInfo => None,
+      Self::DoctestBlock{ .. } => None,
+      Self::Document { .. }   => Some(0),
+      Self::Emphasis { .. } => None,
+      Self::EmptyLine => None,
+      Self::Entry => None,
+      Self::EnumeratedList { enumerator_indent, .. } => Some(*enumerator_indent),
+      Self::EnumeratedListItem { text_indent, .. } => Some(*text_indent),
+      Self::ExternalHyperlinkTarget { .. } => None,
+      Self::Field => None,
+      Self::FieldBody { .. } => None,
+      Self::FieldList { marker_indent, .. } => Some(*marker_indent),
+      Self::FieldListItem { body_indent, .. } => Some(*body_indent),
+      Self::Figure { body_indent, .. } => Some(*body_indent),
+      Self::Footer { body_indent, .. } => Some(*body_indent),
+      Self::Footnote { body_indent, .. } => Some(*body_indent),
+      Self::FootnoteReference { .. } => None,
+      Self::Header { body_indent, .. } => Some(*body_indent),
+      Self::Generated => None,
+      Self::Image { .. } => None,
+      Self::IndirectHyperlinkTarget { .. } => None,
+      Self::Inline { .. } => None,
+      Self::InlineTarget { .. } => None,
+      Self::InterpretedText { .. } => None,
+      Self::Label { .. } => None,
+      Self::Legend { body_indent, .. } => Some(*body_indent),
+      Self::Line { .. } => None,
+      Self::LineBlock { .. } => None,
+      Self::ListTable { .. } => None,
+      Self::Literal { .. } => None,
+      Self::LiteralBlock { .. } => None,
+      Self::Math { .. } => None,
+      Self::MathBlock { .. } => None,
+      Self::OptionList { option_indent, .. } => Some(*option_indent),
+      Self::OptionListItem { body_indent, .. } => Some(*body_indent),
+      Self::OptionString { .. } => None,
+      Self::Organization { .. } => None,
+      Self::Paragraph { indent, .. } => Some(*indent),
+      Self::ParsedLiteralBlock { .. } => None,
+      Self::Pending { .. } => None,
+      Self::Problematic { .. } => None,
+      Self::Raw { .. } => None,
+      Self::Reference { .. } => None,
+      Self::Revision { .. } => None,
+      Self::Row { .. } => None,
+      Self::Rubric { .. } => None,
+      Self::Section { .. }    => Some(0),
+      Self::Sidebar { body_indent, .. } => Some(*body_indent),
+      Self::Status { .. } => None,
+      Self::StandaloneEmail { .. } => None,
+      Self::StrongEmphasis { .. } => None,
+      Self::Subscript { .. } => None,
+      Self::SubstitutionDefinition { .. } => None,
+      Self::SubstitutionReference { .. } => None,
+      Self::Subtitle { .. } => None,
+      Self::Superscript { .. } => None,
+      Self::SystemMessage { .. } => None,
+      Self::Table { .. } => None,
+      Self::Target { .. } => None,
+      Self::TBody { .. } => None,
+      Self::Term { .. } => None,
+      Self::Text { .. } => None,
+      Self::TGroup { .. } => None,
+      Self::THead { .. } => None,
+      Self::Title { .. } => None,
+      Self::TitleReference { .. } => None,
+      Self::Topic { .. } => None,
+      Self::Transition   => None,
+      Self::Version { .. } => None,
+      Self::WhiteSpace { .. } => None,
+    }
+  }
 
   /// ### node_categories
   /// According to the [reStructuredText DTD](https://docutils.sourceforge.io/docs/ref/doctree.html)

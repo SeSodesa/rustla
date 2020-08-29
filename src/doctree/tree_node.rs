@@ -163,7 +163,7 @@ impl TreeNode {
       TreeNodeType::Copyright { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::CSVTable { .. } => todo!(),
       TreeNodeType::Date => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
-      TreeNodeType::Decoration => match node_data { TreeNodeType::Footer { .. } | TreeNodeType::Header => true, _ => false },
+      TreeNodeType::Decoration => match node_data { TreeNodeType::Footer { .. } | TreeNodeType::Header { .. } => true, _ => false },
       TreeNodeType::Definition => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::DefinitionList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::DefinitionListItem { .. } => true, _ => false },
       TreeNodeType::DefinitionListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
