@@ -278,6 +278,9 @@ impl StateMachine {
   // ==================================
 
 
+  /// #### ATTRIBUTION_PATTERN
+  const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *[^ \n]";
+
   /// #### BLANK_LINE_PATTERN
   /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
   const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
