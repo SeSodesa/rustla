@@ -1179,39 +1179,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 //  Helper functions
 // ==================
 
-/// ### parent_indent_matches
-/// Checks the indentation of the given parent (current) node and whether the relevant detected indent matches with it.
-/// If the indent matches, we can push to the current node and focus on the new node. Otherwise
-fn parent_indent_matches (parent_data: &TreeNodeType, relevant_detected_indent: usize) -> bool {
-
-  use crate::doctree::directives::DirectiveNode;
-
-  // Match against the parent node. Only document root  and sections ignore indentation;
-  // inside any other container it makes a difference.
-  match parent_data {
-
-    TreeNodeType::Document { .. } | TreeNodeType::Section { .. } => true,
-
-    TreeNodeType::BulletListItem {text_indent, .. } | TreeNodeType::EnumeratedListItem { text_indent, .. } => {
-      if relevant_detected_indent == *text_indent { true } else { false }
-    }
-
-    TreeNodeType::FieldListItem {body_indent, .. }  | TreeNodeType::Footnote {body_indent, ..}
-    | TreeNodeType::Citation {body_indent, ..}      | TreeNodeType::DefinitionListItem { body_indent, .. } => {
-      if relevant_detected_indent == *body_indent { true } else { false }
-    },
-
-    TreeNodeType::Admonition {content_indent, ..} => {
-      if relevant_detected_indent == *content_indent { true } else { false }
-    }
-
-    // Add other cases here...
-
-    _ => false
-  }
-}
-
-
 /// ### foonote_label_to_int
 /// Converts a foonote label into a label--target-pair based on the current state of `DocTree.foonote_data`,
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
