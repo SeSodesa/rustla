@@ -876,28 +876,29 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 
       } else if next_line_indent > detected_indent { // Definition list item
 
-        if parent_indent_matches(doctree.shared_data(), detected_indent) {
+        match Parser::parent_indent_matches(doctree.shared_data(), detected_indent) {
 
-          doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
+          IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+            doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
 
-          return TransitionResult::Success {
-            doctree: doctree,
-            next_states: Some(vec![StateMachine::DefinitionList]),
-            push_or_pop: PushOrPop::Push,
-            line_advance: LineAdvance::None
+            return TransitionResult::Success {
+              doctree: doctree,
+              next_states: Some(vec![StateMachine::DefinitionList]),
+              push_or_pop: PushOrPop::Push,
+              line_advance: LineAdvance::None
+            }
           }
-        } else {
-          
-          doctree = doctree.focus_on_parent();
+          _ => {
+            doctree = doctree.focus_on_parent();
 
-          return TransitionResult::Success {
-            doctree: doctree,
-            next_states: None,
-            push_or_pop: PushOrPop::Pop,
-            line_advance: LineAdvance::None
+            return TransitionResult::Success {
+              doctree: doctree,
+              next_states: None,
+              push_or_pop: PushOrPop::Pop,
+              line_advance: LineAdvance::None
+            }
           }
         }
-
       } else {
         // Paragraph line unaligned with previous lines => syntax error
         panic!("Found paragraph line with too little indentation on line {}. Compuer says no...", line_cursor.sum_total());
