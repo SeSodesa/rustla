@@ -128,7 +128,13 @@ pub enum TreeNodeType {
   },
 
   /// #### Caption
-  Caption,
+  /// 
+  /// A `Figure` consists of image data (including image options), an optional *caption* (a single paragraph),
+  /// and an optional legend (arbitrary body elements).
+  /// For page-based output media, figures might float to a different position if this helps the page layout.
+  Caption {
+    indent: usize,
+  },
 
   /// #### Citation
   /// A generic citation target.
@@ -469,7 +475,13 @@ pub enum TreeNodeType {
   Label,
 
   /// #### Legend
-  Legend,
+  /// 
+  /// A `Figure` consists of image data (including image options), an optional caption (a single paragraph),
+  /// and an optional *legend* (arbitrary body elements).
+  /// For page-based output media, figures might float to a different position if this helps the page layout.
+  Legend {
+    body_indent: usize
+  },
 
   /// #### Line
   /// A general line node. Might signify the start of a transtition or a section title.
