@@ -1247,6 +1247,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
       }
 
     } else {
+      if captures.get(0).unwrap().as_str().trim() == "::" {
+        // Empty paragraph
+        return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
+      }
       panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
     }
   } else {

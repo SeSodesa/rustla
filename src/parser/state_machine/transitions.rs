@@ -455,7 +455,7 @@ impl StateMachine {
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
-  pub const LINE_PATTERN: &'static str = r#"^(!{3,}|"{3,}|#{3,}|\${3,}|%{3,}|&{3,}|'{3,}|\({3,}|\){3,}|\*{3,}|\+{3,}|,{3,}|-{3,}|\.{3,}|/{3,}|:{3,}|;{3,}|<{3,}|={3,}|>{3,}|\?{3,}|@{3,}|\[{3,}|\\{3,}|\]{3,}|\^{3,}|_{3,}|`{3,}|\{{3,}|\|{3,}|\}{3,}|~{3,}) *$"#;
+  pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
 
   /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
