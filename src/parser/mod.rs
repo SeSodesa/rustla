@@ -738,7 +738,7 @@ impl Parser {
 
       eprintln!("{} {}\n", indent, relevant_child_indent);
 
-      if indent < relevant_child_indent {
+      if indent > relevant_child_indent {
         IndentationMatch::TooLittle
       } else if indent == relevant_child_indent {
         IndentationMatch::JustRight
