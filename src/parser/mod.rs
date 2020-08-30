@@ -736,8 +736,6 @@ impl Parser {
 
     if let Some(indent) = parent.body_indent() {
 
-      eprintln!("{} {}\n", indent, relevant_child_indent);
-
       if indent > relevant_child_indent {
         IndentationMatch::TooLittle
       } else if indent == relevant_child_indent {
@@ -746,7 +744,8 @@ impl Parser {
         IndentationMatch::TooMuch
       }
     } else {
-      IndentationMatch::DoesNotMatter
+      // IndentationMatch::DoesNotMatter
+      panic!("Asked for parent indentation inside a node that is not a container. Computer says no...")
     }
   }
 }
