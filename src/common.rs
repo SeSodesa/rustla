@@ -88,6 +88,7 @@ pub type EnumAsInt = u32;
 pub enum PatternName {
 
   // Body elements, possibly nested
+  Attribution,
   EmptyLine,
   Bullet,
   Citation,

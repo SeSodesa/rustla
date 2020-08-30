@@ -64,6 +64,56 @@ impl StateMachine {
   ];
 
 
+    /// ### BODY_TRANSITIONS
+  /// An array of transitions related to `StateMachine::Body`.
+  pub const BLOCK_QUOTE_TRANSITIONS: [UncompiledTransition; 32] = [
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::EmptyLine, ATTRIBUTION_PATTERN, block_quote::attribution),
+    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, ARABIC_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
+
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
+
+    (PatternName::Citation, CITATION_PATTERN, body::citation),
+
+    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
+
+    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+
+    (PatternName::Comment, COMMENT_PATTERN, body::comment),
+
+    (PatternName::Line, LINE_PATTERN, body::line),
+
+    (PatternName::Text, TEXT_PATTERN, body::text)
+  ];
+
   /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
   /// An array of transitions related to `StateMachine::BulletList`.
   pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
@@ -282,7 +332,7 @@ impl StateMachine {
 
   /// #### ATTRIBUTION_PATTERN
   /// A pattern for matching attributions inside block quotes.
-  const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *[^ \n]";
+  pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *[^ \n]";
 
   /// #### BLANK_LINE_PATTERN
   /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
@@ -405,7 +455,7 @@ impl StateMachine {
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
-  pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
+  pub const LINE_PATTERN: &'static str = r#"^(!{3,}|"{3,}|#{3,}|\${3,}|%{3,}|&{3,}|'{3,}|\({3,}|\){3,}|\*{3,}|\+{3,}|,{3,}|-{3,}|\.{3,}|/{3,}|:{3,}|;{3,}|<{3,}|={3,}|>{3,}|\?{3,}|@{3,}|\[{3,}|\\{3,}|\]{3,}|\^{3,}|_{3,}|`{3,}|\{{3,}|\|{3,}|\}{3,}|~{3,}) *$"#;
 
   /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.

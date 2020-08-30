@@ -10,6 +10,7 @@
 // ===============================================
 // Submodules for namespacing transition functions
 // ===============================================
+mod block_quote;
 mod body;
 mod bullet_list;
 mod common;
@@ -57,6 +58,12 @@ pub enum StateMachine {
   /// #### Section
   /// A state for detecting boyd elements inside a section.
   Section,
+
+  /// #### BlockQuote
+  /// A state for recognizing body elements inside a block quote.
+  /// In addition to normal body elements, attributions are also
+  /// recognized as such in this state.
+  BlockQuote,
 
   /// #### BulletList
   /// In this state, the parser only recognizes empty lines and bullet list items.
@@ -229,6 +236,11 @@ lazy_static! {
 
     let body_actions = StateMachine::compile_state_transitions(&StateMachine::BODY_TRANSITIONS);
     action_map.insert(StateMachine::Body, body_actions);
+
+    use crate::parser::state_machine::transitions::ATTRIBUTION_PATTERN;
+
+    let block_quote_actions = StateMachine::compile_state_transitions(&StateMachine::BLOCK_QUOTE_TRANSITIONS);
+    action_map.insert(StateMachine::BlockQuote, block_quote_actions);
 
     let bullet_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_TRANSITIONS);
     action_map.insert(StateMachine::BulletList, bullet_actions);

@@ -9,20 +9,20 @@ use super::*;
 #[test]
 fn standard_admonition_01 () {
   let src = String::from("
-  .. note:: This is a note admonition.
-   This is the second line of the first paragraph.
+.. note:: This is a note admonition.
+  This is the second line of the first paragraph.
 
-  .. warning::
-     This is another admonition.
-     This is the second line of the first paragraph.
+.. warning::
+    This is another admonition.
+    This is the second line of the first paragraph.
 
-  .. tip::
-    :name: test
-    :class: class
-    :extra: extra (this should be ignored)
+.. tip::
+  :name: test
+  :class: class
+  :extra: extra (this should be ignored)
 
-    This paragraph forms the contents of the tip admonition above.
-    If content is not found, the parser will panic.
+  This paragraph forms the contents of the tip admonition above.
+  If content is not found, the parser will panic.
 
   ");
 
@@ -84,15 +84,15 @@ fn standard_admonition_01 () {
 #[test]
 fn generic_admonition_01 () {
   let src = String::from("
-  .. admonition:: This is a generic admonition with the argument on the first
-      line after the directive marker and extending on the following line as well.
-      :option1: This is not recognized as an admonition option, only \"class\" and \"name\" are valid.
-      :name: hyperref target name
+.. admonition:: This is a generic admonition with the argument on the first
+    line after the directive marker and extending on the following line as well.
+    :option1: This is not recognized as an admonition option, only \"class\" and \"name\" are valid.
+    :name: hyperref target name
 
-      This paragraph starts the admonition contents.
-      Here is a second line.
+    This paragraph starts the admonition contents.
+    Here is a second line.
 
-  This paragraph no longer belongs to the above admonition.
+This paragraph no longer belongs to the above admonition.
 
   ");
 
@@ -130,18 +130,18 @@ fn generic_admonition_01 () {
 #[test]
 fn generic_admonition_02 () {
   let src = String::from("
-  .. admonition::
-    This is a generic admonition, the argument of which starts on
-    the line following the directive marker.
-    :class: options start here
-    :name: here is a reference name
-    :unrecognized: This option is discarded by the parsing function.
+.. admonition::
+  This is a generic admonition, the argument of which starts on
+  the line following the directive marker.
+  :class: options start here
+  :name: here is a reference name
+  :unrecognized: This option is discarded by the parsing function.
 
-    The admonition contents start here,
-    with a single paragraph.
+  The admonition contents start here,
+  with a single paragraph.
 
-    - followed by
-    - a bullet list
+  - followed by
+  - a bullet list
 
   ");
 

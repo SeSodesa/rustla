@@ -67,11 +67,11 @@ fn bullet_list_02 () {
 fn bullet_list_03 () {
 
   let src = String::from("
-  - List item 1
+- List item 1
 
-    Second paragraph of the list item.
+  Second paragraph of the list item.
 
-  - List item 2
+- List item 2
     
   ");
 
@@ -111,13 +111,13 @@ fn bullet_list_03 () {
 fn bullet_list_04 () {
 
   let src = String::from("
-  - List item 1
+- List item 1
 
-    Second paragraph of the list item.
+  Second paragraph of the list item.
 
-  - List item 2
+- List item 2
 
-  asfasdfdsfasfasdfasfd
+asfasdfdsfasfasdfasfd
     
   ");
 
@@ -163,17 +163,17 @@ fn bullet_list_04 () {
 fn bullet_list_05 () {
 
   let src = String::from("
-  - List item 1
+- List item 1
 
-    Second paragraph of the list item.
+  Second paragraph of the list item.
 
-    - Sublist item 1
+  - Sublist item 1
 
-    - Sublist item 2
+  - Sublist item 2
 
-  - List item 2
+- List item 2
 
-  asfasdfdsfasfasdfasfd
+asfasdfdsfasfasdfasfd
     
   ");
 
@@ -208,23 +208,23 @@ fn bullet_list_05 () {
 fn bullet_list_06 () {
 
   let src = String::from("
-  + List item 1
++ List item 1
 
-    Second paragraph of the list item.
+  Second paragraph of the list item.
 
-    - Sublist item 1
+  - Sublist item 1
 
-    - Sublist item 2
+  - Sublist item 2
 
-      * Subsublist item 1
+    * Subsublist item 1
 
-      * Subsublist item 2
+    * Subsublist item 2
 
-    - Sublist item 3
+  - Sublist item 3
 
-  + List item 2
++ List item 2
 
-  asfasdfdsfasfasdfasfd
+asfasdfdsfasfasdfasfd
     
   ");
 

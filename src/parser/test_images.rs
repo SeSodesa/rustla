@@ -12,19 +12,19 @@ use super::*;
 #[test]
 fn image_01 () {
   let src = String::from("
-  .. image:: this/is/an/image/uri.png
-    :class: html class attributes
-    :name: here is a reference name
-    :unrecognized: This option is discarded by the parsing function.
-    :alt: This is alternate text for the visually impaired
-    :height: 200(px|ex|em|pt|...)
-    :width: 100(px|ex|em|pt|...)
-    :scale: 50%?
-    :align: left
-    :target: turns image into link
+.. image:: this/is/an/image/uri.png
+  :class: html class attributes
+  :name: here is a reference name
+  :unrecognized: This option is discarded by the parsing function.
+  :alt: This is alternate text for the visually impaired
+  :height: 200(px|ex|em|pt|...)
+  :width: 100(px|ex|em|pt|...)
+  :scale: 50%?
+  :align: left
+  :target: turns image into link
 
-    - This bullet list
-    - is not a part of the above image.
+- This bullet list
+- is not a part of the above image.
 
   ");
 

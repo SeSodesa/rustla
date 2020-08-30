@@ -37,6 +37,16 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut
         line_advance: LineAdvance::None,
       }
     }
+    IndentationMatch::TooMuch => {
+
+      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_bullet_indent });
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
     _ => {
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
@@ -102,6 +112,15 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, section_level: 
         line_advance: LineAdvance::None,
       }
     }
+    IndentationMatch::TooMuch => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_enumerator_indent });
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
     _ => {
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
@@ -136,6 +155,15 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::FieldList]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
+    IndentationMatch::TooMuch => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BlockQuote]),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::None,
       }
@@ -220,6 +248,15 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
         line_advance: LineAdvance::Some(offset),
       }
     }
+    IndentationMatch::TooMuch => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
     _ => {
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
@@ -261,7 +298,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_body_indent) {
+  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
 
@@ -283,6 +320,15 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
         next_states: Some(state_stack),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::Some(offset),
+      }
+    }
+    IndentationMatch::TooMuch => {
+      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: tree_wrapper,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
       }
     }
     _ => {
@@ -413,6 +459,15 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
         next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::Some(1)
+      }
+    }
+    IndentationMatch::TooMuch => {
+      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
       }
     }
     _ => {
@@ -730,6 +785,15 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
         _ => todo!("Return the unknown or not yet implemented directive as a literal block...")
       }
     }
+    IndentationMatch::TooMuch => {
+      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
+    }
     _ => {
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
@@ -772,6 +836,15 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
       }
     
       todo!()
+    }
+    IndentationMatch::TooMuch => {
+      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
+      }
     }
     _ => {
       doctree = doctree.focus_on_parent();
@@ -886,6 +959,15 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
               next_states: Some(vec![StateMachine::DefinitionList]),
               push_or_pop: PushOrPop::Push,
               line_advance: LineAdvance::None
+            }
+          }
+          IndentationMatch::TooMuch => {
+            doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent });
+            return TransitionResult::Success {
+              doctree: doctree,
+              next_states: Some(vec![StateMachine::BlockQuote]),
+              push_or_pop: PushOrPop::Push,
+              line_advance: LineAdvance::None,
             }
           }
           _ => {
@@ -1351,6 +1433,16 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(1),
         }
+      }
+    }
+
+    IndentationMatch::TooMuch => {
+      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: Some(vec![StateMachine::BlockQuote]),
+        push_or_pop: PushOrPop::Push,
+        line_advance: LineAdvance::None,
       }
     }
 

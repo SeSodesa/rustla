@@ -14,17 +14,17 @@ use super::*;
 fn mixed_nested_lists_01 () {
 
   let src = String::from("
-  (i) * List item 1
-        of a nested bullet list within
-        an enumerated list...
+(i) * List item 1
+      of a nested bullet list within
+      an enumerated list...
 
-      * Nested list item 2
+    * Nested list item 2
 
-        b) Nested enuemrated list in a nested bullet list
+      b) Nested enuemrated list in a nested bullet list
 
-      Second paragraph of list item i.
+    Second paragraph of list item i.
 
-  (ii) List item 2 of the parent list.
+(ii) List item 2 of the parent list.
 
   ");
 

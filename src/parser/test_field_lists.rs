@@ -76,8 +76,8 @@ An ending paragraph...
 fn field_list_02 () {
 
   let src = String::from("
-    :field marker 1: Marker body
-  and a line with too little indentation
+:field marker 1: Marker body
+and a line with too little indentation
 
 
 An ending paragraph...
@@ -124,16 +124,16 @@ An ending paragraph...
 fn field_list_03 () {
 
   let src = String::from("
-  :Date: 2001-08-16
-  :Version: 1
-  :Authors: - Me
-            - Myself
-            - I
-  :Indentation: Since the field marker may be quite long, the second
-     and subsequent lines of the field body do not have to line up
-     with the first line, but they must be indented relative to the
-     field name marker, and they must line up with each other.
-  :Parameter i: integer
+:Date: 2001-08-16
+:Version: 1
+:Authors: - Me
+          - Myself
+          - I
+:Indentation: Since the field marker may be quite long, the second
+    and subsequent lines of the field body do not have to line up
+    with the first line, but they must be indented relative to the
+    field name marker, and they must line up with each other.
+:Parameter i: integer
 
   ");
 

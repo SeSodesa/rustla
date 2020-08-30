@@ -13,10 +13,10 @@ use super::*;
 fn enumerated_list_01 () {
 
   let src = String::from("
-  (i) List item 1
-      with a valid second line
+(i) List item 1
+    with a valid second line
 
-  Some unindented text.
+Some unindented text.
     
   ");
 
@@ -51,13 +51,13 @@ fn enumerated_list_01 () {
 fn enumerated_list_02 () {
 
   let src = String::from("
-  (i) List item 1
-      with a valid second line
+(i) List item 1
+    with a valid second line
 
-      Second paragraph of this list item.
+    Second paragraph of this list item.
 
-  (i) List item 1
-      of a second list
+(i) List item 1
+    of a second list
     
   ");
 
@@ -97,13 +97,13 @@ fn enumerated_list_02 () {
 fn enumerated_list_03 () {
 
   let src = String::from("
-  (i) a) List item ia
-         with a valid second line
+(i) a) List item ia
+       with a valid second line
 
-      Second paragraph of list item i.
+    Second paragraph of list item i.
 
-  (i) List item 1
-      of a second list
+(i) List item 1
+    of a second list
     
   ");
 
@@ -168,13 +168,13 @@ fn enumerated_list_03 () {
 fn enumerated_list_04 () {
 
   let src = String::from("
-  (#) First item of automatically numbered list
+(#) First item of automatically numbered list
 
-  (#) Second item of automatically numbered list
+(#) Second item of automatically numbered list
 
-  (3) Third item that has to match with the internal counter of the list
+(3) Third item that has to match with the internal counter of the list
 
-  (#) Fourth item of the same list, with automatic numbering, again.
+(#) Fourth item of the same list, with automatic numbering, again.
     
   ");
 
@@ -227,18 +227,18 @@ fn enumerated_list_04 () {
 fn enumerated_list_05 () {
 
   let src = String::from("
-  (i) #) List item i1
-         with a valid second line
+(i) #) List item i1
+       with a valid second line
 
-      ii) List item i2
+    ii) List item i2
 
-      #) List item i3
+    #) List item i3
 
-      First paragraph of list item i.
+    First paragraph of list item i.
 
-  (#) List item ii
+(#) List item ii
 
-  (iii) List item iii
+(iii) List item iii
     
   ");
 
