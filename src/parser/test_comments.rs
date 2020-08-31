@@ -62,3 +62,42 @@ fn comment_02 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn comment_03 () {
+
+  let src = String::from("
+..
+
+The above comment is empty.
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::Comment { text } => {
+      if text.is_some() {
+        eprintln!("Erraneous text: {:#?}\n", text); panic!()
+      }
+    }
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(3).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+}
