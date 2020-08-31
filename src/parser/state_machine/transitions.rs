@@ -451,7 +451,7 @@ impl StateMachine {
   /// #### COMMENT_PATTERN
   /// 
   /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
-  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\. ( *$|.)";
+  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\. (?: *$|$)";
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.

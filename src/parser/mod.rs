@@ -809,7 +809,7 @@ impl Parser {
       .collect::<String>();
 
     if suffix.chars().count() > suffix_len {
-      eprintln!("Encountered a newline before reaching suffix. Returning an empty &str...");
+      eprintln!("Encountered a newline before reaching suffix. Returning an empty string...");
       String::new()
     } else {
       suffix

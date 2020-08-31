@@ -813,12 +813,22 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 
   let mut doctree = doctree.unwrap();
 
+  let match_len = captures.get(0).unwrap().as_str().chars().count();
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
   let empty_after_marker = if captures.get(2).unwrap().as_str().trim().is_empty() { true } else { false };
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+
+      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        line
+      } else {
+        panic!("Found a comment marker on line {} but the line doesn't exist? Computer says no...", line_cursor.sum_total())
+      };
+    
+      let line_after_marker = Parser::line_suffix(current_line, match_len);
+      let empty_after_marker = line_after_marker.as_str().trim().is_empty();
 
       let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
         if line.trim().is_empty() && empty_after_marker { true } else { false }
@@ -837,14 +847,27 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
       }
 
       // Scan the next "blob" of text with the same level of indentation.
-      let (indent, offset) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset()) {
-        if offset == 1 { (indent, offset) } else { todo!() }
+      let (next_indent, first_indent) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+        let next_indent = if offset == 1 { indent } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.relative_offset()) };
+        let first_indent = if empty_after_marker { None } else {Some(match_len)};
+        (next_indent, first_indent)
       } else {
-        todo!()
+        panic!("Ran off the end of (nested?) input on line {}, when reading a non-empty comment. Computer says no...", line_cursor.sum_total())
       };
 
+      let (comment_block_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(next_indent), first_indent, false) {
+        (lines.join("\n"), offset)
+      } else {
+        panic!("Could not read comment block on line {}...", line_cursor.sum_total())
+      };
 
-      todo!()
+      doctree = doctree.push_data(TreeNodeType::Comment { text: Some(comment_block_string) });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(offset)
+      }
     }
     IndentationMatch::TooMuch => {
       doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
