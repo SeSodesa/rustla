@@ -819,6 +819,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+
       let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
         if line.trim().is_empty() && empty_after_marker { true } else { false }
       } else {
@@ -834,6 +835,8 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
           line_advance: LineAdvance::Some(1)
         }
       }
+
+      // Scan the next "blob" of text with the same level of indentation.
     
       todo!()
     }

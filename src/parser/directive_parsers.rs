@@ -534,28 +534,6 @@ impl Parser {
   //  HELPERS
   // ---------
 
-  /// ### indent_on_subsequent_lines
-  /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
-  fn indent_on_subsequent_lines (src_lines: &Vec<String>, start_line: usize) -> Option<(usize, usize)> {
-
-    let mut current_line = start_line;
-    loop {
-      if let Some(line) = src_lines.get(current_line) {
-        if line.trim().is_empty() {
-          current_line += 1;
-          continue
-        } else {
-          break Some(
-            (line.chars().take_while(|c| c.is_whitespace()).count(), current_line - start_line)
-          )
-        }
-      } else {
-        break None
-      }
-    }
-  }
-
-
   /// ### scan_directive_arguments
   /// 
   /// Reads the first block of text of a directive,
