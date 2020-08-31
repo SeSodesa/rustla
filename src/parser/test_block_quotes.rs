@@ -62,3 +62,30 @@ fn block_quote_01 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn block_quote_02 () {
+
+  let src = String::from("
+  This is a paragraph inside a block quote.
+  Indentation determines quotation level.
+  The following attribution ends this block quote
+
+  -- Santtu Söderholm
+
+  This paragraph starts a new block quote at the same level
+  as the previous one (as in it is not nested).
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  todo!()
+}

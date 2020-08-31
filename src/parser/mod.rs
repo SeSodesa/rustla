@@ -712,14 +712,17 @@ impl Parser {
 
     if !loop_broken { blank_finish = true; } // Made it to the end of input
 
+    eprintln!("MINIMAL INDENT: {:#?}\n", minimal_indent);
+
     // Strip all minimal indentation from each line
     if let Some(min_indent) = minimal_indent {
       if strip_indent {
         for (index, line) in block_lines.iter_mut().enumerate() {
           let indent = if first_indent.is_some() && index == 0 { first_indent.unwrap() } else { min_indent };
-          let mut cs = line.chars();
-          for _ in 0..indent { cs.next(); } // Remove indentation in characters
-          *line = cs.as_str().to_string();
+          *line = line
+            .chars()
+            .skip(indent)
+            .collect::<String>();
         }
       }
     }

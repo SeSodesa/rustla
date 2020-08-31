@@ -65,10 +65,18 @@ pub enum TreeNodeType {
 
   /// #### Attribution
   /// An optional attribution of a `BlockQuote`.
+  /// An attribution is a text block beginning with "--", "---", or a true em-dash,
+  /// flush left within the block quote.
+  /// If the attribution consists of multiple lines,
+  /// the left edges of the second and subsequent lines must align.
+  /// 
   /// If a `BlockQuote` contains an attribution,
   /// the following node may be a `BlockQuote as well,
-  /// but not otherwise.
-  Attribution,
+  /// but not otherwise (as it will be interpreted as a part of the previous quote).
+  Attribution {
+    raw_text: String,
+    // parsed_text: Vec<TreeNodeType>
+  },
   
   /// #### Author
   Author,
@@ -793,7 +801,7 @@ impl TreeNodeType {
       Self::Acronym { .. } => None,
       Self::Address => None,
       Self::Admonition { content_indent, .. } => Some(*content_indent),
-      Self::Attribution => None,
+      Self::Attribution { .. } => None,
       Self::Author { .. } => None,
       Self::Authors {..} => None,
       Self::AutomaticSectionNumbering {..} => None,
@@ -903,7 +911,7 @@ impl TreeNodeType {
       Self::Acronym { .. } => &ACRONYM_CATEGORIES,
       Self::Address => &ADDRESS_CATEGORIES,
       Self::Admonition { .. } => &ADMONITION_CATEGORIES,
-      Self::Attribution => &ATTRIBUTION_CATEGORIES,
+      Self::Attribution { .. } => &ATTRIBUTION_CATEGORIES,
       Self::Author { .. } => &AUTHOR_CATEGORIES,
       Self::Authors {..} => &AUTHORS_CATEGORIES,
       Self::AutomaticSectionNumbering {..} => &AUTO_SECTION_NUMBERING_CATEGORIES,

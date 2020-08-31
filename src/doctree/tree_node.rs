@@ -143,11 +143,11 @@ impl TreeNode {
       TreeNodeType::Acronym { .. } => false, // No documentation on docutils!
       TreeNodeType::Address => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Admonition { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
-      TreeNodeType::Attribution => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
+      TreeNodeType::Attribution { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Author { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Authors {..} => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::AutomaticSectionNumbering {..} => false, // Not really a node in rST
-      TreeNodeType::BlockQuote { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::Attribution = node_data { true } else { false },
+      TreeNodeType::BlockQuote { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::Attribution { .. } = node_data { true } else { false },
       TreeNodeType::BulletList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::BulletListItem { .. } => true, _ => false },
       TreeNodeType::BulletListItem{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::Caption { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },

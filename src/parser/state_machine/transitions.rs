@@ -332,7 +332,7 @@ impl StateMachine {
 
   /// #### ATTRIBUTION_PATTERN
   /// A pattern for matching attributions inside block quotes.
-  pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *[^ \n]";
+  pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
 
   /// #### BLANK_LINE_PATTERN
   /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
