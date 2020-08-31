@@ -34,3 +34,31 @@ fn comment_01 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn comment_02 () {
+
+  let src = String::from("
+..
+  This is a single-line comment on the line following the marker
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::Comment { text } => {
+      if text.as_ref().unwrap().as_str() != "This is a single-line comment on the line following the marker" {
+        eprintln!("Erraneous text: {:#?}\n", text); panic!()
+      }
+    }
+    _ => panic!()
+  }
+}

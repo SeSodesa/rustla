@@ -847,7 +847,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 
       // Scan the next "blob" of text with the same level of indentation.
       let (next_indent, first_indent) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        let next_indent = if offset == 1 { Some(indent) } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.relative_offset()) };
+
+        eprintln!("Indent: {}\nOffset: {}\n", indent, offset);
+
+        let next_indent = if offset == 0 { Some(indent) } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.sum_total()) };
         let first_indent = if empty_after_marker { None } else {Some(match_len)};
         (next_indent, first_indent)
       } else {
