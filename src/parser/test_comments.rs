@@ -101,3 +101,53 @@ The above comment is empty.
     _ => panic!()
   }
 }
+
+
+#[test]
+fn comment_04 () {
+
+  let src = String::from("
+* ..
+    This is a comment inside a bullet list item
+
+  This here is a paragraph inside the same item.
+
+This paragraph ends the test...
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+
+  doctree.print_tree();
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::BulletList { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::BulletListItem { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).child(0).shared_data() {
+    TreeNodeType::Comment { text } =>
+      if text.as_ref().unwrap().as_str() != "This is a comment inside a bullet list item" { panic!() }
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).child(2).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+}

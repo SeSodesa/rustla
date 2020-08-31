@@ -234,7 +234,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
       };
       tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
   
-      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level) {
+      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level, false) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
       };
@@ -308,7 +308,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
       };
       tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
   
-      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level) {
+      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level,false) {
         Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
         None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
       };
@@ -813,8 +813,8 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 
   let mut doctree = doctree.unwrap();
 
-  let match_len = captures.get(0).unwrap().as_str().chars().count();
-  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
+  let match_len = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
@@ -826,7 +826,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
         panic!("Found a comment marker on line {} but the line doesn't exist? Computer says no...", line_cursor.sum_total())
       };
     
-      let line_after_marker = Parser::line_suffix(current_line, match_len);
+      let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
       let empty_after_marker = line_after_marker.as_str().trim().is_empty();
 
       let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {

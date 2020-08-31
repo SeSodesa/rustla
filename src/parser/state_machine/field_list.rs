@@ -50,7 +50,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level
         };
         tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level, false) {
           Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
           None => return TransitionResult::Failure {message: format!("Could not parse the first block of field marker on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
         };
