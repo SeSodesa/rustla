@@ -122,7 +122,6 @@ This paragraph ends the test...
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
   match doctree.child(1).shared_data() {

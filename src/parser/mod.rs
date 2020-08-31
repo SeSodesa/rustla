@@ -51,9 +51,10 @@ use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKin
 // Unit test modules
 // -----------------
 mod test_admonitions;
+mod test_block_reading;
+mod test_block_quotes;
 mod test_comments;
 mod test_converters;
-mod test_block_reading;
 mod test_bullet_lists;
 mod test_definition_lists;
 mod test_enumerated_lists;
