@@ -837,7 +837,13 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
       }
 
       // Scan the next "blob" of text with the same level of indentation.
-    
+      let (indent, offset) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset()) {
+        if offset == 1 { (indent, offset) } else { todo!() }
+      } else {
+        todo!()
+      };
+
+
       todo!()
     }
     IndentationMatch::TooMuch => {
