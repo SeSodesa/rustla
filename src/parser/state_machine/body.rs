@@ -815,7 +815,6 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 
   let match_len = captures.get(0).unwrap().as_str().chars().count();
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
-  let empty_after_marker = if captures.get(2).unwrap().as_str().trim().is_empty() { true } else { false };
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
@@ -848,15 +847,16 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 
       // Scan the next "blob" of text with the same level of indentation.
       let (next_indent, first_indent) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        let next_indent = if offset == 1 { indent } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.relative_offset()) };
+        let next_indent = if offset == 1 { Some(indent) } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.relative_offset()) };
         let first_indent = if empty_after_marker { None } else {Some(match_len)};
         (next_indent, first_indent)
       } else {
-        panic!("Ran off the end of (nested?) input on line {}, when reading a non-empty comment. Computer says no...", line_cursor.sum_total())
+        let first_indent = if empty_after_marker { None } else {Some(match_len)};
+        (None, first_indent)
       };
 
-      let (comment_block_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(next_indent), first_indent, false) {
-        (lines.join("\n"), offset)
+      let (comment_block_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), next_indent, first_indent, false) {
+        (lines.join("\n").trim().to_string(), offset)
       } else {
         panic!("Could not read comment block on line {}...", line_cursor.sum_total())
       };

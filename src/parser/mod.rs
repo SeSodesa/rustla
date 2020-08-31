@@ -51,6 +51,7 @@ use crate::common::{self, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKin
 // Unit test modules
 // -----------------
 mod test_admonitions;
+mod test_comments;
 mod test_converters;
 mod test_block_reading;
 mod test_bullet_lists;
@@ -624,7 +625,7 @@ impl Parser {
   /// and uses it as a reference for ending the block.
   fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
     strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>, force_alignment: bool)
-  -> Result<(Vec<String>, usize, usize, bool), String> {
+  -> Result<(Vec<String>, Option<usize>, usize, bool), String> {
 
     if src_lines.is_empty() {
       return Err(String::from("An empty block of text was handed for parsing.\nComputer says no...\n"))
@@ -725,7 +726,7 @@ impl Parser {
     block_lines.shrink_to_fit(); // Free unnecessary used memory
     let line_diff = block_lines.len();
 
-    Ok((block_lines, minimal_indent.unwrap(), line_diff, blank_finish))
+    Ok((block_lines, minimal_indent, line_diff, blank_finish))
   }
 
 

@@ -64,11 +64,11 @@ impl StateMachine {
   ];
 
 
-    /// ### BODY_TRANSITIONS
+  /// ### BLOCK_QUOTE_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.
   pub const BLOCK_QUOTE_TRANSITIONS: [UncompiledTransition; 32] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::EmptyLine, ATTRIBUTION_PATTERN, block_quote::attribution),
+    (PatternName::Attribution, ATTRIBUTION_PATTERN, block_quote::attribution),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, body::enumerator),
@@ -451,7 +451,7 @@ impl StateMachine {
   /// #### COMMENT_PATTERN
   /// 
   /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
-  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\. (?: *$|$)";
+  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
 
   /// #### LINE_PATTERN
   /// A pattern for recognizing lines related to section titles and transitions.
