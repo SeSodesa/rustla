@@ -87,5 +87,39 @@ fn block_quote_02 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(1).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).shared_data() {
+    TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm" { panic!() }
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(3).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(3).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
 }
