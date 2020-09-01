@@ -197,6 +197,8 @@ fn block_quote_04 () {
   -- Santtu Söderholm
     and company
 
+The attribution will be combined into a single line,
+at least for now.
   ");
 
   let mut doctree = DocTree::new(String::from("test"));
@@ -207,5 +209,23 @@ fn block_quote_04 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  match doctree.child(1).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).shared_data() {
+    TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm and company" { panic!() }
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::EmptyLine => {}
+    _ => panic!()
+  }
+
+  match doctree.child(3).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
 }
