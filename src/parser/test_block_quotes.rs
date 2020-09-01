@@ -229,3 +229,46 @@ at least for now.
     _ => panic!()
   }
 }
+
+
+#[test]
+fn block_quote_05 () {
+
+  let src = String::from("
+  Below is a multi-line attribution
+
+  -- Santtu Söderholm
+ and company with too little indentation on the second line.
+ This indented block actually ends up inside another less indented
+ block quote as a paragraph.
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).shared_data() {
+    TreeNodeType::Attribution { raw_text } => assert_eq!(raw_text, "Santtu Söderholm"),
+    _ => panic!()
+  }
+
+  match doctree.child(2).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(2).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+}

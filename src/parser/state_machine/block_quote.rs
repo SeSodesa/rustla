@@ -38,7 +38,7 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: &usize, section_level:
       eprintln!("{:#?}\n", first_indent);
 
       let next_indent = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        if offset == 0 { Some(indent) } else { Some(match_len) }
+        if offset == 0 && indent >= attribution_line_indent { Some(indent) } else { Some(match_len) }
       } else {
         Some(match_len)
       };
