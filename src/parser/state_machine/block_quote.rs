@@ -47,7 +47,7 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: &usize, section_level:
 
         eprintln!("{:#?}\n", lines);
 
-        (lines.join("\n").trim().to_string(), offset)
+        (lines.join(" ").trim().to_string(), offset)
       } else {
         panic!("Could not read comment block on line {}...", line_cursor.sum_total())
       };

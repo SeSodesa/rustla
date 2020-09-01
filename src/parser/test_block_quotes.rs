@@ -186,3 +186,26 @@ fn block_quote_03 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn block_quote_04 () {
+
+  let src = String::from("
+  Below is a multi-line attribution
+
+  -- Santtu Söderholm
+    and company
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  todo!()
+}
