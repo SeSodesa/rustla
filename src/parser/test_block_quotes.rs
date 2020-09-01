@@ -137,7 +137,7 @@ fn block_quote_03 () {
     -- Santtu Söderholm inside a nested block quote
 
   This paragraph continues the first block quote,
-  as the above attribution end the nested block quote
+  as the above attribution ends the nested block quote
   it also ended up triggering.
 
   ");
