@@ -123,3 +123,65 @@ fn block_quote_02 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn block_quote_03 () {
+
+  let src = String::from("
+  This is a paragraph inside a block quote.
+  Indentation determines quotation level.
+  The below attribution does not end this block quote,
+  as it is indented relative to this block quote level.
+
+    -- Santtu Söderholm inside a nested block quote
+
+  This paragraph starts a new block quote at the same level
+  as the previous one (as in it is not nested).
+
+  ");
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+
+  match doctree.child(1).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(1).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(2).child(0).shared_data() {
+    TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm inside a nested block quote" { panic!() }
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(3).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.child(1).child(4).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+}
