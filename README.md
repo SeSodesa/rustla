@@ -30,6 +30,7 @@ src/
     ├── line_cursor.rs
     ├── mod.rs
     ├── state_machine
+    │   ├── block_quote.rs
     │   ├── body.rs
     │   ├── bullet_list.rs
     │   ├── common.rs
@@ -41,8 +42,10 @@ src/
     │   ├── mod.rs
     │   └── transitions.rs
     ├── test_admonitions.rs
+    ├── test_block_quotes.rs
     ├── test_block_reading.rs
     ├── test_bullet_lists.rs
+    ├── test_comments.rs
     ├── test_converters.rs
     ├── test_definition_lists.rs
     ├── test_enumerated_lists.rs
@@ -55,7 +58,7 @@ src/
     ├── test_sections_and_transitions.rs
     └── types_and_aliases.rs
 
-4 directories, 39 files
+4 directories, 42 files
 ```
 
 ## Build instructions
