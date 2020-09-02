@@ -124,10 +124,10 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  fn new(src: String, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>, section_level: usize) -> Self {
+  fn new(src: Vec<String>, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>, section_level: usize) -> Self {
 
     Self {
-      src_lines: src.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
+      src_lines: src, //.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
       line_cursor: LineCursor::new(0, base_line),
       base_indent: base_indent.unwrap_or(0),
       section_level: section_level,
@@ -525,7 +525,7 @@ impl Parser {
     let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent), force_alignment) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
         eprintln!("Block lines: {:#?}, line_offset: {:#?}\n", lines, line_offset);
-        (lines.join("\n"), line_offset)
+        (lines, line_offset)
       }
       Err(e) => {
         eprintln!("{}\n", e);
@@ -535,7 +535,7 @@ impl Parser {
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let (doctree, state_stack) = match Parser::new(block.clone(), doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
+    let (doctree, state_stack) = match Parser::new(block, doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
       ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure {message} => {
         eprintln!("{}", message);

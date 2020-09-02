@@ -13,7 +13,7 @@ use super::*;
 fn bullet_list_01 () {
 
   let src = String::from("
-- This is the first bullet list item.");
+- This is the first bullet list item.").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -41,7 +41,7 @@ fn bullet_list_02 () {
   
   Third paragraph of this list item...
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -73,7 +73,7 @@ fn bullet_list_03 () {
 
 - List item 2
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -119,7 +119,7 @@ fn bullet_list_04 () {
 
 asfasdfdsfasfasdfasfd
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -175,7 +175,7 @@ fn bullet_list_05 () {
 
 asfasdfdsfasfasdfasfd
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -226,7 +226,7 @@ fn bullet_list_06 () {
 
 asfasdfdsfasfasdfasfd
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

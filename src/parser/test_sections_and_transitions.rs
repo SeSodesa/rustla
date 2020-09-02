@@ -20,7 +20,7 @@ Below is a transition.
 
 The line is at least 4 symbols long.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -52,7 +52,7 @@ Below is an over- and underlined section title.
 This paragraph belongs to the section started by the above title,
 not to the document root.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -119,7 +119,7 @@ Level 11 Section Title
 Level 1 Section Title
 ======================
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

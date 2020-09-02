@@ -24,7 +24,7 @@ term 3 : classifier
 
 term 4 : classifier one : classifier two
   Definition 4. 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

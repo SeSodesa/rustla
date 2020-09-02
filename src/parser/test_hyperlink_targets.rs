@@ -19,7 +19,7 @@ fn footnote_01 () {
 
     * Bullet list inside foonote
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -61,7 +61,7 @@ fn footnote_02 () {
 .. [1] Another footnote with the same label (and target).
         The duplicate label should generate a warning.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -128,7 +128,7 @@ fn footnote_03 () {
 .. [*] 28
 .. [*] 29
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -193,7 +193,7 @@ fn footnote_04 () {
 .. [#second] 4
 .. [#] 5
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -251,7 +251,7 @@ fn footnote_05 () {
 .. [*] 5
 .. [2] 5
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -312,7 +312,7 @@ fn citation_01 () {
   let src = String::from("
 .. [CIT2005] Citation
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -346,7 +346,7 @@ fn citation_02 () {
     the paragraph started on previous line
        .. [three] This is a citation inside a block quote
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -387,7 +387,7 @@ fn hyperlink_target_01 () {
 
 Paragraph here. Please give me the label \"target1--target2\".
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -415,7 +415,7 @@ fn hyperlink_target_02 () {
 * The above internal targets that belong to the
   previous list item should reference this item.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -439,7 +439,7 @@ fn hyperlink_target_03 () {
 .. _indirect_hyperlink: an-external-hyperlink_
 
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -483,7 +483,7 @@ fn hyperlink_target_04 () {
 
 .. __: anon-target-ref__
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

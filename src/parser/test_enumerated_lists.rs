@@ -18,7 +18,7 @@ fn enumerated_list_01 () {
 
 Some unindented text.
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -59,7 +59,7 @@ fn enumerated_list_02 () {
 (i) List item 1
     of a second list
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -105,7 +105,7 @@ fn enumerated_list_03 () {
 (i) List item 1
     of a second list
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -176,7 +176,7 @@ fn enumerated_list_04 () {
 
 (#) Fourth item of the same list, with automatic numbering, again.
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -240,7 +240,7 @@ fn enumerated_list_05 () {
 
 (iii) List item iii
     
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

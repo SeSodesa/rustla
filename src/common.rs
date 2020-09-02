@@ -24,7 +24,6 @@ pub fn str_to_lines(string: &str) -> Vec<String> {
     .collect::<Vec<String>>();
 
   line_vec
-
 }
 
 
@@ -62,7 +61,6 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
   }
 
   Ok(chars.as_str().to_string())
-
 }
 
 // ============

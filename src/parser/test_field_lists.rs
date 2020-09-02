@@ -28,7 +28,7 @@ fn field_list_01 () {
 
 An ending paragraph...
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -82,7 +82,7 @@ and a line with too little indentation
 
 An ending paragraph...
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -135,7 +135,7 @@ fn field_list_03 () {
     field name marker, and they must line up with each other.
 :Parameter i: integer
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

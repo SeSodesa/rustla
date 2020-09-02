@@ -24,7 +24,7 @@ fn standard_admonition_01 () {
   This paragraph forms the contents of the tip admonition above.
   If content is not found, the parser will panic.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -94,7 +94,7 @@ fn generic_admonition_01 () {
 
 This paragraph no longer belongs to the above admonition.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -143,7 +143,7 @@ fn generic_admonition_02 () {
   - followed by
   - a bullet list
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

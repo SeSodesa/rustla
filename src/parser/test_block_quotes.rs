@@ -22,7 +22,7 @@ fn block_quote_01 () {
 
   This paragraph is again at the first level of quotation.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -77,7 +77,7 @@ fn block_quote_02 () {
   This paragraph starts a new block quote at the same level
   as the previous one (as in it is not nested).
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -140,7 +140,7 @@ fn block_quote_03 () {
   as the above attribution ends the nested block quote
   it also ended up triggering.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -199,7 +199,7 @@ fn block_quote_04 () {
 
 The attribution will be combined into a single line,
 at least for now.
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -242,7 +242,7 @@ fn block_quote_05 () {
  This indented block actually ends up inside another less indented
  block quote as a paragraph.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

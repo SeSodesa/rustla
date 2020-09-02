@@ -26,7 +26,7 @@ fn mixed_nested_lists_01 () {
 
 (ii) List item 2 of the parent list.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

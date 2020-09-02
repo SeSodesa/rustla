@@ -26,7 +26,7 @@ fn image_01 () {
 - This bullet list
 - is not a part of the above image.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 

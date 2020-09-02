@@ -17,7 +17,7 @@ fn literal_block_01 () {
 > This is a literal block of text,
 > indicated by the \"::\" at the end of last paragraph.
 
-  ");
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
@@ -54,7 +54,7 @@ fn literal_block_02 () {
 This line ends the literal block, as its indentation is on the same level
 as that of the literal block indicator "::".
 
-  "#);
+  "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(String::from("test"));
 
