@@ -313,8 +313,22 @@ impl DocTree {
       match children.get(index) {
         Some(node) => node,
         None => {
-          eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
-          panic!()
+          panic!("Focused on node does not have as many children as is implied. Computer says no...")
+        }
+      }
+    } else { panic!("Cannot retrieve child from a node that cannot have children. Computer says no...") }
+  }
+
+
+  /// ### mut_child
+  /// Retrieves a shared reference to a given child.
+  pub fn mut_child (&mut self, index: usize) -> &mut TreeNode {
+
+    if let Some(children) = &mut self.tree.node.children {
+      match children.get_mut(index) {
+        Some(node) => node,
+        None => {
+          panic!("Focused on node does not have as many children as is implied. Computer says no...")
         }
       }
     } else { panic!("Cannot retrieve child from a node that cannot have children. Computer says no...") }
