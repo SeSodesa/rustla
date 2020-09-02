@@ -296,6 +296,18 @@ pub enum HTMLAlignment {
 }
 
 
+/// ### TraversalType
+/// 
+/// Enumerated the types of tree traversals that one of the `DocTree` walk methods might perform.
+pub enum TraversalType {
+
+  /// #### ID
+  /// Traversal based on node ID. Causes the walker method to look for a specific node
+  /// with the given ID.
+  ID(NodeId)
+}
+
+
 // ===========
 //  Constants
 // ===========

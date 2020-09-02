@@ -326,3 +326,19 @@ impl TreeZipper {
     self.node.shared_data()
   }
 }
+
+/// ---------
+///  Walkers
+/// ---------
+impl TreeZipper {
+
+
+  /// ### walk_to_jode_with_id
+  /// 
+  /// Walks to a specific node based on a given id.
+  pub fn walk_to_node_with_id () {
+
+    todo!()
+  }
+
+}

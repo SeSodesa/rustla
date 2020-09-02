@@ -577,6 +577,8 @@ impl DocTree {
 
 
 
+use crate::common::TraversalType;
+
 /// ---------
 ///  Walkers
 /// ---------
@@ -586,6 +588,26 @@ impl DocTree {
 /// contained data variant.
 impl DocTree {
 
+
+  /// ### walk
+  /// 
+  /// The mother of all walkers. Performs a tree walk based on given `TraversalType`.
+  /// These include walking to a specific node id, but a reference to a `TreeNodeType`
+  /// might also be used in determininig when to stop walking.
+  pub fn walk (mut self, traversal_type: TraversalType) -> Self {
+
+    // Always walk to tree root before starting the search/walk.
+    self.tree = self.tree.walk_to_root();
+
+    match traversal_type {
+      TraversalType::ID(id) => {
+        todo!()
+      }
+      _ => unreachable!()
+    }
+  }
+
+
   /// ### walk_to_node_with_id
   /// 
   /// Walks to a `TreeNode` with a specific given ID.
@@ -593,7 +615,7 @@ impl DocTree {
   /// in order to ensure that all nodes are traversed.
   /// 
   /// Panic!s if a node with the given id is not found.
-  pub fn walk_to_node_with_id(self, id: NodeId) {
+  fn walk_to_node_with_id(self, id: NodeId) -> Self {
 
     if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
 
@@ -605,7 +627,7 @@ impl DocTree {
   /// 
   /// Walks to a node with a given ID and the back again.
   /// Panic!s, if the given node is not found in the tree.
-  pub fn walk_to_and_fro(self, id: NodeId) {
+  fn walk_to_and_fro(self, id: NodeId) -> Self {
 
     if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
 
