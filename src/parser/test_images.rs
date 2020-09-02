@@ -98,5 +98,33 @@ fn figure_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  match doctree.shared_child(1).shared_data() {
+    TreeNodeType::Figure { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_child(0).shared_data() {
+    TreeNodeType::Image { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_child(1).shared_data() {
+    TreeNodeType::Caption { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_child(2).shared_data() {
+    TreeNodeType::EmptyLine { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_child(3).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_child(5).shared_data() {
+    TreeNodeType::BulletList { .. } => {}
+    _ => panic!()
+  }
 }
