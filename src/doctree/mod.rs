@@ -576,6 +576,45 @@ impl DocTree {
 }
 
 
+
+/// ---------
+///  Walkers
+/// ---------
+/// 
+/// Functions for walking to differents parts of the contained `TreeZipper`.
+/// These include ID-based searches, as well as criteria related to the
+/// contained data variant.
+impl DocTree {
+
+  /// ### walk_to_node_with_id
+  /// 
+  /// Walks to a `TreeNode` with a specific given ID.
+  /// Naively walks to the tree root before beginning the actual search,
+  /// in order to ensure that all nodes are traversed.
+  /// 
+  /// Panic!s if a node with the given id is not found.
+  pub fn walk_to_node_with_id(self, id: NodeId) {
+
+    if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
+
+    todo!()
+  }
+
+
+  /// ### walk_to_and_fro
+  /// 
+  /// Walks to a node with a given ID and the back again.
+  /// Panic!s, if the given node is not found in the tree.
+  pub fn walk_to_and_fro(self, id: NodeId) {
+
+    if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
+
+    todo!()
+  }
+
+}
+
+
 /// ### Children
 /// Shorthand for a vector of owned child nodes.
 /// Empty vector indicates no children.
