@@ -34,26 +34,26 @@ term 4 : classifier one : classifier two
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::DefinitionList { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::DefinitionListItem { term, classifiers, .. } => {
       if term != "term 1" || !classifiers.is_empty() { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::DefinitionListItem { term, classifiers, .. } => {
       if term != "term 2" || !classifiers.is_empty() { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(2).shared_data() {
     TreeNodeType::DefinitionListItem { term, classifiers, .. } => {
       assert_eq!(term, "term 3");
       assert_eq!(*classifiers, vec!["classifier".to_string()]); 
@@ -61,7 +61,7 @@ term 4 : classifier one : classifier two
     _ => panic!()
   }
 
-  match doctree.child(1).child(3).shared_data() {
+  match doctree.shared_child(1).shared_child(3).shared_data() {
     TreeNodeType::DefinitionListItem { term, classifiers, .. } => {
       assert_eq!(term, "term 4");
       assert_eq!(*classifiers, vec!["classifier one", "classifier two"].iter().map(|s| s.to_string()).collect::<Vec<String>>()); 

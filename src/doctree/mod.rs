@@ -305,9 +305,9 @@ impl DocTree {
   }
 
 
-  /// ### child
+  /// ### shared_child
   /// Retrieves a shared reference to a given child.
-  pub fn child (&self, index: usize) -> &TreeNode {
+  pub fn shared_child (&self, index: usize) -> &TreeNode {
 
     if let Some(children) = &self.tree.node.children {
       match children.get(index) {

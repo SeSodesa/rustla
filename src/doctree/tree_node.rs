@@ -245,7 +245,7 @@ impl TreeNode {
   /// ### child
   /// Returns a reference to a child node of a given index.
   /// Panics, if the child does not exist.
-  pub fn child (&self, index: usize) -> &Self {
+  pub fn shared_child (&self, index: usize) -> &Self {
     if let Some(children) = &self.children {
       match children.get(index) {
         Some(node) => node,

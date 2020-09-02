@@ -29,17 +29,17 @@ Some unindented text.
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem{..} => (),
     _ => panic!("No EnumeratedListItem as child of EnumeratedList!\n")
   }
 
-  match doctree.child(1).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!("No Paragraph as child of EnumeratdListItem!\n")
   }
@@ -70,22 +70,22 @@ fn enumerated_list_02 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.child(2).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::EnumeratedList{..} => (),
     _ => panic!("No EnumeratedList detected!\n")
   }
 
-  match doctree.child(1).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph{..} => (),
     _ => panic!("No Paragraph detected!\n")
   }
 
-  match doctree.child(1).child(0).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(2).shared_data() {
     TreeNodeType::Paragraph{..} => (),
     _ => panic!("No second Paragraph detected!\n")
   }
@@ -116,47 +116,47 @@ fn enumerated_list_03 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(2).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(2).child(0).shared_data() {
+  match doctree.shared_child(2).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(2).child(0).child(0).shared_data() {
+  match doctree.shared_child(2).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
@@ -187,33 +187,33 @@ fn enumerated_list_04 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
       if *index_in_list != 1 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.child(1).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
       if *index_in_list != 2 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.child(1).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(2).shared_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
       if *index_in_list != 3 { panic!() }
     },
     _ => panic!()
   }
 
-  match doctree.child(1).child(3).shared_data() {
+  match doctree.shared_child(1).shared_child(3).shared_data() {
     TreeNodeType::EnumeratedListItem { index_in_list, .. } => {
       if *index_in_list != 4 { panic!() }
     },
@@ -251,64 +251,64 @@ fn enumerated_list_05 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList { n_of_items, .. } => {
       if *n_of_items != 3 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedList{ .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
       if *kind != EnumKind::Arabic || *index_in_list != 1 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList { kind, start_index, .. } => {
       if *kind != EnumKind::LowerRoman || *start_index != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
       if *kind != EnumKind::LowerRoman || *index_in_list != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(1).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
       if *kind != EnumKind::LowerRoman || *index_in_list != 3 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
       if *kind != EnumKind::LowerRoman || *index_in_list != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.child(1).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(2).shared_data() {
     TreeNodeType::EnumeratedListItem { kind, index_in_list, .. } => {
       if *kind != EnumKind::LowerRoman || *index_in_list != 3 { panic!() }
     }

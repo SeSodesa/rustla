@@ -36,7 +36,7 @@ fn image_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
 
     TreeNodeType::Image {
           uri, alt, height, width, scale, align, target, name, class
@@ -59,7 +59,7 @@ fn image_01 () {
     _ => panic!("Not a simple image...")
   }
 
-  match doctree.child(2).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::BulletList { .. } => {}
     _ => panic!()
   }

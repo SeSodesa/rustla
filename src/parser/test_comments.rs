@@ -25,7 +25,7 @@ fn comment_01 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Comment { text } => {
       if text.as_ref().unwrap().as_str() != "This is a comment on a single line" {
         eprintln!("Erraneous text: {:#?}\n", text); panic!()
@@ -53,7 +53,7 @@ fn comment_02 () {
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Comment { text } => {
       if text.as_ref().unwrap().as_str() != "This is a single-line comment on the line following the marker" {
         eprintln!("Erraneous text: {:#?}\n", text); panic!()
@@ -82,7 +82,7 @@ The above comment is empty.
 
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Comment { text } => {
       if text.is_some() {
         eprintln!("Erraneous text: {:#?}\n", text); panic!()
@@ -91,12 +91,12 @@ The above comment is empty.
     _ => panic!()
   }
 
-  match doctree.child(2).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::EmptyLine { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(3).shared_data() {
+  match doctree.shared_child(3).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -124,28 +124,28 @@ This paragraph ends the test...
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.child(1).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::BulletList { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::BulletListItem { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Comment { text } =>
       if text.as_ref().unwrap().as_str() != "This is a comment inside a bullet list item" { panic!() }
     _ => panic!()
   }
 
-  match doctree.child(1).child(0).child(2).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.child(2).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
