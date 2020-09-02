@@ -180,7 +180,8 @@ impl StateMachine {
       | StateMachine::ListItem
       | StateMachine::Footnote
       | StateMachine::Citation
-      | Self::Admonition => {
+      | Self::Admonition
+      | Self::Figure => {
         Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())
       }
       _ => {

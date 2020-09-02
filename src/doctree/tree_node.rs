@@ -181,7 +181,7 @@ impl TreeNode {
       TreeNodeType::FieldBody { .. } => todo!(),
       TreeNodeType::FieldList { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::FieldListItem { .. } => true, _ => false },
       TreeNodeType::FieldListItem { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
-      TreeNodeType::Figure { .. } => match node_data { TreeNodeType::Caption { .. } | TreeNodeType::Legend { .. } => true, _ => false },
+      TreeNodeType::Figure { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) || match node_data { TreeNodeType::Caption { .. } | TreeNodeType::Legend { .. } => true, _ => false } { true } else { false },
       TreeNodeType::Footer { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::Footnote { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::FootnoteReference { .. } => todo!(),

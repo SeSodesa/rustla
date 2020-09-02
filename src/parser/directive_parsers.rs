@@ -217,7 +217,7 @@ impl Parser {
   }
 
 
-  pub fn parse_figure (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
+  pub fn parse_figure (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
 
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
@@ -286,11 +286,23 @@ impl Parser {
     // interpret it as a missing caption and move on to
     // parsing figure legend contents.
 
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
+      (lines, offset)
+    } else {
+      panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
+      ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::Failure { message } => panic!("{}", message)
+    };
+
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Figure]),
+      next_states: Some(nested_state_stack),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None,
+      line_advance: LineAdvance::Some(offset),
     }
   }
 

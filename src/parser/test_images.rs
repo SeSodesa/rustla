@@ -64,3 +64,39 @@ fn image_01 () {
     _ => panic!()
   }
 }
+
+
+#[test]
+fn figure_01 () {
+  let src = String::from("
+.. figure:: this/is/an/image/uri.png
+  :class: html class attributes
+  :name: here is a reference name
+  :unrecognized: This option is discarded by the parsing function.
+  :alt: This is alternate text for the visually impaired
+  :height: 200(px|ex|em|pt|...)
+  :width: 100(px|ex|em|pt|...)
+  :scale: 50%?
+  :align: left
+  :target: turns image into link
+
+  This first paragraph should be transformed into
+  a figure caption node inside the figure parser.
+
+  This paragraph is already a part of the figure legend.
+
+  - As is
+  - This bullet list
+
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  todo!()
+}
