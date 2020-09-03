@@ -105,6 +105,7 @@ Now with a second row.
 
   for i in 0..n_of_nodes {
     doctree = doctree.walk(TraversalType::ID(i));
-    assert_eq!(doctree.current_node_id(), i);  
+    assert_eq!(doctree.current_node_id(), i);
+    doctree.print_node_id();
   }
 }

@@ -348,8 +348,6 @@ impl TreeZipper {
   /// using the NLR (pre-order) strategy.
   pub fn walk_to_node_with_id (mut self, id: NodeId) -> Result<Self, Self> {
 
-    eprintln!("{}", self.node.id);
-
     if self.node.id == id { return Ok(self) }
 
     let n_of_children = if let Some(children) = &self.node.children {
@@ -369,7 +367,7 @@ impl TreeZipper {
         Err(zipper) => { self = zipper; continue }
       }
     }
-    eprintln!("No node with ID = {}", self.node.id);
+
     self = match self.focus_on_parent() {
       Ok(zipper) | Err(zipper) => zipper
     };

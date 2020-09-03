@@ -88,6 +88,9 @@ impl DocTree {
   }
 
 
+  /// ### n_of_nodes
+  /// 
+  /// Returns the value of the contnained node counter.
   pub fn n_of_nodes (&self) -> NodeId {
     self.node_count
   }
@@ -102,6 +105,21 @@ impl DocTree {
     eprintln!("{:#?}", self.tree)
   }
 
+
+  /// ### print_node
+  /// 
+  /// Prints the currently focused on node.
+  fn print_node (&self) {
+    eprintln!("{:#?}", self.tree.node)
+  }
+
+
+  /// ### print_node_id
+  /// 
+  /// Prints the id of the currently focused on node.
+  fn print_node_id (&self) {
+    eprintln!("{:#?}", self.tree.node.id)
+  }
 
   /// ### node_count
   /// Returns a copy of the current node count in the DocTree.
