@@ -8,8 +8,6 @@ use std::rc::{Rc, Weak};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
-mod tests;
-
 mod node_categories;
 mod tree_zipper;
 use tree_zipper::TreeZipper;
@@ -31,6 +29,12 @@ use crate::common::{
   HTMLAlignment, HorizontalAlignment, LenghtUnit,
   TableColWidths, MetricType, ToCBacklinks
 };
+
+// --------------
+//  Test modules
+// --------------
+mod tests;
+mod test_walkers;
 
 /// ### DocTree
 /// A container for the document tree.
@@ -593,7 +597,7 @@ impl DocTree {
   /// 
   /// The mother of all walkers. Performs a tree walk based on given `TraversalType`.
   /// These include walking to a specific node id, but a reference to a `TreeNodeType`
-  /// might also be used in determininig when to stop walking.
+  /// might also be used in determining when to stop walking.
   pub fn walk (mut self, traversal_type: TraversalType) -> Self {
 
     // Always walk to tree root before starting the search/walk.
@@ -601,9 +605,8 @@ impl DocTree {
 
     match traversal_type {
       TraversalType::ID(id) => {
-        todo!()
+        self.walk_to_node_with_id(id)
       }
-      _ => unreachable!()
     }
   }
 
@@ -615,21 +618,26 @@ impl DocTree {
   /// in order to ensure that all nodes are traversed.
   /// 
   /// Panic!s if a node with the given id is not found.
-  fn walk_to_node_with_id(self, id: NodeId) -> Self {
+  fn walk_to_node_with_id(mut self, id: NodeId) -> Self {
 
     if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
 
-    todo!()
+    self.tree = match self.tree.walk_to_node_with_id(id) {
+      Ok(zipper) => zipper,
+      Err(zipper) => zipper
+    };
+
+    self
   }
 
 
   /// ### walk_to_and_fro
   /// 
   /// Walks to a node with a given ID and the back again.
-  /// Panic!s, if the given node is not found in the tree.
-  fn walk_to_and_fro(self, id: NodeId) -> Self {
+  /// Panic!s, if the given target node id has not been entered into the tree.
+  fn walk_to_and_fro(self, to_id: NodeId, current_id: NodeId) -> Self {
 
-    if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
+    if to_id > self.node_count() { panic!("No node with given ID. Computer says no...") }
 
     todo!()
   }

@@ -51,7 +51,7 @@ impl TreeZipper {
   /// Moves focus to a specific child of a node.
   /// Returns `Ok(TreeZipper)` focused
   /// on the child, if successful. Otherwise
-  /// returns with `Err(message: &str)`
+  /// returns with `Err(TreeZipper)`
   pub fn focus_on_child (mut self, index: usize) -> Result<Self, Self> {
 
     let child: TreeNode;
@@ -333,12 +333,37 @@ impl TreeZipper {
 impl TreeZipper {
 
 
-  /// ### walk_to_jode_with_id
+  /// ### walk_to_node_with_id
   /// 
-  /// Walks to a specific node based on a given id.
-  pub fn walk_to_node_with_id () {
+  /// Walks to a specific node based on a given id,
+  /// using the NLR (pre-order) strategy.
+  pub fn walk_to_node_with_id (mut self, id: NodeId) -> Result<Self, Self> {
 
-    todo!()
+    if self.node.id == id { return Ok(self) }
+
+    eprintln!("{:#?}\n", self.shared_data());
+
+    if let Some(children) = &self.node.children {
+
+      let mut ind: usize = 0;
+      loop {
+
+        self = match self.focus_on_child(ind) {
+          Ok(zipper) => zipper,
+          Err(zipper) => zipper //panic!("No child found...")
+        };
+        ind += 1;
+        match self.walk_to_node_with_id(id) {
+          Ok(zipper) => break Ok(zipper),
+          Err(zipper) => { self = zipper; continue }
+        };
+      }
+    } else {
+      println!("No more children to be found. Ending search for ID...");
+      self = match self.focus_on_parent() {
+        Ok(zipper) | Err(zipper) => zipper
+      };
+      return Err(self)
+    }
   }
-
 }

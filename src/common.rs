@@ -308,6 +308,57 @@ pub enum TraversalType {
 }
 
 
+use crate::parser::state_machine::StateMachine;
+use crate::doctree::DocTree;
+
+/// ### ParsingResult
+/// An enumeration of the different ways a (nested) parsing session might terminate.
+/// The return type of the `Parser::parse` method. Generally, finishing conditions
+/// that are not outright failures will enclose the document tree fed to the parser
+/// when it was initialized.
+pub enum ParsingResult {
+
+  /// #### EOF
+  /// This will be returned, if the parser finished by passing over the last line of the source.
+  /// This generally indicates that the source file was parsed successfully.
+  EOF {
+    doctree: DocTree,
+    state_stack: Vec<StateMachine>
+  },
+
+  /// #### EmptyStateStack
+  /// This will be returned if the parser was unable to parse any elements on some line of the source,
+  /// as patterns not matching will drain the parser state stack of states. This might be useful during
+  /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
+  /// that there were no expected nested structures on the same line.
+  EmptyStateStack {
+    doctree: DocTree,
+    state_stack: Vec<StateMachine>
+  },
+
+  /// #### Failure
+  /// A simple failure type. This will be returned when there was clearly no way to recover.
+  Failure {
+    message: String
+  }
+}
+
+impl ParsingResult {
+
+  /// ### unwrap_tree
+  /// Unwraps the contained doctree in one of the non-failure variants.
+  /// Simply panics if this is attempted for the `Failure` variant.
+  pub fn unwrap_tree(self) -> DocTree {
+
+    match self {
+      Self::EOF {doctree, state_stack} => doctree,
+      Self::EmptyStateStack {doctree, state_stack} => doctree,
+      _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
+    }
+  }
+}
+
+
 // ===========
 //  Constants
 // ===========
