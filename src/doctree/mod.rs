@@ -88,11 +88,8 @@ impl DocTree {
   }
 
 
-  /// ### walk_to_root
-  /// Walks to the root of the contained tree zipper.
-  pub fn walk_to_root (mut self) -> Self {
-    self.tree = self.tree.walk_to_root();
-    self
+  pub fn n_of_nodes (&self) -> NodeId {
+    self.node_count
   }
 
 
@@ -592,6 +589,12 @@ use crate::common::TraversalType;
 /// contained data variant.
 impl DocTree {
 
+  /// ### walk_to_root
+  /// Walks to the root of the contained tree zipper.
+  pub fn walk_to_root (mut self) -> Self {
+    self.tree = self.tree.walk_to_root();
+    self
+  }
 
   /// ### walk
   /// 

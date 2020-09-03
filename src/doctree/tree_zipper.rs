@@ -47,6 +47,15 @@ impl TreeZipper {
   }
 
 
+  /// ### shared_children
+  /// 
+  /// Optionally returns the children of current node,
+  /// if they exist.
+  fn shared_children (&self) -> &Option<Vec<TreeNode>> {
+    &self.node.children
+  }
+
+
   /// ### focus_on_child
   /// Moves focus to a specific child of a node.
   /// Returns `Ok(TreeZipper)` focused
@@ -57,14 +66,14 @@ impl TreeZipper {
     let child: TreeNode;
 
     if let Some(children) = &mut self.node.children {
-      if !children.is_empty() && !index >= children.len() {
+      if !children.is_empty() && index < children.len() {
         child = children.swap_remove(index);
       } else {
         eprintln!("Child with given index does not exist.\nReturning parent...\n");
         return Err(self);
       }
     } else {
-      eprintln!("Tried accessing chidlren in a node that can't have them.\nComputer says no...\n");
+      eprintln!("Tried accessing children in a node that can't have them.\nComputer says no...\n");
       return Err(self)
     }
 
@@ -339,31 +348,31 @@ impl TreeZipper {
   /// using the NLR (pre-order) strategy.
   pub fn walk_to_node_with_id (mut self, id: NodeId) -> Result<Self, Self> {
 
+    eprintln!("{}", self.node.id);
+
     if self.node.id == id { return Ok(self) }
 
-    eprintln!("{:#?}\n", self.shared_data());
-
-    if let Some(children) = &self.node.children {
-
-      let mut ind: usize = 0;
-      loop {
-
-        self = match self.focus_on_child(ind) {
-          Ok(zipper) => zipper,
-          Err(zipper) => zipper //panic!("No child found...")
-        };
-        ind += 1;
-        match self.walk_to_node_with_id(id) {
-          Ok(zipper) => break Ok(zipper),
-          Err(zipper) => { self = zipper; continue }
-        };
-      }
+    let n_of_children = if let Some(children) = &self.node.children {
+      self.n_of_children()
     } else {
-      println!("No more children to be found. Ending search for ID...");
-      self = match self.focus_on_parent() {
-        Ok(zipper) | Err(zipper) => zipper
+      match self.focus_on_parent() { Ok(zipper) | Err(zipper) => return Err(zipper) }
+    };
+
+    for ind in 0..n_of_children {
+      self = if let Ok(child) = self.focus_on_child(ind) {
+        child
+      } else {
+        unreachable!("This should not happen with enumerated children...")
       };
-      return Err(self)
+      match self.walk_to_node_with_id(id) {
+        Ok(zipper) => return Ok(zipper),
+        Err(zipper) => { self = zipper; continue }
+      }
     }
+    eprintln!("No node with ID = {}", self.node.id);
+    self = match self.focus_on_parent() {
+      Ok(zipper) | Err(zipper) => zipper
+    };
+    Err(self)
   }
 }
