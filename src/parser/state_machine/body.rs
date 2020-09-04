@@ -359,7 +359,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
   let label_as_string = if detected_target_label == "_" {
     doctree.next_anon_target_label()
   } else {
-    detected_target_label.to_string()
+    normalize_refname(detected_target_label)
   };
 
   let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
