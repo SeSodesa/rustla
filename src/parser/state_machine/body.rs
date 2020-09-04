@@ -869,7 +869,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
         doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(offset)
+        line_advance: LineAdvance::Some(offset - 1) // -1 because of read_until_blank of Parser::read_indented_block being false
       }
     }
     IndentationMatch::TooMuch => {
@@ -1018,7 +1018,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
         }
       } else {
         // Paragraph line unaligned with previous lines => syntax error
-        panic!("Found paragraph line with too little indentation on line {}. Compuer says no...", line_cursor.sum_total());
+        panic!("Found paragraph line with too little indentation on line {}. Computer says no...", line_cursor.sum_total());
       }
     } else {
       return parse_paragraph(src_lines, base_indent, line_cursor, doctree, detected_indent)

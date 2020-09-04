@@ -305,15 +305,15 @@ impl Parser {
     // Ensure we are focused on the figure that started the above nested parsing session.
     // This might still be buggy in situations where a figure was constructed inside of a figure.
     // Might need to be TreeNodeType AND ID-based instead.
-    doctree = doctree.walk(TraversalType::ID(current_node_id));
+    // doctree = doctree.walk(TraversalType::ID(current_node_id));
 
-    if let TreeNodeType::Figure { .. } = doctree.shared_data() {  } else { panic!("Not focused on parent figure after nested parsing session. Computer says no...") };
+    // if let TreeNodeType::Figure { .. } = doctree.shared_data() {  } else { panic!("Not focused on parent figure after nested parsing session. Computer says no...") };
 
     let first_child_data = doctree.mut_child(1).mut_data();
 
-    if let TreeNodeType::Paragraph { indent } = first_child_data {
-      *first_child_data = TreeNodeType::Caption { indent: *indent }
-    }
+    // if let TreeNodeType::Paragraph { indent } = first_child_data {
+    //   *first_child_data = TreeNodeType::Caption { indent: *indent }
+    // }
 
     TransitionResult::Success {
       doctree: doctree,

@@ -96,8 +96,7 @@ impl TreeNode {
       }
       
     } else {
-      eprintln!("Child of type {:#?} not allowed inside a {:#?}.\nComputer says no...\n", node.data, self.data);
-      panic!();
+      panic!("Child of type {:#?} not allowed inside a {:#?}. Computer says no...", node.data, self.data);
     }
   }
 
