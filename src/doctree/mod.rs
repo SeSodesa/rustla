@@ -243,6 +243,8 @@ impl DocTree {
   /// Performs any node specific actions to the doctree based on given node data.
   fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) {
 
+    use crate::common::normalize_refname;
+
     // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
     match &shared_node_data {
       TreeNodeType::Footnote {target, label, .. } => {
@@ -256,7 +258,7 @@ impl DocTree {
         self.add_reference(&shared_node_data, indirect_target, self.node_count);
       }
       TreeNodeType::Section {title_text, level, line_style } => {
-        self.add_target(&shared_node_data, title_text, self.node_count);
+        self.add_target(&shared_node_data, &normalize_refname(title_text.as_str()), self.node_count);
         self.section_data.add_section_level(*line_style);
         if *level > self.section_data.highest_encountered_section_level() {
           self.section_data.increment_encountered_section_number();

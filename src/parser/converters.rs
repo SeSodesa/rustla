@@ -291,20 +291,3 @@ impl Parser {
   }
 
 }
-
-
-/// ### normalize_refname
-/// Normalizes the given `&str` according to the reStructuredText specification.
-/// In this context, normalization means converting any contiguous whitespace into
-/// a single ASCII space character and converting letters to their lower-case variants.
-/// 
-/// #### Note
-/// This might return something nonsensical, as converting a single multi-scalar grapheme
-/// into lower-case will return the multiple constituent "characters" as their lower-case variants. 
-pub fn normalize_refname (name: &str) -> String {
-  name.split_whitespace() 
-    .collect::<Vec<&str>>() // Collects the SplitWhiteSpace iterator into a vector of &strs
-    .join(" ")            // Joins the vector of &strs into an allocated String
-    .to_lowercase()                   // Performs a UTF8-compliant transformation of unicode scalars in the String
-                                      // into their lower-case counterparts
-}

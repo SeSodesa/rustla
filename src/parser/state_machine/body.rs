@@ -348,6 +348,8 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 /// Parses a hyperlink target into a node.
 pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
+  use crate::common::normalize_refname;
+
   let mut doctree = doctree.unwrap();
 
   // Detected parameters
