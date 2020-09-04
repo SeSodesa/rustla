@@ -398,7 +398,11 @@ Paragraph here. Please give me the label \"target1--target2\".
 
   doctree.print_tree();
 
-  assert_eq!(doctree.shared_child(2).shared_target_label(), "target1--target2");
+  if let Some(labels) = doctree.shared_child(2).shared_target_label() {
+    assert_eq!(labels.join("-").as_str(), "target1-target2")
+  } else {
+    panic!()
+  }
 }
 
 
@@ -426,7 +430,12 @@ fn hyperlink_target_02 () {
 
   doctree.print_tree();
 
-  assert_eq!(doctree.shared_child(1).shared_child(1).shared_target_label(), "internal-target-referencing-below-item--another-target-referencing-below-item");
+  // assert_eq!(doctree.shared_child(1).shared_child(1).shared_target_label(), "internal-target-referencing-below-item--another-target-referencing-below-item");
+  if let Some(labels) = doctree.shared_child(1).shared_child(1).shared_target_label() {
+    assert_eq!(labels.join("|").as_str(), "internal-target-referencing-below-item|another-target-referencing-below-item")
+  } else {
+    panic!()
+  }
 }
 
 

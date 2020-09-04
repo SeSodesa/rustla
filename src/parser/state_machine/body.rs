@@ -351,11 +351,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
   let mut doctree = doctree.unwrap();
 
   // Detected parameters
-  // Here we check which type of target we are dealing with:
-  // 1. internal
-  // 2. external or
-  // 3. indirect
-  // in addition to the usual identation and such.
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count();
   let detected_target_label = captures.get(2).unwrap().as_str();
@@ -392,6 +387,11 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
 
       eprintln!("Block string: {:#?}\n", block_string);
 
+      // Here we check which type of target we are dealing with:
+      // 1. internal
+      // 2. external or
+      // 3. indirect
+      // in addition to the usual identation and such.
       if block_string.is_empty() { // ... the target is internal
 
         // We simply add the detected label into the queue of internal target labels and proceed with parsing in the current state.
@@ -444,10 +444,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
               }
             }
 
-            _ => panic!("Hyperlink target on line {} didn't match any known types.\nComputer says no...\n", line_cursor.sum_total())
+            _ => panic!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total())
           }
         }
-        _ => panic!("Inline parser failed when parsing a hyperlink target on line {}\n.Computer says no...\n", line_cursor.sum_total())
+        _ => panic!("Inline parser failed when parsing a hyperlink target on line {} .Computer says no...", line_cursor.sum_total())
       };
 
       let node = TreeNode::new(node_type, doctree.node_count(), None);

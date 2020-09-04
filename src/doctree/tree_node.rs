@@ -12,7 +12,7 @@ use super::*;
 #[derive(Debug)]
 pub struct TreeNode {
   pub id: NodeId,
-  target_label: Option<String>,
+  target_label: Option<Vec<String>>,
   pub data : TreeNodeType,
   pub children: Option<Children>,
 
@@ -22,7 +22,7 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<String>) -> Self {
+  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<Vec<String>>) -> Self {
 
     TreeNode {
       id: id,
@@ -37,7 +37,7 @@ impl TreeNode {
   /// Works similarly to `TreeNode::new`, except also increments the id
   /// behind the given address in addition to assignning the previous value
   /// to the node being constructred.
-  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId, target_label: Option<String>) -> Self {
+  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId, target_label: Option<Vec<String>>) -> Self {
 
     let node = Self {
       id: *id_ref, // assign current id value to node
@@ -79,8 +79,8 @@ impl TreeNode {
   /// Returns a shared (immutable) reference to the optional target label.
   /// If the label is `None`, as is hasn't been set, returns an
   /// empty string slice instead.
-  pub fn shared_target_label (&self) -> &str {
-    if let Some(label) = self.target_label.as_ref() { label } else { "" }
+  pub fn shared_target_label (&self) -> &Option<Vec<String>> {
+    &self.target_label
   }
   
   
@@ -124,8 +124,9 @@ impl TreeNode {
 
 
   /// ### set_target_label
-  /// Sets the target label of the node to given `Option<String>`.
-  pub fn set_target_label (&mut self, label: Option<String>) {
+  /// Sets the target label of the node to given `Option<Vec<String>>`.
+  pub fn set_target_label (&mut self, label: Option<Vec<String>>) {
+
     self.target_label = label;
   }
 

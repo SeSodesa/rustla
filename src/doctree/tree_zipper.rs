@@ -244,7 +244,7 @@ impl TreeZipper {
   /// ### push_data
   /// Given a variant `TreeNodeType`, constructs a TreeNode from the data and
   /// pushes it to current node's children.
-  pub fn push_data(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<String>) -> Result<Self, Self> {
+  pub fn push_data(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<Vec<String>>) -> Result<Self, Self> {
 
     let list_node = TreeNode::new(node_data, node_id, target_label);
     self.node.push_child(list_node);
@@ -256,7 +256,7 @@ impl TreeZipper {
   /// ### push_and_focus
   /// Given a variant `TreeNodeType`, constructs a TreeNode from the data,
   /// pushes it to current node's children and focuses on it.
-  pub fn push_data_and_focus(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<String>) -> Result<Self, Self> {
+  pub fn push_data_and_focus(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<Vec<String>>) -> Result<Self, Self> {
 
     let list_node = TreeNode::new(node_data, node_id, target_label);
 

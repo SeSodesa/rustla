@@ -169,7 +169,7 @@ impl DocTree {
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
 
         _ => {
-          let label = Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR));
+          let label = Some(acc_target_label.drain(..).collect());
           acc_target_label.clear();
           label
         }
@@ -199,7 +199,7 @@ impl DocTree {
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
 
         _ => {
-          let label = Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR));
+          let label = Some(acc_target_label.drain(..).collect());
           acc_target_label.clear();
           label
         }
@@ -227,7 +227,7 @@ impl DocTree {
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
 
         _ => {
-          node.set_target_label(Some(acc_target_label.join(HyperrefData::INTERNAL_TARGET_CONNECTOR)));
+          node.set_target_label(Some(acc_target_label.drain(..).collect()));
           acc_target_label.clear();
         }
       }
