@@ -559,6 +559,29 @@ impl Parser {
   }
 
 
+  /// ### parse_unknown_directive
+  /// 
+  /// Parses unknown directive blocks as literal text.
+  pub fn parse_unknown_directive (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &LineCursor, first_line_indent: usize, body_indent: usize) -> TransitionResult {
+
+    let (unknown_directive_as_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(first_line_indent), false) {
+      Ok((lines, _, offset, _)) => (lines.join("\n"), offset),
+      Err(message) => panic!("Error when reading an unknown directive as literal text: {}", message)
+    };
+
+    let literal_node = TreeNodeType::LiteralBlock { text: unknown_directive_as_text };
+
+    doctree = doctree.push_data(literal_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(offset)
+    }
+  }
+
+
   // ---------
   //  HELPERS
   // ---------

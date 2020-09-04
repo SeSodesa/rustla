@@ -504,10 +504,14 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
       Some((index, _)) => line[index..].trim().is_empty(),
       None => true
     }
-    
   };
 
   eprintln!("Empty after marker: {}\n", empty_after_marker);
+
+  let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset()) {
+    Some((indent, offset)) => (indent, offset),
+    None => (detected_text_indent, 0) // EOF encountered => stay on same line
+  };
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
