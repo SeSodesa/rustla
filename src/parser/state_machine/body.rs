@@ -491,7 +491,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
   let mut doctree = doctree.unwrap();
 
-  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + *base_indent;
   let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
@@ -508,8 +508,8 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
   eprintln!("Empty after marker: {}\n", empty_after_marker);
 
-  let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset()) {
-    Some((indent, offset)) => (indent, offset),
+  let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+    Some((indent, offset)) => (indent + *base_indent, offset),
     None => (detected_text_indent, 0) // EOF encountered => stay on same line
   };
 
@@ -540,104 +540,105 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "topic" => {
   
-          todo!("Parse topic here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "sidebar" => {
   
-          todo!("Parse sidebar here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "line-block" => {
   
-          todo!("Parse line block here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "parsed-literal" => {
   
-          todo!("Parse literal block with inlin elements here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
   
         "code" => {
   
-          todo!("Parse code block here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
   
         "math" => {
-          todo!("Parse display math block here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "rubric" => {
   
-          todo!("Parse rubric here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "epigraph" => {
   
-          todo!("Parse epigraph here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "highlights" => {
   
-          todo!("Parse highlights here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "pull-quote" => {
   
-          todo!("Parse pull-quote here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "compound" => {
   
-          todo!("Parse compound paragraph here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "container" => {
   
-          todo!("parse container here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "table" => {
   
-          todo!("Parse table here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "csv-table" => {
   
-          todo!("Parse CSV table here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "list-table" => {
-          todo!("Parse list table here...")
+
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         // DOCUMENT PARTS
   
         "contents" => {
   
-          todo!("Parse table of contents here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "sectnum" | "section-numbering" => {
   
-          todo!("Parse automatic section number generator here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "header" => {
   
-          todo!("Parse header here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "footer" => {
   
-          todo!("Parse footer here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "target-notes" => {
   
-          todo!("Parse target footnotes here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "footnotes" => {
@@ -652,141 +653,141 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "meta" => {
   
-          todo!("Parse HTML metadata here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         // MISCELLANEOUS
   
         "include" => {
   
-          todo!("Include document here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "raw" => {
   
-          todo!("Parse raw data pass-through here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "class" => {
   
-          todo!("Assign specific CSS class to a block here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "role" => {
   
-          todo!("Create a new interpreted text here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "default-role" => {
   
-          todo!("Assign a default role to interpreted text here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "title" => {
   
-          todo!("Assign a document metadata title here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "restructuredtext-test-directive" => {
   
-          todo!("Only for test purposes...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         // A+ SPECIFIC DIRECTIVES
   
         "questionnaire" => {
   
-          todo!("Parse graded and feedback questionnaires here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "submit" => {
   
-          todo!("Parse submittable (external) exercises here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "toctree" => {
   
-          todo!("Parse round metadata here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "ae-input" => {
   
-          todo!("Parse active element input here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "ae-output" => {
   
-          todo!("Parse active element output here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "hidden_block" => {
   
-          todo!("Parse hidden block here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "point-of-interest" => {
   
-          todo!("Parse point of interest here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "annotated" => {
   
-          todo!("Parse annotated code blocks here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "lineref-code-block" => {
   
-          todo!("Parse code blocks with line references here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "repl-res-count-reset" => {
   
-          todo!("Parse an interactiv REPL session here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "acos-submit" => {
   
-          todo!("parse submitttable ACOS exercise here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "div" => {
   
-          todo!("Assign CSS classes (div) to text blocks here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "styled-topic" => {
   
-          todo!("Parse styled topic here...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         // A+ MEDIA DIRECTIVES
   
         "story" => {
   
-          todo!("Story embedded in a iframe...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "jsvee" => {
   
-          todo!("JSVee program visualization...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "youtube" => {
   
-          todo!("Youtube video...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "local-video" => {
   
-          todo!("A local video...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
         "embedded-page" => {
   
-          todo!("An embedded page...")
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
   
-        _ => todo!("Return the unknown or not yet implemented directive as a literal block...")
+        _ => Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
       }
     }
     IndentationMatch::TooMuch => {

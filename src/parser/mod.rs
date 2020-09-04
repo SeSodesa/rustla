@@ -65,6 +65,7 @@ mod test_mixed_structures;
 mod test_inline_parsing;
 mod test_literal_blocks;
 mod test_sections_and_transitions;
+mod test_unknown_directives;
 
 
 // ==========================
@@ -674,6 +675,8 @@ impl Parser {
         None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
       };
 
+      let line_is_empty = line.trim().is_empty();
+
       // Check for sufficient (or correct if block alignment was forced) indentation if line isn't empty
       let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
 
@@ -685,7 +688,7 @@ impl Parser {
         false
       };
 
-      if !line.trim().is_empty() && ( line_indent < 1 || break_when_not_aligned ) {
+      if !line_is_empty && ( line_indent < 1 || break_when_not_aligned ) {
 
         // Ended with a blank finish if the last line before unindent was blank
         blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().trim().is_empty();
@@ -695,7 +698,7 @@ impl Parser {
 
       // Updating the minimal level of indentation, if line isn't blank
       // and there isn't predetermined block indentation
-      if line.trim().is_empty() && until_blank {
+      if line_is_empty && until_blank {
         blank_finish = true;
         break
       } else if block_indent.is_none() {
@@ -703,7 +706,7 @@ impl Parser {
           minimal_indent = Some(line_indent);
         } else if line_indent > 0 {
           minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
-        } 
+        }
       }
 
       block_lines.push(line);

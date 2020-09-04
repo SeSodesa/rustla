@@ -565,7 +565,10 @@ impl Parser {
   pub fn parse_unknown_directive (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &LineCursor, first_line_indent: usize, body_indent: usize) -> TransitionResult {
 
     let (unknown_directive_as_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(first_line_indent), false) {
-      Ok((lines, _, offset, _)) => (lines.join("\n"), offset),
+      Ok((lines, _, offset, _)) => {
+        eprintln!("{:#?}\n", lines);
+        (lines.join("\n"), offset)
+      },
       Err(message) => panic!("Error when reading an unknown directive as literal text: {}", message)
     };
 
