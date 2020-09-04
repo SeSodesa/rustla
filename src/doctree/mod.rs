@@ -55,9 +55,8 @@ pub struct DocTree {
   /// if it is the first non-(whitespace|comment) node in the tree.
   pub node_count: NodeId,
 
-  /// #### footnote_count
-  /// The number of footnotes that have been entered into the document thus far.
-  /// Main use for this counter is in auto-numbering footnotes with a '#'.
+  /// #### hyperref_data
+  /// The container for hyperref data related to the doctree.
   hyperref_data: HyperrefData,
 
   /// #### section_data
