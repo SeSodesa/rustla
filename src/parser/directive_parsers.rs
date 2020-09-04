@@ -292,18 +292,20 @@ impl Parser {
       panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
     };
 
+    let current_node_id = doctree.current_node_id();
+
     let (mut doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message } => panic!("{}", message)
     };
 
+    use common::TraversalType;
+
     // Ensure we are focused on the figure that started the above nested parsing session.
     // This might still be buggy in situations where a figure was constructed inside of a figure.
     // Might need to be TreeNodeType AND ID-based instead.
-    doctree = loop {
-      doctree = if let TreeNodeType::Figure { .. } = doctree.shared_data() { break doctree } else { doctree.focus_on_parent() };
-    };
+    doctree = doctree.walk(TraversalType::ID(current_node_id));
 
     if let TreeNodeType::Figure { .. } = doctree.shared_data() {  } else { panic!("Not focused on parent figure after nested parsing session. Computer says no...") };
 
