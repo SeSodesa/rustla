@@ -158,26 +158,8 @@ impl DocTree {
   /// If this succeeds, also increments `self.node_count`.
   pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Self {
 
-    // Check if there is an incoming internal target label
-    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
-
-    let target_label = if acc_target_label.is_empty() { None } else {
-
-      match node_data {
-
-        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
-
-        _ => {
-          let label = Some(acc_target_label.drain(..).collect());
-          acc_target_label.clear();
-          label
-        }
-      }
-    };
-
-
-    self.node_specific_actions(&node_data);
-    self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_label).unwrap();
+    let target_labels = self.node_specific_actions(&node_data);
+    self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_labels).unwrap();
     self.node_count += 1;
     self
   }
@@ -189,25 +171,8 @@ impl DocTree {
   /// If this succeeds, also increments `self.node_count`.
   pub fn push_data (mut self, node_data: TreeNodeType) -> Self {
 
-    // Check if there is an incoming internal target label
-    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
-    let target_label = if acc_target_label.is_empty() { None } else {
-
-      match node_data {
-
-        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
-
-        _ => {
-          let label = Some(acc_target_label.drain(..).collect());
-          acc_target_label.clear();
-          label
-        }
-      }
-    };
-
-
-    self.node_specific_actions(&node_data);
-    self.tree = self.tree.push_data(node_data, self.node_count, target_label).unwrap();
+    let target_labels = self.node_specific_actions(&node_data);
+    self.tree = self.tree.push_data(node_data, self.node_count, target_labels).unwrap();
     self.node_count += 1;
     self
   }
@@ -240,31 +205,72 @@ impl DocTree {
 
   /// ### node_specific_actions
   /// Performs any node specific actions to the doctree based on given node data.
-  fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) {
+  fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
 
     use crate::common::normalize_refname;
 
+    // Check if there is an incoming internal target label
+    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
+    let mut target_label: Option<Vec<String>> = if acc_target_label.is_empty() { None } else {
+
+      match shared_node_data {
+
+        TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
+
+        _ => {
+          let label = Some(acc_target_label.drain(..).collect());
+          acc_target_label.clear();
+          label
+        }
+      }
+    };
+
     // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
-    match &shared_node_data {
+    let normalized_refname = match &shared_node_data {
       TreeNodeType::Footnote {target, label, .. } => {
-        self.add_target(&shared_node_data, label, self.node_count);
+
+        let normalized_refname = normalize_refname(label);
+        self.add_target(&shared_node_data, &normalize_refname(normalized_refname.as_str()), self.node_count);
+        Some(normalized_refname)
       }
       TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
-        self.add_target(&shared_node_data, target, self.node_count);
+
+        let normalized_refname = normalize_refname(target);
+        self.add_target(&shared_node_data, &normalize_refname(normalized_refname.as_str()), self.node_count);
+        Some(normalized_refname)
       }
       TreeNodeType::IndirectHyperlinkTarget {target, indirect_target, .. } => {
-        self.add_target(&shared_node_data, target, self.node_count);
-        self.add_reference(&shared_node_data, indirect_target, self.node_count);
+
+        let normalized_target_refname = normalize_refname(target);
+        let normalized_indirect_refname = normalize_refname(target);
+
+        self.add_target(&shared_node_data, &normalize_refname(normalized_target_refname.as_str()), self.node_count);
+        self.add_reference(&shared_node_data, &normalize_refname(normalized_indirect_refname.as_str()), self.node_count);
+        Some(normalized_target_refname)
       }
       TreeNodeType::Section {title_text, level, line_style } => {
-        self.add_target(&shared_node_data, &normalize_refname(title_text.as_str()), self.node_count);
+
+        let normalized_refname = normalize_refname(title_text);
+
+        self.add_target(&shared_node_data, &normalize_refname(normalized_refname.as_str()), self.node_count);
         self.section_data.add_section_level(*line_style);
         if *level > self.section_data.highest_encountered_section_level() {
           self.section_data.increment_encountered_section_number();
         }
+        Some(normalized_refname)
       }
-      _ => {}
+      _ => None
     };
+
+    if let Some(refname) = normalized_refname {
+      if let Some(label) = &mut target_label {
+        label.push(refname)
+      } else {
+        target_label = Some(vec![refname])
+      }
+    }
+
+    target_label
   }
 
 
