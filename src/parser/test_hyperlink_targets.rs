@@ -325,7 +325,7 @@ fn citation_01 () {
 
   match &doctree.shared_child(1).shared_data() {
     TreeNodeType::Citation {label, .. } => {
-      if !(label == "CIT2005") { panic!() }
+      if !(label == "cit2005") { panic!() }
     }
      _=> panic!()
   }

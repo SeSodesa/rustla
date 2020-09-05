@@ -221,6 +221,8 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
     }
   };
 
+  use crate::common::normalize_refname;
+
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
@@ -296,6 +298,8 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
   eprintln!("text: {}", detected_text_indent);
   eprintln!("body: {}\n", detected_body_indent);
 
+  use crate::common::normalize_refname;
+
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
@@ -304,7 +308,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
       let citation_data = TreeNodeType::Citation {
         body_indent: detected_body_indent,
-        label: detected_label_str.to_string(),
+        label: normalize_refname(detected_label_str),
       };
       tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
   
@@ -1313,6 +1317,9 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(String, String)> {
 
   use std::convert::TryFrom;
+  use crate::common::normalize_refname;
+
+  let normalized_name = normalize_refname(detected_label_str);
 
   if let PatternName::Footnote { kind } = pattern_name {
     match kind {
@@ -1323,7 +1330,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         // with this name. If yes, the user is warned of a duplicate label,
         // but otherwise no special action is taken.
 
-        return Some((detected_label_str.to_string(), detected_label_str.to_string()))
+        return Some((normalized_name.clone(), normalized_name))
       }
 
       FootnoteKind::AutoNumbered => {
@@ -1359,7 +1366,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
           if doctree.has_target_label(n_str.as_str()) {
             continue
           }
-          return Some( (n_str.clone(), detected_label_str.to_string()) )
+          return Some( (n_str, normalized_name) )
         }
         eprintln!("All possible footnote numbers in use.\nComputer says no...\n");
         return None
