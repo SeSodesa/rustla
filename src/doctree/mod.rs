@@ -205,6 +205,7 @@ impl DocTree {
 
   /// ### node_specific_actions
   /// Performs any node specific actions to the doctree based on given node data.
+  /// Returns an optional internal target label
   fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
 
     use crate::common::normalize_refname;

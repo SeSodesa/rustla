@@ -500,7 +500,6 @@ fn hyperlink_target_04 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
   eprintln!("Doctree targets: {:#?}", doctree.shared_targets());
@@ -524,5 +523,60 @@ fn hyperlink_target_04 () {
       }
     }
     _ => panic!()
+  }
+}
+
+
+#[test]
+fn hyperlink_target_05 () {
+
+  let src = String::from("
+.. _target label:
+
+A Section title
+===============
+
+.. _Target  for footnote:
+.. _AnD AnotherOne:
+
+.. [1] Here is a paragraph
+  with body indent.
+
+  * Bullet list inside foonote
+
+  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(String::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  // Structural tests
+  match doctree.shared_child(2).shared_data() {
+    TreeNodeType::Section { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(2).shared_child(2).shared_data() {
+    TreeNodeType::Footnote { .. } => {}
+    _ => panic!()
+  }
+  
+  // Target tests
+  match doctree.shared_child(2).shared_target_labels() {
+    None => panic!(),
+    Some(labels) => {
+      if labels[0].as_str() != "target label" || labels[1].as_str() != "a section title" { panic!() }
+    }
+  }
+
+  match doctree.shared_child(2).shared_child(2).shared_target_labels() {
+    None => panic!(),
+    Some(labels) => {
+      if labels[0].as_str() != "target for footnote" || labels[1].as_str() != "and anotherone" { panic!() }
+    }
   }
 }

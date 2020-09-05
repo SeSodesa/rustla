@@ -123,6 +123,11 @@ impl TreeNode {
   }
 
 
+  pub fn shared_target_labels (&self) -> &Option<Vec<String>> {
+    &self.target_label
+  }
+
+
   /// ### set_target_label
   /// Sets the target label of the node to given `Option<Vec<String>>`.
   pub fn set_target_label (&mut self, label: Option<Vec<String>>) {
