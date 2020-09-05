@@ -8,6 +8,7 @@ use std::rc::{Rc, Weak};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
+mod larst_writer;
 mod node_categories;
 mod tree_zipper;
 use tree_zipper::TreeZipper;
