@@ -136,6 +136,15 @@ impl TreeNode {
   }
 
 
+  /// ### shared_children
+  /// 
+  /// Optionally returns a shared reference to vector containing child nodes.
+  pub fn shared_children (&self) -> &Option<Children> {
+
+    &self.children
+  }
+
+
   /// ### child_is_allowed
   /// Checks whether a node is allowed to be inserted into another node.
   pub fn child_is_allowed (&self, node_data: &TreeNodeType) -> bool {
