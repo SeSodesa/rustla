@@ -47,9 +47,8 @@ impl TreeZipper {
       }
     }
 
-    self.node.larst_pre_order_write();
+    self.node.larst_post_order_write();
   }
-
 }
 
 
@@ -67,24 +66,27 @@ impl TreeNode {
       }
     }
 
-    self.larst_pre_order_write();
+    self.larst_post_order_write();
   }  
 
-  /// ### write
+  /// ### larst_pre_order_write
+  /// 
+  /// Calls the pre-order LarST writer method of the contained `TreeNodeType` variant.
   fn larst_pre_order_write (&self) {
 
     self.data.larst_pre_order_write()
   }
 
 
+  /// ### larst_post_order_write
+  /// 
+  /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
   fn larst_post_order_write (&self) {
 
     self.data.larst_post_order_write()
   }
 }
 
-
-// Pre- and post-order operations for the
 
 impl TreeNodeType {
 
