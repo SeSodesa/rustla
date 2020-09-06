@@ -1,9 +1,9 @@
 # ruSTLa - rSTLa in Rust
 
 ruSTLa is an implementation of the rSTLa
-(reStructuredText to $`\LaTeX`$) transpiler,
+(reStructuredText ⟶ $`\LaTeX`$) transpiler,
 written in the Rust programming language.
-rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ to reStructuredText) transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
+rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ ⟶ reStructuredText) transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
 
 ## Project structure
 
@@ -16,13 +16,16 @@ src/
 ├── doctree
 │   ├── directives.rs
 │   ├── hyperref_data.rs
+│   ├── larst_writer.rs
 │   ├── mod.rs
 │   ├── node_categories.rs
 │   ├── section_data.rs
 │   ├── tests.rs
+│   ├── test_walkers.rs
 │   ├── tree_node.rs
 │   ├── tree_node_types.rs
-│   └── tree_zipper.rs
+│   ├── tree_zipper.rs
+│   └── walkers.rs
 ├── main.rs
 └── parser
     ├── converters.rs
@@ -56,9 +59,10 @@ src/
     ├── test_literal_blocks.rs
     ├── test_mixed_structures.rs
     ├── test_sections_and_transitions.rs
+    ├── test_unknown_directives.rs
     └── types_and_aliases.rs
 
-4 directories, 42 files
+4 directories, 46 files
 ```
 
 ## Build instructions
