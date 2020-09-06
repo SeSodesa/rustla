@@ -22,6 +22,7 @@ mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 mod section_data;
 use section_data::SectionData;
+mod walkers;
 
 use crate::common::{
   SectionLineStyle,
@@ -599,77 +600,6 @@ impl DocTree {
     } else {
       None
     }
-  }
-
-}
-
-
-
-use crate::common::TraversalType;
-
-/// ---------
-///  Walkers
-/// ---------
-/// 
-/// Functions for walking to differents parts of the contained `TreeZipper`.
-/// These include ID-based searches, as well as criteria related to the
-/// contained data variant.
-impl DocTree {
-
-  /// ### walk_to_root
-  /// Walks to the root of the contained tree zipper.
-  pub fn walk_to_root (mut self) -> Self {
-    self.tree = self.tree.walk_to_root();
-    self
-  }
-
-  /// ### walk
-  /// 
-  /// The mother of all walkers. Performs a tree walk based on given `TraversalType`.
-  /// These include walking to a specific node id, but a reference to a `TreeNodeType`
-  /// might also be used in determining when to stop walking.
-  pub fn walk (mut self, traversal_type: TraversalType) -> Self {
-
-    // Always walk to tree root before starting the search/walk.
-    self.tree = self.tree.walk_to_root();
-
-    match traversal_type {
-      TraversalType::ID(id) => {
-        self.walk_to_node_with_id(id)
-      }
-    }
-  }
-
-
-  /// ### walk_to_node_with_id
-  /// 
-  /// Walks to a `TreeNode` with a specific given ID.
-  /// Naively walks to the tree root before beginning the actual search,
-  /// in order to ensure that all nodes are traversed.
-  /// 
-  /// Panic!s if a node with the given id is not found.
-  fn walk_to_node_with_id(mut self, id: NodeId) -> Self {
-
-    if id > self.node_count() { panic!("No node with given ID. Computer says no...") }
-
-    self.tree = match self.tree.walk_to_node_with_id(id) {
-      Ok(zipper) => zipper,
-      Err(zipper) => zipper
-    };
-
-    self
-  }
-
-
-  /// ### walk_to_and_fro
-  /// 
-  /// Walks to a node with a given ID and the back again.
-  /// Panic!s, if the given target node id has not been entered into the tree.
-  fn walk_to_and_fro(self, to_id: NodeId, current_id: NodeId) -> Self {
-
-    if to_id > self.node_count() { panic!("No node with given ID. Computer says no...") }
-
-    todo!()
   }
 
 }

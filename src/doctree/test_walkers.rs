@@ -9,6 +9,7 @@ use super::*;
 
 #[cfg(test)]
 
+use crate::common::TraversalType;
 
 #[test]
 fn walk_to_id_01 () {
