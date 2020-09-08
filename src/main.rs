@@ -72,10 +72,17 @@ fn main() {
 
     // Enter parser here...
 
-    let doctree = DocTree::new(path);
-    let parser = Parser::new(src_lines, doctree, None, 0, None, 0);
+    let mut doctree = DocTree::new(path);
+    let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
+    
+    use common::ParsingResult;
 
-    todo!()
+    doctree = match parser.parse() {
+      ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => doctree,
+      _ => panic!("Parsing ended in failure...")
+    };
+
+    doctree.write_to_larst();
   }
 
 }
