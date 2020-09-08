@@ -81,19 +81,18 @@ impl DocTree {
   /// A `DocTree` constructor.
   pub fn new(doc_name: PathBuf) -> Self {
 
-    use std::fs;
-
     let root_id: NodeId = 0;
     let root_data = TreeNodeType::Document;
     let root_node = TreeNode::new(root_data, root_id, None);
 
-    let file_stem: String = if let Some(stem) =  doc_name.file_stem() {
-      match stem.to_os_string().into_string() {
-        Ok(s) => s,
-        Err(s) => panic!("Could not convert an OS specific path into a Rust string while constructing doctree. Computer says no...")
-      }
-    } else {
-      panic!("Could not construct a file name stem when building a doctree. Computer says no...")
+    let file_stem: String = match doc_name.to_str() {
+      Some(full_path) => {
+        match full_path.split(".").next() {
+          Some(path_before_suffix) => path_before_suffix.to_string(),
+          None => panic!("No valid path before file suffix. Computer says no...")
+        }
+      },
+      None => panic!("Invalid unicode in file path. Computer says no...")
     };
 
     DocTree {

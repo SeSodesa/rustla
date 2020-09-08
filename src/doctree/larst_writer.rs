@@ -22,6 +22,8 @@ impl DocTree {
 
     let filename = self.filename_stem + ".tex";
 
+    eprintln!("filename: {}\n", filename);
+
     use std::fs::{File, OpenOptions};
     // TODO: Add check for file existence...
     let mut file: File = match OpenOptions::new().append(true).create(true).open(filename.as_str()) {
