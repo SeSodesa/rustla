@@ -26,7 +26,7 @@ impl DocTree {
 
     use std::fs::{File, OpenOptions};
     // TODO: Add check for file existence...
-    let mut file: File = match OpenOptions::new().append(true).create(true).open(filename.as_str()) {
+    let mut file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(filename.as_str()) {
       Ok(file) => file,
       Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
     };
@@ -145,10 +145,10 @@ impl TreeNodeType {
         format!(r"\begin{{quotation}}")
       },
       Self::BulletList { bullet, bullet_indent, text_indent } => {
-        format!(r"\begin{{itemize}}")
+        format!("\\begin{{itemize}}\n")
       },
       Self::BulletListItem{ bullet, bullet_indent, text_indent } => {
-        format!(r"{}\item ", " ".repeat(*bullet_indent))
+        format!("\n\\item ")
       },
       Self::Caption { indent } => {
         format!(r"\caption{{")
@@ -351,7 +351,7 @@ impl TreeNodeType {
       Self::Description                     => todo!(),
       Self::DocInfo                         => todo!(),
       Self::DoctestBlock{ .. }              => todo!(),
-      Self::Document { .. }                 => "\\end{document}\n\n".to_string(),
+      Self::Document { .. }                 => "\\end{document}\n".to_string(),
       Self::Emphasis { .. }                 => "".to_string(),
       Self::EmptyLine                       => "".to_string(),
       Self::Entry                           => todo!(),
