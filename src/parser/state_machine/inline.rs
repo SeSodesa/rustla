@@ -130,7 +130,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
       let match_str = whole_match.as_str();
 
       // If a successful email recognition, prepend a mailto scheme to email.
-      TreeNodeType::StandaloneEmail{text: format!("{}{}", "mailto:", match_str)}
+      TreeNodeType::StandaloneEmail{text: format!("{}", match_str)}
 
     }
 

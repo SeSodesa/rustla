@@ -165,7 +165,7 @@ fn inline_parse_06 () {
     if let TreeNodeType::StandaloneEmail{text} = &nodes[10] {
       text.as_str()
     } else {panic!()},
-    "mailto:john.harry.doe@www.example.com"
+    "john.harry.doe@www.example.com"
   );
 
 }

@@ -243,7 +243,7 @@ impl TreeNodeType {
       Self::Line { .. }                     => todo!(),
       Self::LineBlock { .. }                => todo!(),
       Self::ListTable { .. }                => todo!(),
-      Self::Literal { text }       => format!("\\code{{{}}}", text),
+      Self::Literal { text }       => format!("\\texttt{{{}}}", text),
       Self::LiteralBlock { text }  => format!("\\begin{{codeblock}}\n{}", text),
       Self::Math { .. }                     => "".to_string(),
       Self::MathBlock { block_text, name, class } => {
@@ -279,8 +279,10 @@ impl TreeNodeType {
       },
       Self::Sidebar { .. }                  => todo!(),
       Self::Status { .. }                   => todo!(),
-      Self::StandaloneEmail { .. }          => todo!(),
-      Self::StrongEmphasis { text }           => {
+      Self::StandaloneEmail { text } => {
+        format!("\\href{{mailto:{}}}{{{}}}", text, text)
+      },
+      Self::StrongEmphasis { text }  => {
         format!("\\textbf{{{}}}", text)
       },
       Self::Subscript { .. }                => todo!(),
