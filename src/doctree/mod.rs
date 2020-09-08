@@ -45,6 +45,10 @@ mod test_walkers;
 /// metadata about the tree.
 pub struct DocTree {
 
+  /// #### filename_stem
+  /// The canonicalized file path without the file suffix.
+  filename_stem: String,
+
   /// #### tree
   /// Holds the tree focused on a specific node.
   tree: TreeZipper,
@@ -77,10 +81,11 @@ impl DocTree {
   pub fn new(doc_name: String) -> Self {
 
     let root_id: NodeId = 0;
-    let root_data = TreeNodeType::Document{doc_name};
+    let root_data = TreeNodeType::Document;
     let root_node = TreeNode::new(root_data, root_id, None);
 
     DocTree {
+      filename_stem: doc_name,
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id + 1,
       hyperref_data: HyperrefData::new(),

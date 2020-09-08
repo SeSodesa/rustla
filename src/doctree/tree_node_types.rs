@@ -299,11 +299,7 @@ pub enum TreeNodeType {
 
   /// #### Document
   /// The root node of an reStructuredText document tree.
-  /// Contains the (name|absolute path) of the document
-  /// as its only field.
-  Document{
-    doc_name: String
-  },
+  Document,
 
   /// #### Emphasis
   /// Emphasised or italicized text.

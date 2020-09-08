@@ -20,8 +20,10 @@ impl DocTree {
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
   pub fn write_to_larst (self) {
 
+    let filename = self.filename_stem + ".tex";
+
     use std::fs::{File, OpenOptions};
-    let mut file: File = match OpenOptions::new().append(true).open("foo.txt") {
+    let mut file: File = match OpenOptions::new().append(true).open(filename.as_str()) {
       Ok(file) => file,
       Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
     };
