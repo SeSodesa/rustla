@@ -344,8 +344,62 @@ impl Parser {
   }
 
 
-  pub fn parse_code () {
-    todo!()
+  /// ### parse_code
+  /// 
+  /// The "code" directive parser.
+  pub fn parse_code (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+    };
+    let language = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      Some(arg)
+    } else {
+      None
+    };
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    let (classes, name, number_lines) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name", "figwidth", "figclass"]) {
+        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let classes = options.remove("class");
+      let name = options.remove("name");
+      let number_lines = options.remove("number_lines");
+
+      (classes, name, number_lines)
+    } else {
+      (None, None, None)
+    };
+
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
+      (lines, offset)
+    } else {
+      panic!("Could not read the code block on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    let code_block = TreeNodeType::Code {
+
+      text: lines.join("\n"),
+
+      language: language,
+      number_lines: number_lines,
+      class: classes,
+      name: name
+    };
+
+    doctree = doctree.push_data(code_block);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(offset)
+    }
   }
 
 

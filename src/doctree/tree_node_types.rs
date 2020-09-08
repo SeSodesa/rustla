@@ -178,10 +178,13 @@ pub enum TreeNodeType {
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#code
   Code {
+
+    text: String,
+
     language:     Option<String>,
     name:         Option<String>,
     class:        Option<String>,
-    number_lines: Option<u32>
+    number_lines: Option<String>
   },
 
   /// #### ColSpec

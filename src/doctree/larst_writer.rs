@@ -127,7 +127,7 @@ impl TreeNodeType {
         format!(r"\hyperref[{}]{{{}}}", target_label, displayed_text)
       },
       Self::Classifier { .. }         => todo!(),
-      Self::Code { language, name, class, number_lines } => {
+      Self::Code { text, language, name, class, number_lines } => {
 
         let lang = if let Some(lang) = language { format!("[{}]", lang) } else {"".to_string()};
         format!("\\begin{{codeblock}}{}\n", lang)
