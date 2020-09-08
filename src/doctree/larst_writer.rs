@@ -20,10 +20,13 @@ impl DocTree {
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
   pub fn write_to_larst (self) {
 
-    use std::fs::OpenOptions;
-    // let file = OpenOptions::new().append(true).open("foo.txt");
+    use std::fs::{File, OpenOptions};
+    let mut file: File = match OpenOptions::new().append(true).open("foo.txt") {
+      Ok(file) => file,
+      Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
+    };
 
-    self.tree.write_to_larst()
+    self.tree.write_to_larst(&mut file)
   }
 
 }
@@ -38,19 +41,19 @@ impl TreeZipper {
   /// Starts out by calling `TreeNodeType`-specific pre-order action,
   /// then recursively calls itself for the children of the node and
   /// finishes by calling a post-order action on `self`.
-  fn write_to_larst (mut self) {
+  fn write_to_larst (mut self, file_ptr: &mut std::fs::File) {
 
     self = self.walk_to_root(); // Start out by walking to root.
 
-    self.node.larst_pre_order_write();
+    self.node.larst_pre_order_write(file_ptr);
 
     if let Some(children) = self.node.shared_children() {
       for child in children {
-        child.write_to_larst();
+        child.write_to_larst(file_ptr);
       }
     }
 
-    self.node.larst_post_order_write();
+    self.node.larst_post_order_write(file_ptr);
   }
 }
 
@@ -59,23 +62,23 @@ impl TreeNode {
 
   /// ### write_to_larst
   /// Recursively writes a node and its children (and the children of those, etc.) to LarST.
-  fn write_to_larst (&self) {
+  fn write_to_larst (&self, file_ptr: &mut std::fs::File) {
 
-    self.larst_pre_order_write();
+    self.larst_pre_order_write(file_ptr);
 
     if let Some(children) = self.shared_children() {
       for child in children {
-        child.write_to_larst();
+        child.write_to_larst(file_ptr);
       }
     }
 
-    self.larst_post_order_write();
+    self.larst_post_order_write(file_ptr);
   }  
 
   /// ### larst_pre_order_write
   /// 
   /// Calls the pre-order LarST writer method of the contained `TreeNodeType` variant.
-  fn larst_pre_order_write (&self) {
+  fn larst_pre_order_write (&self, file_ptr: &mut std::fs::File) {
 
     let refnames = if let Some(refnames) = self.shared_target_label() {
 
@@ -88,14 +91,14 @@ impl TreeNode {
       String::new()
     };
 
-    self.data.larst_pre_order_write(refnames)
+    self.data.larst_pre_order_write(file_ptr, refnames)
   }
 
 
   /// ### larst_post_order_write
   /// 
   /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
-  fn larst_post_order_write (&self) {
+  fn larst_post_order_write (&self, file_ptr: &mut std::fs::File) {
 
     let refnames = if let Some(refnames) = self.shared_target_label() {
 
@@ -108,7 +111,7 @@ impl TreeNode {
       String::new()
     };
 
-    self.data.larst_post_order_write(refnames)
+    self.data.larst_post_order_write(file_ptr, refnames)
   }
 }
 
@@ -119,9 +122,9 @@ impl TreeNodeType {
   /// 
   /// Defines the text pattern each `TreeNodeType` variant
   /// starts with.
-  fn larst_pre_order_write (&self, ref_names: String) {
+  fn larst_pre_order_write (&self, file_ptr: &mut std::fs::File, ref_names: String) {
 
-    match self {
+    let pre_string = match self {
       Self::Abbreviation { .. }           => todo!(),
       Self::AbsoluteURI { text } => {
         format!(r"\url{{{}}}", text)
@@ -296,13 +299,19 @@ impl TreeNodeType {
         format!("{}", text)
       },
     };
+
+    use std::io::Write;
+    match file_ptr.write(pre_string.as_bytes()){
+      Ok(_) => {},
+      Err(_) => panic!("Could not write the prefix string \"{}\" to file. Computer says no...", pre_string)
+    };
   }
 
   /// ### larst_post_order_write
   /// 
   /// Defines the text pattern each `TreeNodeType` variant
   /// ends with.
-  fn larst_post_order_write (&self, ref_names: String) {
+  fn larst_post_order_write (&self, file_ptr: &mut std::fs::File, ref_names: String) {
 
     let post_string = match self {
       Self::Abbreviation { .. }             => todo!(),
@@ -406,6 +415,11 @@ impl TreeNodeType {
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { .. }               => "".to_string(),
     };
-    todo!()
+
+    use std::io::Write;
+    match file_ptr.write(post_string.as_bytes()){
+      Ok(_) => {},
+      Err(_) => panic!("Could not write the postfix string \"{}\" to file. Computer says no...", post_string)
+    };
   }
 }
