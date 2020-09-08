@@ -20,6 +20,9 @@ impl DocTree {
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
   pub fn write_to_larst (self) {
 
+    use std::fs::OpenOptions;
+    // let file = OpenOptions::new().append(true).open("foo.txt");
+
     self.tree.write_to_larst()
   }
 
@@ -74,7 +77,18 @@ impl TreeNode {
   /// Calls the pre-order LarST writer method of the contained `TreeNodeType` variant.
   fn larst_pre_order_write (&self) {
 
-    self.data.larst_pre_order_write()
+    let refnames = if let Some(refnames) = self.shared_target_label() {
+
+      let mut targets = String::new();
+      for refname in refnames.iter() {
+        targets += &format!("\\label{{{}}}\n", refname);
+      }
+      targets
+    } else {
+      String::new()
+    };
+
+    self.data.larst_pre_order_write(refnames)
   }
 
 
@@ -83,7 +97,18 @@ impl TreeNode {
   /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
   fn larst_post_order_write (&self) {
 
-    self.data.larst_post_order_write()
+    let refnames = if let Some(refnames) = self.shared_target_label() {
+
+      let mut targets = String::new();
+      for refname in refnames.iter() {
+        targets += &format!("\\label{{{}}}\n", refname);
+      }
+      targets
+    } else {
+      String::new()
+    };
+
+    self.data.larst_post_order_write(refnames)
   }
 }
 
@@ -94,7 +119,7 @@ impl TreeNodeType {
   /// 
   /// Defines the text pattern each `TreeNodeType` variant
   /// starts with.
-  fn larst_pre_order_write (&self) {
+  fn larst_pre_order_write (&self, ref_names: String) {
 
     match self {
       Self::Abbreviation { .. }           => todo!(),
@@ -207,7 +232,18 @@ impl TreeNodeType {
       Self::Literal { text }       => format!("\\code{{{}}}", text),
       Self::LiteralBlock { text }  => format!("\\begin{{codeblock}}\n{}", text),
       Self::Math { .. }                     => "".to_string(),
-      Self::MathBlock { .. }                => todo!(),
+      Self::MathBlock { block_text, name, class } => {
+
+        let ref_labels = if let Some(name) = name {
+          let mut labels = String::new();
+          let names = name.split(" ").map(|s| s.to_string()).collect::<Vec<String>>();
+          for name in names.iter() {
+            labels += &format!("\\label{}\n", name);
+          }
+          labels
+        } else { String::new() };
+        format!("\\begin{{equation}}\n{}\n{}", ref_labels, block_text)
+      },
       Self::OptionList { .. }               => todo!(),
       Self::OptionListItem { .. }           => todo!(),
       Self::OptionString { .. }             => todo!(),
@@ -232,7 +268,9 @@ impl TreeNodeType {
       },
       Self::Subscript { .. }                => todo!(),
       Self::SubstitutionDefinition { .. }   => todo!(),
-      Self::SubstitutionReference { .. }    => todo!(),
+      Self::SubstitutionReference { displayed_text, target_label } => {
+        todo!()
+      },
       Self::Subtitle { .. }                 => todo!(),
       Self::Superscript { .. }              => todo!(),
       Self::SystemMessage { .. }            => todo!(),
@@ -240,7 +278,7 @@ impl TreeNodeType {
       Self::Target { .. }                   => todo!(),
       Self::TBody { .. }                    => todo!(),
       Self::Term { .. }                     => todo!(),
-      Self::Text { text }                     => {
+      Self::Text { text }          => {
         format!("{}", text)
       },
       Self::TGroup { .. }                   => todo!(),
@@ -264,19 +302,19 @@ impl TreeNodeType {
   /// 
   /// Defines the text pattern each `TreeNodeType` variant
   /// ends with.
-  fn larst_post_order_write (&self) {
+  fn larst_post_order_write (&self, ref_names: String) {
 
     let post_string = match self {
       Self::Abbreviation { .. }             => todo!(),
-      Self::AbsoluteURI { .. }              => todo!(),
+      Self::AbsoluteURI { .. }              => "".to_string(),
       Self::Acronym { .. }                  => todo!(),
       Self::Address                         => todo!(),
-      Self::Admonition { .. }               => todo!(),
+      Self::Admonition { .. }               => "\n".to_string(),
       Self::Attribution { .. }              => todo!(),
       Self::Author { .. }                   => todo!(),
       Self::Authors { .. }                  => todo!(),
       Self::AutomaticSectionNumbering {..}  => todo!(),
-      Self::BlockQuote { .. }               => todo!(),
+      Self::BlockQuote { .. }               => "\n".to_string(),
       Self::BulletList { .. }               => format!("\\end{{itemize}}\n"),
       Self::BulletListItem{ .. }            => "\n".to_string(),
       Self::Caption { .. }                  => "}\n".to_string(),
@@ -285,7 +323,7 @@ impl TreeNodeType {
       Self::Classifier { .. }               => todo!(),
       Self::Code { .. }                     => "\\end{codeblock}\n".to_string(),
       Self::ColSpec { .. }                  => todo!(),
-      Self::Comment { .. }                  => "".to_string(),
+      Self::Comment { .. }                  => "\n".to_string(),
       Self::CompoundParagraph { .. }        => "\n".to_string(),
       Self::Contact { .. }                  => todo!(),
       Self::Container { .. }                => todo!(),
@@ -328,34 +366,34 @@ impl TreeNodeType {
       Self::ListTable { .. }                => todo!(),
       Self::Literal { .. }                  => todo!(),
       Self::LiteralBlock { .. }             => "\\end{codeblock}".to_string(),
-      Self::Math { .. }                     => todo!(),
-      Self::MathBlock { .. }                => todo!(),
-      Self::OptionList { .. }               => todo!(),
-      Self::OptionListItem { .. }           => todo!(),
+      Self::Math { .. }                     => "".to_string(),
+      Self::MathBlock { .. }                => "\\end{equation}\n".to_string(),
+      Self::OptionList { .. }               => "\n".to_string(),
+      Self::OptionListItem { .. }           => "\n".to_string(),
       Self::OptionString { .. }             => todo!(),
       Self::Organization { .. }             => todo!(),
       Self::Paragraph { .. }                => "\n\n".to_string(),
-      Self::ParsedLiteralBlock { .. }       => todo!(),
+      Self::ParsedLiteralBlock { .. }       => "\n".to_string(),
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
       Self::Raw { .. }                      => "\\end{raw}\n".to_string(),
       Self::Reference { .. }                => "".to_string(),
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),
-      Self::Rubric { .. }                   => todo!(),
-      Self::Section { .. }                  => "".to_string(),
+      Self::Rubric { .. }                   => "\n".to_string(),
+      Self::Section { .. }                  => "\n".to_string(),
       Self::Sidebar { .. }                  => "\n".to_string(),
       Self::Status { .. }                   => todo!(),
-      Self::StandaloneEmail { .. }          => todo!(),
-      Self::StrongEmphasis { .. }           => todo!(),
-      Self::Subscript { .. }                => todo!(),
+      Self::StandaloneEmail { .. }          => "".to_string(),
+      Self::StrongEmphasis { .. }           => "".to_string(),
+      Self::Subscript { .. }                => "".to_string(),
       Self::SubstitutionDefinition { .. }   => "\n".to_string(),
-      Self::SubstitutionReference { .. }    => todo!(),
-      Self::Subtitle { .. }                 => todo!(),
-      Self::Superscript { .. }              => todo!(),
+      Self::SubstitutionReference { .. }    => "".to_string(),
+      Self::Subtitle { .. }                 => "".to_string(),
+      Self::Superscript { .. }              => "".to_string(),
       Self::SystemMessage { .. }            => todo!(),
-      Self::Table { .. }                    => todo!(),
-      Self::Target { .. }                   => todo!(),
+      Self::Table { .. }                    => "\n".to_string(),
+      Self::Target { .. }                   => "\n".to_string(),
       Self::TBody { .. }                    => todo!(),
       Self::Term { .. }                     => todo!(),
       Self::Text { .. }                     => "".to_string(),
@@ -364,7 +402,7 @@ impl TreeNodeType {
       Self::Title { .. }                    => todo!(),
       Self::TitleReference { .. }           => todo!(),
       Self::Topic { .. }                    => todo!(),
-      Self::Transition { .. }               => "".to_string(),
+      Self::Transition { .. }               => "\n".to_string(),
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { .. }               => "".to_string(),
     };
