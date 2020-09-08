@@ -12,7 +12,7 @@ use doctree::DocTree;
 mod common;
 
 use std::io::BufRead;
-use std::{env, process, fs, path, io};
+use std::{env, fs, path, io};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -21,7 +21,7 @@ const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
 
 /// Program starting point
-fn main() {
+fn main() -> Result<(), ()>{
     
   copyright();
   
@@ -29,14 +29,14 @@ fn main() {
 
   if args.len() != 2 {
     usage();
-    process::exit(1)
+    return Err(())
   }
 
   let path: path::PathBuf = match fs::canonicalize(&args[1]) {
     Ok(p) => p,
     Err(e) => {
       eprintln!("Could not resolve file path:\n{}",e);
-      process::exit(1);
+      return Err(())
     }
   };
 
@@ -44,7 +44,7 @@ fn main() {
     Ok(meta) => meta,
     Err(e) => {
       eprintln!("\nCannot determine the type of input:\n{}", e);
-      process::exit(1);
+      return Err(())
     }
   };
 
@@ -52,7 +52,7 @@ fn main() {
     println!("{:?} is a directory", path);
     println!("At this stage, ruSTLa is designed to work with");
     println!("files only. Please enter a valid rST file.");
-    process::exit(1);
+    return Err(());
 
   } else if md.is_file() {
     println!("{:?} is a file.", path);
@@ -85,6 +85,7 @@ fn main() {
     doctree.write_to_larst();
   }
 
+  return Ok(())
 }
 
 /// # `has_toctree`
@@ -106,7 +107,7 @@ fn has_toctree (fc: &String) -> bool{
 /// Prints out copyright information of ruSTLa
 fn copyright() {
   println!("\nThis is ruSTLa, version {}", VERSION);
-  println!("©{} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
+  println!("© {} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
 }
 
 /// # Usage
