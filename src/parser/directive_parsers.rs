@@ -431,7 +431,6 @@ impl Parser {
       (None, None)
     };
 
-
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
       (lines, offset)
     } else {
@@ -589,6 +588,87 @@ impl Parser {
     todo!()
   }
 
+
+// ========================
+//  Sphinx-specific directives
+// ========================
+
+  pub fn parse_sphinx_toctree () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_versionadded () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_versionchanged () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_deprecated () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_seealso () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_centered () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_hlist () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_highlight () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_code_block () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_literalinclude () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_glossary () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_sectionauthor () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_codeauthor () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_index () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_only () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_tabularcolumns () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_math_block () {
+    todo!()
+  }
+
+  pub fn parse_sphinx_productionlist () {
+    todo!()
+  }
+
+
+// ========================
+//  A+-specific directives
+// ========================
 
   pub fn parse_aplus_questionnaire () {
     todo!()
