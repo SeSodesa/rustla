@@ -241,15 +241,15 @@ impl StateMachine {
   /// An array of inline transitions.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
     (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
-    (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*\S)\*\*", inline::paired_delimiter),
-    (PatternName::Emphasis, r"^\*(\S|\S.*\S)\*", inline::paired_delimiter),
-    (PatternName::Literal, r"^``(\S|\S.*\S)``", inline::paired_delimiter),
+    (PatternName::StrongEmphasis, r"^\*\*(\S|\S.*?\S)\*\*", inline::paired_delimiter),
+    (PatternName::Emphasis, r"^\*(\S|\S.*?\S)\*", inline::paired_delimiter),
+    (PatternName::Literal, r"^``(\S|\S.*?\S)``", inline::paired_delimiter),
     (PatternName::InlineTarget, r"^_`([\w .]+)`", inline::paired_delimiter),
-    (PatternName::PhraseRef, r"^`(\S|\S.*\S)`(__?)", inline::reference),
-    (PatternName::Interpreted { kind: InterpretedTextKind::Default } , r"^`(\S|\S.*\S)`", inline::paired_delimiter),
-    (PatternName::FootNoteRef, r"^\[(\S|\S.*\S)\](__?)", inline::reference),
+    (PatternName::PhraseRef, r"^`(\S|\S.*?\S)`(__?)", inline::reference),
+    (PatternName::Interpreted { kind: InterpretedTextKind::Default } , r"^`(\S|\S.*?\S)`", inline::paired_delimiter),
+    (PatternName::FootNoteRef, r"^\[(\S|\S.*?\S)\](__?)", inline::reference),
     (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)(__?)", inline::reference),
-    (PatternName::SubstitutionRef, r"^\|(\S|\S.*\S)\|(__?)", inline::reference),
+    (PatternName::SubstitutionRef, r"^\|(\S|\S.*?\S)\|(__?)", inline::reference),
 
     // ### StandaloneHyperlink
     //

@@ -148,7 +148,7 @@ impl TreeNodeType {
         format!("\\begin{{itemize}}\n")
       },
       Self::BulletListItem{ bullet, bullet_indent, text_indent } => {
-        format!("\n\\item ")
+        format!("\\item ")
       },
       Self::Caption { indent } => {
         format!(r"\caption{{")
@@ -185,7 +185,13 @@ impl TreeNodeType {
       Self::DocInfo => todo!(),
       Self::DoctestBlock{ .. } => todo!(),
       Self::Document { .. }   => {
-        format!("\\begin{{document}}\n")
+        format!(
+"\
+\\documentclass[12pt]{{article}}
+
+\\usepackage{{hyperref}}
+
+\\begin{{document}}\n\n")
       },
       Self::Emphasis { text } => {
         format!("\\textit{{{}}}", text)
@@ -256,7 +262,7 @@ impl TreeNodeType {
       Self::OptionListItem { .. }           => todo!(),
       Self::OptionString { .. }             => todo!(),
       Self::Organization { .. }             => todo!(),
-      Self::Paragraph { .. }                => "\n\n".to_string(),
+      Self::Paragraph { .. }                => "".to_string(),
       Self::ParsedLiteralBlock { .. }       => todo!(),
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
@@ -267,7 +273,10 @@ impl TreeNodeType {
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),
       Self::Rubric { .. }                   => todo!(),
-      Self::Section { .. }                  => todo!(),
+      Self::Section { title_text, level, line_style } => {
+        let subs = "sub".repeat(*level - 1);
+        format!("\\{}section{{{}}}\n\n", subs, title_text)
+      },
       Self::Sidebar { .. }                  => todo!(),
       Self::Status { .. }                   => todo!(),
       Self::StandaloneEmail { .. }          => todo!(),
@@ -297,7 +306,7 @@ impl TreeNodeType {
       },
       Self::Topic { .. }                    => todo!(),
       Self::Transition {}                   =>  {
-        format!("\n\\hrulefill\n")
+        format!("\\hrulefill\n")
       },
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { text } => {
@@ -329,8 +338,8 @@ impl TreeNodeType {
       Self::Authors { .. }                  => todo!(),
       Self::AutomaticSectionNumbering {..}  => todo!(),
       Self::BlockQuote { .. }               => "\n".to_string(),
-      Self::BulletList { .. }               => format!("\\end{{itemize}}\n"),
-      Self::BulletListItem{ .. }            => "\n".to_string(),
+      Self::BulletList { .. }               => format!("\\end{{itemize}}\n\n"),
+      Self::BulletListItem{ .. }            => "".to_string(),
       Self::Caption { .. }                  => "}\n".to_string(),
       Self::Citation { .. }                 => "\n".to_string(),
       Self::CitationReference { .. }        => "".to_string(),
@@ -346,7 +355,7 @@ impl TreeNodeType {
       Self::Date                            => todo!(),
       Self::Decoration                      => todo!(),
       Self::Definition                      => todo!(),
-      Self::DefinitionList { .. }           => "\\end{itemize}".to_string(),
+      Self::DefinitionList { .. }           => "\\end{itemize}\n".to_string(),
       Self::DefinitionListItem { .. }       => "\n".to_string(),
       Self::Description                     => todo!(),
       Self::DocInfo                         => todo!(),
@@ -355,12 +364,12 @@ impl TreeNodeType {
       Self::Emphasis { .. }                 => "".to_string(),
       Self::EmptyLine                       => "".to_string(),
       Self::Entry                           => todo!(),
-      Self::EnumeratedList { .. }           => "\\end{enumerated}\n".to_string(),
+      Self::EnumeratedList { .. }           => "\\end{enumerate}\n\n".to_string(),
       Self::EnumeratedListItem { .. }       => "\n".to_string(),
       Self::ExternalHyperlinkTarget { .. }  => "\n".to_string(),
       Self::Field                           => todo!(),
       Self::FieldBody { .. }                => todo!(),
-      Self::FieldList { .. }                => "\\end{itemize}".to_string(),
+      Self::FieldList { .. }                => "\\end{itemize}\n".to_string(),
       Self::FieldListItem { .. }            => "\n".to_string(),
       Self::Figure { .. }                   => "\\end{center}\n".to_string(),
       Self::Footer { .. }                   => todo!(),
@@ -378,8 +387,8 @@ impl TreeNodeType {
       Self::Line { .. }                     => todo!(),
       Self::LineBlock { .. }                => todo!(),
       Self::ListTable { .. }                => todo!(),
-      Self::Literal { .. }                  => todo!(),
-      Self::LiteralBlock { .. }             => "\\end{codeblock}".to_string(),
+      Self::Literal { .. }                  => "".to_string(),
+      Self::LiteralBlock { .. }             => "\\end{codeblock}\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
       Self::MathBlock { .. }                => "\\end{equation}\n".to_string(),
       Self::OptionList { .. }               => "\n".to_string(),
