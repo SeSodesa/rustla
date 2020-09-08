@@ -560,7 +560,12 @@ pub enum TreeNodeType {
 
   /// #### MathBlock
   /// A node for display-style mathematics (LaTeX).
-  MathBlock,
+  MathBlock {
+    block_text: String,
+
+    name: Option<String>,
+    class: Option<String>,
+  },
 
   /// #### OptionList
   /// A two-column list of command line options, such as the ones typically seen on unix `man` pages.

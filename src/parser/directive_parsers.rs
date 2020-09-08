@@ -363,13 +363,13 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name, number_lines) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name", "figwidth", "figclass"]) {
-        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      if !Self::all_options_recognized(&options, &["class", "name", "number-lines"]) {
+        eprintln!("Code block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
       }
 
       let classes = options.remove("class");
       let name = options.remove("name");
-      let number_lines = options.remove("number_lines");
+      let number_lines = options.remove("number-lines");
 
       (classes, name, number_lines)
     } else {
@@ -403,8 +403,75 @@ impl Parser {
   }
 
 
-  pub fn parse_math () {
-    todo!()
+  /// ### parse_math_block
+  /// 
+  /// The display math parser. Content blocks separated by a blank lines are put in adjacent math blocks.
+  pub fn parse_math_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+
+    // Fetch content indentation and option|content offset from directive marker line
+    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+      Some( (indent, offset ) ) => (indent, offset),
+      None => panic!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+    };
+
+    line_cursor.increment_by(content_offset + 1);
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+
+    let (classes, name) = if let Some(mut options) = directive_options {
+      if !Self::all_options_recognized(&options, &["class", "name"]) {
+        eprintln!("Math block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let classes = options.remove("class");
+      let name = options.remove("name");
+
+      (classes, name)
+    } else {
+      (None, None)
+    };
+
+
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
+      (lines, offset)
+    } else {
+      panic!("Could not read the code block on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    // Scan lines for blocks separated by blank lines
+    let blocks = {
+
+      let mut blocks = Vec::new();
+      let mut block = String::new();
+
+      eprintln!("{:#?}", lines);
+
+      for line in lines.iter() {
+
+        if line.trim().is_empty() && !block.trim().is_empty() {
+          blocks.push(block); block = String::new()
+        } else if line.trim().is_empty() && block.trim().is_empty() {
+          continue
+        }
+
+        block = block + " " + line; // Newlines to spaces
+      }
+
+      blocks
+    };
+
+    if blocks.is_empty() { panic!("Tried reading a math block on line {} but didn't find any actual content. Computer says no...", line_cursor.sum_total()) }
+
+    for block in blocks {
+      doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: block.trim().to_string(), name: name.clone(), class: classes.clone() })
+    }
+    
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(offset)
+    }
   }
 
 
@@ -742,11 +809,11 @@ impl Parser {
         ended_with_blank = false;
         break // Found a line not conforming to field list item syntax
       }
-      *line_cursor.relative_offset_mut_ref() += 1;
+      line_cursor.increment_by(1);
     }
 
     if option_map.is_empty() { None } else {
-      if ended_with_blank { *line_cursor.relative_offset_mut_ref() += 1 }
+      if ended_with_blank { line_cursor.increment_by(1) }
       Some(option_map)
     }
   }
