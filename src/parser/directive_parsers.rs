@@ -434,7 +434,7 @@ impl Parser {
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
       (lines, offset)
     } else {
-      panic!("Could not read the code block on line {}. Computer says no...", line_cursor.sum_total())
+      panic!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total())
     };
 
     // Scan lines for blocks separated by blank lines
