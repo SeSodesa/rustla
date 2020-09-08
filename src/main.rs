@@ -6,7 +6,9 @@
 
 
 mod parser;
+use parser::Parser;
 mod doctree;
+use doctree::DocTree;
 mod common;
 
 use std::io::BufRead;
@@ -56,24 +58,24 @@ fn main() {
     println!("{:?} is a file.", path);
   
 
-    let line_iter = match common::read_path_lines(path) {
-      Ok(lines) => lines,
-      Err(_e) => {
-        eprintln!("File could not be opened");
-        process::exit(1);
-      }
+    let src_lines = match common::read_path_lines(&path) {
+      Ok(lines) => {
+        lines.map(|s|
+          match s {
+            Ok(string) => string,
+            Err(e) => panic!("Ran into an error when reading source file into buffer.")
+          }
+        ).collect::<Vec<String>>()
+      },
+      Err(_e) => panic!("File could not be opened")
     };
 
     // Enter parser here...
 
-    for line in line_iter {
-      if let Ok(line_text) = line {
-        println!("{}", line_text);
-      } else {
-        eprintln!("Could not read the line...\n");
-      }
-    }
+    let doctree = DocTree::new(path);
+    let parser = Parser::new(src_lines, doctree, None, 0, None, 0);
 
+    todo!()
   }
 
 }

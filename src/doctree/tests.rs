@@ -3,7 +3,9 @@
 /// 
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
+
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -11,7 +13,7 @@ use super::*;
 #[test]
 fn new_doctree() {
 
-  let doc_name = String::from("abc");
+  let doc_name = PathBuf::from("abc");
 
   let dt = DocTree::new(doc_name);
 

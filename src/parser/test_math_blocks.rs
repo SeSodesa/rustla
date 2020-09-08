@@ -6,6 +6,7 @@
 /// email: santtu.soderholm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -22,7 +23,7 @@ fn math_block_01 () {
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -56,7 +57,7 @@ fn math_block_02 () {
 
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

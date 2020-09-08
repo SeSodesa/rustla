@@ -5,6 +5,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -20,7 +21,7 @@ Some unindented text.
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -61,7 +62,7 @@ fn enumerated_list_02 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -107,7 +108,7 @@ fn enumerated_list_03 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -178,7 +179,7 @@ fn enumerated_list_04 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -242,7 +243,7 @@ fn enumerated_list_05 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

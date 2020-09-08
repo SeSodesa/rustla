@@ -5,6 +5,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -15,7 +16,7 @@ fn bullet_list_01 () {
   let src = String::from("
 - This is the first bullet list item.").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -43,7 +44,7 @@ fn bullet_list_02 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -75,7 +76,7 @@ fn bullet_list_03 () {
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -121,7 +122,7 @@ asfasdfdsfasfasdfasfd
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -177,7 +178,7 @@ asfasdfdsfasfasdfasfd
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -228,7 +229,7 @@ asfasdfdsfasfasdfasfd
     
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

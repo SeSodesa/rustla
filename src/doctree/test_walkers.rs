@@ -6,6 +6,7 @@
 /// email:  santtu.soderolm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -24,10 +25,8 @@ And another one.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
-
+  let mut doctree = DocTree::new(PathBuf::from("test"));
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
-
   doctree = parser.parse().unwrap_tree();
 
   let n_of_nodes = doctree.n_of_nodes();
@@ -57,7 +56,7 @@ fn walk_to_id_02 () {
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -95,7 +94,7 @@ Now with a second row.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

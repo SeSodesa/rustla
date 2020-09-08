@@ -5,6 +5,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -22,7 +23,7 @@ The line is at least 4 symbols long.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -54,7 +55,7 @@ not to the document root.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -121,7 +122,7 @@ Level 1 Section Title
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

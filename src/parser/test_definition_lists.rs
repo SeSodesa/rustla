@@ -2,7 +2,7 @@
 /// A submodule for definition list -related unit tests.
 
 use super::*;
-
+use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -26,7 +26,7 @@ term 4 : classifier one : classifier two
   Definition 4. 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(String::from("test"));
+  let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

@@ -23,7 +23,8 @@ impl DocTree {
     let filename = self.filename_stem + ".tex";
 
     use std::fs::{File, OpenOptions};
-    let mut file: File = match OpenOptions::new().append(true).open(filename.as_str()) {
+    // TODO: Add check for file existence...
+    let mut file: File = match OpenOptions::new().append(true).create(true).open(filename.as_str()) {
       Ok(file) => file,
       Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
     };
