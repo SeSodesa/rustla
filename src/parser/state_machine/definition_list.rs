@@ -17,8 +17,14 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 
     let next_line_indent = n_line.chars().take_while(|c| c.is_whitespace()).count();
     if next_line_indent <= detected_indent {
-      return TransitionResult::Failure {
-        message: format!("Tried parsing a definition list item on line {}, but definition does not have enough indent.\nComputer says no...\n", line_cursor.sum_total())
+
+      doctree = doctree.focus_on_parent();
+
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None
       }
     }
 
