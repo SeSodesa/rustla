@@ -173,8 +173,10 @@ impl StateMachine {
 
   /// ### ENUMERATED_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::EnumeratedList`.
-  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 19] = [
+  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 31] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+
+    (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::bullet),
 
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
@@ -199,14 +201,77 @@ impl StateMachine {
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, unknown_transitions::field_marker),
+
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+
+    (PatternName::Citation, CITATION_PATTERN, unknown_transitions::citation),
+
+    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, unknown_transitions::hyperlink_target),
+
+    (PatternName::Directive, DIRECTIVE_PATTERN, unknown_transitions::directive),
+
+    (PatternName::Comment, COMMENT_PATTERN, unknown_transitions::comment),
+
+    (PatternName::Line, LINE_PATTERN, unknown_transitions::line),
+
+    (PatternName::Text, TEXT_PATTERN, unknown_transitions::text)
   ];
 
 
   /// ### FIELD_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::FieldList`.
-  pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+  pub const FIELD_LIST_TRANSITIONS: [UncompiledTransition; 31] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+
+    (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::bullet),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, ARABIC_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, LOWER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, UPPER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
+
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, field_list::field_marker),
+
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, unknown_transitions::footnote),
+
+    (PatternName::Citation, CITATION_PATTERN, unknown_transitions::citation),
+
+    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, unknown_transitions::hyperlink_target),
+
+    (PatternName::Directive, DIRECTIVE_PATTERN, unknown_transitions::directive),
+
+    (PatternName::Comment, COMMENT_PATTERN, unknown_transitions::comment),
+
+    (PatternName::Line, LINE_PATTERN, unknown_transitions::line),
+
+    (PatternName::Text, TEXT_PATTERN, unknown_transitions::text)
   ];
 
 
