@@ -10,7 +10,7 @@ rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ ⟶ reStructuredT
 The current structure of the project is given below.
 This is subject to change as the project advances further.
 ```bash
-src/
+src
 ├── bin
 ├── common.rs
 ├── doctree
@@ -43,7 +43,8 @@ src/
     │   ├── footnote.rs
     │   ├── inline.rs
     │   ├── mod.rs
-    │   └── transitions.rs
+    │   ├── transitions.rs
+    │   └── unknown_transitions.rs
     ├── test_admonitions.rs
     ├── test_block_quotes.rs
     ├── test_block_reading.rs
@@ -57,12 +58,13 @@ src/
     ├── test_images.rs
     ├── test_inline_parsing.rs
     ├── test_literal_blocks.rs
+    ├── test_math_blocks.rs
     ├── test_mixed_structures.rs
     ├── test_sections_and_transitions.rs
     ├── test_unknown_directives.rs
     └── types_and_aliases.rs
 
-4 directories, 46 files
+4 directories, 48 files
 ```
 
 ## Build instructions
