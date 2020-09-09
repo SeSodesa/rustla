@@ -54,8 +54,14 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
       line_advance: LineAdvance::Some(1)
     }
   } else {
-    return TransitionResult::Failure {
-      message: format!("Found a definition list item candidate without a definition on line {}.\nComputer says no...\n", line_cursor.sum_total())
+
+    doctree = doctree.focus_on_parent();
+
+    return TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None
     }
   }
 }

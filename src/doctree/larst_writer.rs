@@ -179,7 +179,7 @@ impl TreeNodeType {
         format!("\\begin{{itemize}}\n")
       },
       Self::DefinitionListItem { term, classifiers, body_indent } => {
-        format!("\\item[{}] ({})]\n", term, classifiers.join(", "))
+        format!("\\item[{}] ({})\n", term, classifiers.join(", "))
       },
       Self::Description => todo!(),
       Self::DocInfo => todo!(),
