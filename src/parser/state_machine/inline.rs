@@ -12,9 +12,11 @@ use super::*;
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
   
-  let content = captures.get(1).unwrap();
+  let content = captures.get(2).unwrap();
 
   let data = String::from(content.as_str());
+
+  eprintln!("{:#?}", pattern_name);
 
   let node_data = match pattern_name {
     PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: data},
@@ -24,7 +26,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     _ => panic!("No such paired delimiter type!")
   };
 
-  let match_len = captures.get(0).unwrap().as_str().chars().count();
+  let match_len = captures.get(1).unwrap().as_str().chars().count();
 
   (node_data, match_len)
 }
