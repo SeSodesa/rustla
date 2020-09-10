@@ -179,7 +179,10 @@ impl TreeNodeType {
         format!("\\begin{{itemize}}\n")
       },
       Self::DefinitionListItem { term, classifiers, body_indent } => {
-        format!("\\item[{}] ({})\n", term, classifiers.join(", "))
+
+        let classifiers = if classifiers.is_empty() { "".to_string() } else { format!(": {}", classifiers.join(", ")) };
+
+        format!("\\item \\textbf{{{}}}{}\n\n", term, classifiers)
       },
       Self::Description => todo!(),
       Self::DocInfo => todo!(),
@@ -213,7 +216,7 @@ impl TreeNodeType {
         format!("\\begin{{itemize}}\n")
       },
       Self::FieldListItem { raw_marker_name, marker_name_as_inline_nodes, .. } => {
-        format!("\\item[{}] ", raw_marker_name)
+        format!("\\item \\textbf{{{}}}\n\n", raw_marker_name)
       },
       Self::Figure { .. }                   => format!("\\begin{{center}}\n"),
       Self::Footer { .. }                   => todo!(),
