@@ -355,8 +355,8 @@ impl StateMachine {
     (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::reference),
     (PatternName::Interpreted { kind: InterpretedTextKind::Default } , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
     (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::reference),
-    (PatternName::SimpleRef, r#"(^|\s|['"<(\[{])([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)(__?)"#, inline::reference),
-    (PatternName::SubstitutionRef, r#"(^|\s|['"<(\[{])\|(\S|\S.*?\S)\|(__?)"#, inline::reference),
+    (PatternName::SimpleRef, SIMPLE_REF_PATTERN, inline::reference),
+    (PatternName::SubstitutionRef, SUBSTITUTION_REF_PATTERN, inline::reference),
 
     // ### StandaloneHyperlink
     //
@@ -685,6 +685,44 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
         \S|\S.*?\S
       )
     `
+    (?P<ref_type>
+      __?
+    )
+  )
+)
+(?P<lookahead>
+  \s|[-.,:;!?\\/'")\]}>]|$
+)
+"#;
+
+const SIMPLE_REF_PATTERN: &str = r#"(?x)^
+(?P<before_lookahead>
+  (?P<lookbehind>
+    \s|['"<(\[{]
+  )?
+  (?P<content>
+    [a-zA-Z0-9]+(?:[-_.:+][a-zA-Z0-9]+)*
+  )
+  (?P<ref_type>
+    __?
+  )
+)
+(?P<lookahead>
+  \s|[-.,:;!?\\/'")\]}>]|$
+)
+"#;
+
+const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
+(?P<before_lookahead>
+  (?P<lookbehind>
+    \s|['"<(\[{]
+  )?
+  (?P<markup_with_delims>
+    \|
+      (?P<content>
+        \S|\S.*?\S
+      )
+    \|
     (?P<ref_type>
       __?
     )
