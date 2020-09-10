@@ -348,15 +348,15 @@ impl StateMachine {
   /// An array of inline transitions.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
     (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
-    (PatternName::StrongEmphasis, r#"^(\*\*(\S|\S.*?\S)\*\*)(?:\s|[-.,:;!?\\/'")\]}>]|$)"#, inline::paired_delimiter),
-    (PatternName::Emphasis, r#"^(\*(\S|\S.*?\S)\*)(?:\s|[-.,:;!?\\/'")\]}>]|$)"#, inline::paired_delimiter),
-    (PatternName::Literal, r#"^(``(\S|\S.*?\S)``)(?:\s|[-.,:;!?\\/'")\]}>]|$)"#, inline::paired_delimiter),
-    (PatternName::InlineTarget, r#"^(_`([\w .]+))`(?:\s|[-.,:;!?\\/'")\]}>]|$)"#, inline::paired_delimiter),
-    (PatternName::PhraseRef, r#"^`(\S|\S.*?\S)`(__?)"#, inline::reference),
-    (PatternName::Interpreted { kind: InterpretedTextKind::Default } , r#"^(`(\S|\S.*?\S)`)(?:\s|[-.,:;!?\\/'")\]}>]|$)"#, inline::paired_delimiter),
-    (PatternName::FootNoteRef, r"^\[(\S|\S.*?\S)\](__?)", inline::reference),
-    (PatternName::SimpleRef, r"^([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)(__?)", inline::reference),
-    (PatternName::SubstitutionRef, r"^\|(\S|\S.*?\S)\|(__?)", inline::reference),
+    (PatternName::StrongEmphasis, STRONG_EMPH_PATTERN, inline::paired_delimiter),
+    (PatternName::Emphasis, EMPH_PATTERN, inline::paired_delimiter),
+    (PatternName::Literal, LITERAL_PATTERN, inline::paired_delimiter),
+    (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::paired_delimiter),
+    (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::reference),
+    (PatternName::Interpreted { kind: InterpretedTextKind::Default } , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
+    (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::reference),
+    (PatternName::SimpleRef, r#"(^|\s|['"<(\[{])([\p{L}0-9]+(?:[-+._:][\p{L}0-9]+)*)(__?)"#, inline::reference),
+    (PatternName::SubstitutionRef, r#"(^|\s|['"<(\[{])\|(\S|\S.*?\S)\|(__?)"#, inline::reference),
 
     // ### StandaloneHyperlink
     //
@@ -426,7 +426,7 @@ impl StateMachine {
       )
       ", inline::uri),
     //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
-    (PatternName::Text, r"^([\S]+)", inline::text)
+    (PatternName::Text, r"^(\S+)", inline::text)
   ];
 
 }
@@ -569,3 +569,132 @@ impl StateMachine {
   /// This pattern should generally be tested against only after all other
   /// possibilities have been eliminated. 
   pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
+
+// =================
+//  Inline patterns
+// =================
+
+const STRONG_EMPH_PATTERN: &str = r#"(?x)^
+  (?P<before_lookahead>
+    (?P<lookbehind>
+      \s|['"<(\[{]
+    )?
+    (?P<markup_with_delims>
+      \*\*
+        (?P<content>
+          \S|\S.*?\S
+        )
+      \*\*
+    )
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>]|$
+  )
+"#;
+
+const EMPH_PATTERN: &str = r#"(?x)^
+  (?P<before_lookahead>
+    (?P<lookbehind>
+      \s|['"<(\[{]
+    )?
+    (?P<markup_with_delims>
+      \*
+        (?P<content>
+          \S|\S.*?\S
+        )
+      \*
+    )
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>]|$
+  )
+"#;
+
+const LITERAL_PATTERN: &str = r#"(?x)^
+  (?P<before_lookahead>
+    (?P<lookbehind>
+      \s|['"<(\[{]
+    )?
+    (?P<markup_with_delims>
+      ``
+        (?P<content>
+          \S|\S.*?\S
+        )
+      ``
+    )
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'">)\]}]|$
+  )
+"#;
+
+const INLINE_TARGET_PATTERN: &str = r#"(?x)^
+  (?P<before_lookahead>
+    (?P<lookbehind>
+      \s|['"<(\[{]
+    )?
+    (?P<markup_with_delims>
+      _`
+        (?P<content>
+          \S|\S.*?\S
+        )
+      `
+    )
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>]|$
+  )
+"#;
+
+const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
+  (?P<before_lookahead>
+    (?P<lookbehind>
+      \s|['"<(\[{]
+    )?
+    (?:
+      :(?P<front_role>
+        \S|\S.*?\S
+      ):
+    )?
+    (?P<markup_with_delims>
+      _`
+        (?P<content>
+          \S|\S.*?\S
+        )
+      `
+    )
+    (?:
+      :(?P<back_role>
+        \S|\S.*?\S
+      ):
+    )?
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>]|$
+  )
+"#;
+
+const PHRASE_REF_PATTERN: &str = r#"(?x)^
+(?P<before_lookahead>
+  (?P<lookbehind>
+    \s|['"<(\[{]
+  )?
+  (?P<markup_with_delims>
+    `
+      (?P<content>
+        \S|\S.*?\S
+      )
+    `
+    (?P<ref_type>
+      __?
+    )
+  )
+)
+(?P<lookahead>
+  \s|[-.,:;!?\\/'")\]}>]|$
+)
+"#;
+
+// r#"^(\s|['"<(\[{])`(\S|\S.*?\S)`(__?)"#
+
+// r#"(^|\s|['"<(\[{])(_`([\w .]+))`(?:\s|[-.,:;!?\\/'")\]}>]|$)"#

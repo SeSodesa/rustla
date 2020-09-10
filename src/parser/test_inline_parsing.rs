@@ -25,14 +25,14 @@ fn inline_parse_01 () {
   assert_eq!(
     if let TreeNodeType::Literal{text} = &nodes[12] {
       text.as_str()
-    } else {panic!()},
+    } else { panic!() },
     "literal"
   );
 
   assert_eq!(
     if let TreeNodeType::StrongEmphasis{text} = &nodes[15] {
       text.as_str()
-    } else {panic!()},
+    } else { panic!() },
     "strong emphasis"
   );
 
