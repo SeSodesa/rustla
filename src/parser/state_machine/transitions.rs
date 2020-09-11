@@ -577,12 +577,12 @@ impl StateMachine {
 const STRONG_EMPH_PATTERN: &str = r#"(?x)^
   (?P<before_lookahead>
     (?P<lookbehind>
-      \s|['"<(\[{]
+      ['"<(\[{\s&&[^\\]]
     )?
     (?P<markup_with_delims>
       \*\*
         (?P<content>
-          \S|\S.*?\S
+          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
         )
       \*\*
     )
@@ -595,12 +595,12 @@ const STRONG_EMPH_PATTERN: &str = r#"(?x)^
 const EMPH_PATTERN: &str = r#"(?x)^
   (?P<before_lookahead>
     (?P<lookbehind>
-      \s|['"<(\[{]
+      ['"<(\[{\s&&[^\\]]
     )?
     (?P<markup_with_delims>
       \*
         (?P<content>
-          \S|\S.*?\S
+          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
         )
       \*
     )
@@ -613,12 +613,12 @@ const EMPH_PATTERN: &str = r#"(?x)^
 const LITERAL_PATTERN: &str = r#"(?x)^
   (?P<before_lookahead>
     (?P<lookbehind>
-      \s|['"<(\[{]
+      ['"<(\[{\s&&[^\\]]
     )?
     (?P<markup_with_delims>
       ``
         (?P<content>
-          \S|\S.*?\S
+          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
         )
       ``
     )
@@ -631,12 +631,12 @@ const LITERAL_PATTERN: &str = r#"(?x)^
 const INLINE_TARGET_PATTERN: &str = r#"(?x)^
   (?P<before_lookahead>
     (?P<lookbehind>
-      \s|['"<(\[{]
+      ['"<(\[{\s&&[^\\]]
     )?
     (?P<markup_with_delims>
       _`
         (?P<content>
-          \S|\S.*?\S
+          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
         )
       `
     )
@@ -649,7 +649,7 @@ const INLINE_TARGET_PATTERN: &str = r#"(?x)^
 const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
   (?P<before_lookahead>
     (?P<lookbehind>
-      \s|['"<(\[{]
+      ['"<(\[{\s&&[^\\]]
     )?
     (?:
       :(?P<front_role>
@@ -659,7 +659,7 @@ const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
     (?P<markup_with_delims>
       _`
         (?P<content>
-          \S|\S.*?\S
+          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
         )
       `
     )
@@ -677,12 +677,12 @@ const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
 const PHRASE_REF_PATTERN: &str = r#"(?x)^
 (?P<before_lookahead>
   (?P<lookbehind>
-    \s|['"<(\[{]
+    ['"<(\[{\s&&[^\\]]
   )?
   (?P<markup_with_delims>
     `
       (?P<content>
-        \S|\S.*?\S
+        [\S&&[^\\]]|\S.*?[\S&&[^\\]]
       )
     `
     (?P<ref_type>
@@ -698,7 +698,7 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
 const SIMPLE_REF_PATTERN: &str = r#"(?x)^
 (?P<before_lookahead>
   (?P<lookbehind>
-    \s|['"<(\[{]
+    ['"<(\[{\s&&[^\\]]
   )?
   (?P<content>
     [a-zA-Z0-9]+(?:[-_.:+][a-zA-Z0-9]+)*
@@ -715,12 +715,12 @@ const SIMPLE_REF_PATTERN: &str = r#"(?x)^
 const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
 (?P<before_lookahead>
   (?P<lookbehind>
-    \s|['"<(\[{]
+    ['"<(\[{\s&&[^\\]]
   )?
   (?P<markup_with_delims>
     \|
       (?P<content>
-        \S|\S.*?\S
+        [\S&&[^\\]]|\S.*?[\S&&[^\\]]
       )
     \|
     (?P<ref_type>
