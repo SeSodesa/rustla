@@ -417,9 +417,9 @@ impl Parser {
     let mut col: usize = 0;
 
     // Remove backslashes
-    let src_without_escapes = inline_src_block.replace("\\", "");
+    // let src_without_escapes = inline_src_block.replace("\\", "");
 
-    let src_chars = &mut src_without_escapes.chars();
+    let src_chars = &mut inline_src_block.chars();
 
     match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
       Some((node_data, offset)) => {
