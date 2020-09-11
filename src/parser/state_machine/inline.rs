@@ -325,10 +325,12 @@ fn quotation_matches (start: &str, end: &str) -> bool {
   /// 
   /// A listing of pairs of "quotation" characters that, among other things,
   /// must not immediately surround reStructuredText inline markup.
-  const QUOTATION_STRS: [(&str, &str);6] = [
+  const QUOTATION_STRS: [(&str, &str);8] = [
     (r#"'"#,r#"'"#),
     (r#"""#,r#"""#),
     (r#"<"#,r#">"#),
+    (r#"‹"#,r#"›"#),
+    (r#"«"#,r#"»"#),
     (r#"("#,r#")"#),
     (r#"["#,r#"]"#),
     (r#"{"#,r#"}"#),
