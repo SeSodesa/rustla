@@ -49,6 +49,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
    } else {
      ""
    };
+  let content = captures.name("content").unwrap().as_str();
 
   eprintln!("{:#?}", pattern_name);
   eprintln!("{:#?}", captures);
@@ -59,11 +60,20 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     let match_len = capture_as_text.chars().count();
     let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
     return (text_node, match_len)
+  } else if quoted_start(lookbehind_str, content) {
+    let quoted_start_string: String = captures
+      .name("before_lookahead")
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(3)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string}, 3)
   }
 
-  let content = captures.name("content").unwrap();
 
-  let data = String::from(content.as_str());
+
+  let data = String::from(content);
 
   let node_data = match pattern_name {
     PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: data},
@@ -321,21 +331,6 @@ pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, c
 /// Checks the two given string slices for matching reStructuredText quotation characters.
 fn quotation_matches (start: &str, end: &str) -> bool {
 
-  /// ### QUOTATION_STRS
-  /// 
-  /// A listing of pairs of "quotation" characters that, among other things,
-  /// must not immediately surround reStructuredText inline markup.
-  const QUOTATION_STRS: [(&str, &str);8] = [
-    (r#"'"#,r#"'"#),
-    (r#"""#,r#"""#),
-    (r#"<"#,r#">"#),
-    (r#"‹"#,r#"›"#),
-    (r#"«"#,r#"»"#),
-    (r#"("#,r#")"#),
-    (r#"["#,r#"]"#),
-    (r#"{"#,r#"}"#),
-  ];
-
   for pair in QUOTATION_STRS.iter() {
     if start == pair.0 && end == pair.1 { return true }
   };
@@ -343,3 +338,46 @@ fn quotation_matches (start: &str, end: &str) -> bool {
   false
 }
 
+
+/// ### quoted_start
+/// 
+/// Compares two characters with the quotation strings found in QUOTATION_STRS.
+fn quoted_start (lookbehind: &str, content: &str) -> bool {
+
+  let lookbehind_char = if let Some(c) = lookbehind.chars().next() {
+    c
+  } else {
+    return false
+  };
+  let first_content_char = if let Some(c) = content.chars().next() {
+    c
+  } else {
+    panic!("Detected markup has no content. Can't check for quoted start.")
+  };
+
+  for pair in QUOTATION_STRS.iter() {
+
+    let quote_start = pair.0.chars().next().unwrap();
+    let quote_end = pair.1.chars().next().unwrap();
+
+    if lookbehind_char == quote_start && first_content_char == quote_end { return true }
+  };
+
+  false
+}
+
+
+/// ### QUOTATION_STRS
+/// 
+/// A listing of pairs of "quotation" characters that, among other things,
+/// must not immediately surround reStructuredText inline markup.
+const QUOTATION_STRS: [(&str, &str);8] = [
+  (r#"'"#,r#"'"#),
+  (r#"""#,r#"""#),
+  (r#"<"#,r#">"#),
+  (r#"‹"#,r#"›"#),
+  (r#"«"#,r#"»"#),
+  (r#"("#,r#")"#),
+  (r#"["#,r#"]"#),
+  (r#"{"#,r#"}"#),
+];
