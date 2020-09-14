@@ -200,8 +200,80 @@ maybe a -simple-reference__- as well.
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
-  todo!()
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(8).shared_data() {
+    assert_eq!(text, "\"");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::StrongEmphasis { text } = doctree.shared_child(1).shared_child(9).shared_data() {
+    assert_eq!(text, "strong emphasis");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(10).shared_data() {
+    assert_eq!(text, "\",");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(12).shared_data() {
+    assert_eq!(text, "<");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Emphasis { text } = doctree.shared_child(1).shared_child(13).shared_data() {
+    assert_eq!(text, "text in italics");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(14).shared_data() {
+    assert_eq!(text, ">,");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(16).shared_data() {
+    assert_eq!(text, "(");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(17).shared_data() {
+    assert_eq!(displayed_text, "a phrase reference with automatic labeling");
+    assert_eq!(target_label, "[[-ANON-LABEL-1-]]");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(18).shared_data() {
+    assert_eq!(text, "),");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(24).shared_data() {
+    assert_eq!(text, "-");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(25).shared_data() {
+    assert_eq!(displayed_text, "simple-reference");
+    assert_eq!(target_label, "[[-ANON-LABEL-2-]]");
+  } else {
+    panic!()
+  }
+  
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(26).shared_data() {
+    assert_eq!(text, "-");
+  } else {
+    panic!()
+  }
 }

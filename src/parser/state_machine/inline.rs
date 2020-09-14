@@ -49,17 +49,27 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
+    eprintln!("{}...{}\n", lookbehind_str, lookahead_str);
+
     let start_quote_string = lookbehind_str.to_string();
     let match_len = start_quote_string.chars().count();
     let text_node = TreeNodeType::Text { text: start_quote_string };
     return (text_node, match_len)
+
   } else if quotation_matches(lookbehind_str, content) {
 
-    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+    let lookbehind_string = lookbehind_str.to_string();
+    let lookbehind_char_count = lookbehind_string.chars().count();
 
-    let quoted_start_string: String = lookbehind_str.to_string()
+    let quoted_start_char_count = (lookbehind_str.to_string() + markup_start_str).chars().count() + 1;
+
+    let quoted_start_string: String = lookbehind_string
       + markup_start_str
-      + content.chars().next().unwrap().to_string().as_str();
+      + content
+        .chars()
+        .take(lookbehind_char_count)
+        .collect::<String>()
+        .as_str();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
@@ -108,10 +118,13 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
-    let capture_as_text = captures.get(0).unwrap().as_str();
-    let match_len = capture_as_text.chars().count();
-    let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
+    // The entire markup is quoted so turn beginning quote into text and return
+
+    let lookbehind_as_text = lookbehind_str.to_string();
+    let match_len = lookbehind_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
     return (text_node, match_len)
+
   } else if quotation_matches(lookbehind_str, content) {
 
     let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
@@ -228,9 +241,11 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
-    let capture_as_text = captures.get(0).unwrap().as_str();
-    let match_len = capture_as_text.chars().count();
-    let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
+    // The entire markup is quoted so turn beginning quote into text and return
+
+    let lookbehind_as_text = lookbehind_str.to_string();
+    let match_len = lookbehind_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
     return (text_node, match_len)
 
   } else if quotation_matches(lookbehind_str, content) {
@@ -566,9 +581,22 @@ fn quoted_start (lookbehind: &str, content: &str) -> bool {
 /// Some languages like French use multiple characters (quillemets) to denote quotations.
 /// Hence the type of the pairs.
 /// 
+/// #### TODO
+/// 
+/// Reduce the size of this list or alternatively come up with a string- and iterator-based approach.
+/// 
 /// source: https://en.wikipedia.org/wiki/Quotation_mark#Summary_table
 /// 
 const QUOTATION_PAIRS: &[(&str, &str)] = &[
+  
+  // Parentheses and other "quotation" pairs
+  (r#"("#, r#")"#),
+  (r#"["#, r#"]"#),
+  (r#"{"#, r#"}"#),
+  (r#"<"#, r#">"#),
+  (r#"-"#, r#"-"#),
+  
+  // Language-specific quotation pairs
   (r#"“"#, r#"”"#),
   (r#"‘"#, r#"’"#),
   (r#"„"#, r#"”"#),
