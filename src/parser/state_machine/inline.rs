@@ -212,8 +212,9 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
     target_label: target_label
   };
 
+  let match_len = (lookbehind_str.to_string() + content + ref_type).chars().count();
   
-  todo!()
+  (ref_node, match_len)
 }
 
 pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
@@ -225,7 +226,53 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  todo!()
+  if quotation_matches(lookbehind_str, lookahead_str) {
+
+    let capture_as_text = captures.get(0).unwrap().as_str();
+    let match_len = capture_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
+    return (text_node, match_len)
+
+  } else if quotation_matches(lookbehind_str, content) {
+
+    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+  }
+
+  use crate::common::normalize_refname;
+
+  let target_label: String = match ref_type {
+    "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
+
+      if let Some(doctree) = opt_doctree_ref {
+        doctree.next_anon_reference_label()
+      } else {
+        eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
+        normalize_refname(content)
+      }
+    }
+    "_" => { // Manual reference label
+      normalize_refname(content)
+    }
+    _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
+  };
+
+  let ref_node = TreeNodeType::Reference {
+    displayed_text: content.to_string(),
+    target_label: target_label
+  };
+
+  let match_len = (lookbehind_str.to_string() + markup_start_str + content + markup_end_str + ref_type).chars().count();
+
+  (ref_node, match_len)
 }
 
 
@@ -256,6 +303,34 @@ pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
 
 
 pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let ref_type = if let Some(ref_type_str) = captures.name("ref_type") { ref_type_str.as_str() } else { "" };
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  if quotation_matches(lookbehind_str, lookahead_str) {
+
+    let capture_as_text = captures.get(0).unwrap().as_str();
+    let match_len = capture_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
+    return (text_node, match_len)
+
+  } else if quotation_matches(lookbehind_str, content) {
+
+    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+  }
 
   todo!()
 }

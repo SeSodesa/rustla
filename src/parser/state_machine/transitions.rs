@@ -680,7 +680,7 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
     [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
-    _`
+    `
   )
   (?P<content>
     [\S&&[^\\]]|\S.*?[\S&&[^\\]]
