@@ -35,7 +35,8 @@ use super::*;
 
 
 /// ### paired_delimiter
-/// Parses inline text elements that have simple opening
+/// 
+/// Parses inline text elements that have identical opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
   
@@ -94,6 +95,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
 
 /// ### whitespace
+/// 
 /// Parses inline whitespace
 pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
@@ -191,6 +193,9 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
 }
 
 
+/// ### simple_ref
+/// 
+/// Parses simple hyperlink references.
 pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -234,6 +239,10 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
   (ref_node, match_len)
 }
 
+
+/// ### phrase_ref
+/// 
+/// Parses phrase references.
 pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -295,6 +304,9 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 }
 
 
+/// ### footnote_ref
+/// 
+/// Parses footnote references.
 pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -331,6 +343,9 @@ pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
 }
 
 
+/// ### citation_ref
+/// 
+/// Parses citation references.
 pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -367,6 +382,10 @@ pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
 }
 
 
+/// ### substitution_ref
+/// 
+/// Parses inline subsitution references. Also adds hyperlink information to the reference,
+/// if the matched string ended with a `__?`.
 pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -434,6 +453,11 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 }
 
 
+/// ### uri
+/// 
+/// Parses inline URIs. These are split into general URIs and standalone email addresses.
+/// These two are differentiate by whether the URI starts with a protocol scheme,
+/// such as `https://`.
 pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
@@ -565,8 +589,10 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
 
 /// ### text
-/// Parses inline text elements that have simple opening
-/// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
+/// 
+/// This function is invoked when no other inline pattern matched.
+/// Eats up any consequent non-whitespace characters as a single
+/// word of "text".
 pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let content = captures.get(1).unwrap();
