@@ -576,7 +576,7 @@ impl StateMachine {
 
 const STRONG_EMPH_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     \*\*
@@ -588,13 +588,13 @@ const STRONG_EMPH_PATTERN: &str = r#"(?x)^
     \*\*
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const EMPH_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     \*
@@ -606,13 +606,13 @@ const EMPH_PATTERN: &str = r#"(?x)^
     \*
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const LITERAL_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     ``
@@ -624,13 +624,13 @@ const LITERAL_PATTERN: &str = r#"(?x)^
     ``
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const INLINE_TARGET_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     _`
@@ -642,13 +642,13 @@ const INLINE_TARGET_PATTERN: &str = r#"(?x)^
     `
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
 
   (?P<front_role_marker>
@@ -671,13 +671,13 @@ const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
     ):
   )?
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const PHRASE_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     `
@@ -692,13 +692,13 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
     __?
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const SIMPLE_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<content>
     [a-zA-Z0-9]+(?:[-_.:+][a-zA-Z0-9]+)*
@@ -707,13 +707,13 @@ const SIMPLE_REF_PATTERN: &str = r#"(?x)^
     __?
   )
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
-    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
   (?P<markup_start>
     \|
@@ -728,6 +728,6 @@ const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
     __?
   )?
   (?P<lookahead>
-    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
