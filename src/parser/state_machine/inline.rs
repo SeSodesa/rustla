@@ -58,6 +58,8 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   } else if quotation_matches(lookbehind_str, content) {
 
+    eprintln!("Quoted start!\n");
+
     let lookbehind_string = lookbehind_str.to_string();
     let lookbehind_char_count = lookbehind_string.chars().count();
 
@@ -70,6 +72,8 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
         .take(lookbehind_char_count)
         .collect::<String>()
         .as_str();
+
+    eprintln!("quoted start: {:#?}\n", quoted_start_string);
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
@@ -582,35 +586,7 @@ pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, c
 fn quotation_matches (start: &str, end: &str) -> bool {
 
   for pair in QUOTATION_PAIRS.iter() {
-    if start == pair.0 && end == pair.1 { return true }
-  };
-
-  false
-}
-
-
-/// ### quoted_start
-/// 
-/// Compares two characters with the quotation strings found in QUOTATION_STRS.
-fn quoted_start (lookbehind: &str, content: &str) -> bool {
-
-  let lookbehind_char = if let Some(c) = lookbehind.chars().next() {
-    c
-  } else {
-    return false
-  };
-  let first_content_char = if let Some(c) = content.chars().next() {
-    c
-  } else {
-    panic!("Detected markup has no content. Can't check for quoted start.")
-  };
-
-  for pair in QUOTATION_PAIRS.iter() {
-
-    let quote_start = pair.0.chars().next().unwrap();
-    let quote_end = pair.1.chars().next().unwrap();
-
-    if lookbehind_char == quote_start && first_content_char == quote_end { return true }
+    if start.ends_with(pair.0) && end.starts_with(pair.1) { return true }
   };
 
   false

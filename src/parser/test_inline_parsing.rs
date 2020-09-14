@@ -202,7 +202,6 @@ maybe a -simple-reference__- as well.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-
   if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(8).shared_data() {
     assert_eq!(text, "\"");
   } else {
@@ -273,6 +272,60 @@ maybe a -simple-reference__- as well.
   
   if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(26).shared_data() {
     assert_eq!(text, "-");
+  } else {
+    panic!()
+  }
+}
+
+
+#[test]
+fn quoted_markup_02 () {
+
+  let src = String::from(r#"
+Test for "*"quoted* (**)start** '`'strings`__.
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(4).shared_data() {
+    assert_eq!(text, "\"*\"");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(5).shared_data() {
+    assert_eq!(text, "quoted*");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(7).shared_data() {
+    assert_eq!(text, "(**)");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(8).shared_data() {
+    assert_eq!(text, "start**");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(10).shared_data() {
+    assert_eq!(text, "\'`\'");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(11).shared_data() {
+    assert_eq!(text, "strings`__.");
   } else {
     panic!()
   }
