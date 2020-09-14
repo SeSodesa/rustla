@@ -585,9 +585,13 @@ pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, c
 /// Checks the two given string slices for matching reStructuredText quotation characters.
 fn quotation_matches (start: &str, end: &str) -> bool {
 
-  for pair in QUOTATION_PAIRS.iter() {
-    if start.ends_with(pair.0) && end.starts_with(pair.1) { return true }
-  };
+  for (i, c) in OPENERS.iter().enumerate() {
+    if start.ends_with(*c) && end.starts_with(*CLOSERS.get(i).unwrap()) { return true }
+  }
+
+  for c in DELIMITERS.iter() {
+    if start.ends_with(*c) && end.starts_with(*c) { return true }
+  }
 
   false
 }
