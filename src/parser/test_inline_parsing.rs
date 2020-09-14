@@ -189,7 +189,8 @@ fn quoted_markup_01 () {
 
   let src = String::from(r#"
 Paragraph with quoted markup: "**strong emphasis**",
-<*text in italics*>
+<*text in italics*>, (`a phrase reference with automatic labeling`__),
+maybe a -simple-reference__- as well.
 
 "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
