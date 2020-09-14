@@ -159,12 +159,12 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
         target_label: target_label
       }
     },
-    PatternName::SubstitutionRef => {
-      TreeNodeType::SubstitutionReference{
-        displayed_text: displayed_text.to_string(),
-        target_label: target_label
-      }
-    },
+    // PatternName::SubstitutionRef => {
+    //   TreeNodeType::SubstitutionReference{
+    //     displayed_text: displayed_text.to_string(),
+    //     target_label: target_label
+    //   }
+    // },
     _ => panic!("No such reference pattern.\n")
   };
 
@@ -332,7 +332,38 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
-  todo!()
+  use crate::common::normalize_refname;
+
+  let target_label = if !ref_type.is_empty() {
+
+    let target_label: String = match ref_type {
+      "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
+  
+        if let Some(doctree) = opt_doctree_ref {
+          doctree.next_anon_reference_label()
+        } else {
+          eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
+          normalize_refname(content)
+        }
+      }
+      "_" => { // Manual reference label
+        normalize_refname(content)
+      }
+      _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
+    };
+
+    Some(target_label)
+
+  } else { None };
+
+  let substitution_ref_node = TreeNodeType::SubstitutionReference {
+    substitution_label: normalize_refname(content),
+    target_label: target_label
+  };
+
+  let match_len = (lookbehind_str.to_string() + markup_start_str + content + markup_end_str + ref_type).chars().count();
+
+  (substitution_ref_node, match_len)
 }
 
 

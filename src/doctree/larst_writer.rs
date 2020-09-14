@@ -290,7 +290,7 @@ impl TreeNodeType {
       },
       Self::Subscript { .. }                => todo!(),
       Self::SubstitutionDefinition { .. }   => todo!(),
-      Self::SubstitutionReference { displayed_text, target_label } => {
+      Self::SubstitutionReference { substitution_label, target_label } => {
         todo!()
       },
       Self::Subtitle { .. }                 => todo!(),

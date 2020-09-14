@@ -699,8 +699,9 @@ pub enum TreeNodeType {
   /// #### SubstitutionReference
   /// A reference that is to be substituted with the reference target directive output.
   SubstitutionReference {
-    displayed_text: String,
-    target_label: String
+    substitution_label: String,
+    // displayed_text: Option<String>,
+    target_label: Option<String>
   },
 
   /// #### Subtitle

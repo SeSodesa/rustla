@@ -10,7 +10,7 @@ use super::*;
 
 
 #[test]
-fn inline_parse_01 () {
+fn literal_and_strong_emphasis_01 () {
 
   let src = String::from("This is a string with\n a ``literal``, **strong emphasis** and normal text");
   let mut lc = LineCursor::new(0,0);
@@ -40,7 +40,7 @@ fn inline_parse_01 () {
 
 
 #[test]
-fn inline_parse_02 () {
+fn references_01 () {
 
   let src = String::from("This is a string with a simple-reference+with:punctuation_\nand a `phrase reference`_");
 
@@ -72,9 +72,9 @@ fn inline_parse_02 () {
 
 
 #[test]
-fn inline_parse_03 () {
+fn references_02 () {
 
-  let src = String::from("Here is a simple-reference_ to an _`inline target.`");
+  let src = String::from("Here is a simple-reference_ and a `not so simple refereNce`_.");
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
@@ -91,21 +91,27 @@ fn inline_parse_03 () {
     "simple-reference"
   );
 
-  assert_eq!(
-    if let TreeNodeType::InlineTarget{target_label} = &nodes[12] {
-      target_label.as_str()
-    } else {panic!()},
-    "inline target."
-  );
+  if let TreeNodeType::Reference{target_label, displayed_text} = &nodes[12] {
+    assert_eq!(displayed_text.as_str(), "not so simple refereNce");
+    assert_eq!(target_label.as_str(), "not so simple reference");
+  } else {panic!()}
 
 }
 
 
 
 #[test]
-fn inline_parse_04 () {
+fn substitution_ref_01 () {
 
-  let src = String::from("Here is a |substitution reference|_ to an _`inline target.`");
+  let src = String::from(
+r#"
+This is a simple |substitution reference|.  It will be replaced by
+the processing system.
+
+This is a combination |substitution and hyperlink reference|_.  In
+addition to being replaced, the replacement text or element will
+refer to the "substitution and hyperlink reference" target.
+"#);
   let mut lc = LineCursor::new(0,0);
 
   let nodes = match Parser::inline_parse(src, None, &mut lc) {
@@ -115,12 +121,17 @@ fn inline_parse_04 () {
 
   eprintln!("{:#?}", nodes);
 
-  assert_eq!(
-    if let TreeNodeType::SubstitutionReference{target_label, ..} = &nodes[6] {
-      target_label.as_str()
-    } else {panic!()},
-    "substitution reference"
-  );
+  if let TreeNodeType::SubstitutionReference{substitution_label, target_label} = &nodes[9] {
+    assert_eq!(substitution_label.as_str(), "substitution reference");
+    assert_eq!(target_label.as_deref(), None);
+    
+  } else { panic!() };
+
+  if let TreeNodeType::SubstitutionReference{substitution_label, target_label} = &nodes[36] {
+    assert_eq!(substitution_label.as_str(), "substitution and hyperlink reference");
+    assert_eq!(target_label.as_deref(), Some("substitution and hyperlink reference"));
+    
+  } else { panic!() };
 
 }
 
