@@ -109,6 +109,39 @@ pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNa
 
 pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let front_role_marker = captures.name("front_role_marker");
+  let front_role = if let Some(role) = captures.name("front_role") { role.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let back_role_marker = captures.name("back_role_marker");
+  let back_role = if let Some(role) = captures.name("back_role") { role.as_str() } else { "" };
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  if quotation_matches(lookbehind_str, lookahead_str) {
+
+    // The entire markup is quoted so turn beginning quote into text and return
+
+    let lookbehind_as_text = lookbehind_str.to_string();
+    let match_len = lookbehind_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
+    return (text_node, match_len)
+
+  } else if quotation_matches(lookbehind_str, content) {
+
+    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+  }
+
   todo!()
 }
 
