@@ -39,51 +39,41 @@ use super::*;
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
   
-  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
-    lookbehind.as_str()
-  } else {
-    ""
-  };
-  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") {
-     lookahead.as_str()
-   } else {
-     ""
-   };
-  let content = captures.name("content").unwrap().as_str();
+  // Destructuring the regex parts...
 
-  eprintln!("{:#?}", pattern_name);
-  eprintln!("{:#?}", captures);
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
-    let capture_as_text = captures.get(0).unwrap().as_str();
-    let match_len = capture_as_text.chars().count();
-    let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
+    let start_quote_string = lookbehind_str.to_string();
+    let match_len = start_quote_string.chars().count();
+    let text_node = TreeNodeType::Text { text: start_quote_string };
     return (text_node, match_len)
-  } else if quoted_start(lookbehind_str, content) {
-    let quoted_start_string: String = captures
-      .name("before_lookahead")
-      .unwrap()
-      .as_str()
-      .chars()
-      .take(3)
-      .collect();
-    return (TreeNodeType::Text { text: quoted_start_string}, 3)
+  } else if quotation_matches(lookbehind_str, content) {
+
+    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+
+    let quoted_start_string: String = lookbehind_str.to_string()
+      + markup_start_str
+      + content.chars().next().unwrap().to_string().as_str();
+    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
-
-
-  let data = String::from(content);
+  let content_string = String::from(content);
 
   let node_data = match pattern_name {
-    PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: data},
-    PatternName::Emphasis => TreeNodeType::Emphasis{text: data},
-    PatternName::Literal => TreeNodeType::Literal{text: data},
-    PatternName::InlineTarget => TreeNodeType::InlineTarget{target_label: data},
+    PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: content_string},
+    PatternName::Emphasis => TreeNodeType::Emphasis{text: content_string},
+    PatternName::Literal => TreeNodeType::Literal{text: content_string},
+    PatternName::InlineTarget => TreeNodeType::InlineTarget{target_label: content_string},
     _ => panic!("No such paired delimiter type!")
   };
 
-  let match_len = captures.name("before_lookahead").unwrap().as_str().chars().count();
+  let match_len = (lookbehind_str.to_string() + markup_start_str + content + markup_end_str).chars().count();
 
   (node_data, match_len)
 }
@@ -110,19 +100,11 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 /// Parses reference type inline elements based on their pattern name.
 pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
-  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
-    lookbehind.as_str()
-  } else {
-    ""
-  };
-  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") {
-     lookahead.as_str()
-   } else {
-     ""
-   };
-
-  eprintln!("{:#?}", pattern_name);
-  eprintln!("{:#?}", captures);
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
@@ -130,6 +112,18 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
     let match_len = capture_as_text.chars().count();
     let text_node = TreeNodeType::Text { text: capture_as_text.to_string() };
     return (text_node, match_len)
+  } else if quotation_matches(lookbehind_str, content) {
+
+    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
   let whole_match = captures.get(0).unwrap();
@@ -174,9 +168,96 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
     _ => panic!("No such reference pattern.\n")
   };
 
-  let match_len = captures.name("before_lookahead").unwrap().as_str().chars().count();
+  let match_len = captures.get(0).unwrap().as_str().chars().count();
 
   (data, match_len)
+}
+
+
+pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let content = captures.name("content").unwrap().as_str();
+  let ref_type = captures.name("ref_type").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  if quotation_matches(lookbehind_str, lookahead_str) {
+
+    let start_quote_string = lookbehind_str.to_string();
+    let match_len = start_quote_string.chars().count();
+    let text_node = TreeNodeType::Text { text: start_quote_string };
+    return (text_node, match_len)
+  }
+
+  use crate::common::normalize_refname;
+
+  let target_label: String = match ref_type {
+    "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
+
+      if let Some(doctree) = opt_doctree_ref {
+        doctree.next_anon_reference_label()
+      } else {
+        eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
+        normalize_refname(content)
+      }
+    }
+    "_" => { // Manual reference label
+      normalize_refname(content)
+    }
+    _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
+  };
+
+  let ref_node = TreeNodeType::Reference {
+    displayed_text: content.to_string(),
+    target_label: target_label
+  };
+
+  
+  todo!()
+}
+
+pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let ref_type = captures.name("ref_type").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  todo!()
+}
+
+
+pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let ref_type = captures.name("ref_type").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  todo!()
+}
+
+
+pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start_str = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let ref_type = captures.name("ref_type").unwrap().as_str();
+  let markup_end_str = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  todo!()
+}
+
+
+pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
+
+  todo!()
 }
 
 

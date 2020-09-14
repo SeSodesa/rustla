@@ -352,11 +352,11 @@ impl StateMachine {
     (PatternName::Emphasis, EMPH_PATTERN, inline::paired_delimiter),
     (PatternName::Literal, LITERAL_PATTERN, inline::paired_delimiter),
     (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::paired_delimiter),
-    (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::reference),
+    (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::phrase_ref),
     (PatternName::Interpreted { kind: InterpretedTextKind::Default } , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
-    (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::reference),
-    (PatternName::SimpleRef, SIMPLE_REF_PATTERN, inline::reference),
-    (PatternName::SubstitutionRef, SUBSTITUTION_REF_PATTERN, inline::reference),
+    (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::footnote_ref),
+    (PatternName::SimpleRef, SIMPLE_REF_PATTERN, inline::simple_ref),
+    (PatternName::SubstitutionRef, SUBSTITUTION_REF_PATTERN, inline::substitution_ref),
 
     // ### StandaloneHyperlink
     //
@@ -575,17 +575,17 @@ impl StateMachine {
 // =================
 
 const STRONG_EMPH_PATTERN: &str = r#"(?x)^
-  (?P<before_lookahead>
-    (?P<lookbehind>
-      [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
-    )?
-    (?P<markup_with_delims>
-      \*\*
-        (?P<content>
-          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-        )
-      \*\*
-    )
+  (?P<lookbehind>
+    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+  )?
+  (?P<markup_start>
+    \*\*
+  )
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    \*\*
   )
   (?P<lookahead>
     [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
@@ -593,17 +593,17 @@ const STRONG_EMPH_PATTERN: &str = r#"(?x)^
 "#;
 
 const EMPH_PATTERN: &str = r#"(?x)^
-  (?P<before_lookahead>
-    (?P<lookbehind>
-      [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
-    )?
-    (?P<markup_with_delims>
-      \*
-        (?P<content>
-          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-        )
-      \*
-    )
+  (?P<lookbehind>
+    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+  )?
+  (?P<markup_start>
+    \*
+  )
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    \*
   )
   (?P<lookahead>
     [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
@@ -611,17 +611,17 @@ const EMPH_PATTERN: &str = r#"(?x)^
 "#;
 
 const LITERAL_PATTERN: &str = r#"(?x)^
-  (?P<before_lookahead>
-    (?P<lookbehind>
-      [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
-    )?
-    (?P<markup_with_delims>
-      ``
-        (?P<content>
-          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-        )
-      ``
-    )
+  (?P<lookbehind>
+    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+  )?
+  (?P<markup_start>
+    ``
+  )
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    ``
   )
   (?P<lookahead>
     [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
@@ -629,17 +629,17 @@ const LITERAL_PATTERN: &str = r#"(?x)^
 "#;
 
 const INLINE_TARGET_PATTERN: &str = r#"(?x)^
-  (?P<before_lookahead>
-    (?P<lookbehind>
-      [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
-    )?
-    (?P<markup_with_delims>
-      _`
-        (?P<content>
-          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-        )
-      `
-    )
+  (?P<lookbehind>
+    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+  )?
+  (?P<markup_start>
+    _`
+  )
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    `
   )
   (?P<lookahead>
     [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
@@ -647,56 +647,56 @@ const INLINE_TARGET_PATTERN: &str = r#"(?x)^
 "#;
 
 const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
-  (?P<before_lookahead>
-    (?P<lookbehind>
-      [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
-    )?
-    (?:
-      :(?P<front_role>
-        \S|\S.*?\S
-      ):
-    )?
-    (?P<markup_with_delims>
-      _`
-        (?P<content>
-          [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-        )
-      `
-    )
-    (?:
-      :(?P<back_role>
-        \S|\S.*?\S
-      ):
-    )?
+  (?P<lookbehind>
+    [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
+  )?
+
+  (?P<front_role_marker>
+    :(?P<front_role>
+      \S|\S.*?\S
+    ):
+  )?
+  (?P<markup_start>
+    `
   )
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    `
+  )
+  (?P<back_role_marker>
+    :(?P<back_role>
+      \S|\S.*?\S
+    ):
+  )?
   (?P<lookahead>
     [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
   )
 "#;
 
 const PHRASE_REF_PATTERN: &str = r#"(?x)^
-(?P<before_lookahead>
   (?P<lookbehind>
     [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
-  (?P<markup_with_delims>
-    `
-      (?P<content>
-        [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-      )
-    `
-    (?P<ref_type>
-      __?
-    )
+  (?P<markup_start>
+    _`
   )
-)
-(?P<lookahead>
-  [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
-)
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    `
+  )
+  (?P<ref_type>
+    __?
+  )
+  (?P<lookahead>
+    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+  )
 "#;
 
 const SIMPLE_REF_PATTERN: &str = r#"(?x)^
-(?P<before_lookahead>
   (?P<lookbehind>
     [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
@@ -706,29 +706,28 @@ const SIMPLE_REF_PATTERN: &str = r#"(?x)^
   (?P<ref_type>
     __?
   )
-)
-(?P<lookahead>
-  [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
-)
+  (?P<lookahead>
+    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+  )
 "#;
 
 const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
-(?P<before_lookahead>
   (?P<lookbehind>
     [\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\]]
   )?
-  (?P<markup_with_delims>
+  (?P<markup_start>
     \|
-      (?P<content>
-        [\S&&[^\\]]|\S.*?[\S&&[^\\]]
-      )
-    \|
-    (?P<ref_type>
-      __?
-    )
   )
-)
-(?P<lookahead>
-  [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
-)
+  (?P<content>
+    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+  )
+  (?P<markup_end>
+    \|
+  )
+  (?P<ref_type>
+    __?
+  )?
+  (?P<lookahead>
+    [\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+  )
 "#;
