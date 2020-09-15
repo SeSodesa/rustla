@@ -4,10 +4,36 @@
 /// 
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-/// source: http://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.html, 2020-09-15
+
 
 use std::collections::HashMap;
 use lazy_static::lazy_static;
+
+
+/// str_to_latex
+/// 
+/// A function for converting a given `&str` (which is valid UTF-8)
+/// into a valid LaTeX string. Some more exotic symbols might require
+/// a specific LaTeX package fo the resulting object code to parse without errors,
+/// which is *not* taken into account by this function.
+/// 
+/// If not conversion exists, adds the unicode scalar into the string unchanged.
+pub fn str_to_latex (utf_str: &str) -> String {
+
+  let mut latex_string = String::new();
+
+  for c in utf_str.chars() {
+    if let Some(latex_str) = UTF8_TO_LATEX_MAP.get(&c) {
+      latex_string += latex_str;
+    } else {
+      latex_string.push(c);
+    }
+  }
+
+  latex_string
+}
+
+
 
 
 lazy_static! {
@@ -15,6 +41,8 @@ lazy_static! {
   /// ### UTF8_TO_LATEX_MAP
   /// 
   /// A mapping of certain utf8 scalars to LaTeX strings.
+  /// 
+  /// source: http://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.html, 2020-09-15
   static ref UTF8_TO_LATEX_MAP: HashMap<char, &'static str> = {
     let mut map = HashMap::new();
 
@@ -406,6 +434,24 @@ lazy_static! {
     map.insert('\u{228a}', r#"\subsetneq"#);
     map.insert('\u{228b}', r#"\supsetneq"#);
     //
+    map.insert('\u{22a2}', r#"\vdash"#);
+    map.insert('\u{22a3}', r#"\dashv"#);
+    map.insert('\u{22a4}', r#"\top"#);
+    map.insert('\u{22a5}', r#"\bot"#);
+    //
+    map.insert('\u{22a7}', r#"\models"#);
+    map.insert('\u{22a8}', r#"\vDash"#);
+    //
+    map.insert('\u{22c0}', r#"\bigwedge"#);
+    map.insert('\u{22c1}', r#"\bigvee"#);
+    map.insert('\u{22c2}', r#"\bigcap"#);
+    map.insert('\u{22c3}', r#"\bigcup"#);
+    map.insert('\u{22c4}', r#"\diamond"#);
+    map.insert('\u{22c5}', r#"\cdot"#);
+    map.insert('\u{22c6}', r#"\star"#);
+    //
+    map.insert('\u{22ce}', r#"\curlyvee"#);
+    map.insert('\u{22cf}', r#"\curlywedge"#);
 
     map
   };
