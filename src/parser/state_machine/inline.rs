@@ -118,24 +118,19 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let back_role = if let Some(role) = captures.name("back_role") { role.as_str() } else { "" };
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  if quotation_matches(lookbehind_str, lookahead_str) {
-
-    // The entire markup is quoted so turn beginning quote into text and return
-
-    let lookbehind_as_text = lookbehind_str.to_string();
-    let match_len = lookbehind_as_text.chars().count();
-    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
-    return (text_node, match_len)
-
-  } else if !front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
+  if !front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
 
     let lookbehind_char_count = lookbehind_str.chars().count();
     let quoted_start_char_count = 2 * lookbehind_char_count + ":".chars().count();
 
-    let lookbehind_as_text = lookbehind_str.to_string();
-    let match_len = lookbehind_as_text.chars().count();
-    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
-    return (text_node, match_len)
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect();
+    return (TreeNodeType::Text { text: quoted_start_string }, quoted_start_char_count)
 
   } else if quotation_matches(lookbehind_str, content) {
 
@@ -149,7 +144,17 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       .chars()
       .take(quoted_start_char_count)
       .collect();
+
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+
+  } else if quotation_matches(lookbehind_str, lookahead_str) {
+
+    // The entire markup is quoted so turn beginning quote into text and return
+
+    let lookbehind_as_text = lookbehind_str.to_string();
+    let match_len = lookbehind_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
+    return (text_node, match_len)
   }
 
   if !front_role_marker.is_empty() && !back_role_marker.is_empty() {

@@ -538,5 +538,27 @@ fn quoted_interpreted_text_03 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    assert_eq!(text, "\":\"");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(1).shared_data() {
+    assert_eq!(text, "emphasis:`quoted");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    assert_eq!(text, " ");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(3).shared_data() {
+    assert_eq!(text, "emphasis`\"");
+  } else {
+    panic!()
+  }
 }
