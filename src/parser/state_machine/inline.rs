@@ -194,9 +194,11 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       (TreeNodeType::Literal { text: content.to_string() }, match_len)
     }
     "math" => {
+
+      use utf8_to_latex::str_to_latex;
       // TODO: add conversions from utf8-characters such as greek letters
       //  to LaTeX macros to this, maybe via a "utf8_to_latex" function.
-      let content_string = content.to_string();
+      let content_string = str_to_latex(content);
       (TreeNodeType::Math { text: content_string, class: None, name: None }, match_len)
     }
     "pep-reference" | "PEP" => {

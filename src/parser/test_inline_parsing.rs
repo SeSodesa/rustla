@@ -363,7 +363,7 @@ The following should produce a title reference: `Söderholm2020`.
   }
 
   if let TreeNodeType::Math { text, name, class } = doctree.shared_child(3).shared_child(16).shared_data() {
-    assert_eq!(text, "α_t(i) = P(O_1, O_2, … O_t, q_t = S_i λ)");
+    assert_eq!(text, r"\alpha_t(i) = P(O_1, O_2, \ldots O_t, q_t = S_i \lambda)");
   } else {
     panic!()
   }
