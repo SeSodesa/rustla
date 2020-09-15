@@ -111,12 +111,12 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
-  let front_role_marker = captures.name("front_role_marker");
+  let front_role_marker = if let Some(marker) = captures.name("front_role_marker") { marker.as_str() } else { "" };
   let front_role = if let Some(role) = captures.name("front_role") { role.as_str() } else { "" };
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
   let content = captures.name("content").unwrap().as_str();
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
-  let back_role_marker = captures.name("back_role_marker");
+  let back_role_marker = if let Some(marker) = captures.name("back_role_marker") { marker.as_str() } else { "" };
   let back_role = if let Some(role) = captures.name("back_role") { role.as_str() } else { "" };
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
@@ -129,10 +129,10 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
     return (text_node, match_len)
 
-  } else if front_role_marker.is_some() && quotation_matches(lookbehind_str, front_role) {
+  } else if !front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
 
     let lookbehind_char_count = lookbehind_str.chars().count();
-    let quoted_start_char_count = 2 * lookbehind_char_count + 1; // The 1 comes from ':'
+    let quoted_start_char_count = 2 * lookbehind_char_count + ":".chars().count();
 
     let lookbehind_as_text = lookbehind_str.to_string();
     let match_len = lookbehind_as_text.chars().count();
@@ -154,9 +154,9 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
-  if front_role_marker.is_some() && back_role_marker.is_some() {
+  if !front_role_marker.is_empty() && !back_role_marker.is_empty() {
     println!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
-    let match_len = (lookbehind_str.to_string() + front_role_marker.unwrap().as_str() + markup_start_str + content + markup_end_str + back_role_marker.unwrap().as_str()).chars().count();
+    let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
     let match_string: String = whole_match
     .chars()
     .take(match_len)
@@ -164,6 +164,7 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     return (TreeNodeType::Literal { text: match_string }, match_len)
   }
 
+  let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
   let role = if !front_role.is_empty() {
     front_role
   } else if !back_role.is_empty() {
@@ -178,7 +179,7 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     const DEFAULT_DEFAULT_ROLE: &str = "title-reference";
 
     println!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
-    let match_len = (lookbehind_str.to_string() + front_role_marker.unwrap().as_str() + markup_start_str + content + markup_end_str + back_role_marker.unwrap().as_str()).chars().count();
+    let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
     let match_string: String = whole_match
     .chars()
     .take(match_len)
@@ -188,37 +189,48 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   match role {
     "emphasis" => {
-      todo!()
+      (TreeNodeType::Emphasis { text: content.to_string() }, match_len)
     }
     "literal" => {
-      todo!()
+      (TreeNodeType::Literal { text: content.to_string() }, match_len)
     }
     "code" => {
-      todo!()
+      (TreeNodeType::Literal { text: content.to_string() }, match_len)
     }
     "math" => {
-      todo!()
+      // TODO: add conversions from utf8-characters such as greek letters
+      //  to LaTeX macros to this, maybe via a "utf8_to_latex" function.
+      let content_string = content.to_string();
+      (TreeNodeType::Math { text: content_string, class: None, name: None }, match_len)
     }
-    "pep-reference" => {
-      todo!()
+    "pep-reference" | "PEP" => {
+      // PEP reference strings are 4 digits long
+      let content_len = content.chars().count();
+      let zeroes = "0".repeat(4 - content_len);
+      let pep_ref = format!("https://www.python.org/peps/pep-{pep_num}.html", pep_num = zeroes + content);
+      let displayed_text = "PEP ".to_string() + content;
+      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: pep_ref}, match_len)
     }
-    "rfc-reference" => {
-      todo!()
+    "rfc-reference" | "RFC" => {
+      let rfc_ref = format!("https://www.faqs.org/rfcs/rfc{rfc_num}.html", rfc_num = content);
+      let displayed_text = "RFC ".to_string() + content;
+      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: rfc_ref }, match_len)
     }
     "strong" => {
-      todo!()
+      (TreeNodeType::StrongEmphasis { text: content.to_string() }, match_len)
     }
     "subscript" => {
-      todo!()
+      (TreeNodeType::Subscript { text: content.to_string() }, match_len)
     }
     "superscript" => {
-      todo!()
+      (TreeNodeType::Superscript { text: content.to_string() }, match_len)
     }
     "title-reference" => {
-      todo!()
+      use crate::common::normalize_refname;
+      (TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }, match_len)
     }
     _ => { // Unknown role into literal
-      todo!()
+      (TreeNodeType::Literal { text: content.to_string() }, match_len)
     }
   }
 }

@@ -550,6 +550,7 @@ pub enum TreeNodeType {
   /// 
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#math
   Math {
+    text: String,
     name:   Option<String>,
     class:  Option<String>,
   },
@@ -680,7 +681,9 @@ pub enum TreeNodeType {
   },
 
   /// #### Subscript
-  Subscript,
+  Subscript {
+    text: String
+  },
 
   /// #### SubstitutionDefinition
   /// Explicit markup node, as in begins with ".. " followed by a vertical bar '|',
@@ -708,7 +711,9 @@ pub enum TreeNodeType {
   Subtitle,
 
   /// #### Superscript
-  Superscript,
+  Superscript {
+    text: String
+  },
 
   /// SystemMessage
   SystemMessage,
