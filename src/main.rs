@@ -10,6 +10,7 @@ use parser::Parser;
 mod doctree;
 use doctree::DocTree;
 mod common;
+mod utf8_to_latex;
 
 use std::io::BufRead;
 use std::{env, fs, path, io};
