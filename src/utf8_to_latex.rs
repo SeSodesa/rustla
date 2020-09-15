@@ -20,7 +20,8 @@ use lazy_static::lazy_static;
 /// If not conversion exists, adds the unicode scalar into the string unchanged.
 pub fn str_to_latex (utf_str: &str) -> String {
 
-  let mut latex_string = String::new();
+  let source_byte_len = utf_str.as_bytes().len();
+  let mut latex_string = String::with_capacity(source_byte_len);
 
   for c in utf_str.chars() {
     if let Some(latex_str) = UTF8_TO_LATEX_MAP.get(&c) {
