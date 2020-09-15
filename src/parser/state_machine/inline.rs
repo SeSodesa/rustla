@@ -179,12 +179,8 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     const DEFAULT_DEFAULT_ROLE: &str = "title-reference";
 
     println!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
-    let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
-    let match_string: String = whole_match
-    .chars()
-    .take(match_len)
-    .collect();
-    return (TreeNodeType::Literal { text: match_string }, match_len)
+    use crate::common::normalize_refname;
+    return (TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }, match_len)
   };
 
   match role {

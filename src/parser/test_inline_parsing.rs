@@ -330,3 +330,61 @@ Test for "*"quoted* (**)start** '`'strings`__.
     panic!()
   }
 }
+
+
+#[test]
+fn interpreted_text_01 () {
+
+  let src = String::from(r#"
+Test for :emphasis:`interpreted text`.
+
+Here is some math with a suffix role: `α_t(i) = P(O_1, O_2, … O_t, q_t = S_i λ)`:math:.
+
+Let's add a title reference too: :title-reference:`Söderholm2020`.
+
+The following should produce a title reference: `Söderholm2020`.
+
+`Strong emphasis`:strong:.
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::Emphasis { text } = doctree.shared_child(1).shared_child(4).shared_data() {
+    assert_eq!(text, "interpreted text");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Math { text, name, class } = doctree.shared_child(3).shared_child(16).shared_data() {
+    assert_eq!(text, "α_t(i) = P(O_1, O_2, … O_t, q_t = S_i λ)");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::TitleReference { displayed_text, target_label } = doctree.shared_child(5).shared_child(12).shared_data() {
+    assert_eq!(displayed_text, "Söderholm2020");
+    assert_eq!(target_label, "söderholm2020");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::TitleReference { displayed_text, target_label } = doctree.shared_child(7).shared_child(14).shared_data() {
+    assert_eq!(displayed_text, "Söderholm2020");
+    assert_eq!(target_label, "söderholm2020");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::StrongEmphasis { text } = doctree.shared_child(9).shared_child(0).shared_data() {
+    assert_eq!(text, "Strong emphasis");
+  } else {
+    panic!()
+  }
+}
