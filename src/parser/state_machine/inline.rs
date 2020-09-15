@@ -109,6 +109,7 @@ pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNa
 
 pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
+  let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let front_role_marker = captures.name("front_role_marker");
   let front_role = if let Some(role) = captures.name("front_role") { role.as_str() } else { "" };
@@ -128,9 +129,20 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
     return (text_node, match_len)
 
+  } else if front_role_marker.is_some() && quotation_matches(lookbehind_str, front_role) {
+
+    let lookbehind_char_count = lookbehind_str.chars().count();
+    let quoted_start_char_count = 2 * lookbehind_char_count + 1; // The 1 comes from ':'
+
+    let lookbehind_as_text = lookbehind_str.to_string();
+    let match_len = lookbehind_as_text.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
+    return (text_node, match_len)
+
   } else if quotation_matches(lookbehind_str, content) {
 
-    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+    let lookbehind_char_count = lookbehind_str.chars().count();
+    let quoted_start_char_count = 2 * lookbehind_char_count + markup_start_str.chars().count();
 
     let quoted_start_string: String = captures
       .get(0)
@@ -142,7 +154,73 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
   }
 
-  todo!()
+  if front_role_marker.is_some() && back_role_marker.is_some() {
+    println!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
+    let match_len = (lookbehind_str.to_string() + front_role_marker.unwrap().as_str() + markup_start_str + content + markup_end_str + back_role_marker.unwrap().as_str()).chars().count();
+    let match_string: String = whole_match
+    .chars()
+    .take(match_len)
+    .collect();
+    return (TreeNodeType::Literal { text: match_string }, match_len)
+  }
+
+  let role = if !front_role.is_empty() {
+    front_role
+  } else if !back_role.is_empty() {
+    back_role
+  } else {
+
+    /// ### DEFAULT_DEFAULT_ROLE
+    /// 
+    /// This is used as the interpreted text role, if no role was specified.
+    /// This is in accordance with the
+    /// [reStructuredText Markup Specification](https://docutils.sourceforge.io/docs/ref/rst/roles.html).
+    const DEFAULT_DEFAULT_ROLE: &str = "title-reference";
+
+    println!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
+    let match_len = (lookbehind_str.to_string() + front_role_marker.unwrap().as_str() + markup_start_str + content + markup_end_str + back_role_marker.unwrap().as_str()).chars().count();
+    let match_string: String = whole_match
+    .chars()
+    .take(match_len)
+    .collect();
+    return (TreeNodeType::Literal { text: match_string }, match_len)
+  };
+
+  match role {
+    "emphasis" => {
+      todo!()
+    }
+    "literal" => {
+      todo!()
+    }
+    "code" => {
+      todo!()
+    }
+    "math" => {
+      todo!()
+    }
+    "pep-reference" => {
+      todo!()
+    }
+    "rfc-reference" => {
+      todo!()
+    }
+    "strong" => {
+      todo!()
+    }
+    "subscript" => {
+      todo!()
+    }
+    "superscript" => {
+      todo!()
+    }
+    "title-reference" => {
+      todo!()
+    }
+    _ => { // Unknown role into literal
+      todo!()
+    }
+  }
 }
 
 /// ### reference
