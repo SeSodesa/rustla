@@ -427,3 +427,40 @@ Unknown roles also trigger literal text: :role1:`this is a literal`,
     panic!()
   }
 }
+
+
+#[test]
+fn quoted_interpreted_text_01 () {
+
+  let src = String::from(r#"
+(`a "quoted" title reference`)
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    assert_eq!(text, "(");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::TitleReference { displayed_text, target_label } = doctree.shared_child(1).shared_child(1).shared_data() {
+    assert_eq!(displayed_text, r#"a "quoted" title reference"#);
+    assert_eq!(target_label, r#"a "quoted" title reference"#);
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    assert_eq!(text, ")");
+  } else {
+    panic!()
+  }
+}
