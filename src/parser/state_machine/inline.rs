@@ -50,18 +50,15 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   if quotation_matches(lookbehind_str, content) {
 
-    let lookbehind_string = lookbehind_str.to_string();
-    let lookbehind_char_count = lookbehind_string.chars().count();
+    let quoted_start_char_count = 2 * lookbehind_str.chars().count() + markup_start_str.chars().count();
 
-    let quoted_start_char_count = (lookbehind_str.to_string() + markup_start_str).chars().count() + 1;
-
-    let quoted_start_string: String = lookbehind_string
-      + markup_start_str
-      + content
-        .chars()
-        .take(lookbehind_char_count)
-        .collect::<String>()
-        .as_str();
+    let quoted_start_string: String = captures
+      .get(0)
+      .unwrap()
+      .as_str()
+      .chars()
+      .take(quoted_start_char_count)
+      .collect::<String>();
 
     eprintln!("quoted start: {:#?}\n", quoted_start_string);
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
