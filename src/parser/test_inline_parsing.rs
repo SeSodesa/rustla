@@ -464,3 +464,59 @@ fn quoted_interpreted_text_01 () {
     panic!()
   }
 }
+
+
+#[test]
+fn quoted_interpreted_text_02 () {
+
+  let src = String::from(r#"
+":emphasis:`quoted emphasis`"
+
+<`quoted strong emphasis`:strong:>
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    assert_eq!(text, "\"");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Emphasis { text } = doctree.shared_child(1).shared_child(1).shared_data() {
+    assert_eq!(text, r#"quoted emphasis"#);
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    assert_eq!(text, "\"");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(3).shared_child(0).shared_data() {
+    assert_eq!(text, "<");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::StrongEmphasis { text } = doctree.shared_child(3).shared_child(1).shared_data() {
+    assert_eq!(text, r#"quoted strong emphasis"#);
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(3).shared_child(2).shared_data() {
+    assert_eq!(text, ">");
+  } else {
+    panic!()
+  }
+}
