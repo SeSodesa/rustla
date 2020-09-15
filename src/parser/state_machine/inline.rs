@@ -48,18 +48,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  if quotation_matches(lookbehind_str, lookahead_str) {
-
-    eprintln!("{}...{}\n", lookbehind_str, lookahead_str);
-
-    let start_quote_string = lookbehind_str.to_string();
-    let match_len = start_quote_string.chars().count();
-    let text_node = TreeNodeType::Text { text: start_quote_string };
-    return (text_node, match_len)
-
-  } else if quotation_matches(lookbehind_str, content) {
-
-    eprintln!("Quoted start!\n");
+  if quotation_matches(lookbehind_str, content) {
 
     let lookbehind_string = lookbehind_str.to_string();
     let lookbehind_char_count = lookbehind_string.chars().count();
@@ -76,6 +65,15 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
     eprintln!("quoted start: {:#?}\n", quoted_start_string);
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+
+  } else if quotation_matches(lookbehind_str, lookahead_str) {
+
+    eprintln!("Quoted start!\n");
+
+    let start_quote_string = lookbehind_str.to_string();
+    let match_len = start_quote_string.chars().count();
+    let text_node = TreeNodeType::Text { text: start_quote_string };
+    return (text_node, match_len)
   }
 
   let content_string = String::from(content);
@@ -749,6 +747,15 @@ fn quotation_matches (start: &str, end: &str) -> bool {
 }
 
 
+fn damn_the_swedish_and_other_weirdos () {
+
+  const SWEDISH_AND_WEIRD_QUOTATION_PAIRS: &[char] = &[
+
+  ];
+
+}
+
+
 /// ### OPENERS
 /// 
 /// A long string of "quotation openers".
@@ -764,7 +771,13 @@ const OPENERS: &[char] = &[
   '\u{fe43}', '\u{fe47}', '\u{fe59}', '\u{fe5b}', '\u{fe5d}', '\u{ff08}', '\u{ff3b}', '\u{ff5b}', '\u{ff5f}', '\u{ff62}',
   '\u{00ab}', '\u{2018}', '\u{201c}', '\u{2039}', '\u{2e02}', '\u{2e04}', '\u{2e09}', '\u{2e0c}', '\u{2e1c}', '\u{2e20}',
   '\u{201a}', '\u{201e}', '\u{00bb}', '\u{2019}', '\u{201d}', '\u{203a}', '\u{2e03}', '\u{2e05}', '\u{2e0a}', '\u{2e0d}',
-  '\u{2e1d}', '\u{2e21}', '\u{201b}', '\u{201f}'
+  '\u{2e1d}', '\u{2e21}', '\u{201b}', '\u{201f}',
+  
+  // Additional (weird like the swedish that the Swedish don't even use) quotes
+
+  '\u{00bb}', '\u{2018}', '\u{2019}', '\u{201a}', '\u{201a}',
+  '\u{201c}', '\u{201e}', '\u{201e}', '\u{201d}', '\u{203a}',
+
 ];
 
 /// ### CLOSERS
@@ -782,7 +795,12 @@ const CLOSERS: &[char] = &[
   '\u{fe44}', '\u{fe48}', '\u{fe5a}', '\u{fe5c}', '\u{fe5e}', '\u{ff09}', '\u{ff3d}', '\u{ff5d}', '\u{ff60}', '\u{ff63}',
   '\u{00bb}', '\u{2019}', '\u{201d}', '\u{203a}', '\u{2e03}', '\u{2e05}', '\u{2e0a}', '\u{2e0d}', '\u{2e1d}', '\u{2e21}',
   '\u{201b}', '\u{201f}', '\u{00ab}', '\u{2018}', '\u{201c}', '\u{2039}', '\u{2e02}', '\u{2e04}', '\u{2e09}', '\u{2e0c}',
-  '\u{2e1c}', '\u{2e20}', '\u{201a}', '\u{201e}'
+  '\u{2e1c}', '\u{2e20}', '\u{201a}', '\u{201e}',
+
+  // Swedish, Albanian, etc. closers
+
+  '\u{00bb}','\u{201a}','\u{2019}','\u{2018}','\u{2019}',
+  '\u{201e}','\u{201c}','\u{201d}','\u{201d}','\u{203a}',
 ];
 
 
