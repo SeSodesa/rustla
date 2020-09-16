@@ -453,7 +453,7 @@ impl Parser {
           continue
         }
 
-        block = block + " " + line; // Newlines to spaces
+        block = block + "\n" + line;
       }
 
       blocks

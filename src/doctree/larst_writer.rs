@@ -192,6 +192,7 @@ impl TreeNodeType {
 "\
 \\documentclass[12pt]{{article}}
 
+\\usepackage{{mathtools}}
 \\usepackage{{hyperref}}
 
 \\begin{{document}}\n\n")
@@ -261,7 +262,7 @@ impl TreeNodeType {
           }
           labels
         } else { String::new() };
-        format!("\\begin{{equation}}\n{}{}", ref_labels, block_text)
+        format!("\\begin{{equation}}\n{}\\begin{{split}}\n{}\n", ref_labels, block_text)
       },
       Self::OptionList { .. }               => todo!(),
       Self::OptionListItem { .. }           => todo!(),
@@ -401,7 +402,7 @@ impl TreeNodeType {
       Self::Literal { .. }                  => "".to_string(),
       Self::LiteralBlock { .. }             => "\\end{codeblock}\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
-      Self::MathBlock { .. }                => "\\end{equation}\n".to_string(),
+      Self::MathBlock { .. }                => "\\end{split}\n\\end{equation}\n\n".to_string(),
       Self::OptionList { .. }               => "\n".to_string(),
       Self::OptionListItem { .. }           => "\n".to_string(),
       Self::OptionString { .. }             => todo!(),
