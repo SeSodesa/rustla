@@ -67,7 +67,7 @@ fn math_block_02 () {
 
   match doctree.shared_child(1).shared_data() {
     TreeNodeType::MathBlock { block_text, name, class } => {
-      assert_eq!(block_text.as_str(), r"(1) \alpha + \beta = \gamma \delta");
+      assert_eq!(block_text.as_str(), "(1) \\alpha + \\beta = \\gamma\n\\delta");
       assert_eq!(name.as_ref().unwrap().as_str(), r"name");
       assert_eq!(class.as_ref().unwrap().as_str(), r"class");
     }

@@ -588,7 +588,7 @@ const STRONG_EMPH_PATTERN: &str = r#"(?x)^
     \*\*
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -606,7 +606,7 @@ const EMPH_PATTERN: &str = r#"(?x)^
     \*
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -624,7 +624,7 @@ const LITERAL_PATTERN: &str = r#"(?x)^
     ``
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -642,7 +642,7 @@ const INLINE_TARGET_PATTERN: &str = r#"(?x)^
     `
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -671,7 +671,7 @@ const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
     ):
   )?
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -692,7 +692,7 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
     __?
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -707,7 +707,7 @@ const SIMPLE_REF_PATTERN: &str = r#"(?x)^
     __?
   )
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
 
@@ -728,6 +728,6 @@ const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
     __?
   )?
   (?P<lookahead>
-    [-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s]|$
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
   )
 "#;
