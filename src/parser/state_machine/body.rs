@@ -572,7 +572,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
   
         "math" => {
-          Parser::parse_math_block(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_text_indent), *section_level)
+          Parser::parse_math_block(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_text_indent, *section_level)
         }
   
         "rubric" => {

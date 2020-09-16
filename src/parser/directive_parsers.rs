@@ -406,7 +406,17 @@ impl Parser {
   /// ### parse_math_block
   /// 
   /// The display math parser. Content blocks separated by a blank lines are put in adjacent math blocks.
-  pub fn parse_math_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+  pub fn parse_math_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, section_level: usize) -> TransitionResult {
+
+    let math_after_marker =  if ! empty_after_marker {
+      if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        Some(Parser::line_suffix(line, first_indent))
+      } else {
+        unreachable!("On line {} with a marker but found no line?", line_cursor.sum_total())
+      }
+    } else {
+      None
+    };
 
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
@@ -436,6 +446,16 @@ impl Parser {
     } else {
       panic!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total())
     };
+
+    if let Some(math) = math_after_marker {
+      doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: math, class: classes, name: name });
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Neither,
+        line_advance: LineAdvance::Some(offset)
+      }
+    }
 
     // Scan lines for blocks separated by blank lines
     let blocks = {
