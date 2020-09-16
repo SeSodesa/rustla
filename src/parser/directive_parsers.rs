@@ -441,21 +441,21 @@ impl Parser {
       (None, None)
     };
 
-    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
-      (lines, offset)
-    } else {
-      panic!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total())
-    };
-
     if let Some(math) = math_after_marker {
       doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: math, class: classes, name: name });
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(offset)
+        line_advance: LineAdvance::None
       }
     }
+
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
+      (lines, offset)
+    } else {
+      panic!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     // Scan lines for blocks separated by blank lines
     let blocks = {
