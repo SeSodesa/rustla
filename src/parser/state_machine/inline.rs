@@ -60,12 +60,9 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       .take(quoted_start_char_count)
       .collect::<String>();
 
-    eprintln!("quoted start: {:#?}\n", quoted_start_string);
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
 
   } else if quotation_matches(lookbehind_str, lookahead_str) {
-
-    eprintln!("Quoted start!\n");
 
     let start_quote_string = lookbehind_str.to_string();
     let match_len = start_quote_string.chars().count();
@@ -749,15 +746,6 @@ fn quotation_matches (start: &str, end: &str) -> bool {
 }
 
 
-fn damn_the_swedish_and_other_weirdos () {
-
-  const SWEDISH_AND_WEIRD_QUOTATION_PAIRS: &[char] = &[
-
-  ];
-
-}
-
-
 /// ### OPENERS
 /// 
 /// A long string of "quotation openers".
@@ -775,7 +763,7 @@ const OPENERS: &[char] = &[
   '\u{201a}', '\u{201e}', '\u{00bb}', '\u{2019}', '\u{201d}', '\u{203a}', '\u{2e03}', '\u{2e05}', '\u{2e0a}', '\u{2e0d}',
   '\u{2e1d}', '\u{2e21}', '\u{201b}', '\u{201f}',
   
-  // Additional (weird like the swedish that the Swedish don't even use) quotes
+  // Additional (weird like the Swedish quotes that the Swedish don't even use) quotes
 
   '\u{00bb}', '\u{2018}', '\u{2019}', '\u{201a}', '\u{201a}',
   '\u{201c}', '\u{201e}', '\u{201e}', '\u{201d}', '\u{203a}',

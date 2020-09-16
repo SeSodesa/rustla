@@ -52,9 +52,9 @@ lazy_static! {
     map.insert('\u{24}', r#"\$"#);
     map.insert('\u{25}', r#"\%"#);
     map.insert('\u{26}', r#"\&"#);
-    map.insert('\u{5c}', r#"\backslash"#);
-    map.insert('\u{7b}', r#"\{"#);
-    map.insert('\u{7d}', r#"\}"#);
+    // map.insert('\u{5c}', r#"\backslash"#);
+    // map.insert('\u{7b}', r#"\{"#);
+    // map.insert('\u{7d}', r#"\}"#);
     map.insert('\u{7e}', r#"\sim"#);
 
     // Latin 1 Supplement

@@ -248,7 +248,9 @@ impl TreeNodeType {
       Self::ListTable { .. }                => todo!(),
       Self::Literal { text }       => format!("\\texttt{{{}}}", text),
       Self::LiteralBlock { text }  => format!("\\begin{{codeblock}}\n{}", text),
-      Self::Math { .. }                     => "".to_string(),
+      Self::Math { text, class, name }                     => {
+        format!(r"\({}\)", text)
+      },
       Self::MathBlock { block_text, name, class } => {
 
         let ref_labels = if let Some(name) = name {
@@ -259,7 +261,7 @@ impl TreeNodeType {
           }
           labels
         } else { String::new() };
-        format!("\\begin{{equation}}\n{}\n{}", ref_labels, block_text)
+        format!("\\begin{{equation}}\n{}{}", ref_labels, block_text)
       },
       Self::OptionList { .. }               => todo!(),
       Self::OptionListItem { .. }           => todo!(),
@@ -288,13 +290,17 @@ impl TreeNodeType {
       Self::StrongEmphasis { text }  => {
         format!("\\textbf{{{}}}", text)
       },
-      Self::Subscript { .. }                => todo!(),
+      Self::Subscript { text }                => {
+        format!(r"\textsubscript{{{}}}", text)
+      },
       Self::SubstitutionDefinition { .. }   => todo!(),
       Self::SubstitutionReference { substitution_label, target_label } => {
         todo!()
       },
       Self::Subtitle { .. }                 => todo!(),
-      Self::Superscript { .. }              => todo!(),
+      Self::Superscript { text }              => {
+        format!(r"\textsuperscript{{{}}}", text)
+      },
       Self::SystemMessage { .. }            => todo!(),
       Self::Table { .. }                    => todo!(),
       Self::Target { .. }                   => todo!(),
@@ -388,10 +394,10 @@ impl TreeNodeType {
       Self::InlineTarget { .. }             => todo!(),
       Self::InterpretedText { .. }          => todo!(),
       Self::Label { .. }                    => todo!(),
-      Self::Legend { .. }                   => todo!(),
-      Self::Line { .. }                     => todo!(),
-      Self::LineBlock { .. }                => todo!(),
-      Self::ListTable { .. }                => todo!(),
+      Self::Legend { .. }                   => "\n".to_string(),
+      Self::Line { .. }                     => "\n".to_string(),
+      Self::LineBlock { .. }                => "\n".to_string(),
+      Self::ListTable { .. }                => "\n".to_string(),
       Self::Literal { .. }                  => "".to_string(),
       Self::LiteralBlock { .. }             => "\\end{codeblock}\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
@@ -422,13 +428,13 @@ impl TreeNodeType {
       Self::SystemMessage { .. }            => todo!(),
       Self::Table { .. }                    => "\n".to_string(),
       Self::Target { .. }                   => "\n".to_string(),
-      Self::TBody { .. }                    => todo!(),
+      Self::TBody { .. }                    => "\n".to_string(),
       Self::Term { .. }                     => todo!(),
       Self::Text { .. }                     => "".to_string(),
       Self::TGroup { .. }                   => todo!(),
-      Self::THead { .. }                    => todo!(),
+      Self::THead { .. }                    => "\n".to_string(),
       Self::Title { .. }                    => todo!(),
-      Self::TitleReference { .. }           => todo!(),
+      Self::TitleReference { .. }           => "".to_string(),
       Self::Topic { .. }                    => todo!(),
       Self::Transition { .. }               => "\n".to_string(),
       Self::Version { .. }                  => todo!(),
