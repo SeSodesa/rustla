@@ -607,6 +607,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
   let whole_match = captures.get(0).unwrap();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let content = captures.name("content").unwrap().as_str();
   let scheme_str = if let Some(scheme) = captures.name("scheme") { scheme.as_str() } else { "" };
   let authority = if let Some(authority) = captures.name("authority") { authority.as_str() } else { "" };
   let userinfo = if let Some(userinfo) = captures.name("userinfo") { userinfo.as_str() } else { "" };
@@ -731,7 +732,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
           false
         };
 
-        if !has_slash {
+        if ! path.is_empty() && ! has_slash {
           eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match.as_str());
           is_valid = false;
         }
@@ -739,15 +740,15 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
       // If URI is valid, return it as URI, else as text
       if is_valid {
-        TreeNodeType::AbsoluteURI{text: String::from(whole_match.as_str())}
+        TreeNodeType::AbsoluteURI{text: String::from(content)}
       } else {
-        TreeNodeType::Text{text: String::from(whole_match.as_str())}
+        TreeNodeType::Text{text: String::from(content)}
       }
 
     }
   };
 
-  let match_len = whole_match.as_str().chars().count();
+  let match_len = content.chars().count();
   (data, match_len)
 }
 

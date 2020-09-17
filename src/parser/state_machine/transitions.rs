@@ -715,7 +715,9 @@ const URI_PATTERN: &str = r#"(?x)^
         )@
       )?
       (?P<host>
-        [a-zA-Z0-9]+(?:[-.+][a-zA-Z0-9]+)*
+        [a-zA-Z0-9]+(?:[-.+][a-zA-Z0-9]+)* # hostname
+        | [0-9]{1,3}(?:\.[0-9]{1,3}){3} # IPv4
+        # TODO: add IPv6 pattern here
       )
       (?::
         (?P<port>[0-9]+)
@@ -724,6 +726,7 @@ const URI_PATTERN: &str = r#"(?x)^
     (?P<path>
       /?[a-zA-Z0-9]*(?:/[A-Za-z0-9]+)*/?
     )
+    [_~*/=+a-zA-Z0-9] # Allowed URI suffixes
     (?:\?
       (?P<query>
         [=&a-zA-Z0-9]+

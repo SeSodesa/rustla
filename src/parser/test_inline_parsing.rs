@@ -598,7 +598,7 @@ fn quoted_interpreted_text_03 () {
 fn uri_01 () {
 
   let src = String::from(r#"
-https://quoted.uri.fi
+<https://quoted.uri.fi>
   
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
   
@@ -610,5 +610,21 @@ https://quoted.uri.fi
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    assert_eq!(text, "<");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::AbsoluteURI { text } = doctree.shared_child(1).shared_child(1).shared_data() {
+    assert_eq!(text, "https://quoted.uri.fi");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    assert_eq!(text, ">");
+  } else {
+    panic!()
+  }
 }
