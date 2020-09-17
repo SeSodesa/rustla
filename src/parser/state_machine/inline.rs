@@ -605,7 +605,7 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 /// such as `https://`.
 pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
-  let whole_match = captures.get(0).unwrap();
+  let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let content = captures.name("content").unwrap().as_str();
   let scheme_str = if let Some(scheme) = captures.name("scheme") { scheme.as_str() } else { "" };
@@ -652,16 +652,12 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
       // If no email when missing a scheme, simply return match as string
       if email == MISSING {
-        let match_str = whole_match.as_str();
-        let data = TreeNodeType::Text{text: String::from(whole_match.as_str())};
-        return (data, match_str.chars().count())
+        let data = TreeNodeType::Text{text: String::from(whole_match)};
+        return (data, whole_match.chars().count())
       }
 
-      let match_str = whole_match.as_str();
-
       // If a successful email recognition, prepend a mailto scheme to email.
-      TreeNodeType::StandaloneEmail{text: format!("{}", match_str)}
-
+      TreeNodeType::StandaloneEmail{text: String::from(whole_match)}
     }
 
     _ => {
@@ -733,7 +729,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
         };
 
         if ! path.is_empty() && ! has_slash {
-          eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match.as_str());
+          eprintln!("URI {}\nhas an autority field and a path that doesn't start with a '/'...\n  => URI invalid\n", whole_match);
           is_valid = false;
         }
       }
