@@ -619,16 +619,6 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
   let email_str = if let Some(email) = captures.name("email") { email.as_str() } else { "" };
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  eprintln!("scheme: {:#?}", scheme_str);
-  eprintln!("authority: {:#?}", authority);
-  eprintln!("  userinfo: {:#?}", userinfo);
-  eprintln!("  host: {:#?}", host);
-  eprintln!("  port: {:#?}", port);
-  eprintln!("path: {:#?}", path);
-  eprintln!("query: {:#?}", query);
-  eprintln!("fragment: {:#?}", fragment);
-  eprintln!("Email: {:#?}", email_str);
-
   if quotation_matches(lookbehind_str, lookahead_str) {
 
     let start_quote_string = lookbehind_str.to_string();
@@ -654,14 +644,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
     if ! authority.is_empty()  {
       let has_slash = if let Some(c) = path.chars().next() {
-        eprintln!("First char of path is {}\n", c);
-
-        let mut has_slash: bool = false;
-        if c == '/' {
-          has_slash = true;
-        }
-        has_slash
-
+        if c == '/' { true } else { false }
       } else {
         false
       };
