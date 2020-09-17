@@ -606,6 +606,25 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
   let whole_match = captures.get(0).unwrap();
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let scheme_str = if let Some(scheme) = captures.name("scheme") { scheme.as_str() } else { "" };
+  let authority = if let Some(authority) = captures.name("authority") { authority.as_str() } else { "" };
+  let userinfo = if let Some(userinfo) = captures.name("userinfo") { userinfo.as_str() } else { "" };
+  let host = if let Some(host) = captures.name("host") { host.as_str() } else { "" };
+  let port = if let Some(port) = captures.name("port") { port.as_str() } else { "" };
+  let path = if let Some(path) = captures.name("path")  { path.as_str() } else { "" };
+  let query = if let Some(query) = captures.name("query") { query.as_str() } else { "" };
+  let fragment = if let Some(fragment) = captures.name("fragment") { fragment.as_str() } else { "" };
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  if quotation_matches(lookbehind_str, lookahead_str) {
+
+    let start_quote_string = lookbehind_str.to_string();
+    let match_len = start_quote_string.chars().count();
+    let text_node = TreeNodeType::Text { text: start_quote_string };
+    return (text_node, match_len)
+
+  }
 
   let mut is_valid = true;
 
