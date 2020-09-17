@@ -624,6 +624,8 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
     let match_len = lookbehind_str.chars().count();
     let text_node = TreeNodeType::Text { text: lookbehind_str.to_string() };
     return (text_node, match_len)
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
   let mut is_valid = true;

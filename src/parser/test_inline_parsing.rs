@@ -598,7 +598,7 @@ fn quoted_interpreted_text_03 () {
 fn uri_01 () {
 
   let src = String::from(r#"
-<https://quoted.uri.fi>
+<https://quoted.uri.fi>.
 
 <quoted@email.com>
   
@@ -625,7 +625,7 @@ fn uri_01 () {
   }
 
   if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
-    assert_eq!(text, ">");
+    assert_eq!(text, ">.");
   } else {
     panic!()
   }
