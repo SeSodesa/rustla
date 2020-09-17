@@ -336,7 +336,7 @@ Test for "*"quoted* (**)start** '`'strings`__.
 fn quoted_markup_03 () {
 
   let src = String::from(r#"
-Test for ats: @``@not_literal``.
+Test for ats: @``@literal``.
 
 "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
@@ -348,7 +348,17 @@ Test for ats: @``@not_literal``.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  todo!()
+  if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(6).shared_data() {
+    assert_eq!(text, "@");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Literal { text } = doctree.shared_child(1).shared_child(7).shared_data() {
+    assert_eq!(text, "@literal");
+  } else {
+    panic!()
+  }
 }
 
 
