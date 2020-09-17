@@ -333,6 +333,26 @@ Test for "*"quoted* (**)start** '`'strings`__.
 
 
 #[test]
+fn quoted_markup_03 () {
+
+  let src = String::from(r#"
+Test for ats: @``@not_literal``.
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  todo!()
+}
+
+
+#[test]
 fn interpreted_text_01 () {
 
   let src = String::from(r#"

@@ -32,6 +32,8 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use utf8_to_latex::unicode_text_to_latex;
+use crate::common::normalize_refname;
 
 
 /// ### paired_delimiter
@@ -48,6 +50,9 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
+  eprintln!("{}", captures.get(0).unwrap().as_str());
+  eprintln!("{}", lookbehind_str);
+
   if quotation_matches(lookbehind_str, content) {
 
     let quoted_start_char_count = 2 * lookbehind_str.chars().count() + markup_start_str.chars().count();
@@ -60,7 +65,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       .take(quoted_start_char_count)
       .collect::<String>();
 
-    return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+    return (TreeNodeType::Text { text: unicode_text_to_latex(quoted_start_string.as_str())}, quoted_start_char_count)
 
   } else if quotation_matches(lookbehind_str, lookahead_str) {
 
@@ -68,9 +73,12 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     let match_len = start_quote_string.chars().count();
     let text_node = TreeNodeType::Text { text: start_quote_string };
     return (text_node, match_len)
+
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
-  let content_string = String::from(content);
+  let content_string = unicode_text_to_latex(content);
 
   let node_data = match pattern_name {
     PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: content_string},
@@ -149,6 +157,9 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     let match_len = lookbehind_as_text.chars().count();
     let text_node = TreeNodeType::Text { text: lookbehind_as_text.to_string() };
     return (text_node, match_len)
+
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
   if !front_role_marker.is_empty() && !back_role_marker.is_empty() {
@@ -176,7 +187,6 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     const DEFAULT_DEFAULT_ROLE: &str = "title-reference";
 
     println!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
-    use crate::common::normalize_refname;
     return (TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }, match_len)
   };
 
@@ -221,7 +231,7 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       (TreeNodeType::Superscript { text: content.to_string() }, match_len)
     }
     "title-reference" => {
-      use crate::common::normalize_refname;
+
       (TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }, match_len)
     }
     _ => { // Unknown role into literal
@@ -266,6 +276,9 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
       .take(quoted_start_char_count)
       .collect();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+
+  } else if ! lookbehind_str.is_empty() {    
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
   let whole_match = captures.get(0).unwrap();
@@ -332,9 +345,10 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
     let match_len = start_quote_string.chars().count();
     let text_node = TreeNodeType::Text { text: start_quote_string };
     return (text_node, match_len)
-  }
 
-  use crate::common::normalize_refname;
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
+  }
 
   let target_label: String = match ref_type {
     "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
@@ -396,9 +410,10 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
       .take(quoted_start_char_count)
       .collect();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
-  }
 
-  use crate::common::normalize_refname;
+  } else if ! lookbehind_str.is_empty() {    
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
+  }
 
   let target_label: String = match ref_type {
     "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
@@ -460,6 +475,9 @@ pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
       .take(quoted_start_char_count)
       .collect();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+
+  } else if ! lookbehind_str.is_empty() {    
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
   todo!()
@@ -499,6 +517,9 @@ pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
       .take(quoted_start_char_count)
       .collect();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
+
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
   todo!()
@@ -539,9 +560,10 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       .take(quoted_start_char_count)
       .collect();
     return (TreeNodeType::Text { text: quoted_start_string}, quoted_start_char_count)
-  }
 
-  use crate::common::normalize_refname;
+  } else if ! lookbehind_str.is_empty() {
+    return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
+  }
 
   let target_label = if !ref_type.is_empty() {
 
@@ -721,7 +743,6 @@ pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, c
   let content = captures.get(0).unwrap().as_str();
   let match_len = content.chars().count();
 
-  use utf8_to_latex::unicode_text_to_latex;
   let unicode_text_escape = true; // TODO: Transform this to a compiler flag
   let content_string = if unicode_text_escape { unicode_text_to_latex(content) } else { content.to_string() };
 
