@@ -621,9 +621,8 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 
   if quotation_matches(lookbehind_str, lookahead_str) {
 
-    let start_quote_string = lookbehind_str.to_string();
-    let match_len = start_quote_string.chars().count();
-    let text_node = TreeNodeType::Text { text: start_quote_string };
+    let match_len = lookbehind_str.chars().count();
+    let text_node = TreeNodeType::Text { text: lookbehind_str.to_string() };
     return (text_node, match_len)
   }
 
@@ -636,7 +635,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
       let data = TreeNodeType::Text{text: String::from(email_str)};
       return (data, email_str.chars().count())
     }
-    TreeNodeType::StandaloneEmail{text: String::from(whole_match)}
+    TreeNodeType::StandaloneEmail{text: String::from(content)}
 
   } else {
 

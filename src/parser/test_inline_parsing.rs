@@ -599,6 +599,8 @@ fn uri_01 () {
 
   let src = String::from(r#"
 <https://quoted.uri.fi>
+
+<quoted@email.com>
   
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
   
@@ -623,6 +625,24 @@ fn uri_01 () {
   }
 
   if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    assert_eq!(text, ">");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(3).shared_child(0).shared_data() {
+    assert_eq!(text, "<");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::StandaloneEmail { text } = doctree.shared_child(3).shared_child(1).shared_data() {
+    assert_eq!(text, "quoted@email.com");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Text { text } = doctree.shared_child(3).shared_child(2).shared_data() {
     assert_eq!(text, ">");
   } else {
     panic!()
