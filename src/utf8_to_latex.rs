@@ -18,13 +18,13 @@ use lazy_static::lazy_static;
 /// which is *not* taken into account by this function.
 /// 
 /// If not conversion exists, adds the unicode scalar into the string unchanged.
-pub fn str_to_latex (utf_str: &str) -> String {
+pub fn unicode_math_to_latex (utf_str: &str) -> String {
 
-  let source_byte_len = utf_str.as_bytes().len();
-  let mut latex_string = String::with_capacity(source_byte_len);
+  let source_char_count = utf_str.chars().count();
+  let mut latex_string = String::with_capacity(source_char_count);
 
   for c in utf_str.chars() {
-    if let Some(latex_str) = UTF8_TO_LATEX_MAP.get(&c) {
+    if let Some(latex_str) = UTF8_MATH_TO_LATEX_MAP.get(&c) {
       latex_string += latex_str;
     } else {
       latex_string.push(c);
@@ -35,16 +35,39 @@ pub fn str_to_latex (utf_str: &str) -> String {
 }
 
 
+/// ### unicode_text_to_latex
+///
+/// Escapes any non-text category LaTeX characters in a given `&str`,
+/// so as to allow the generated `.tex` document to compile if it has
+/// control characters such as underscores in a text node.
+/// 
+/// For example, `'_' ↦ "\_"` and `'@' ↦ "\@"`. If a character is not recognized as a control character,
+/// it is added to the generated `String` as is.
+pub fn unicode_text_to_latex (utf_str: &str) -> String {
+
+  let source_char_count = utf_str.chars().count();
+  let mut latex_string = String::with_capacity(source_char_count);
+
+  for c in utf_str.chars() {
+    if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c) {
+      latex_string += latex_str;
+    } else {
+      latex_string.push(c);
+    }
+  }
+
+  latex_string
+}
 
 
 lazy_static! {
 
-  /// ### UTF8_TO_LATEX_MAP
+  /// ### UTF8_MATH_TO_LATEX_MAP
   /// 
   /// A mapping of certain utf8 scalars to LaTeX strings.
   /// 
   /// source: http://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.html, 2020-09-15
-  static ref UTF8_TO_LATEX_MAP: HashMap<char, &'static str> = {
+  static ref UTF8_MATH_TO_LATEX_MAP: HashMap<char, &'static str> = {
     let mut map = HashMap::new();
 
     // Basic Latin
@@ -453,6 +476,21 @@ lazy_static! {
     //
     map.insert('\u{22ce}', r#"\curlyvee"#);
     map.insert('\u{22cf}', r#"\curlywedge"#);
+
+    map
+  };
+
+
+  /// ### UTF8_TEXT_TO_LATEX_MAP
+  ///
+  /// A mapping of characters that LaTeX does not recognize as text to escaped versions of them.
+  /// This allows the parser to transform any plain text node contents into LaTeX-compatible strings.
+  static ref UTF8_TEXT_TO_LATEX_MAP: HashMap<char, &'static str> = {
+
+    let mut map = HashMap::new();
+
+    map.insert('_', r#"\_"#);
+    map.insert('@', r#"\@"#);
 
     map
   };

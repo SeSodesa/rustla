@@ -325,7 +325,7 @@ Test for "*"quoted* (**)start** '`'strings`__.
   }
 
   if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(11).shared_data() {
-    assert_eq!(text, "strings`__.");
+    assert_eq!(text, "strings`\\_\\_."); // <- Plain text is LaTeX-escaped
   } else {
     panic!()
   }

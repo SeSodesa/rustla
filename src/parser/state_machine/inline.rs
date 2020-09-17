@@ -192,10 +192,10 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     }
     "math" => {
 
-      use utf8_to_latex::str_to_latex;
+      use utf8_to_latex::unicode_math_to_latex;
       // TODO: add conversions from utf8-characters such as greek letters
       //  to LaTeX macros to this, maybe via a "utf8_to_latex" function.
-      let content_string = str_to_latex(content);
+      let content_string = unicode_math_to_latex(content);
       (TreeNodeType::Math { text: content_string, class: None, name: None }, match_len)
     }
     "pep-reference" | "PEP" => {
@@ -718,9 +718,14 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 /// word of "text".
 pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
-  let content = captures.get(1).unwrap();
-  let match_len = content.as_str().chars().count();
-  let node_data = TreeNodeType::Text { text: String::from(content.as_str()) };
+  let content = captures.get(0).unwrap().as_str();
+  let match_len = content.chars().count();
+
+  use utf8_to_latex::unicode_text_to_latex;
+  let unicode_text_escape = true; // TODO: Transform this to a compiler flag
+  let content_string = if unicode_text_escape { unicode_text_to_latex(content) } else { content.to_string() };
+
+  let node_data = TreeNodeType::Text { text: content_string };
   (node_data, match_len)
 }
 
