@@ -1177,8 +1177,20 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
   let detected_line_char = detected_line.chars().next().unwrap();
   let detected_line_length = detected_line.trim_end().chars().count();
   
-  let previous_line = src_lines.get(line_cursor.relative_offset() - 1);
-  let next_line = src_lines.get(line_cursor.relative_offset() + 1);
+  let current_line = line_cursor.relative_offset();
+
+  let previous_line = if let Some(num) = usize::checked_sub(current_line, 1) {
+    src_lines.get(current_line - 1)
+  } else {
+    None
+  };
+
+
+  let next_line = if let Some(num) = usize::checked_add(current_line, 1) {
+    src_lines.get(current_line + 1)
+  } else {
+    None
+  };
 
   let at_doc_root = if let TreeNodeType::Document { .. } = doctree.shared_node_data() { true } else { false };
   let at_input_start = previous_line.is_none();
