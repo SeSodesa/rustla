@@ -201,7 +201,7 @@ impl TreeNodeType {
         format!("\\textit{{{}}}", text)
       },
       Self::EmptyLine => {
-        format!("\n") // Notice, not "\n\n" but "\n"
+        format!("") // Notice, not "\n\n" but "\n"
       },
       Self::Entry => todo!(),
       Self::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => {
