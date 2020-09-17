@@ -416,7 +416,7 @@ impl TreeNodeType {
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),
       Self::Rubric { .. }                   => "\n".to_string(),
-      Self::Section { .. }                  => "\n".to_string(),
+      Self::Section { .. }                  => "".to_string(),
       Self::Sidebar { .. }                  => "\n".to_string(),
       Self::Status { .. }                   => todo!(),
       Self::StandaloneEmail { .. }          => "".to_string(),
