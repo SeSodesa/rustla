@@ -1185,7 +1185,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
     None
   };
 
-
   let next_line = if let Some(num) = usize::checked_add(current_line, 1) {
     src_lines.get(current_line + 1)
   } else {
@@ -1202,119 +1201,221 @@ pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
     }
   }
 
-  if let (Some(p_line), Some(n_line)) = (previous_line, next_line) {
+  match (previous_line, next_line) {
+    (Some(p_line), Some(n_line)) => {
+      if p_line.trim().is_empty() && n_line.trim().is_empty() && detected_line_length >= TRANSITION_LINE_LENGTH {
 
-    if p_line.trim().is_empty() && n_line.trim().is_empty() && detected_line_length >= TRANSITION_LINE_LENGTH {
-
-      doctree = doctree.push_data(TreeNodeType::Transition);
-
-      return TransitionResult::Success {
-        doctree: doctree,
-        next_states: None,
-        push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
-      }
-
-    } else if TEXT_RE.is_match(n_line) {
-      // A possible section title.
-      // Check next line for line pattern and its length.
-
-      if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
-
-        if let Some(capts) = LINE_RE.captures(next_next_line) {
-
-          let next_line_len = n_line.trim_end().chars().count(); // title text line
-          let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
-          let next_next_line_len = next_next_line.trim_end().chars().count();
-
-          if detected_line_char == next_next_line_char && detected_line_length == next_next_line_len && next_line_len <= detected_line_length {
-            // generate a section.
-
-            let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
-            let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
-
-            if let TreeNodeType::Section { level, .. } = section_data {
-
-              let detected_level = level;
-
-              match doctree.shared_data() {
-
-                TreeNodeType::Document { .. } => {
-                  doctree = doctree.push_data_and_focus(section_data);
-                  *section_level = detected_level;
-                }
-
-                TreeNodeType::Section { level, .. } => {
-
-                  if detected_level <= *level {
-                    *section_level = *level;
+        doctree = doctree.push_data(TreeNodeType::Transition);
+  
+        return TransitionResult::Success {
+          doctree: doctree,
+          next_states: None,
+          push_or_pop: PushOrPop::Neither,
+          line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
+        }
+  
+      } else if TEXT_RE.is_match(n_line) {
+        // A possible section title.
+        // Check next line for line pattern and its length.
+  
+        if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
+  
+          if let Some(capts) = LINE_RE.captures(next_next_line) {
+  
+            let next_line_len = n_line.trim_end().chars().count(); // title text line
+            let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
+            let next_next_line_len = next_next_line.trim_end().chars().count();
+  
+            if detected_line_char == next_next_line_char && detected_line_length == next_next_line_len && next_line_len <= detected_line_length {
+              // generate a section.
+  
+              let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
+              let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
+  
+              if let TreeNodeType::Section { level, .. } = section_data {
+  
+                let detected_level = level;
+  
+                match doctree.shared_data() {
+  
+                  TreeNodeType::Document { .. } => {
+                    doctree = doctree.push_data_and_focus(section_data);
+                    *section_level = detected_level;
+                  }
+  
+                  TreeNodeType::Section { level, .. } => {
+  
+                    if detected_level <= *level {
+                      *section_level = *level;
+                      doctree = doctree.focus_on_parent();
+                      return TransitionResult::Success {
+                        doctree: doctree,
+                        next_states: None,
+                        push_or_pop: PushOrPop::Pop,
+                        line_advance: LineAdvance::None
+                      }
+                    } else {
+                      *section_level = detected_level;
+                      doctree = doctree.push_data_and_focus(section_data);
+                    }
+                  }
+  
+                  _ => {
                     doctree = doctree.focus_on_parent();
+  
+                    if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
+                      *section_level = *level;
+                    }
+  
                     return TransitionResult::Success {
                       doctree: doctree,
                       next_states: None,
                       push_or_pop: PushOrPop::Pop,
                       line_advance: LineAdvance::None
                     }
-                  } else {
-                    *section_level = detected_level;
-                    doctree = doctree.push_data_and_focus(section_data);
                   }
                 }
-
-                _ => {
-                  doctree = doctree.focus_on_parent();
-
-                  if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
-                    *section_level = *level;
-                  }
-
-                  return TransitionResult::Success {
-                    doctree: doctree,
-                    next_states: None,
-                    push_or_pop: PushOrPop::Pop,
-                    line_advance: LineAdvance::None
-                  }
+                return TransitionResult::Success {
+                  doctree: doctree,
+                  next_states: Some(vec![StateMachine::Section]),
+                  push_or_pop: PushOrPop::Push,
+                  line_advance: LineAdvance::Some(3) // Jump over the section underline
                 }
+              } else {
+                panic!("No generated section where one was expected. Computer says no...")
               }
-              return TransitionResult::Success {
-                doctree: doctree,
-                next_states: Some(vec![StateMachine::Section]),
-                push_or_pop: PushOrPop::Push,
-                line_advance: LineAdvance::Some(3) // Jump over the section underline
-              }
+  
             } else {
-              panic!("No generated section where one was expected. Computer says no...")
+              return TransitionResult::Failure {
+                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+              }
+            }
+  
+          } else {
+            return TransitionResult::Failure {
+              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
+            }
+          }
+  
+        } else {
+          return TransitionResult::Failure {
+            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
+          }
+        }
+  
+      } else {
+        if captures.get(0).unwrap().as_str().trim() == "::" {
+          // Empty paragraph
+          return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
+        }
+        panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
+      }
+    }
+
+    (None, Some(n_line)) => {
+      if TEXT_RE.is_match(n_line) {
+        // A possible section title.
+        // Check next line for line pattern and its length.
+
+        if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
+
+          if let Some(capts) = LINE_RE.captures(next_next_line) {
+
+            let next_line_len = n_line.trim_end().chars().count(); // title text line
+            let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
+            let next_next_line_len = next_next_line.trim_end().chars().count();
+
+            if detected_line_char == next_next_line_char && detected_line_length == next_next_line_len && next_line_len <= detected_line_length {
+              // generate a section.
+
+              let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
+              let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
+
+              if let TreeNodeType::Section { level, .. } = section_data {
+
+                let detected_level = level;
+
+                match doctree.shared_data() {
+
+                  TreeNodeType::Document { .. } => {
+                    doctree = doctree.push_data_and_focus(section_data);
+                    *section_level = detected_level;
+                  }
+
+                  TreeNodeType::Section { level, .. } => {
+
+                    if detected_level <= *level {
+                      *section_level = *level;
+                      doctree = doctree.focus_on_parent();
+                      return TransitionResult::Success {
+                        doctree: doctree,
+                        next_states: None,
+                        push_or_pop: PushOrPop::Pop,
+                        line_advance: LineAdvance::None
+                      }
+                    } else {
+                      *section_level = detected_level;
+                      doctree = doctree.push_data_and_focus(section_data);
+                    }
+                  }
+
+                  _ => {
+                    doctree = doctree.focus_on_parent();
+
+                    if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
+                      *section_level = *level;
+                    }
+
+                    return TransitionResult::Success {
+                      doctree: doctree,
+                      next_states: None,
+                      push_or_pop: PushOrPop::Pop,
+                      line_advance: LineAdvance::None
+                    }
+                  }
+                }
+                return TransitionResult::Success {
+                  doctree: doctree,
+                  next_states: Some(vec![StateMachine::Section]),
+                  push_or_pop: PushOrPop::Push,
+                  line_advance: LineAdvance::Some(3) // Jump over the section underline
+                }
+              } else {
+                panic!("No generated section where one was expected. Computer says no...")
+              }
+
+            } else {
+              return TransitionResult::Failure {
+                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+              }
             }
 
           } else {
             return TransitionResult::Failure {
-              message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
             }
           }
 
         } else {
           return TransitionResult::Failure {
-            message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
+            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
           }
         }
 
       } else {
-        return TransitionResult::Failure {
-          message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
+        if captures.get(0).unwrap().as_str().trim() == "::" {
+          // Empty paragraph
+          return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
         }
+        panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
       }
-
-    } else {
-      if captures.get(0).unwrap().as_str().trim() == "::" {
-        // Empty paragraph
-        return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
-      }
-      panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
     }
-  } else {
-    return TransitionResult::Failure {
-      message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total())
-    };
+
+    _ => {
+      return TransitionResult::Failure {
+        message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total())
+      };
+    }
   }
 }
 
