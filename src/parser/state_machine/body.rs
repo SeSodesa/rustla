@@ -694,8 +694,79 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
+
+        // SPHINX-SPECIFIC DIRECTIVES
+
+        "toctree" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "versionadded" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "versionchanged" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "deprecated" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "seealso" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "centered" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "hlist" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "highlight" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "code-block" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "literalinclude" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "glossary" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "sectionauthor" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "codeauthor" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "index" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "only" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "tabularcolumns" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
+        "productionlist" => {
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        }
+
   
-        // A+ SPECIFIC DIRECTIVES
+        // A+-SPECIFIC DIRECTIVES
   
         "questionnaire" => {
   
@@ -703,11 +774,6 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
         }
   
         "submit" => {
-  
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
-        }
-  
-        "toctree" => {
   
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
