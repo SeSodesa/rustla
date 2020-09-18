@@ -190,7 +190,7 @@ impl TreeNodeType {
       Self::Document { .. }   => {
         format!(
 "\
-\\documentclass[12pt]{{article}}
+\\documentclass[12pt]{{report}}
 
 \\usepackage{{mathtools}}
 \\usepackage{{hyperref}}
@@ -280,8 +280,10 @@ impl TreeNodeType {
       Self::Row { .. }                      => todo!(),
       Self::Rubric { .. }                   => todo!(),
       Self::Section { title_text, level, line_style } => {
+
+        let (command, subs) = if *level == 1 { ("chapter", "".to_string()) } else { ("section", "sub".repeat(*level - 2)) };
         let subs = "sub".repeat(*level - 1);
-        format!("\\{}section{{{}}}\n\n", subs, title_text)
+        format!("\\{}{}{{{}}}\n\n", subs, command, title_text)
       },
       Self::Sidebar { .. }                  => todo!(),
       Self::Status { .. }                   => todo!(),
