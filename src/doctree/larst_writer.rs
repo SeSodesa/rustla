@@ -425,7 +425,7 @@ impl TreeNodeType {
       Self::LineBlock { .. }                => "\n".to_string(),
       Self::ListTable { .. }                => "\n".to_string(),
       Self::Literal { .. }                  => "".to_string(),
-      Self::LiteralBlock { .. }             => "\\end{codeblock}\n".to_string(),
+      Self::LiteralBlock { .. }             => "\n\\end{codeblock}\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
       Self::MathBlock { .. }                => "\\end{split}\n\\end{equation}\n\n".to_string(),
       Self::OptionList { .. }               => "\n".to_string(),
