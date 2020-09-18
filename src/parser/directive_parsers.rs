@@ -770,7 +770,7 @@ impl Parser {
       no_poi_box: no_poi_box
     };
 
-    doctree = doctree.push_data(poi_node);
+    doctree = doctree.push_data_and_focus(poi_node);
 
     TransitionResult::Success {
       doctree: doctree,

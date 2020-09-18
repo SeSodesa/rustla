@@ -943,24 +943,7 @@ impl TreeNodeType {
       //  A+ specific directives
       // ========================
 
-      Self::AplusPOI {
-
-        title,
-        body_indent,
-    
-        // Options
-        id,
-        previous,
-        next,
-        hidden,
-        class,
-        height,
-        columns,
-        bgimg,
-        not_in_slides,
-        not_in_book,
-        no_poi_box,
-      } => todo!()
+      Self::AplusPOI { body_indent, .. } => Some(*body_indent)
     }
   }
 
