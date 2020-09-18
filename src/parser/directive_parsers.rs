@@ -710,7 +710,7 @@ impl Parser {
   }
 
 
-  pub fn parse_apkus_active_element_output () {
+  pub fn parse_aplus_active_element_output () {
     todo!()
   }
 
@@ -720,8 +720,64 @@ impl Parser {
   }
 
 
-  pub fn parse_aplus_point_of_interest () {
-    todo!()
+  pub fn parse_aplus_point_of_interest (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize, section_level: usize) -> TransitionResult {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "id", "previous", "next", "hidden", "class", "height",
+      "columns", "bgimg", "not_in_slides", "not_in_book", "no_poi_box"
+    ];
+
+    let title = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker);
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    // Read recognized options
+    let (id, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box) = if let Some(mut options) = options {
+      if !Self::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("A+ point of interest block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let id = options.remove("id");
+      let previous = options.remove("previous");
+      let next = options.remove("next");
+      let hidden = options.remove("hidden");
+      let class = options.remove("class");
+      let height = options.remove("height");
+      let columns = options.remove("columns");
+      let bgimg = options.remove("bgimg");
+      let not_in_slides = options.remove("not_in_slides");
+      let not_in_book = options.remove("not_in_book");
+      let no_poi_box = options.remove("no_poi_box");
+
+      (id, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box)
+    } else {
+      (None, None, None, None, None, None, None, None, None, None, None)
+    };
+
+    let poi_node = TreeNodeType::AplusPOI {
+      title: if let Some(title) = title { title } else { "".to_string() },
+      body_indent: body_indent,
+
+      id: id,
+      previous: previous,
+      next: next,
+      hidden: hidden,
+      class: class,
+      height: height,
+      columns: columns,
+      bgimg: bgimg,
+      not_in_slides: not_in_slides,
+      not_in_book: not_in_book,
+      no_poi_box: no_poi_box
+    };
+
+    doctree = doctree.push_data(poi_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Body]), // PoI contains body nodes
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None
+    }
   }
 
 
@@ -831,7 +887,7 @@ impl Parser {
 
     // Jump to next line if line after directive marker is empty
     if empty_after_marker {
-      *line_cursor.relative_offset_mut_ref() += 1;
+      line_cursor.increment_by(1);
       on_marker_line = false;
     }
 
@@ -858,7 +914,7 @@ impl Parser {
       }
 
       argument_lines.push(line_without_indent);
-      *line_cursor.relative_offset_mut_ref() += 1;
+      line_cursor.increment_by(1);
     };
 
     if argument_lines.is_empty() { None } else { Some(argument_lines.join(" ")) }

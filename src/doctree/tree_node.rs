@@ -252,6 +252,11 @@ impl TreeNode {
       TreeNodeType::Transition {} => todo!(),
       TreeNodeType::Version { .. } => false,
       TreeNodeType::WhiteSpace { .. } => false,
+
+      // ========================
+      //  A+ specific directives
+      // ========================
+      TreeNodeType::AplusPOI{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
     }
   }
 

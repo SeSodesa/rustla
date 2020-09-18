@@ -499,24 +499,20 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + *base_indent;
   let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let detected_first_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
   let empty_after_marker: bool = {
     let line = src_lines.get(line_cursor.relative_offset()).unwrap(); // Unwrapping is not a problem here.
 
-    eprintln!("{:#?}\n", line);
-
-    match line.char_indices().nth(detected_text_indent) {
+    match line.char_indices().nth(detected_first_indent) {
       Some((index, _)) => line[index..].trim().is_empty(),
       None => true
     }
   };
 
-  eprintln!("Empty after marker: {}\n", empty_after_marker);
-
   let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
     Some((indent, offset)) => (indent + *base_indent, offset),
-    None => (detected_text_indent, 0) // EOF encountered => stay on same line
+    None => (detected_first_indent, 0) // EOF encountered => stay on same line
   };
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
@@ -526,22 +522,22 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
         "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
   
-          Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_text_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
+          Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
         }
   
         "admonition" => {
   
-          Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
+          Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_first_indent))
         }
   
         "image" => {
   
-          Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_text_indent))
+          Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_first_indent))
         }
   
         "figure" => {
   
-          Parser::parse_figure(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_text_indent), *section_level)
+          Parser::parse_figure(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
   
         "topic" => {
@@ -567,12 +563,12 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "code" => {
   
-          Parser::parse_code(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_text_indent), *section_level)
+          Parser::parse_code(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
   
   
         "math" => {
-          Parser::parse_math_block(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_text_indent, *section_level)
+          Parser::parse_math_block(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, *section_level)
         }
   
         "rubric" => {
@@ -733,7 +729,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "point-of-interest" => {
   
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_aplus_point_of_interest(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
         }
   
         "annotated" => {

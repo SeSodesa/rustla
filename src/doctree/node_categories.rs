@@ -497,3 +497,9 @@ pub const VERSION_CATEGORIES: [NodeCategory; 1] = [
 pub const WHITESPACE_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
+
+
+pub const APLUS_POI_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody
+];

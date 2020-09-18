@@ -51,6 +51,7 @@ use crate::common::{self, ParsingResult, EnumDelims, EnumKind, FootnoteKind, Hyp
 // Unit test modules
 // -----------------
 mod test_admonitions;
+mod test_aplus_point_of_interest;
 mod test_block_reading;
 mod test_block_quotes;
 mod test_comments;

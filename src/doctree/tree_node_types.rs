@@ -791,6 +791,38 @@ pub enum TreeNodeType {
   WhiteSpace{
     text: String
   },
+
+  // ========================
+  //  A+ specific directives
+  // ========================
+
+  /// #### AplusPOI
+  ///
+  /// A "point of interest" summary block.
+  /// A point of interest is mostly like a normal admonition
+  /// ("coloured info box"), but they are also linked to each other
+  /// with next/previous links. The links enable the user to quickly
+  /// navigate between the points of interest.
+  AplusPOI {
+
+    title: String,
+
+    // Information needed by the parser
+    body_indent: usize,
+
+    // Options
+    id: Option<String>,
+    previous: Option<String>,
+    next: Option<String>,
+    hidden: Option<String>,
+    class: Option<String>,
+    height: Option<String>,
+    columns: Option<String>,
+    bgimg: Option<String>,
+    not_in_slides: Option<String>,
+    not_in_book: Option<String>,
+    no_poi_box: Option<String>,
+  },
 }
 
 use std::collections::HashSet;
@@ -906,6 +938,29 @@ impl TreeNodeType {
       Self::Transition   => None,
       Self::Version { .. } => None,
       Self::WhiteSpace { .. } => None,
+
+      // ========================
+      //  A+ specific directives
+      // ========================
+
+      Self::AplusPOI {
+
+        title,
+        body_indent,
+    
+        // Options
+        id,
+        previous,
+        next,
+        hidden,
+        class,
+        height,
+        columns,
+        bgimg,
+        not_in_slides,
+        not_in_book,
+        no_poi_box,
+      } => todo!()
     }
   }
 
@@ -1016,6 +1071,12 @@ impl TreeNodeType {
       Self::Transition {}     => &TRANSITION_CATEGORIES,
       Self::Version { .. } => &VERSION_CATEGORIES,
       Self::WhiteSpace { .. } => &WHITESPACE_CATEGORIES,
+      
+      // ========================
+      //  A+ specific directives
+      // ========================
+
+      Self::AplusPOI { .. } => &APLUS_POI_CATEGORIES,
     };
 
     categories.iter()

@@ -324,6 +324,29 @@ impl TreeNodeType {
       Self::WhiteSpace { text } => {
         format!("{}", text)
       },
+
+      // ========================
+      //  A+ specific directives
+      // ========================
+
+      Self::AplusPOI {
+
+        title,
+    
+        // Options
+        id,
+        previous,
+        next,
+        hidden,
+        class,
+        height,
+        columns,
+        bgimg,
+        not_in_slides,
+        not_in_book,
+        no_poi_box,
+        ..
+      } => todo!()
     };
 
     use std::io::Write;
@@ -440,6 +463,30 @@ impl TreeNodeType {
       Self::Transition { .. }               => "\n".to_string(),
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { .. }               => "".to_string(),
+
+      // ========================
+      //  A+ specific directives
+      // ========================
+
+      Self::AplusPOI {
+
+        title,
+    
+        // Options
+        id,
+        previous,
+        next,
+        hidden,
+        class,
+        height,
+        columns,
+        bgimg,
+        not_in_slides,
+        not_in_book,
+        no_poi_box,
+
+        ..
+      } => todo!()
     };
 
     use std::io::Write;
