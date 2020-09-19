@@ -833,6 +833,13 @@ pub enum TreeNodeType {
     not_in_book: Option<String>,
     no_poi_box: Option<String>,
   },
+
+  /// #### AplusColBreak
+  ///
+  /// A node that can be inserted inside A+ directives that support multiple columns.
+  /// Placing a line that conforms to he regex `[ ]+::newcol` with the `::newcol` having proper indentation
+  /// with respect to the multicol directive will generate this type of node.
+  AplusColBreak,
 }
 
 use std::collections::HashSet;
@@ -961,7 +968,8 @@ impl TreeNodeType {
       //  A+ specific directives
       // ========================
 
-      Self::AplusPOI { body_indent, .. } => Some(*body_indent)
+      Self::AplusPOI { body_indent, .. } => Some(*body_indent),
+      Self::AplusColBreak => None
     }
   }
 
@@ -1085,7 +1093,8 @@ impl TreeNodeType {
       // ========================
 
       Self::AplusPOI { .. } => &APLUS_POI_CATEGORIES,
-      
+      Self::AplusColBreak => &APLUS_COL_BREAK_CATEGORIES
+
     };
 
     categories.iter()

@@ -137,6 +137,9 @@ pub enum PatternName {
   ImplicitURL,
   StandaloneHyperlink,
   WhiteSpace,
+
+  // A+ specific
+  AplusColBreak
 }
 
 

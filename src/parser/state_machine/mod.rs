@@ -10,6 +10,7 @@
 // ===============================================
 // Submodules for namespacing transition functions
 // ===============================================
+mod aplus;
 mod block_quote;
 mod body;
 mod bullet_list;
@@ -51,6 +52,13 @@ pub enum StateMachine {
   /// #### Admonition
   /// A state for parsing body nodes inside admonitions.
   Admonition,
+
+  /// #### AplusMultiCol
+  ///
+  /// A state for detecting reStructuredText & Sphinx body elements,
+  /// in addition to column breaks in the form of `::newcol` for A+ nodes that support them.
+  /// These include the Point of Interest directive.
+  AplusMultiCol,
 
   /// #### Body
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
@@ -270,6 +278,10 @@ lazy_static! {
 
     let line_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_TRANSITIONS);
     action_map.insert(StateMachine::Line, line_actions);
+
+    // A+
+    let aplus_multicol_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_MULTICOL_TRANSITIONS);
+    action_map.insert(StateMachine::AplusMultiCol, aplus_multicol_actions);
 
     action_map
 

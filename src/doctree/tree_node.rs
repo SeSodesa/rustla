@@ -262,7 +262,8 @@ impl TreeNode {
       // ========================
       //  A+ specific directives
       // ========================
-      TreeNodeType::AplusPOI{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::AplusPOI{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::AplusColBreak = node_data { true } else { false },
+      TreeNodeType::AplusColBreak => false,
     }
   }
 

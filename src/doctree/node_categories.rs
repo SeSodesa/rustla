@@ -123,6 +123,7 @@ pub enum NodeCategory {
   /// #### Raw
   /// Raw data that is to be passed untouched to the writer.
   Raw,
+
 }
 
 
@@ -515,4 +516,8 @@ pub const SPHINX_ONLY_CATEGORIES: &[NodeCategory] = &[
 pub const APLUS_POI_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::CompoundBody
+];
+
+pub const APLUS_COL_BREAK_CATEGORIES: &[NodeCategory] = &[
+  
 ];

@@ -354,7 +354,9 @@ impl TreeNodeType {
         not_in_book,
         no_poi_box,
         ..
-      } => todo!()
+      } => todo!(),
+
+      Self::AplusColBreak => "\\newcol\n\n".to_string()
     };
 
     use std::io::Write;
@@ -501,7 +503,9 @@ impl TreeNodeType {
         no_poi_box,
 
         ..
-      } => todo!()
+      } => todo!(),
+
+      Self::AplusColBreak => "".to_string(),
     };
 
     use std::io::Write;

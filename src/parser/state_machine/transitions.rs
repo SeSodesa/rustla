@@ -344,6 +344,60 @@ impl StateMachine {
   ];
 
 
+  /// ### APLUS_MULTICOL_TRANSITIONS
+  /// An array of transitions allowed in multi-column A+ directives such as points of interest.
+  /// These are indentical to those, except the state also recognizes
+  pub const APLUS_MULTICOL_TRANSITIONS: &'static [UncompiledTransition] = &[
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+
+    (PatternName::AplusColBreak, APLUS_COL_BREAK_PATTERN, aplus::aplus_col_break),
+
+    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Arabic}, ARABIC_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerAlpha}, LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperAlpha}, UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::LowerRoman}, LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::LowerRoman}, LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::UpperRoman}, UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::UpperRoman}, UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
+    (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
+
+    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
+
+    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
+    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
+
+    (PatternName::Citation, CITATION_PATTERN, body::citation),
+
+    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
+
+    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+
+    (PatternName::Comment, COMMENT_PATTERN, body::comment),
+
+    (PatternName::Line, LINE_PATTERN, body::line),
+
+    (PatternName::Text, TEXT_PATTERN, body::text),
+  ];
+
+
   /// ### INLINE_TRANSITIONS
   /// An array of inline transitions.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
@@ -753,3 +807,13 @@ const URI_PATTERN: &str = r#"(?x)^
   \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}]|$
 )
 "#;
+
+
+// ======================
+//  A+ specific patterns
+// ======================
+
+/// ### APLUS_COL_BREAK_PATTERN
+/// A regex pattern relatex to detecting column breaks in multi-column
+/// A+ directives, such as points of interest.
+const APLUS_COL_BREAK_PATTERN: &str = r#"^(\s+)::newcol"#;

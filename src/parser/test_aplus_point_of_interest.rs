@@ -64,6 +64,6 @@ fn poi_01 () {
 
   if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(0).shared_data() {} else { panic!() }
   if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(2).shared_data() {} else { panic!() }
-  todo!("Inserting new columns to slides is yet to be implemented as an A+ node...");
+  if let TreeNodeType::AplusColBreak { .. } = doctree.shared_child(1).shared_child(4).shared_data() {} else { panic!() }
   if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(6).shared_data() {} else { panic!() }
 }

@@ -808,7 +808,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Body]), // PoI contains body nodes
+      next_states: Some(vec![StateMachine::AplusMultiCol]), // PoI contains body nodes and A+ specific column breaks
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None
     }
