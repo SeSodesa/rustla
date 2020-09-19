@@ -498,3 +498,98 @@ impl TreeNodeType {
     };
   }
 }
+
+
+// =========
+//  HELPERS
+// =========
+
+/// ### aplus_cls_contents
+///
+/// Returns the contents of the LaTeX class file required by Larst projects
+/// being compiled by `pdflatex` or `lualatex` as a `&'static str`.
+/// The string was authored by Tomi Janhunen.
+/// 
+/// source: https://course-gitlab.tuni.fi/ITC/CS/larst/larstprod/-/raw/master/LarST-example/aplus.cls
+/// url-date: 2020-09-17
+fn aplus_cls_contents () -> &'static str {
+
+r#"%
+% The LaRST Project
+%
+% alpus -- Documentclass for the direct LaTeX compilation of A+ materials
+%
+% (c) 2019 Tomi Janhunen
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{aplus}
+
+\LoadClass{article}
+\RequirePackage{url}
+\RequirePackage{hyperref}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{keyval}
+\RequirePackage{ifthen}
+\RequirePackage{xstring}
+\RequirePackage{comment}
+
+% Font issues
+\RequirePackage[T1]{fontenc}
+
+% Reset page dimensions
+\usepackage[nohead,nofoot,top=1in,margin=1in]{geometry}
+\pagestyle{empty}
+
+\newcommand{\chapter}[1]{\begin{center}\Huge\textbf{#1}\end{center}}
+
+% Set fonts toward ``Read the Docs''
+\usepackage[scaled]{helvet}
+\renewcommand\familydefault{\sfdefault}
+
+% No indentation
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5\baselineskip}
+
+% Remove (sub)section numbering
+\makeatletter
+\renewcommand{\@seccntformat}[1]{}
+\makeatother
+
+% Remove the section title for references
+\renewcommand{\refname}{\vspace{-2\baselineskip}}
+
+% Typical environments in mathematical text
+
+\newenvironment{definition}{\par\textbf{Definition}\\}{}
+\newenvironment{proposition}{\par\textbf{Proposition}\\}{}
+\newenvironment{theorem}{\par\textbf{Theorem}\\}{}
+\newenvironment{corollary}{\par\textbf{Corollary}\\}{}
+\newenvironment{example}{\par\textbf{Example}\\}{}
+
+% RST Simulations in LaTeX
+
+\excludecomment{only}
+
+\newcommand{\code}[1][]{\texttt{#1}}
+\newenvironment{codeblock}{\begin{texttt}}{\end{texttt}}
+
+% Points of interest (slide-type objects within material)
+
+\newcommand{\newcol}{\newpage}
+\newenvironment{poi}{}{}
+
+% A+ Simulations in LaTeX
+
+\newcommand{\Header}[1]{\LARGE\textbf{#1}}
+
+\newcommand{\wrong}{\item[\fbox{\phantom{\large x}}]}
+\renewcommand{\right}{\item[\fbox{\large x}]}
+
+\newcounter{question}\stepcounter{question}
+\newenvironment{quiz}[1]{\par\Header{Quiz #1}\par}{\setcounter{question}{1}}
+\newenvironment{pick}[2]{\Header{Q\thequestion~}}{\stepcounter{question}}
+\newenvironment{answers}{\begin{enumerate}}{\end{enumerate}}
+"#
+}

@@ -57,7 +57,6 @@ fn main() -> Result<(), ()>{
 
   } else if md.is_file() {
     println!("{:?} is a file.", path);
-  
 
     let src_lines = match common::read_path_lines(&path) {
       Ok(lines) => {
