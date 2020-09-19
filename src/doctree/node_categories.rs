@@ -499,6 +499,19 @@ pub const WHITESPACE_CATEGORIES: [NodeCategory; 1] = [
 ];
 
 
+// ============================
+//  Sphinx specific directives
+// ============================
+
+pub const SPHINX_ONLY_CATEGORIES: &[NodeCategory] = &[
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
+];
+
+// ========================
+//  A+ specific directives
+// ========================
+
 pub const APLUS_POI_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::Body,
   NodeCategory::CompoundBody

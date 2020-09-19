@@ -327,6 +327,12 @@ impl TreeNodeType {
         format!("{}", text)
       },
 
+      // ============================
+      //  Sphinx specific directives
+      // ============================
+
+      Self::SphinxOnly { .. } => todo!(),
+
       // ========================
       //  A+ specific directives
       // ========================
@@ -465,6 +471,13 @@ impl TreeNodeType {
       Self::Transition { .. }               => "\n".to_string(),
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { .. }               => "".to_string(),
+
+
+      // ============================
+      //  Sphinx specific directives
+      // ============================
+
+      Self::SphinxOnly { .. } => todo!(),
 
       // ========================
       //  A+ specific directives

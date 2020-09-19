@@ -792,6 +792,16 @@ pub enum TreeNodeType {
     text: String
   },
 
+
+  // ============================
+  //  Sphinx specific directives
+  // ============================
+
+  SphinxOnly {
+    expression: String,
+    body_indent: usize,
+  },
+
   // ========================
   //  A+ specific directives
   // ========================
@@ -939,6 +949,14 @@ impl TreeNodeType {
       Self::Version { .. } => None,
       Self::WhiteSpace { .. } => None,
 
+
+      // ========================
+      //  Sphinx specific directives
+      // ========================
+
+      Self::SphinxOnly { body_indent, .. } => Some(*body_indent),
+
+
       // ========================
       //  A+ specific directives
       // ========================
@@ -1054,12 +1072,20 @@ impl TreeNodeType {
       Self::Transition {}     => &TRANSITION_CATEGORIES,
       Self::Version { .. } => &VERSION_CATEGORIES,
       Self::WhiteSpace { .. } => &WHITESPACE_CATEGORIES,
+
+
+      // ============================
+      //  Sphinx specific directives
+      // ============================
+
+      Self::SphinxOnly { body_indent, .. } => &SPHINX_ONLY_CATEGORIES,
       
       // ========================
       //  A+ specific directives
       // ========================
 
       Self::AplusPOI { .. } => &APLUS_POI_CATEGORIES,
+      
     };
 
     categories.iter()

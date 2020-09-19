@@ -754,7 +754,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
         }
 
         "only" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_sphinx_only(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
         }
 
         "tabularcolumns" => {

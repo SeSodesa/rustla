@@ -253,6 +253,12 @@ impl TreeNode {
       TreeNodeType::Version { .. } => false,
       TreeNodeType::WhiteSpace { .. } => false,
 
+      // ============================
+      //  Sphinx specific directives
+      // ============================
+
+      TreeNodeType::SphinxOnly { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+
       // ========================
       //  A+ specific directives
       // ========================

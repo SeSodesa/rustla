@@ -669,8 +669,42 @@ impl Parser {
     todo!()
   }
 
-  pub fn parse_sphinx_only () {
-    todo!()
+  pub fn parse_sphinx_only (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize, section_level: usize) -> TransitionResult {
+
+    /// ### ALWAYS_DEFINED_TAGS
+    ///
+    /// Directive `only` tags that are always known to the Sphinx parser.
+    /// These work like expressions in predicate logic and can be combined with
+    /// ` and `, ` or ` and grouped with parentheses.
+    ///
+    /// They should be included with the directive argument.
+    const ALWAYS_DEFINED_TAGS: &[&str] = &[
+      "html", "latex", "text"
+    ];
+
+    let expression = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+      Parser::line_suffix(line, first_indent).trim().to_string()
+    } else {
+      unreachable!("On line {} with a marker but found no line?", line_cursor.sum_total())
+    };
+
+    if expression.is_empty() {
+      panic!(r#"The expression of an "only" Sphinx directive on line {} should not be empty. Computer says no..."#, line_cursor.sum_total())
+    }
+
+    let only_node = TreeNodeType::SphinxOnly {
+      expression: expression,
+      body_indent: body_indent
+    };
+
+    doctree = doctree.push_data_and_focus(only_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Body]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
   pub fn parse_sphinx_tabularcolumns () {
