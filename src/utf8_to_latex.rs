@@ -491,6 +491,7 @@ lazy_static! {
 
     map.insert('_', r#"\_"#);
     // map.insert('@', r#"\@ "#);
+    map.insert('#', r#"\#"#);
 
     map
   };

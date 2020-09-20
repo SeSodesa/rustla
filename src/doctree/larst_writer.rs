@@ -266,7 +266,10 @@ impl TreeNodeType {
       Self::LineBlock { .. }                => todo!(),
       Self::ListTable { .. }                => todo!(),
       Self::Literal { text }       => format!("\\texttt{{{}}}", text),
-      Self::LiteralBlock { text }  => format!("\\begin{{codeblock}}\n{}", text),
+      Self::LiteralBlock { text }  => {
+        use crate::utf8_to_latex::unicode_text_to_latex;
+        format!("\\begin{{codeblock}}\n{}", unicode_text_to_latex(text))
+      },
       Self::Math { text, class, name }                     => {
         format!(r"\({}\)", text)
       },
@@ -349,7 +352,9 @@ impl TreeNodeType {
       //  Sphinx specific directives
       // ============================
 
-      Self::SphinxOnly { .. } => todo!(),
+      Self::SphinxOnly { expression, body_indent } => {
+        format!("\\begin{{only}}[{}]\n", expression)
+      },
 
       // ========================
       //  A+ specific directives
@@ -472,7 +477,7 @@ impl TreeNodeType {
       Self::LineBlock { .. }                => "\n".to_string(),
       Self::ListTable { .. }                => "\n".to_string(),
       Self::Literal { .. }                  => "".to_string(),
-      Self::LiteralBlock { .. }             => "\n\\end{codeblock}\n".to_string(),
+      Self::LiteralBlock { .. }             => "\n\\end{codeblock}\n\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
       Self::MathBlock { .. }                => "\\end{split}\n\\end{equation}\n\n".to_string(),
       Self::OptionList { .. }               => "\n".to_string(),
@@ -480,10 +485,10 @@ impl TreeNodeType {
       Self::OptionString { .. }             => todo!(),
       Self::Organization { .. }             => todo!(),
       Self::Paragraph { .. }                => "\n\n".to_string(),
-      Self::ParsedLiteralBlock { .. }       => "\n".to_string(),
+      Self::ParsedLiteralBlock { .. }       => "\n\n".to_string(),
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
-      Self::Raw { .. }                      => "\\end{raw}\n".to_string(),
+      Self::Raw { .. }                      => "\\end{raw}\n\n".to_string(),
       Self::Reference { .. }                => "".to_string(),
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),
@@ -518,7 +523,7 @@ impl TreeNodeType {
       //  Sphinx specific directives
       // ============================
 
-      Self::SphinxOnly { .. } => todo!(),
+      Self::SphinxOnly { expression, body_indent } => "\\end{only}\n\n".to_string(),
 
       // ========================
       //  A+ specific directives
