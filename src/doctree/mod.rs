@@ -49,6 +49,12 @@ pub struct DocTree {
   /// The canonicalized file path without the file suffix.
   filename_stem: String,
 
+  /// #### file_folder
+  /// The folder the source file is stored in.
+  /// The object file will be stored in the same folder with a different suffix.
+  file_folder: String,
+
+
   /// #### tree
   /// Holds the tree focused on a specific node.
   tree: TreeZipper,
@@ -85,18 +91,29 @@ impl DocTree {
     let root_data = TreeNodeType::Document;
     let root_node = TreeNode::new(root_data, root_id, None);
 
-    let file_stem: String = match doc_name.to_str() {
-      Some(full_path) => {
-        match full_path.split(".").next() {
-          Some(path_before_suffix) => path_before_suffix.to_string(),
-          None => panic!("No valid path before file suffix. Computer says no...")
-        }
-      },
-      None => panic!("Invalid unicode in file path. Computer says no...")
+    let file_stem: String = if let Some(path_os_str) = doc_name.file_stem() {
+      if let Some(path_str) = path_os_str.to_str() {
+        path_str.to_string()
+      } else {
+        panic!("Invalid unicode in file path. Computer says no...")
+      }
+    } else {
+      panic!("No recognizable source file name to be found. Computer says no...")
+    };
+
+    let file_folder = if let Some(parent) = doc_name.parent() {
+      if let Some(path_str) = parent.to_str() {
+        path_str.to_string()
+      } else {
+        panic!("Source folder path could not be converted to a string. Computer says no...")
+      }
+    } else {
+      panic!("Source is not in any folder (even root). Computer says no...")
     };
 
     DocTree {
       filename_stem: file_stem,
+      file_folder: file_folder,
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id + 1,
       hyperref_data: HyperrefData::new(),

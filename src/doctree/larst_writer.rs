@@ -20,18 +20,39 @@ impl DocTree {
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
   pub fn write_to_larst (self) {
 
-    let filename = self.filename_stem + ".tex";
-
-    eprintln!("filename: {}\n", filename);
-
     use std::fs::{File, OpenOptions};
+    use std::path::Path;
+
+    const TEX_FILE_SUFFIX: &str = ".tex";
+    const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";
+
+    let folder = &self.file_folder;
+    let mut object_file_path = PathBuf::from(folder);
+    let mut aplus_class_file_path = PathBuf::from(folder);
+    object_file_path.push(self.filename_stem + TEX_FILE_SUFFIX);
+    aplus_class_file_path.push(APLUS_CLASS_FILE_NAME);
+
+
+
     // TODO: Add check for file existence...
-    let mut file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(filename.as_str()) {
+    let mut object_file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(object_file_path) {
       Ok(file) => file,
       Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
     };
 
-    self.tree.write_to_larst(&mut file)
+    // If object file generation was successful, generate A+ class file
+    let mut aplus_class_file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(aplus_class_file_path) {
+      Ok(file) => file,
+      Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
+    };
+
+    use std::io::Write;
+    match aplus_class_file.write(aplus_cls_contents().as_bytes()){
+      Ok(_) => {},
+      Err(_) => panic!("Could not write to A+ class file after generating object code. Computer says no...")
+    };
+
+    self.tree.write_to_larst(&mut object_file)
   }
 
 }
@@ -190,10 +211,7 @@ impl TreeNodeType {
       Self::Document { .. }   => {
         format!(
 "\
-\\documentclass[12pt]{{report}}
-
-\\usepackage{{mathtools}}
-\\usepackage{{hyperref}}
+\\documentclass[12pt]{{aplus}}
 
 \\begin{{document}}\n\n")
       },
