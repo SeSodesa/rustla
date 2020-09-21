@@ -143,7 +143,9 @@ pub enum PatternName {
   WhiteSpace,
 
   // A+ specific
-  AplusColBreak
+  AplusColBreak,
+  AplusPickOne,
+  AplusPickAny,
 }
 
 

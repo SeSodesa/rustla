@@ -398,6 +398,11 @@ impl StateMachine {
   ];
 
 
+  pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
+
+  ];
+
+
   /// ### INLINE_TRANSITIONS
   /// An array of inline transitions.
   pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
@@ -817,3 +822,13 @@ const URI_PATTERN: &str = r#"(?x)^
 /// A regex pattern relatex to detecting column breaks in multi-column
 /// A+ directives, such as points of interest.
 const APLUS_COL_BREAK_PATTERN: &str = r#"^(\s+)::newcol"#;
+
+
+/// ### APLUS_PICK_ONE_PATTERN
+const APLUS_PICK_ONE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-one::(?:[ ]+|$)";
+
+/// ### APLUS_PICK_ANY_PATTERN
+const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$)";
+
+/// ### APLUS_FREETEXT_PATTERN
+const APLUS_FREETEXT_PATTERN: &'static str = r"^(\s*)\.\.[ ]+freetext::(?:[ ]+|$)";

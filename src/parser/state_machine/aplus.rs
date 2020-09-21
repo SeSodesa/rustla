@@ -47,3 +47,21 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: &usize, section_le
     }
   }
 }
+
+
+/// ### aplus_pick_one
+pub fn aplus_pick_one (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+  todo!()
+}
+
+
+/// ### aplus_pick_any
+pub fn aplus_pick_any (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+  todo!()
+}
+
+
+/// ### aplus_freetext
+pub fn aplus_freetext (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+  todo!()
+}
