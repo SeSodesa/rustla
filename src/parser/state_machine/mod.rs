@@ -291,6 +291,9 @@ lazy_static! {
     let aplus_multicol_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_MULTICOL_TRANSITIONS);
     action_map.insert(StateMachine::AplusMultiCol, aplus_multicol_actions);
 
+    let aplus_questionnaire_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_QUESTIONNAIRE_TRANSITIONS);
+    action_map.insert(StateMachine::AplusQuestionnaire, aplus_questionnaire_actions);
+
     action_map
 
   };
