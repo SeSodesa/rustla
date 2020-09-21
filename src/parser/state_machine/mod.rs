@@ -299,10 +299,13 @@ lazy_static! {
   };
 
   /// ### COMPILED_INLINE_TRANSITIONS
-  /// A vector of transitions specific to MachineWithState<Inline>.
+  ///
   /// Inline text has different parsing requirements than (nested)
   /// `Body` elements as they do not form blocks of text,
   /// making detecting by source line impractical.
+  ///
+  /// Instead, a block of source text is given to `Parser::parse_inline_nodes`
+  /// which is then scanned with regular expressions.
   pub static ref COMPILED_INLINE_TRANSITIONS: Vec<(PatternName, regex::Regex, InlineParsingMethod)> = {
 
     let mut inline_transitions = Vec::with_capacity(StateMachine::INLINE_TRANSITIONS.len());
