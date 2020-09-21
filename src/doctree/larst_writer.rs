@@ -576,33 +576,25 @@ r#"%
 %
 % alpus -- Documentclass for the direct LaTeX compilation of A+ materials
 %
-% (c) 2019 Tomi Janhunen
+% (c) 2019-2020 Tomi Janhunen
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{aplus}
 
-\LoadClass{article}
+\LoadClass{book}
 \RequirePackage{url}
-\RequirePackage{hyperref}
 \RequirePackage{graphicx}
+\RequirePackage[breakable,most]{tcolorbox}
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
+\RequirePackage{pifont}
 \RequirePackage{keyval}
 \RequirePackage{ifthen}
 \RequirePackage{xstring}
 \RequirePackage{comment}
-\RequirePackage{listings}
-  \lstset{
-    basicstyle=\ttfamily\scriptsize,
-    showspaces=false,
-    showstringspaces=false,
-    tabsize=4,
-    numbers=left,
-    numberstyle=\tiny,
-    numberblanklines=true,
-  }
-  \lstnewenvironment{codeblock}{\renewcommand\lstlistingname{Listing}%
-  }{}
+\RequirePackage{environ}
+\RequirePackage{fancyvrb}
+\RequirePackage{hyperref}
 
 % Font issues
 \RequirePackage[T1]{fontenc}
@@ -611,7 +603,7 @@ r#"%
 \usepackage[nohead,nofoot,top=1in,margin=1in]{geometry}
 \pagestyle{empty}
 
-\newcommand{\chapter}[1]{\begin{center}\Huge\textbf{#1}\end{center}}
+% \newcommand{\chapter}[1]{{\Huge\textbf{#1}}}
 
 % Set fonts toward ``Read the Docs''
 \usepackage[scaled]{helvet}
@@ -622,43 +614,216 @@ r#"%
 \setlength{\parskip}{0.5\baselineskip}
 
 % Remove (sub)section numbering
-\makeatletter
-\renewcommand{\@seccntformat}[1]{}
-\makeatother
+% \makeatletter
+% \renewcommand{\@seccntformat}[1]{} 
+% \makeatother
 
-% Remove the section title for references
-\renewcommand{\refname}{\vspace{-2\baselineskip}}
-
-% Typical environments in mathematical text
-
-\newenvironment{definition}{\par\textbf{Definition}\\}{}
-\newenvironment{proposition}{\par\textbf{Proposition}\\}{}
-\newenvironment{theorem}{\par\textbf{Theorem}\\}{}
-\newenvironment{corollary}{\par\textbf{Corollary}\\}{}
-\newenvironment{example}{\par\textbf{Example}\\}{}
+% Unification of labels
+\global\def\labelhere{}
+\newcommand{\rstlabel}[1]{\global\def\labelhere{\hypertarget{#1}{}\label{#1}}}
 
 % RST Simulations in LaTeX
 
-\excludecomment{only}
+\newcommand{\aplus}[2]{}
 
-\newcommand{\code}[1][]{\texttt{#1}}
-\newenvironment{codeblock}{\begin{texttt}}{\end{texttt}}
+\makeatletter
+\long\def\notext#1{}
+\newenvironment{only}[1][foo]{%
+  \ifthenelse{\equal{#1}{latex}}%
+  {}{\Collect@Body\notext}
+  }{}
+\makeatother
+
+\newenvironment{raw}{}{}
+\RenewEnviron{raw}{}{}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+% Blocks of code
+
+\makeatletter
+\define@key{codeblock}{python}[]{}
+\makeatother
+
+\newcommand\innercodeblock[1][]{#1}
+\newenvironment{codeblock}{ \bgroup\verbatim\innercodeblock }{ \endverbatim\egroup }
+% \newenvironment{codeblock}[1][]{\begin{BVerbatim}}{\end{BVerbatim}}
+
+% File download
+
+\newcommand{\download}[2]{\par\texttt{#1}\footnote{\url{#2}}}
+\newcommand{\rstclass}[1]{}
+\newcommand{\feedback}[2]{\par\textbf{#1}. #2 \\}
+
+\newenvironment{toggle}[1]{\textbf{#1}. }{}
+
 
 % Points of interest (slide-type objects within material)
 
-\newcommand{\newcol}{\newpage}
-\newenvironment{poi}{}{}
+\makeatletter
+\define@key{poi}{hidden}[]{}
+\define@key{poi}{columns}[]{\def\poi@colums{#1}}
+\define@key{poi}{id}[]{\def\poi@id{#1}}
+\define@key{poi}{next}[]{\def\poi@next{#1}}
+\define@key{poi}{prev}[]{\def\poi@prev{#1}}
+\define@key{poi}{bgimg}[]{\def\poi@bgimg{#1}}
+\makeatother
 
-% A+ Simulations in LaTeX
+\newcommand{\newcol}{\newpage} % Semantic mismatch
+\newenvironment{poi}[2][]{%
+\setkeys{poi}{#1}
+\par\noindent\begin{large}\begin{tcolorbox}[width=\textwidth,adjusted title=#2]%
+}{%
+\end{tcolorbox}\end{large}}
 
-\newcommand{\Header}[1]{\LARGE\textbf{#1}}
+% Active elements
+
+\makeatletter
+\newlength{\ae@width}
+\newlength{\ae@height}
+\define@key{aelement}{width}[]{\def\ae@width{#1}}
+\define@key{aelement}{height}[]{\def\ae@height{#1}}
+\define@key{aelement}{class}[]{\def\ae@class{#1}}
+\define@key{aelement}{type}[]{\def\ae@type{#1}}
+\setkeys{aelement}{width=\textwidth,height=\baselineskip,type=pdf,class=left}%
+\newcommand{\aeinput}[2][]{\setkeys{aelement}{#1}}
+\newcommand{\aeoutput}[3][]{\setkeys{aelement}{#1}}
+\makeatother
+
+% Submission fields
+
+\makeatletter
+\define@key{submit}{config}[]{\def\sbm@config{#1}}
+\define@key{submit}{submissions}[]{\def\sbm@submissions{#1}}
+\define@key{submit}{points-to-pass}[]{\def\sbm@ptp{#1}}
+\define@key{submit}{class}[]{\def\sbm@class{#1}}
+\define@key{submit}{title}[]{\def\sbm@title{#1}}
+\define@key{submit}{category}[]{\def\sbm@category{#1}}
+\define@key{submit}{status}[]{\def\sbm@status{#1}}
+\define@key{submit}{allow-assistant-viewing}[]{\def\sbm@viewing{#1}}
+\define@key{submit}{allow-assistant-grading}[]{\def\sbm@grading{#1}}
+\define@key{submit}{url}[]{\def\sbm@url{#1}}
+\define@key{submit}{lti}[]{\def\sbm@lti{#1}}
+\define@key{submit}{ajax}[]{\def\sbm@ajax{true}}
+\define@key{submit}{quiz}[]{\def\sbm@quiz{true}}
+\makeatother
+
+\newenvironment{submit}[2][]{%
+\setkeys{submit}{#1}%
+\par\noindent\begin{tcolorbox}[width=\textwidth,adjusted title=#2]%
+}{%
+\end{tcolorbox}}
+
+% Quizzes
 
 \newcommand{\wrong}{\item[\fbox{\phantom{\large x}}]}
 \renewcommand{\right}{\item[\fbox{\large x}]}
+\newcommand{\undet}{\item[\fbox{\large *}]}
 
 \newcounter{question}\stepcounter{question}
-\newenvironment{quiz}[1]{\par\Header{Quiz #1}\par}{\setcounter{question}{1}}
-\newenvironment{pick}[2]{\Header{Q\thequestion~}}{\stepcounter{question}}
 \newenvironment{answers}{\begin{enumerate}}{\end{enumerate}}
+
+\makeatletter
+\define@key{quiz}{submissions}[]{\def\qz@submissions{#1}}
+\define@key{quiz}{points-to-pass}[]{\def\qz@points{#1}}
+\define@key{quiz}{title}[]{\def\qz@title{#1}}
+\define@key{quiz}{pick-randomly}[]{\def\qz@randomly{#1}}
+\define@key{quiz}{category}[]{\def\qz@category{#1}}
+\define@key{quiz}{status}[]{\def\qz@status{#1}}
+\define@key{quiz}{reveal-model-at-max-submissions}[]{\def\qz@reveal{#1}}
+\define@key{quiz}{show-model}[]{\def\qz@show{#1}}
+\define@key{quiz}{allow-assistant-viewing}[]{\def\qz@viewing{#1}}
+\define@key{quiz}{allow-assistant-grading}[]{\def\qz@grading{#1}}
+\define@key{quiz}{feedback}[]{\def\qz@feedback{true}}
+\define@key{quiz}{no-override}[]{\def\qz@noover{true}}
+\define@key{quiz}{preserve-questions-between-attempts}[]{\def\qz@preserve{true}}
+\setkeys{quiz}{}%
+\newenvironment{quiz}[3][]{%
+\setkeys{quiz}{#1}{}%
+\section*{Quiz #2}}{\setcounter{question}{1}}
+\makeatother
+
+% Pick
+
+\makeatletter
+\define@key{pick}{class}[]{\def\pick@class{#1}}
+\define@key{pick}{key}[]{\def\pick@key{#1}}
+\define@key{pick}{randomized}[]{\def\pick@randomized{#1}}
+\define@key{pick}{correct-count}[]{\def\pick@correct{#1}}
+\define@key{pick}{required}[]{\def\pick@required{true}}
+\define@key{pick}{partial-points}[]{\def\pick@partial{true}}
+\setkeys{pick}{}%
+\newenvironment{pick}[3][]{%
+\setkeys{pick}{#1}{}%
+\par\textbf{Q\thequestion:}~}{\stepcounter{question}}
+\makeatother
+
+% Freetext
+
+\makeatletter
+\newlength{\ft@height}
+\newlength{\ft@length}
+\define@key{freetext}{required}[]{\def\ft@required{true}}
+\define@key{freetext}{length}[]{\def\ft@length{#1}}
+\define@key{freetext}{height}[]{\def\ft@height{#1}}
+\define@key{freetext}{class}[]{\def\ft@class{#1}}
+\define@key{freetext}{key}[]{\def\ft@key{#1}}
+\setkeys{freetext}{length=100em,height=5\baselineskip,class=left}%
+\newenvironment{freetext}[4][]{%
+\setkeys{freetext}{#1}{}
+\par\textbf{Q\thequestion:}~}{\stepcounter{question}}
+\makeatother
+
+% LaTeX environments (assumed by default, some used in limited ways)
+
+% \begin{document} ... \end{document}
+% \begin{itemize} ... \item ... \end{itemize}
+% \begin{enumerate} ... \item ... \end{enumerate}
+% \begin{tabular}[...] ... & ... & ... \\ ... \end{tabular}
+% \begin{thebibliography}{...} ... \end{thebibligraphy}
+% \begin{equation} ... \end{equation}
+% \begin{center} ... \end{center}
+
+% LaTeX commands (assumed by default)
+
+% \documentclass{}
+% \bibliographystyle{...}
+% \tableofcontents
+% \contentsline{...}{...}{...}
+% \chapter{...}
+% \section{...}
+% \subsection{...}
+% \emph{...} or {\em ...}
+% \textit{...}
+% \textbf{...} or {\bf ...}
+% \texttt{...}
+% \captionof{...}{...}
+% \newcounter{...}
+% \the...
+% \stepcounter{...}
+% \refstepcounter{...}
+% \addtocounter{...}{...}
+% \setcounter{...}{...}
+% \numberwithin{...}{...}
+% \include{...}
+% \input{...}
+% \includegraphics[...]{...}
+% \cite{...}
+% \ref{...}
+% \label{...}
+% \url{...}
+% \href{...}{...}
+% \hyperref[...]{...}
+% \hypertarget{...}{...}
+% \hyperlink{...}{...}
+% \textbackslash
+% \textasciicircum
+% \textunderscore
+% \textasciitilde
+% \nbspc
+% \aa
+% \AA
+% \hrulefill
+
 "#
 }
