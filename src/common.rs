@@ -92,6 +92,10 @@ pub type NodeId = u32;
 /// A type alias for different kinds of enumerators such as list or foonote ordinals in integer format.
 pub type EnumAsInt = u32;
 
+/// ### QuizPoints
+/// A type alias for question points.
+pub type QuizPoints = u32;
+
 
 // ==========================
 // Enumerators and converters

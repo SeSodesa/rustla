@@ -399,8 +399,15 @@ impl TreeNodeType {
         let option_string =  if options.as_mut_str() == "[]" { "" } else { options.as_str() };
         format!("\\begin{{poi}}{}{{{}}}\n\n", option_string, title)
       },
-
-      Self::AplusColBreak => "\\newcol\n\n".to_string()
+      Self::AplusColBreak => "\\newcol\n\n".to_string(),
+      Self::AplusQuestionnaire { max_points, key, points, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => todo!(),
+      Self::AplusPickOne { points, class, required, key, dropdown, .. } => "\\begin{pick}{one}\n".to_string(),
+      Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => "\\begin{pick}{any}\n".to_string(),
+      Self::AplusFreeText { points, compare_method, required, class, key, length, height, .. } => "\\begin{freetext}\n".to_string(),
+      Self::AplusQuestionInstructions => "".to_string(),
+      Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
+      Self::AplusPickChoice { is_correct, is_pre_selected, is_neutral } => "\\item ".to_string(),
+      Self::AplusFreeTextModel { model_answer } => "\n".to_string(),
     };
 
     use std::io::Write;
@@ -529,28 +536,16 @@ impl TreeNodeType {
       //  A+ specific directives
       // ========================
 
-      Self::AplusPOI {
-
-        title,
-    
-        // Options
-        id,
-        previous,
-        next,
-        hidden,
-        class,
-        height,
-        columns,
-        bgimg,
-        not_in_slides,
-        not_in_book,
-        no_poi_box,
-        ..
-      } => {
-        "\\end{poi}\n\n".to_string()
-      },
-
+      Self::AplusPOI { .. } => "\\end{poi}\n\n".to_string(),
       Self::AplusColBreak => "".to_string(),
+      Self::AplusQuestionnaire { .. } => "\\end{quiz}\n\n".to_string(),
+      Self::AplusPickOne { .. } => "\\end{pick}\n\n".to_string(),
+      Self::AplusPickAny { .. } => "\\end{pick}\n\n".to_string(),
+      Self::AplusFreeText { .. } => "\\end{freetext}\n\n".to_string(),
+      Self::AplusQuestionInstructions { .. } => "\n".to_string(),
+      Self::AplusPickChoices { .. } => "\\end{answers}\n\n".to_string(),
+      Self::AplusPickChoice { .. } => "\n".to_string(),
+      Self::AplusFreeTextModel { .. } => "\n".to_string(),
     };
 
     use std::io::Write;

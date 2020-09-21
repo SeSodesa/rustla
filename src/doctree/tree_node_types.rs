@@ -6,6 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use crate::common::QuizPoints;
 
 
 /// ### TreeNodeType
@@ -840,6 +841,100 @@ pub enum TreeNodeType {
   /// Placing a line that conforms to he regex `[ ]+::newcol` with the `::newcol` having proper indentation
   /// with respect to the multicol directive will generate this type of node.
   AplusColBreak,
+
+  /// #### AplusQuestionnaire
+  ///
+  /// A quiz node that corresponds to the questionnaire A+ directive.
+  AplusQuestionnaire {
+
+    // Required by the parser
+    body_indent: usize,
+    max_points: u32,
+
+    // Directive arguments
+    key: String,
+    points: String,
+    difficulty: Option<String>,
+
+    // Directive options
+    // source: https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
+
+    submissions: Option<String>,
+    points_to_pass: Option<String>,
+    feedback: Option<String>,
+    title: Option<String>,
+    no_override: Option<String>,
+    pick_randomly: Option<String>,
+    preserve_questions_between_attempts: Option<String>,
+    category: Option<String>,
+    status: Option<String>,
+    reveal_model_at_max_submissions: Option<String>,
+    show_model: Option<String>,
+    allow_assistant_viewing: Option<String>,
+    allow_assistant_grading: Option<String>,
+  },
+
+  /// See the documentation for the `quoestionnaire` directive:
+  /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
+  AplusPickOne {
+
+    body_indent: usize,
+    points: QuizPoints,
+    class: Option<String>,
+    required: Option<String>,
+    key: Option<String>,
+    dropdown: Option<String>,
+  },
+
+  /// See the documentation for the `quoestionnaire` directive:
+  /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
+  AplusPickAny {
+
+    body_indent: usize,
+    points: QuizPoints,
+    class: Option<String>,
+    required: Option<String>,
+    key: Option<String>,
+    partial_points: Option<String>,
+    randomized: Option<String>,
+    correct_count: Option<String>,
+    preserve_questions_between_attempts: Option<String>,
+  },
+
+  /// See the documentation for the `quoestionnaire` directive:
+  /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
+  AplusFreeText {
+
+    body_indent: usize,
+
+    // Directive arguments
+    points: QuizPoints,
+
+    /// One of `int`, `float`, `string`, `subdiff`, `regexp`, `unsortedchars`,
+    /// with `string` and `regexp` having the `-`-separated modifiers
+    /// , `ignorews`, `ignorequotes`, `requirecase`, `ignorerepl` and `ignoreparenthesis` available.
+    compare_method: String,
+
+    // Directive options
+    class: Option<String>,
+    required: Option<String>,
+    key: Option<String>,
+    length: Option<String>,
+    height: Option<String>,
+  },
+
+  AplusQuestionInstructions,
+  AplusPickChoices {
+    body_indent: usize,
+  },
+  AplusPickChoice {
+    is_correct: bool,
+    is_pre_selected: bool,
+    is_neutral: bool,
+  },
+  AplusFreeTextModel {
+    model_answer: String,
+  },
 }
 
 use std::collections::HashSet;
@@ -969,7 +1064,15 @@ impl TreeNodeType {
       // ========================
 
       Self::AplusPOI { body_indent, .. } => Some(*body_indent),
-      Self::AplusColBreak => None
+      Self::AplusColBreak => None,
+      Self::AplusQuestionnaire { body_indent, .. } => Some(*body_indent),
+      Self::AplusPickOne { body_indent, .. } => Some(*body_indent),
+      Self::AplusPickAny { body_indent, .. } => Some(*body_indent),
+      Self::AplusFreeText { body_indent, .. } => Some(*body_indent),
+      Self::AplusQuestionInstructions { .. } => None,
+      Self::AplusPickChoices { body_indent, .. } => Some(*body_indent),
+      Self::AplusPickChoice { .. } => None,
+      Self::AplusFreeTextModel { .. } => None,
     }
   }
 
@@ -1093,8 +1196,15 @@ impl TreeNodeType {
       // ========================
 
       Self::AplusPOI { .. } => &APLUS_POI_CATEGORIES,
-      Self::AplusColBreak => &APLUS_COL_BREAK_CATEGORIES
-
+      Self::AplusColBreak => &APLUS_COL_BREAK_CATEGORIES,
+      Self::AplusQuestionnaire { .. } => &APLUS_QUESTIONNAIRE_CATEGORIES,
+      Self::AplusPickOne { .. } => &APLUS_PICK_ONE_CATEGORIES,
+      Self::AplusPickAny { .. } => &APLUS_PICK_ANY_CATEGORIES,
+      Self::AplusFreeText { .. } => &APLUS_FREETEXT_CATEGORIES,
+      Self::AplusQuestionInstructions { .. } => &APLUS_QUESTION_INSTRUCTION_CATEGORIES,
+      Self::AplusPickChoices { body_indent, .. } => &APLUS_PICK_CHOICES_CATEGORIES,
+      Self::AplusPickChoice { .. } => &APLUS_PICK_CHOICE_CATEGORIES,
+      Self::AplusFreeTextModel { .. } => &APLUS_FREE_TEXT_MODEL_CATEGORIES,
     };
 
     categories.iter()

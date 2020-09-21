@@ -264,6 +264,31 @@ impl TreeNode {
       // ========================
       TreeNodeType::AplusPOI{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::AplusColBreak = node_data { true } else { false },
       TreeNodeType::AplusColBreak => false,
+      TreeNodeType::AplusQuestionnaire { .. } => match node_data {
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickOne { .. } | TreeNodeType::AplusPickAny { .. } | TreeNodeType::AplusFreeText { .. } => true,
+        _ => false
+      },
+      TreeNodeType::AplusPickOne { .. } => match node_data {
+        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        _ => false
+      }
+      TreeNodeType::AplusPickAny { .. } => match node_data {
+        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        _ => false
+      }
+      TreeNodeType::AplusFreeText { .. } => match node_data {
+        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        _ => false
+      }
+      TreeNodeType::AplusQuestionInstructions => {
+        if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
+      },
+      TreeNodeType::AplusPickChoices { .. } => match node_data{
+        TreeNodeType::AplusPickChoice { .. } => true,
+        _ => false,
+      },
+      TreeNodeType::AplusPickChoice { .. } => false,
+      TreeNodeType::AplusFreeTextModel { .. } => false,
     }
   }
 
