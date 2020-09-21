@@ -60,6 +60,14 @@ pub enum StateMachine {
   /// These include the Point of Interest directive.
   AplusMultiCol,
 
+  /// #### AplusQuestionnaire
+  ///
+  /// A state for recognizing the sub-directives:
+  /// 1. `pick-one`,
+  /// 2. `pick-any` and
+  /// 3. `freetext`
+  AplusQuestionnaire,
+
   /// #### Body
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
   Body,

@@ -596,6 +596,18 @@ r#"%
 \RequirePackage{ifthen}
 \RequirePackage{xstring}
 \RequirePackage{comment}
+\RequirePackage{listings}
+  \lstset{
+    basicstyle=\ttfamily\scriptsize,
+    showspaces=false,
+    showstringspaces=false,
+    tabsize=4,
+    numbers=left,
+    numberstyle=\tiny,
+    numberblanklines=true,
+  }
+  \lstnewenvironment{codeblock}{\renewcommand\lstlistingname{Listing}%
+  }{}
 
 % Font issues
 \RequirePackage[T1]{fontenc}
