@@ -400,7 +400,7 @@ impl TreeNodeType {
         format!("\\begin{{poi}}{}{{{}}}\n\n", option_string, title)
       },
       Self::AplusColBreak => "\\newcol\n\n".to_string(),
-      Self::AplusQuestionnaire { max_points, key, points, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => todo!(),
+      Self::AplusQuestionnaire { max_points, key, points_from_children, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => todo!(),
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => "\\begin{pick}{one}\n".to_string(),
       Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => "\\begin{pick}{any}\n".to_string(),
       Self::AplusFreeText { points, compare_method, required, class, key, length, height, .. } => "\\begin{freetext}\n".to_string(),

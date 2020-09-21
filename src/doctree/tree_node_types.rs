@@ -849,11 +849,11 @@ pub enum TreeNodeType {
 
     // Required by the parser
     body_indent: usize,
-    max_points: u32,
+    points_from_children: Vec<String>,
 
     // Directive arguments
     key: String,
-    points: String,
+    max_points: QuizPoints,
     difficulty: Option<String>,
 
     // Directive options

@@ -724,8 +724,93 @@ impl Parser {
 //  A+-specific directives
 // ========================
 
-  pub fn parse_aplus_questionnaire () {
-    todo!()
+  pub fn parse_aplus_questionnaire (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize, section_level: usize) -> TransitionResult {
+    
+    let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+
+      use lazy_static::lazy_static;
+      use regex::{Regex, Captures};
+
+      lazy_static! {
+        static ref QUESTIONNAIRE_ARGS_DFA: Regex = Regex::new(r"(?P<key>[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*)?(?:[ ]+)?(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)").unwrap();
+      }
+
+      if let Some(captures) = QUESTIONNAIRE_ARGS_DFA.captures(arg.as_str()) {
+        let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { panic!("No reference key for questionnaire preceding line {}. Computer says no...", line_cursor.sum_total()) };
+        let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
+        let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
+        (key, difficulty, max_points)
+      } else {
+        // No allocations for strings with zero size
+        eprintln!("Either no arguments or invalid argument format for questionnaire preceding line {}...", line_cursor.sum_total());
+        (String::new(), String::new(), String::new())
+      }
+    } else {
+      panic!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
+    };
+
+    let directive_options = Self::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading) = if let Some(mut options) = directive_options {
+
+      const RECOGNIZED_OPTIONS: &[&str] = &["submissions", "points-to-pass", "feedback", "title", "no_override", "pick_randomly", "preserve-questions-between-attempts", "category", "status", "reveal-model-at-max-submissions", "show-model", "allow-assistant-viewing", "allow-assistant-grading"];
+
+      if !Self::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("Math block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
+      }
+
+      let submissions = options.remove("submissions");
+      let points_to_pass= options.remove("points-to-pass");
+      let feedback = options.remove("feedback");
+      let title = options.remove("title");
+      let no_override = options.remove("no_override");
+      let pick_randomly = options.remove("pick_randomly");
+      let preserve_questions_between_attempts = options.remove("preserve-questions-between-attempts");
+      let category = options.remove("category");
+      let status = options.remove("status");
+      let reveal_model_at_max_submissions = options.remove("reveal-model-at-max-submissions");
+      let show_model = options.remove("show-model");
+      let allow_assistant_viewing = options.remove("allow-assistant-viewing");
+      let allow_assistant_grading = options.remove("allow-assistant-grading");
+
+      (submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading)
+
+    } else {
+      (None, None, None, None, None, None, None, None, None, None, None, None, None)
+    };
+    
+    use crate::common::QuizPoints;
+    use std::convert::TryFrom;
+
+    let questionnaire_node = TreeNodeType::AplusQuestionnaire {
+      body_indent: body_indent,
+      key: key,
+      difficulty: if difficulty.is_empty() { None } else { Some(difficulty) },
+      max_points: if let Ok(result) = max_points.parse::<QuizPoints>() { result } else { 50 },
+      points_from_children: Vec::new(),
+      submissions: submissions,
+      points_to_pass: points_to_pass,
+      feedback: feedback,
+      title: title,
+      no_override: no_override,
+      pick_randomly: pick_randomly,
+      preserve_questions_between_attempts: preserve_questions_between_attempts,
+      category: category,
+      status: status,
+      reveal_model_at_max_submissions: reveal_model_at_max_submissions,
+      show_model: show_model,
+      allow_assistant_viewing: allow_assistant_viewing,
+      allow_assistant_grading: allow_assistant_grading
+    };
+
+    doctree = doctree.push_data_and_focus(questionnaire_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::AplusQuestionnaire]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
 
