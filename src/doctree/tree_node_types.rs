@@ -923,15 +923,30 @@ pub enum TreeNodeType {
     height: Option<String>,
   },
 
+  /// #### AplusQuestionInstructions
+  ///
+  /// An optional paragraph that contains the instructions for a specific question inside a questionnaire.
   AplusQuestionInstructions,
+
+  /// #### AplusPickChoices
+  ///
+  /// A node that contains the choices of an A+ `pick` type question.
   AplusPickChoices {
     body_indent: usize,
   },
+
+  /// #### AplusPickChoice
+  ///
+  /// A single answer choice inside an A+ pick-(one|any) question.
   AplusPickChoice {
     is_correct: bool,
     is_pre_selected: bool,
     is_neutral: bool,
   },
+
+  /// #### AplusFreeTextModel
+  ///
+  /// The model answer for an A+ free text question.
   AplusFreeTextModel {
     model_answer: String,
   },
