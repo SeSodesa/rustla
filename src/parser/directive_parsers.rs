@@ -876,6 +876,11 @@ impl Parser {
   ///
   /// A `pick-any` type questionnaire question parser.
   pub fn parse_aplus_pick_any (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "class", "required", "key", "partial-points",  "randomized", "correct-count", "preserve-questions-between-attempts",
+    ];
+
     todo!()
   }
 
@@ -884,6 +889,10 @@ impl Parser {
   ///
   /// A `freetext` type questionnaire question parser.
   pub fn parse_aplus_freetext (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "class", "required", "key", "length",  "height",
+    ];
     todo!()
   }
 
