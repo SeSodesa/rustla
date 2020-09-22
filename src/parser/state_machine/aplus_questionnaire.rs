@@ -32,14 +32,13 @@ pub fn aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, se
 
       let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Cound not parse intermediate questionnaire text on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => panic!("Could not parse intermediate questionnaire text on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
       };
 
       let paragraph = TreeNodeType::Paragraph { indent: detected_indent };
       doctree = doctree.push_data_and_focus(paragraph);
       for node in inline_nodes {
         doctree = doctree.push_data(node);
-
       }
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
