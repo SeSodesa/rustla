@@ -878,19 +878,29 @@ pub enum TreeNodeType {
   /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
   AplusPickOne {
 
+    // Needed by the parser
     body_indent: usize,
+    has_assignment_text: bool,
+    has_choices: bool,
+    has_hints: bool,
+
     points: QuizPoints,
     class: Option<String>,
-    required: Option<String>,
+    required: Option<()>,
     key: Option<String>,
-    dropdown: Option<String>,
+    dropdown: Option<()>,
   },
 
   /// See the documentation for the `quoestionnaire` directive:
   /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
   AplusPickAny {
 
+    // Needed by the parser
     body_indent: usize,
+    has_assignment_text: bool,
+    has_choices: bool,
+    has_hints: bool,
+
     points: QuizPoints,
     class: Option<String>,
     required: Option<String>,
@@ -905,7 +915,11 @@ pub enum TreeNodeType {
   /// https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
   AplusFreeText {
 
+    // Needed by the parser
     body_indent: usize,
+    has_assignment_text: bool,
+    has_model_answer: bool,
+    has_hints: bool,
 
     // Directive arguments
     points: QuizPoints,

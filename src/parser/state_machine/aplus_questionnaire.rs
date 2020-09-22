@@ -88,9 +88,9 @@ pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent
 
       match detected_directive_label.as_str() {
 
-        "pick-one" => parse_aplus_pick_one(src_lines, detected_first_indent, body_indent, empty_after_marker),
-        "pick-any" => parse_aplus_pick_any(src_lines, detected_first_indent, body_indent, empty_after_marker),
-        "freetext" => parse_aplus_freetext(src_lines, detected_first_indent, body_indent, empty_after_marker),
+        "pick-one" => Parser::parse_aplus_pick_one(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker),
+        "pick-any" => Parser::parse_aplus_pick_any(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker),
+        "freetext" => Parser::parse_aplus_freetext(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker),
         _ => {
           doctree = doctree.focus_on_parent();
           return TransitionResult::Success {
@@ -112,29 +112,4 @@ pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent
       }
     }
   }
-}
-
-/// ### aplus_pick_one
-///
-/// A `pick-one` type questionnaire question parser.
-pub fn parse_aplus_pick_one (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
-  todo!()
-}
-
-
-
-
-/// ### aplus_pick_any
-///
-/// A `pick-any` type questionnaire question parser.
-pub fn parse_aplus_pick_any (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
-  todo!()
-}
-
-
-/// ### aplus_freetext
-///
-/// A `freetext` type questionnaire question parser.
-pub fn parse_aplus_freetext (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
-  todo!()
 }

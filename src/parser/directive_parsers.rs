@@ -814,6 +814,75 @@ impl Parser {
   }
 
 
+  /// ### parse_aplus_pick_one
+  ///
+  /// A `pick-one` type questionnaire question parser.
+  pub fn parse_aplus_pick_one (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "class", "required", "key", "dropdown", 
+    ];
+
+    use common::QuizPoints;
+
+    let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+    } else {
+      panic!("No points provided for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (class, required, key, dropdown) = if let Some(mut options) = options {
+      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("Pick one -question received unknown options. ignoring those...");
+      }
+
+      let class = options.remove("class");
+      let required = options.remove("required");
+      let key = options.remove("key");
+      let dropdown = options.remove("dropdown");
+
+      (class, required, key, dropdown)
+
+    } else {
+      (None, None, None, None)
+    };
+
+    let pick_one_node = TreeNodeType::AplusPickOne {
+      body_indent: body_indent,
+      has_assignment_text: false,
+      has_choices: false,
+      has_hints: false,
+      class: class,
+      points: points,
+      required: if required.is_some() { Some(()) } else { None },
+      key: key,
+      dropdown: if dropdown.is_some() { Some(()) } else { None },
+    };
+
+    doctree = doctree.push_data_and_focus(pick_one_node);
+
+    todo!()
+  }
+
+
+  /// ### parse_aplus_pick_any
+  ///
+  /// A `pick-any` type questionnaire question parser.
+  pub fn parse_aplus_pick_any (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+    todo!()
+  }
+
+
+  /// ### parse_aplus_freetext
+  ///
+  /// A `freetext` type questionnaire question parser.
+  pub fn parse_aplus_freetext (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+    todo!()
+  }
+
+
   pub fn parse_aplus_submit () {
     todo!()
   }
