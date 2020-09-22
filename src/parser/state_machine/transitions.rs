@@ -832,5 +832,23 @@ const APLUS_PICK_ONE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-one::(?:[ ]+|$
 /// ### APLUS_PICK_ANY_PATTERN
 const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$)";
 
+/// ### APLUS_PICK_ONE_CHOICE_PATTERN
+/// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
+/// A `pick-any` question may have neutral options, which are marked with `?`.
+/// Neutral options are always counted as correct, whether the student selected them or not.
+/// Initially selected options may be set with `+`.
+/// The initially selected options are pre-selected when the exercise is loaded.
+/// The `+` character is written before `*` or `?` if they are combined.
+const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
+
+/// ### APLUS_PICK_ANY_CHOICE_PATTERN
+/// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
+/// A `pick-any` question may have neutral options, which are marked with `?`.
+/// Neutral options are always counted as correct, whether the student selected them or not.
+/// Initially selected options may be set with `+`.
+/// The initially selected options are pre-selected when the exercise is loaded.
+/// The `+` character is written before `*` or `?` if they are combined.
+const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<neutral>\?)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
+
 /// ### APLUS_FREETEXT_PATTERN
 const APLUS_FREETEXT_PATTERN: &'static str = r"^(\s*)\.\.[ ]+freetext::(?:[ ]+|$)";
