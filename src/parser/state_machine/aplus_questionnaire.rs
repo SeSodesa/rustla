@@ -30,7 +30,7 @@ pub fn aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, se
         panic!("Error when reading intermediate text in A+ questionnaire on line {}. Computer says no...", line_cursor.sum_total())
       };
 
-      let mut inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
+      let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
         _ => panic!("Cound not parse intermediate questionnaire text on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
       };
