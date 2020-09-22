@@ -863,7 +863,12 @@ impl Parser {
 
     doctree = doctree.push_data_and_focus(pick_one_node);
 
-    todo!()
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::AplusPickOne]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
 
