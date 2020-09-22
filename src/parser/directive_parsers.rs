@@ -881,6 +881,14 @@ impl Parser {
       "class", "required", "key", "partial-points",  "randomized", "correct-count", "preserve-questions-between-attempts",
     ];
 
+    use common::QuizPoints;
+
+    let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+    } else {
+      panic!("No points provided for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
     todo!()
   }
 
@@ -893,6 +901,15 @@ impl Parser {
     const RECOGNIZED_OPTIONS: &[&str] = &[
       "class", "required", "key", "length",  "height",
     ];
+
+    use common::QuizPoints;
+
+    let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+    } else {
+      panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
     todo!()
   }
 
