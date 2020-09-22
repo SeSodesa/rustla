@@ -11,6 +11,7 @@
 // Submodules for namespacing transition functions
 // ===============================================
 mod aplus;
+mod aplus_questionnaire;
 mod block_quote;
 mod body;
 mod bullet_list;
