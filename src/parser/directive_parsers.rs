@@ -889,6 +889,27 @@ impl Parser {
       panic!("No points provided for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
     };
 
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts) = if let Some(mut options) = options {
+      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("Pick one -question received unknown options. ignoring those...");
+      }
+
+      let class = options.remove("class");
+      let required = options.remove("required");
+      let key = options.remove("key");
+      let partial_points = options.remove("partial-points");
+      let randomized = options.remove("randomized");
+      let correct_count = options.remove("correct-count");
+      let preserve_questions_between_attempts = options.remove("preserve-questions-between-attempts");
+      
+      (class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts)
+
+    } else {
+      (None, None, None, None, None, None, None)
+    };
+
     todo!()
   }
 
@@ -908,6 +929,25 @@ impl Parser {
       if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
     } else {
       panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (class, required, key, length, height) = if let Some(mut options) = options {
+      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("A freetext-question received unknown options before line {}. Ignoring those...", line_cursor.sum_total());
+      }
+
+      let class = options.remove("class");
+      let required = options.remove("required");
+      let key = options.remove("key");
+      let length = options.remove("length");
+      let height = options.remove("height");
+      
+      (class, required, key, length, height)
+
+    } else {
+      (None, None, None, None, None)
     };
 
     todo!()
