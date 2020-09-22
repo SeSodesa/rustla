@@ -10,7 +10,7 @@ use super::*;
 
 /// ### text
 /// A transition function for parsing definition list items.
-pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count();

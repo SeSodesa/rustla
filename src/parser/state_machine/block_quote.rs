@@ -6,12 +6,12 @@ use super::*;
 /// ### attribution
 /// A function that generates attribution nodes inside a block quote.
 /// An attribution ends block quotes, so encoutnering one makes the parser focus on its parent.
-pub fn attribution (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
-  let match_len = captures.get(0).unwrap().as_str().chars().count() + *base_indent;
-  let attribution_line_indent = captures.get(1).unwrap().as_str().chars().count() + *base_indent;
+  let match_len = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+  let attribution_line_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
 
   match Parser::parent_indent_matches(doctree.shared_data(), attribution_line_indent) {

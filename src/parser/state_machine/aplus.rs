@@ -9,7 +9,7 @@ use super::*;
 
 
 /// ### aplus_col_break
-pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
 
   let mut doctree = doctree.unwrap();
 

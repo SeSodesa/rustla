@@ -89,7 +89,7 @@ impl Parser {
 
 
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, &base_indent, line_cursor, content_indent, Some(first_line_indent), StateMachine::Admonition, &mut section_level, false) {
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, content_indent, Some(first_line_indent), StateMachine::Admonition, &mut section_level, false) {
       Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
       None => return TransitionResult::Failure {message: format!("Looks like {} admonition on line {:#?} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total())}
     };

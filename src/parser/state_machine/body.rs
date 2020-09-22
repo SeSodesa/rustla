@@ -12,7 +12,7 @@ use super::*;
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
-pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -69,7 +69,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
-pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -136,7 +136,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: &usize, section_level: 
 
 /// ### field_marker
 /// A transitioin function for handling detected field markers in a state that generates body type nodes.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -183,7 +183,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: &usize, section_level
 
 /// ### footnote
 /// A transition function for generating footnotes
-pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -274,7 +274,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
 /// ### citation
 /// A transition function for generating citations
-pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -350,7 +350,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: &usize, section_level: &m
 
 /// ### hyperlink_target
 /// Parses a hyperlink target into a node.
-pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   use crate::common::normalize_refname;
 
@@ -491,13 +491,13 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: &usize, section_l
 
 /// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
-pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   use crate::doctree::directives::DirectiveNode;
 
   let mut doctree = doctree.unwrap();
 
-  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + *base_indent;
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
   let detected_first_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
@@ -511,7 +511,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   };
 
   let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-    Some((indent, offset)) => (indent + *base_indent, offset),
+    Some((indent, offset)) => (indent + base_indent, offset),
     None => (detected_first_indent, 0) // EOF encountered => stay on same line
   };
 
@@ -522,7 +522,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
         "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
   
-          Parser::parse_standard_admonition(src_lines, *base_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
+          Parser::parse_standard_admonition(src_lines, base_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
         }
   
         "admonition" => {
@@ -537,7 +537,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "figure" => {
   
-          Parser::parse_figure(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
+          Parser::parse_figure(src_lines, doctree, line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
   
         "topic" => {
@@ -563,12 +563,12 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "code" => {
   
-          Parser::parse_code(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
+          Parser::parse_code(src_lines, doctree, line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
   
   
         "math" => {
-          Parser::parse_math_block(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, *section_level)
+          Parser::parse_math_block(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, *section_level)
         }
   
         "rubric" => {
@@ -754,7 +754,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
         }
 
         "only" => {
-          Parser::parse_sphinx_only(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
+          Parser::parse_sphinx_only(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
         }
 
         "tabularcolumns" => {
@@ -795,7 +795,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
   
         "point-of-interest" => {
   
-          Parser::parse_aplus_point_of_interest(src_lines, doctree, line_cursor, *base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
+          Parser::parse_aplus_point_of_interest(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
         }
   
         "annotated" => {
@@ -882,7 +882,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: &usize, section_level: &
 
 /// ### comment
 /// A function for parsing reST comments.
-pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -971,7 +971,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: &usize, section_level: &mu
 /// A function that handles the parsing of blocks that start with text.
 /// This includes paragraphs, but also underlined titles.
 /// These are detected via line lookahead.
-pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -1105,7 +1105,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut u
 
 /// ### literal_block
 /// A function for parsing indented literal block nodes.
-pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -1227,7 +1227,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: &usize, section_leve
 
 
 /// ### line
-pub fn line (src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -1580,7 +1580,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
 /// ### parse_paragraph
 /// A helper for parsing a paragraph node.
-fn parse_paragraph (src_lines: &Vec<String>, base_indent: &usize, line_cursor: &mut LineCursor, mut doctree: DocTree, detected_indent: usize) -> TransitionResult {
+fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &mut LineCursor, mut doctree: DocTree, detected_indent: usize) -> TransitionResult {
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
 

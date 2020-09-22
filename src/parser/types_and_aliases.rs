@@ -21,7 +21,7 @@ use super::{*};
 /// If the optional next state is *not* `None`, the current state is either replaced with the new state or
 /// the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
-pub type TransitionMethod = fn(src_lines: &Vec<String>, base_indent: &usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> TransitionResult;
+pub type TransitionMethod = fn(src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, next_state: &PatternName) -> TransitionResult;
 
 /// ### Transition
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`

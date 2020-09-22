@@ -227,7 +227,7 @@ impl Parser {
 
           let line_before_transition = self.line_cursor.sum_total();
 
-          self.doctree = match method(&self.src_lines, &self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
+          self.doctree = match method(&self.src_lines, self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
 
             TransitionResult::Success{doctree, next_states, push_or_pop, line_advance} => {
 
@@ -517,7 +517,7 @@ impl Parser {
   /// ### parse_first_node_block
   /// Parses the first block of a node, in case it contains body level nodes
   /// right after a marker such as an enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: &usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize, force_alignment: bool) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize, force_alignment: bool) -> Option<(DocTree, usize, Vec<StateMachine>)> {
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
