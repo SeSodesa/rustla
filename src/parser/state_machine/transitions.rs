@@ -848,7 +848,7 @@ const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)
 /// Initially selected options may be set with `+`.
 /// The initially selected options are pre-selected when the exercise is loaded.
 /// The `+` character is written before `*` or `?` if they are combined.
-const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<neutral>\?)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
+const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?:(?P<neutral>\?)|(?P<correct>\*))?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
 
 /// ### APLUS_FREETEXT_PATTERN
 const APLUS_FREETEXT_PATTERN: &'static str = r"^(\s*)\.\.[ ]+freetext::(?:[ ]+|$)";
