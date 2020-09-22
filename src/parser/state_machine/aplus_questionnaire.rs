@@ -11,7 +11,7 @@ use super::*;
 /// ### aplus_questionnaire_text
 ///
 /// A function for reading in blocks of intermediate text (rST paragraphs) between questionnaire questions.
-pub fn aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
 
   let mut doctree = doctree.unwrap();
 
@@ -60,18 +60,74 @@ pub fn aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, se
   }
 }
 
+
+pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+
+  let mut doctree = doctree.unwrap();
+
+  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
+  let detected_first_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+
+  let empty_after_marker: bool = {
+    let line = src_lines.get(line_cursor.relative_offset()).unwrap(); // Unwrapping is not a problem here.
+
+    match line.char_indices().nth(detected_first_indent) {
+      Some((index, _)) => line[index..].trim().is_empty(),
+      None => true
+    }
+  };
+
+  let (body_indent, body_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+    Some((indent, offset)) => (indent + base_indent, offset),
+    None => (detected_first_indent, 0) // EOF encountered => stay on same line
+  };
+
+  match Parser::parent_indent_matches(doctree.shared_data(), detected_marker_indent) {
+    IndentationMatch::JustRight => {
+
+      match detected_directive_label.as_str() {
+
+        "pick-one" => parse_aplus_pick_one(src_lines, detected_first_indent, body_indent, empty_after_marker),
+        "pick-any" => parse_aplus_pick_any(src_lines, detected_first_indent, body_indent, empty_after_marker),
+        "freetext" => parse_aplus_freetext(src_lines, detected_first_indent, body_indent, empty_after_marker),
+        _ => {
+          doctree = doctree.focus_on_parent();
+          return TransitionResult::Success {
+            doctree: doctree,
+            next_states: None,
+            push_or_pop: PushOrPop::Pop,
+            line_advance: LineAdvance::None,
+          }
+        }
+      }
+    }
+    _ => {
+      doctree = doctree.focus_on_parent();
+      return TransitionResult::Success {
+        doctree: doctree,
+        next_states: None,
+        push_or_pop: PushOrPop::Pop,
+        line_advance: LineAdvance::None,
+      }
+    }
+  }
+}
+
 /// ### aplus_pick_one
 ///
 /// A `pick-one` type questionnaire question parser.
-pub fn aplus_pick_one (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn parse_aplus_pick_one (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
   todo!()
 }
+
+
 
 
 /// ### aplus_pick_any
 ///
 /// A `pick-any` type questionnaire question parser.
-pub fn aplus_pick_any (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn parse_aplus_pick_any (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
   todo!()
 }
 
@@ -79,6 +135,6 @@ pub fn aplus_pick_any (src_lines: &Vec<String>, base_indent: usize, section_leve
 /// ### aplus_freetext
 ///
 /// A `freetext` type questionnaire question parser.
-pub fn aplus_freetext (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn parse_aplus_freetext (src_lines: &Vec<String>, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
   todo!()
 }

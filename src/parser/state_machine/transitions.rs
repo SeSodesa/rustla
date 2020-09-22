@@ -399,9 +399,9 @@ impl StateMachine {
 
 
   pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::AplusPickOne, APLUS_PICK_ONE_PATTERN, aplus_questionnaire::aplus_pick_one),
-    (PatternName::AplusPickOne, APLUS_PICK_ANY_PATTERN, aplus_questionnaire::aplus_pick_any),
-    (PatternName::AplusPickOne, APLUS_FREETEXT_PATTERN, aplus_questionnaire::aplus_freetext),
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::AplusPickOne, APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_directive),
+    (PatternName::Text, TEXT_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_text)
   ];
 
 
@@ -827,7 +827,7 @@ const APLUS_COL_BREAK_PATTERN: &str = r#"^(\s+)::newcol"#;
 
 
 /// ### APLUS_PICK_ONE_PATTERN
-const APLUS_PICK_ONE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-one::(?:[ ]+|$)";
+const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+(pick-one|pick-any|freetext)::(?:[ ]+|$)";
 
 /// ### APLUS_PICK_ANY_PATTERN
 const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$)";
