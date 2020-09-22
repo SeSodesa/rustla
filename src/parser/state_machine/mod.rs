@@ -32,7 +32,6 @@ use lazy_static::lazy_static;
 
 use super::*;
 use crate::common::{EnumDelims, EnumKind, HyperlinkTargetKind, NodeId, EnumAsInt};
-//use transitions::{TRANSITION_MAP, COMPILED_INLINE_TRANSITIONS, UncompiledTransition,  *};
 use crate::doctree::{self};
 
 
@@ -67,6 +66,12 @@ pub enum StateMachine {
   /// 2. `pick-any` and
   /// 3. `freetext`
   AplusQuestionnaire,
+
+  AplusPickOne,
+
+  AplusPickAny,
+
+  AplusFreetext,
 
   /// #### Body
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
