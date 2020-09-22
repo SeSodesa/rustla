@@ -67,11 +67,17 @@ pub enum StateMachine {
   /// 3. `freetext`
   AplusQuestionnaire,
 
+  /// #### AplusPickOne
+  ///
+  /// A state for detecting choices and assignments inside a A+ questionnaire
+  /// subdirective `pick-one`.
   AplusPickOne,
 
+  /// #### AplusPickAny
+  ///
+  /// A state for detecting choices and assignments inside a A+ questionnaire
+  /// subdirective `pick-any`.
   AplusPickAny,
-
-  AplusFreetext,
 
   /// #### Body
   /// A state for recognizing body elements such as lists or footnotes when focused on document root.
@@ -204,7 +210,6 @@ impl StateMachine {
       | StateMachine::Citation
       | Self::Admonition
       | Self::Figure            => Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap()),
-      StateMachine::AplusQuestionnaire => Ok(TRANSITION_MAP.get(self).unwrap()),
       _                                => Ok(TRANSITION_MAP.get(self).unwrap()),
     }
   }
