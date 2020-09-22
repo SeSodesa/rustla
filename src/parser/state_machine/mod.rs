@@ -203,12 +203,9 @@ impl StateMachine {
       | StateMachine::Footnote
       | StateMachine::Citation
       | Self::Admonition
-      | Self::Figure => {
-        Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap())
-      }
-      _ => {
-        Ok(TRANSITION_MAP.get(self).unwrap())
-      }
+      | Self::Figure            => Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap()),
+      StateMachine::AplusQuestionnaire => Ok(TRANSITION_MAP.get(self).unwrap()),
+      _                                => Ok(TRANSITION_MAP.get(self).unwrap()),
     }
   }
 }
