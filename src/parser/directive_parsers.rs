@@ -910,7 +910,35 @@ impl Parser {
       (None, None, None, None, None, None, None)
     };
 
-    todo!()
+    let pick_any_node = TreeNodeType::AplusPickAny {
+      body_indent: body_indent,
+      has_assignment_text: false,
+      has_choices: false,
+      has_hints: false,
+      points: points,
+      class: class,
+      required: if required.is_some() { true } else { false },
+      key: key,
+      partial_points: if partial_points.is_some() { true } else { false },
+      randomized: if randomized.is_some() && correct_count.is_some() { true } else { false },
+      correct_count: if randomized.is_some() && correct_count.is_some() {
+        if let Ok(result) = correct_count.unwrap().parse() {
+          Some(result)
+        } else {
+          panic!("No correct count provided for pick-any on line {} with randomization activated. Computer says no...", line_cursor.sum_total())
+        }
+      } else { None },
+      preserve_questions_between_attempts: if preserve_questions_between_attempts.is_some() { true }  else { false }
+    };
+    
+    doctree = doctree.push_data_and_focus(pick_any_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::AplusPickAny]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
 
@@ -925,8 +953,22 @@ impl Parser {
 
     use common::QuizPoints;
 
-    let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+    let (points, method_string) = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+
+      let mut arg_iter = arg.split_whitespace();
+      let points_string: Option<&str> = arg_iter.next();
+      let method_str = arg_iter.next();
+
+      let points: QuizPoints = if let Some(string) = points_string {
+        if let Ok(result) = string.parse() { result } else {
+          panic!("Quiz freetext question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total())
+        }
+      } else {
+        panic!("No points found for freetext on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      let method_string = if let Some(string) = method_str { string.to_string() } else { String::new() };
+
+      (points, method_string)
     } else {
       panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
     };
@@ -950,7 +992,28 @@ impl Parser {
       (None, None, None, None, None)
     };
 
-    todo!()
+    let freetext_node = TreeNodeType::AplusFreeText {
+      body_indent: body_indent,
+      has_assignment_text: false,
+      has_model_answer: false,
+      has_hints: false,
+      points: points,
+      compare_method: method_string,
+      class: class,
+      required: required,
+      key: key,
+      length: length,
+      height: height,
+    };
+
+    doctree = doctree.push_data_and_focus(freetext_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::AplusPickAny]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1)
+    }
   }
 
 

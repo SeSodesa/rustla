@@ -903,12 +903,12 @@ pub enum TreeNodeType {
 
     points: QuizPoints,
     class: Option<String>,
-    required: Option<String>,
+    required: bool,
     key: Option<String>,
-    partial_points: Option<String>,
-    randomized: Option<String>,
-    correct_count: Option<String>,
-    preserve_questions_between_attempts: Option<String>,
+    partial_points: bool,
+    randomized: bool,
+    correct_count: Option<u32>,
+    preserve_questions_between_attempts: bool,
   },
 
   /// See the documentation for the `quoestionnaire` directive:
