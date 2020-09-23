@@ -955,7 +955,7 @@ pub enum TreeNodeType {
   AplusPickChoice {
     is_correct: bool,
     is_pre_selected: bool,
-    is_neutral: bool,
+    is_neutral: bool, // Only set with pick-any nodes
   },
 
   /// #### AplusFreeTextModel
