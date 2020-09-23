@@ -833,13 +833,14 @@ impl Parser {
     /// The initially selected options are pre-selected when the exercise is loaded.
     /// The `+` character is written before `*` or `?` if they are combined.
     const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
-    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+§[ ]+(?P<hint>.+)";
 
     use regex::{Regex, Captures};
     use lazy_static;
 
     lazy_static::lazy_static! {
       static ref CHOICE_RE: Regex = Regex::new(APLUS_PICK_ONE_CHOICE_PATTERN).unwrap();
+      static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
     }
 
     // Parsing the directive arguments
@@ -974,11 +975,59 @@ impl Parser {
       panic!("Found no choices for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
     }
 
+    // Read possible hints inside the answers environment
+
+    loop {
+      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        line
+      } else {
+        panic!("Tried scanning pick-one question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+      };
+
+      let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
+
+      if indent != body_indent { break }
+
+      let captures = if let Some(capts) = HINT_RE.captures(current_line) { capts } else { break };
+
+      let show_not_answered = captures.name("show_not_answered");
+      let enumerator = match captures.name("enumerator") {
+        Some(enumerator) => enumerator.as_str().to_string(),
+        None => panic!("No enumerator for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
+        panic!("No hint text for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint.is_empty() {
+        panic!("Empty  hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint_nodes.is_empty() {
+        panic!("No inline nodes found for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_node = TreeNodeType::AplusQuestionnaireHint {
+        label: enumerator,
+        show_anyways: show_not_answered.is_some()
+      };
+
+      doctree = doctree.push_data_and_focus(hint_node);
+      for node in hint_nodes {
+        doctree = doctree.push_data(node);
+      }
+      doctree = doctree.focus_on_parent();
+
+      line_cursor.increment_by(1);
+
+    }
+
     doctree = doctree.focus_on_parent();
-
-    // Read possible hints
-
-    todo!();
 
     // Return with modified doctree
 
