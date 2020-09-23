@@ -939,25 +939,33 @@ impl Parser {
 
       let pre_selected = captures.name("pre_selected");
       let correct = captures.name("correct");
-      let enumerator = captures.name("enumerator");
+      let enumerator = if let Some(capt) = captures.name("enumerator") {
+        capt.as_str().chars().next().unwrap()
+      } else {
+        panic!("Found pick-one answer but no enumerator on line {}. Computer says no...", line_cursor.sum_total())
+      };
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
+
+      if answer.trim().is_empty() {
+        panic!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total())
+      }
 
       let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
         _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
       };
 
-      if answer_nodes.is_empty() {
-        panic!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total())
-      }
-
       let choice_node = TreeNodeType::AplusPickChoice {
         is_pre_selected: pre_selected.is_some(),
         is_correct: correct.is_some(),
-        is_neutral: false
+        is_neutral: false // pick-one nodes don't have this set
       };
 
-      doctree = doctree.push_data(choice_node);
+      doctree = doctree.push_data_and_focus(choice_node);
+
+      for node in answer_nodes { doctree = doctree.push_data(node); }
+
+      doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
     }
