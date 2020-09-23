@@ -958,6 +958,13 @@ pub enum TreeNodeType {
     is_neutral: bool, // Only set with pick-any nodes
   },
 
+  /// #### AplusChoiceHint
+  /// A hint for questionnaire pick-{one, any} and freetext questions.
+  AplusQuestionnaireHint {
+    label: String,
+    show_anyways: bool,
+  },
+
   /// #### AplusFreeTextModel
   ///
   /// The model answer for an A+ free text question.
@@ -1102,6 +1109,7 @@ impl TreeNodeType {
       Self::AplusPickChoices { body_indent, .. } => Some(*body_indent),
       Self::AplusPickChoice { .. } => None,
       Self::AplusFreeTextModel { .. } => None,
+      Self::AplusQuestionnaireHint { .. } => None,
     }
   }
 
@@ -1234,6 +1242,7 @@ impl TreeNodeType {
       Self::AplusPickChoices { body_indent, .. } => &APLUS_PICK_CHOICES_CATEGORIES,
       Self::AplusPickChoice { .. } => &APLUS_PICK_CHOICE_CATEGORIES,
       Self::AplusFreeTextModel { .. } => &APLUS_FREE_TEXT_MODEL_CATEGORIES,
+      Self::AplusQuestionnaireHint { .. } => & APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
     };
 
     categories.iter()

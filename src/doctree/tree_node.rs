@@ -287,8 +287,13 @@ impl TreeNode {
         TreeNodeType::AplusPickChoice { .. } => true,
         _ => false,
       },
-      TreeNodeType::AplusPickChoice { .. } => false,
+      TreeNodeType::AplusPickChoice { .. } => {
+        if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
+      },
       TreeNodeType::AplusFreeTextModel { .. } => false,
+      TreeNodeType::AplusQuestionnaireHint { .. } => {
+        if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
+      }
     }
   }
 
