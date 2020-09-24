@@ -407,7 +407,7 @@ impl TreeNodeType {
       Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
       Self::AplusPickChoice { is_correct, is_pre_selected, is_neutral } => "\\item ".to_string(),
       Self::AplusQuestionnaireHints { .. } => "\\begin{hints}\n".to_string(),
-      Self::AplusQuestionnaireHint { label, show_anyways } => "\n".to_string(),
+      Self::AplusQuestionnaireHint { label, show_when_not_selected } => "\n".to_string(),
       Self::AplusFreeTextModel { model_answer } => "\n".to_string(),
     };
 

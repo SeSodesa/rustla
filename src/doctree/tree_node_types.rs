@@ -894,9 +894,6 @@ pub enum TreeNodeType {
 
     // Needed by the parser
     body_indent: usize,
-    has_assignment_text: bool,
-    has_choices: bool,
-    has_hints: bool,
 
     points: QuizPoints,
     class: Option<String>,
@@ -914,9 +911,6 @@ pub enum TreeNodeType {
 
     // Needed by the parser
     body_indent: usize,
-    has_assignment_text: bool,
-    has_model_answer: bool,
-    has_hints: bool,
 
     // Directive arguments
     points: QuizPoints,
@@ -961,7 +955,7 @@ pub enum TreeNodeType {
   /// A hint for questionnaire pick-{one, any} and freetext questions.
   AplusQuestionnaireHint {
     label: String,
-    show_anyways: bool,
+    show_when_not_selected: bool,
   },
 
   /// #### AplusFreeTextModel

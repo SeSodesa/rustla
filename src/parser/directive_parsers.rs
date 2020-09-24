@@ -1021,7 +1021,7 @@ impl Parser {
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
         label: enumerator,
-        show_anyways: show_not_answered.is_some()
+        show_when_not_selected: show_not_answered.is_some()
       };
 
       doctree = doctree.push_data_and_focus(hint_node);
@@ -1098,9 +1098,6 @@ impl Parser {
 
     let pick_any_node = TreeNodeType::AplusPickAny {
       body_indent: body_indent,
-      has_assignment_text: false,
-      has_choices: false,
-      has_hints: false,
       points: points,
       class: class,
       required: if required.is_some() { true } else { false },
@@ -1226,7 +1223,7 @@ impl Parser {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
         line
       } else {
-        break//panic!("Tried scanning pick-any question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+        break
       };
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
@@ -1250,16 +1247,16 @@ impl Parser {
 
       let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => panic!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
       };
 
       if hint_nodes.is_empty() {
-        panic!("No inline nodes found for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+        panic!("No inline nodes found for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
         label: enumerator,
-        show_anyways: show_not_answered.is_some()
+        show_when_not_selected: show_not_answered.is_some()
       };
 
       doctree = doctree.push_data_and_focus(hint_node);
@@ -1312,6 +1309,7 @@ impl Parser {
       let method_string = if let Some(string) = method_str { string.to_string() } else { String::new() };
 
       (points, method_string)
+
     } else {
       panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
     };
@@ -1337,9 +1335,6 @@ impl Parser {
 
     let freetext_node = TreeNodeType::AplusFreeText {
       body_indent: body_indent,
-      has_assignment_text: false,
-      has_model_answer: false,
-      has_hints: false,
       points: points,
       compare_method: method_string,
       class: class,
@@ -1351,11 +1346,125 @@ impl Parser {
 
     doctree = doctree.push_data_and_focus(freetext_node);
 
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    // Read in assignment
+
+    let assignment_inline_nodes: Vec<TreeNodeType> =  {
+      let (block_lines, offset) = Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)).expect(
+          format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()).
+          as_str()
+        );
+      let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      
+      line_cursor.increment_by(1);
+
+      inline_nodes
+    };
+
+    // Add assignment node (paragraph) to tree
+
+    let assignment_node = TreeNodeType::Paragraph { indent: body_indent };
+    doctree = doctree.push_data_and_focus(assignment_node);
+    for node in assignment_inline_nodes {
+      doctree = doctree.push_data(node);
+    }
+    doctree = doctree.focus_on_parent();
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    // Read in model answer
+
+    if let Some(answer) = src_lines.get(line_cursor.relative_offset()) {
+
+      let indent = answer.chars().take_while(|c| c.is_whitespace()).count();
+      if indent != body_indent {
+        panic!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let model_answer = TreeNodeType::AplusFreeTextModel {
+        model_answer: answer.trim().to_string()
+      };
+
+      doctree = doctree.push_data(model_answer);
+
+      line_cursor.increment_by(1);
+
+    } else {
+      panic!("Tried scanning freetext question for correct answer but encountered end of input on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    // Read possible hints
+
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>.+)[ ]*§[ ]*(?P<hint>.+)";
+    lazy_static::lazy_static! {
+      static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
+    }
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    doctree = doctree.push_data_and_focus(TreeNodeType::AplusQuestionnaireHints{ body_indent: body_indent });
+
+    loop {
+      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        line
+      } else {
+        break
+      };
+
+      let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
+
+      if indent != body_indent { break }
+
+      let captures = if let Some(capts) = HINT_RE.captures(current_line) { capts } else { break };
+
+      let show_not_answered = captures.name("show_not_answered");
+      let label = match captures.name("label") {
+        Some(label) => label.as_str().trim().to_string(),
+        None => panic!("No text for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
+        panic!("No hint text for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint.is_empty() {
+        panic!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse freetext hint on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint_nodes.is_empty() {
+        panic!("No inline nodes found for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_node = TreeNodeType::AplusQuestionnaireHint {
+        label: label,
+        show_when_not_selected: show_not_answered.is_some()
+      };
+
+      doctree = doctree.push_data_and_focus(hint_node);
+      for node in hint_nodes { doctree = doctree.push_data(node); }
+      doctree = doctree.focus_on_parent();
+
+      line_cursor.increment_by(1);
+    }
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    doctree = doctree.focus_on_parent(); // Focus on pick-one
+    doctree = doctree.focus_on_parent(); // Focus on questionnaire
+
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::AplusPickAny]),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1)
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::None
     }
   }
 

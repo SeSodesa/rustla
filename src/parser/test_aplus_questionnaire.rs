@@ -63,6 +63,23 @@ fn aplus_questionnaire_01 () {
     d. this is the **fourth**
     ?e. choosing this does not affect the granted points
 
+  .. freetext:: 30 string-ignorews-ignorequotes-requirecase
+    :length: 10
+
+    A textual input can be compared with the model solution as integer, float or string.
+    Here the correct answer is "test". Surrounding quotes are ignored in the solution
+    as well as whitespace everywhere (modifiers ignorequotes and ignorews).
+
+    test
+    !test § Follow the instruction.
+    regexp:Test|TEST § Use the lower case!
+
+  .. freetext:: 10 regexp
+
+    This question accepts either "red" or "blue" as the correct answer.
+    The model solution is a regular expression.
+  
+    red|blue
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -75,21 +92,3 @@ fn aplus_questionnaire_01 () {
 
   todo!()
 }
-
-// .. freetext:: 30 string-ignorews-ignorequotes-requirecase
-// :length: 10
-
-// A textual input can be compared with the model solution as integer, float or string.
-// Here the correct answer is "test". Surrounding quotes are ignored in the solution
-// as well as whitespace everywhere (modifiers ignorequotes and ignorews).
-
-// test
-// !test § Follow the instruction.
-// regexp:Test|TEST § Use the lower case!
-
-// .. freetext:: 10 regexp
-
-// This question accepts either "red" or "blue" as the correct answer.
-// The model solution is a regular expression.
-
-// red|blue

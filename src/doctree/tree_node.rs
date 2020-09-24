@@ -276,7 +276,7 @@ impl TreeNode {
         _ => false
       }
       TreeNodeType::AplusFreeText { .. } => match node_data {
-        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } | TreeNodeType::AplusQuestionnaireHints { .. } | TreeNodeType::AplusFreeTextModel { .. } => true,
         _ => false
       }
       TreeNodeType::AplusPickChoices { .. } => match node_data{
