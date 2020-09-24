@@ -920,6 +920,8 @@ pub enum TreeNodeType {
     /// , `ignorews`, `ignorequotes`, `requirecase`, `ignorerepl` and `ignoreparenthesis` available.
     compare_method: String,
 
+    model_answer: String,
+
     // Directive options
     class: Option<String>,
     required: Option<String>,
@@ -956,13 +958,6 @@ pub enum TreeNodeType {
   AplusQuestionnaireHint {
     label: String,
     show_when_not_selected: bool,
-  },
-
-  /// #### AplusFreeTextModel
-  ///
-  /// The model answer for an A+ free text question.
-  AplusFreeTextModel {
-    model_answer: String,
   },
 }
 
@@ -1100,7 +1095,6 @@ impl TreeNodeType {
       Self::AplusFreeText { body_indent, .. } => Some(*body_indent),
       Self::AplusPickChoices { body_indent, .. } => Some(*body_indent),
       Self::AplusPickChoice { .. } => None,
-      Self::AplusFreeTextModel { .. } => None,
       Self::AplusQuestionnaireHints { body_indent } => Some(*body_indent),
       Self::AplusQuestionnaireHint { .. } => None,
     }
@@ -1233,7 +1227,6 @@ impl TreeNodeType {
       Self::AplusFreeText { .. } => &APLUS_FREETEXT_CATEGORIES,
       Self::AplusPickChoices { body_indent, .. } => &APLUS_PICK_CHOICES_CATEGORIES,
       Self::AplusPickChoice { .. } => &APLUS_PICK_CHOICE_CATEGORIES,
-      Self::AplusFreeTextModel { .. } => &APLUS_FREE_TEXT_MODEL_CATEGORIES,
       Self::AplusQuestionnaireHints { .. } => &APLUS_QUESTIONNAIRE_HINTS_CATEGORIES,
       Self::AplusQuestionnaireHint { .. } => & APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
     };

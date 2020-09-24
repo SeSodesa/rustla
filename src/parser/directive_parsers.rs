@@ -1337,6 +1337,7 @@ impl Parser {
       body_indent: body_indent,
       points: points,
       compare_method: method_string,
+      model_answer: String::new(),
       class: class,
       required: required,
       key: key,
@@ -1385,11 +1386,11 @@ impl Parser {
         panic!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total())
       }
 
-      let model_answer = TreeNodeType::AplusFreeTextModel {
-        model_answer: answer.trim().to_string()
-      };
-
-      doctree = doctree.push_data(model_answer);
+      if let TreeNodeType::AplusFreeText { model_answer, .. } = doctree.mut_node_data() {
+        model_answer.push_str(answer.trim());
+      } else {
+        panic!("Not focused on A+ freetext node when reading its model answer on line {}? Computer says no...", line_cursor.sum_total())
+      }
 
       line_cursor.increment_by(1);
 

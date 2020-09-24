@@ -400,15 +400,25 @@ impl TreeNodeType {
         format!("\\begin{{poi}}{}{{{}}}\n\n", option_string, title)
       },
       Self::AplusColBreak => "\\newcol\n\n".to_string(),
-      Self::AplusQuestionnaire { max_points, key, points_from_children, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => todo!(),
-      Self::AplusPickOne { points, class, required, key, dropdown, .. } => "\\begin{pick}{one}\n".to_string(),
-      Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => "\\begin{pick}{any}\n".to_string(),
+      Self::AplusQuestionnaire { max_points, key, points_from_children, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => {
+
+        let key = if key.is_empty() { String::new() } else {
+          format!("{{{}}}", key)
+        };
+
+        format!("\\begin{{quiz}}{}{{{}}}\n", key, *max_points)
+      },
+      Self::AplusPickOne { points, class, required, key, dropdown, .. } => {
+        format!("\\begin{{pick}}{{one}}{{{}}}{{}}\n", points.to_string(), )
+      }
+      Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => {
+        "\\begin{pick}{any}\n".to_string()
+      },
       Self::AplusFreeText { points, compare_method, required, class, key, length, height, .. } => "\\begin{freetext}\n".to_string(),
       Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
       Self::AplusPickChoice { is_correct, is_pre_selected, is_neutral } => "\\item ".to_string(),
       Self::AplusQuestionnaireHints { .. } => "\\begin{hints}\n".to_string(),
       Self::AplusQuestionnaireHint { label, show_when_not_selected } => "\n".to_string(),
-      Self::AplusFreeTextModel { model_answer } => "\n".to_string(),
     };
 
     use std::io::Write;
@@ -547,7 +557,6 @@ impl TreeNodeType {
       Self::AplusPickChoice { .. } => "\n".to_string(),
       Self::AplusQuestionnaireHints { .. } => "\\end{hints}\n\n".to_string(),
       Self::AplusQuestionnaireHint { .. } => "}\n".to_string(),
-      Self::AplusFreeTextModel { .. } => "\n".to_string(),
     };
 
     use std::io::Write;

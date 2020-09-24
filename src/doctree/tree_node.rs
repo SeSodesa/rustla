@@ -276,7 +276,7 @@ impl TreeNode {
         _ => false
       }
       TreeNodeType::AplusFreeText { .. } => match node_data {
-        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } | TreeNodeType::AplusQuestionnaireHints { .. } | TreeNodeType::AplusFreeTextModel { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } | TreeNodeType::AplusQuestionnaireHints { .. } => true,
         _ => false
       }
       TreeNodeType::AplusPickChoices { .. } => match node_data{
@@ -286,7 +286,6 @@ impl TreeNode {
       TreeNodeType::AplusPickChoice { .. } => {
         if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
       },
-      TreeNodeType::AplusFreeTextModel { .. } => false,
       TreeNodeType::AplusQuestionnaireHints { .. } => match node_data {
         TreeNodeType::AplusQuestionnaireHint { .. } => true,
         _ => false
