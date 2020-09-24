@@ -560,6 +560,10 @@ pub const APLUS_FREE_TEXT_MODEL_CATEGORIES: &[NodeCategory] = &[
 
 ];
 
+pub const APLUS_QUESTIONNAIRE_HINTS_CATEGORIES: &[NodeCategory] = &[
+
+];
+
 pub const APLUS_QUESTIONNAIRE_HINT_CATEGORIES: &[NodeCategory] = &[
 
 ];

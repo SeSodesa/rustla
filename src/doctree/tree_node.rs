@@ -268,20 +268,17 @@ impl TreeNode {
         _ => false
       },
       TreeNodeType::AplusPickOne { .. } => match node_data {
-        TreeNodeType::Paragraph{ .. } | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
         _ => false
       }
       TreeNodeType::AplusPickAny { .. } => match node_data {
-        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
         _ => false
       }
       TreeNodeType::AplusFreeText { .. } => match node_data {
-        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
         _ => false
       }
-      TreeNodeType::AplusQuestionInstructions => {
-        if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
-      },
       TreeNodeType::AplusPickChoices { .. } => match node_data{
         TreeNodeType::AplusPickChoice { .. } => true,
         _ => false,
@@ -290,6 +287,10 @@ impl TreeNode {
         if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
       },
       TreeNodeType::AplusFreeTextModel { .. } => false,
+      TreeNodeType::AplusQuestionnaireHints { .. } => match node_data {
+        TreeNodeType::AplusQuestionnaireHint { .. } => true,
+        _ => false
+      }
       TreeNodeType::AplusQuestionnaireHint { .. } => {
         if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
       }

@@ -404,9 +404,9 @@ impl TreeNodeType {
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => "\\begin{pick}{one}\n".to_string(),
       Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => "\\begin{pick}{any}\n".to_string(),
       Self::AplusFreeText { points, compare_method, required, class, key, length, height, .. } => "\\begin{freetext}\n".to_string(),
-      Self::AplusQuestionInstructions => "".to_string(),
       Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
       Self::AplusPickChoice { is_correct, is_pre_selected, is_neutral } => "\\item ".to_string(),
+      Self::AplusQuestionnaireHints { .. } => "\\begin{hints}\n".to_string(),
       Self::AplusQuestionnaireHint { label, show_anyways } => "\n".to_string(),
       Self::AplusFreeTextModel { model_answer } => "\n".to_string(),
     };
@@ -543,9 +543,9 @@ impl TreeNodeType {
       Self::AplusPickOne { .. } => "\\end{pick}\n\n".to_string(),
       Self::AplusPickAny { .. } => "\\end{pick}\n\n".to_string(),
       Self::AplusFreeText { .. } => "\\end{freetext}\n\n".to_string(),
-      Self::AplusQuestionInstructions { .. } => "\n".to_string(),
       Self::AplusPickChoices { .. } => "\\end{answers}\n\n".to_string(),
       Self::AplusPickChoice { .. } => "\n".to_string(),
+      Self::AplusQuestionnaireHints { .. } => "\\end{hints}\n\n".to_string(),
       Self::AplusQuestionnaireHint { .. } => "}\n".to_string(),
       Self::AplusFreeTextModel { .. } => "\n".to_string(),
     };

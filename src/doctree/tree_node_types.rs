@@ -934,11 +934,6 @@ pub enum TreeNodeType {
     height: Option<String>,
   },
 
-  /// #### AplusQuestionInstructions
-  ///
-  /// An optional paragraph that contains the instructions for a specific question inside a questionnaire.
-  AplusQuestionInstructions,
-
   /// #### AplusPickChoices
   ///
   /// A node that contains the choices of an A+ `pick` type question.
@@ -954,6 +949,13 @@ pub enum TreeNodeType {
     is_pre_selected: bool,
     is_neutral: bool, // Only set with pick-any nodes
   },
+
+  /// #### AplusQuestionnaireHints
+  /// A list type node for containing `AplusQuestionnaireHint`s.
+  AplusQuestionnaireHints {
+    body_indent: usize
+  },
+
 
   /// #### AplusChoiceHint
   /// A hint for questionnaire pick-{one, any} and freetext questions.
@@ -1102,10 +1104,10 @@ impl TreeNodeType {
       Self::AplusPickOne { body_indent, .. } => Some(*body_indent),
       Self::AplusPickAny { body_indent, .. } => Some(*body_indent),
       Self::AplusFreeText { body_indent, .. } => Some(*body_indent),
-      Self::AplusQuestionInstructions { .. } => None,
       Self::AplusPickChoices { body_indent, .. } => Some(*body_indent),
       Self::AplusPickChoice { .. } => None,
       Self::AplusFreeTextModel { .. } => None,
+      Self::AplusQuestionnaireHints { body_indent } => Some(*body_indent),
       Self::AplusQuestionnaireHint { .. } => None,
     }
   }
@@ -1235,10 +1237,10 @@ impl TreeNodeType {
       Self::AplusPickOne { .. } => &APLUS_PICK_ONE_CATEGORIES,
       Self::AplusPickAny { .. } => &APLUS_PICK_ANY_CATEGORIES,
       Self::AplusFreeText { .. } => &APLUS_FREETEXT_CATEGORIES,
-      Self::AplusQuestionInstructions { .. } => &APLUS_QUESTION_INSTRUCTION_CATEGORIES,
       Self::AplusPickChoices { body_indent, .. } => &APLUS_PICK_CHOICES_CATEGORIES,
       Self::AplusPickChoice { .. } => &APLUS_PICK_CHOICE_CATEGORIES,
       Self::AplusFreeTextModel { .. } => &APLUS_FREE_TEXT_MODEL_CATEGORIES,
+      Self::AplusQuestionnaireHints { .. } => &APLUS_QUESTIONNAIRE_HINTS_CATEGORIES,
       Self::AplusQuestionnaireHint { .. } => & APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
     };
 
