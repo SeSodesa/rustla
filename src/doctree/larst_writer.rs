@@ -419,7 +419,7 @@ impl TreeNodeType {
       },
       Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
       Self::AplusPickChoice { label, is_correct, is_pre_selected, is_neutral } => {
-        let is_correct = if *is_correct { "\\right " } else { "\\wrong " };
+        let is_correct = if *is_neutral { "\\undet" } else if *is_correct { "\\right" } else { "\\wrong" };
         format!("{} ", is_correct)
       },
       Self::AplusQuestionnaireHints { .. } => "".to_string(),
