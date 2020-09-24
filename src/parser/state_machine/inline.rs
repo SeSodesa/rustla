@@ -50,9 +50,6 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  eprintln!("{}", captures.get(0).unwrap().as_str());
-  eprintln!("{}", lookbehind_str);
-
   if quotation_matches(lookbehind_str, content) {
 
     let quoted_start_char_count = 2 * lookbehind_str.chars().count() + markup_start_str.chars().count();

@@ -904,7 +904,7 @@ impl Parser {
         _ => panic!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
       };
       
-      line_cursor.increment_by(offset);
+      line_cursor.increment_by(1);
 
       inline_nodes
 
@@ -1056,6 +1056,17 @@ impl Parser {
       "class", "required", "key", "partial-points",  "randomized", "correct-count", "preserve-questions-between-attempts",
     ];
 
+    const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?:(?P<neutral>\?)|(?P<correct>\*))?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])[ ]*§[ ]*(?P<hint>.+)";
+
+    use regex::{Regex, Captures};
+    use lazy_static;
+
+    lazy_static::lazy_static! {
+      static ref CHOICE_RE: Regex = Regex::new(APLUS_PICK_ANY_CHOICE_PATTERN).unwrap();
+      static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
+    }
+
     use common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
@@ -1068,7 +1079,7 @@ impl Parser {
 
     let (class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts) = if let Some(mut options) = options {
       if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("Pick one -question received unknown options. ignoring those...");
+        eprintln!("Pick any -question received unknown options. Ignoring those...");
       }
 
       let class = options.remove("class");
@@ -1108,11 +1119,168 @@ impl Parser {
     
     doctree = doctree.push_data_and_focus(pick_any_node);
 
+    // Check for assignment
+
+    let start_line = src_lines.get(line_cursor.relative_offset()).expect(
+      format!("Input overflow on line {} when parsing pick-any assignment. Computer says no...", line_cursor.sum_total()).as_str()
+    );
+
+    let assignment_inline_nodes: Vec<TreeNodeType> = if ! CHOICE_RE.is_match(start_line) {
+      let (block_lines, offset) = Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)).expect(
+          format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()).
+          as_str()
+        );
+      let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      
+      line_cursor.increment_by(1);
+
+      inline_nodes
+
+    } else { Vec::new() };
+
+    // Add assignment node (paragraph) to tree
+
+    if ! assignment_inline_nodes.is_empty() {
+      let assignment_node = TreeNodeType::Paragraph { indent: body_indent };
+      doctree = doctree.push_data_and_focus(assignment_node);
+      for node in assignment_inline_nodes {
+        doctree = doctree.push_data(node);
+      }
+      doctree = doctree.focus_on_parent()
+    }
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    // Read question choices
+
+    doctree = doctree.push_data_and_focus(TreeNodeType::AplusPickChoices { body_indent: body_indent });
+
+    loop {
+
+      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        line
+      } else {
+        panic!("Tried scanning pick-any question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+      };
+
+      let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
+
+      if indent != body_indent { break }
+
+      let captures: Captures = if let Some(capts) = CHOICE_RE.captures(current_line) { capts } else { break };
+
+      eprintln!("{:#?}", captures.get(0).unwrap().as_str());
+
+      let pre_selected = captures.name("pre_selected");
+      let correct = captures.name("correct");
+      let neutral = captures.name("neutral");
+      eprintln!("{:#?}", pre_selected.is_some());
+      eprintln!("{:#?}", correct.is_some());
+      eprintln!("{:#?}", neutral.is_some());
+
+      let enumerator = if let Some(capt) = captures.name("enumerator") {
+        capt.as_str().chars().next().unwrap()
+      } else {
+        panic!("Found pick-one answer but no enumerator on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
+
+      if answer.trim().is_empty() {
+        panic!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+      };
+
+      let choice_node = TreeNodeType::AplusPickChoice {
+        is_pre_selected: pre_selected.is_some(),
+        is_correct: correct.is_some(),
+        is_neutral: false // pick-one nodes don't have this set
+      };
+
+      doctree = doctree.push_data_and_focus(choice_node);
+      for node in answer_nodes { doctree = doctree.push_data(node); }
+      doctree = doctree.focus_on_parent();
+
+      line_cursor.increment_by(1);
+    }
+
+    if doctree.n_of_children() == 0 {
+      panic!("Found no choices for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
+    }
+
+    doctree = doctree.focus_on_parent();
+
+    // Read possible hints inside the answers environment
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    doctree = doctree.push_data_and_focus(TreeNodeType::AplusQuestionnaireHints{ body_indent: body_indent });
+
+    loop {
+      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+        line
+      } else {
+        break//panic!("Tried scanning pick-any question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+      };
+
+      let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
+
+      if indent != body_indent { break }
+
+      let captures = if let Some(capts) = HINT_RE.captures(current_line) { capts } else { break };
+
+      let show_not_answered = captures.name("show_not_answered");
+      let enumerator = match captures.name("enumerator") {
+        Some(enumerator) => enumerator.as_str().to_string(),
+        None => panic!("No enumerator for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+      let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
+        panic!("No hint text for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint.is_empty() {
+        panic!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
+        InlineParsingResult::Nodes(nodes) => nodes,
+        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+      };
+
+      if hint_nodes.is_empty() {
+        panic!("No inline nodes found for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+      }
+
+      let hint_node = TreeNodeType::AplusQuestionnaireHint {
+        label: enumerator,
+        show_anyways: show_not_answered.is_some()
+      };
+
+      doctree = doctree.push_data_and_focus(hint_node);
+      for node in hint_nodes { doctree = doctree.push_data(node); }
+      doctree = doctree.focus_on_parent();
+
+      line_cursor.increment_by(1);
+    }
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    doctree = doctree.focus_on_parent(); // Focus on pick-one
+    doctree = doctree.focus_on_parent(); // Focus on questionnaire
+
+    // Return with modified doctree
+
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::AplusPickAny]),
-      push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1)
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::None
     }
   }
 

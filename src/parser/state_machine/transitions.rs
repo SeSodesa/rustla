@@ -400,7 +400,7 @@ impl StateMachine {
 
   pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::AplusPickOne, APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_directive),
+    (PatternName::AplusQuestionnaireDirective, APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_directive),
     (PatternName::Text, TEXT_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_text)
   ];
 

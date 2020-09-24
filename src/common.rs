@@ -144,8 +144,7 @@ pub enum PatternName {
 
   // A+ specific
   AplusColBreak,
-  AplusPickOne,
-  AplusPickAny,
+  AplusQuestionnaireDirective
 }
 
 

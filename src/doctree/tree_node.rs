@@ -272,7 +272,7 @@ impl TreeNode {
         _ => false
       }
       TreeNodeType::AplusPickAny { .. } => match node_data {
-        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } | TreeNodeType::AplusQuestionnaireHints { .. } => true,
         _ => false
       }
       TreeNodeType::AplusFreeText { .. } => match node_data {
