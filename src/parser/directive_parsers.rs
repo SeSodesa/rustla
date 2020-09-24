@@ -832,8 +832,8 @@ impl Parser {
     /// Initially selected options may be set with `+`.
     /// The initially selected options are pre-selected when the exercise is loaded.
     /// The `+` character is written before `*` or `?` if they are combined.
-    const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
-    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])[ ]*§[ ]*(?P<hint>.+)";
+    const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<label>\S+)\.[ ]+(?P<answer>.+)";
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>\S+)[ ]*§[ ]*(?P<hint>.+)";
 
     use regex::{Regex, Captures};
     use lazy_static;
@@ -941,13 +941,9 @@ impl Parser {
 
       let captures: Captures = if let Some(capts) = CHOICE_RE.captures(current_line) { capts } else { break };
 
+      let label = captures.name("label").unwrap().as_str().to_string();
       let pre_selected = captures.name("pre_selected");
       let correct = captures.name("correct");
-      let enumerator = if let Some(capt) = captures.name("enumerator") {
-        capt.as_str().chars().next().unwrap()
-      } else {
-        panic!("Found pick-one answer but no enumerator on line {}. Computer says no...", line_cursor.sum_total())
-      };
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
 
       if answer.trim().is_empty() {
@@ -960,6 +956,7 @@ impl Parser {
       };
 
       let choice_node = TreeNodeType::AplusPickChoice {
+        label: label,
         is_pre_selected: pre_selected.is_some(),
         is_correct: correct.is_some(),
         is_neutral: false // pick-one nodes don't have this set
@@ -998,8 +995,8 @@ impl Parser {
       let captures = if let Some(capts) = HINT_RE.captures(current_line) { capts } else { break };
 
       let show_not_answered = captures.name("show_not_answered");
-      let enumerator = match captures.name("enumerator") {
-        Some(enumerator) => enumerator.as_str().to_string(),
+      let label = match captures.name("label") {
+        Some(label) => label.as_str().to_string(),
         None => panic!("No enumerator for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
       };
       let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
@@ -1020,7 +1017,7 @@ impl Parser {
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
-        label: enumerator,
+        label: label,
         show_when_not_selected: show_not_answered.is_some()
       };
 
@@ -1056,8 +1053,8 @@ impl Parser {
       "class", "required", "key", "partial-points",  "randomized", "correct-count", "preserve-questions-between-attempts",
     ];
 
-    const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?:(?P<neutral>\?)|(?P<correct>\*))?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
-    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])[ ]*§[ ]*(?P<hint>.+)";
+    const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?:(?P<neutral>\?)|(?P<correct>\*))?(?P<label>\S+)\.[ ]+(?P<answer>.+)";
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>\S+)[ ]*§[ ]*(?P<hint>.+)";
 
     use regex::{Regex, Captures};
     use lazy_static;
@@ -1169,8 +1166,6 @@ impl Parser {
 
       let captures: Captures = if let Some(capts) = CHOICE_RE.captures(current_line) { capts } else { break };
 
-      eprintln!("{:#?}", captures.get(0).unwrap().as_str());
-
       let pre_selected = captures.name("pre_selected");
       let correct = captures.name("correct");
       let neutral = captures.name("neutral");
@@ -1178,23 +1173,20 @@ impl Parser {
       eprintln!("{:#?}", correct.is_some());
       eprintln!("{:#?}", neutral.is_some());
 
-      let enumerator = if let Some(capt) = captures.name("enumerator") {
-        capt.as_str().chars().next().unwrap()
-      } else {
-        panic!("Found pick-one answer but no enumerator on line {}. Computer says no...", line_cursor.sum_total())
-      };
+      let label = captures.name("label").unwrap().as_str().to_string();
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
 
       if answer.trim().is_empty() {
-        panic!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total())
+        panic!("Discovered a pick-any answer without content on line {}. Computer says no...", line_cursor.sum_total())
       }
 
       let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => panic!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
       };
 
       let choice_node = TreeNodeType::AplusPickChoice {
+        label: label,
         is_pre_selected: pre_selected.is_some(),
         is_correct: correct.is_some(),
         is_neutral: false // pick-one nodes don't have this set
@@ -1233,9 +1225,9 @@ impl Parser {
       let captures = if let Some(capts) = HINT_RE.captures(current_line) { capts } else { break };
 
       let show_not_answered = captures.name("show_not_answered");
-      let enumerator = match captures.name("enumerator") {
+      let label = match captures.name("label") {
         Some(enumerator) => enumerator.as_str().to_string(),
-        None => panic!("No enumerator for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+        None => panic!("No label for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
       };
       let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
         panic!("No hint text for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
@@ -1255,7 +1247,7 @@ impl Parser {
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
-        label: enumerator,
+        label: label,
         show_when_not_selected: show_not_answered.is_some()
       };
 

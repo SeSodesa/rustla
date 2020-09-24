@@ -409,14 +409,19 @@ impl TreeNodeType {
         format!("\\begin{{quiz}}{}{{{}}}\n", key, *max_points)
       },
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => {
-        format!("\\begin{{pick}}{{one}}{{{}}}{{}}\n", points.to_string(), )
+        format!("\\begin{{pick}}{{one}}{{{}}}\n", points)
       }
       Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => {
-        "\\begin{pick}{any}\n".to_string()
+        format!("\\begin{{pick}}{{any}}{{{}}}\n", points)
       },
-      Self::AplusFreeText { points, compare_method, required, class, key, length, height, .. } => "\\begin{freetext}\n".to_string(),
+      Self::AplusFreeText { points, compare_method, model_answer, required, class, key, length, height, .. } => {
+        format!("\\begin{{freetext}}{{{}}}{{{}}}{{{}}}\n", compare_method, points, model_answer)
+      },
       Self::AplusPickChoices { .. } => "\\begin{answers}\n".to_string(),
-      Self::AplusPickChoice { is_correct, is_pre_selected, is_neutral } => "\\item ".to_string(),
+      Self::AplusPickChoice { label, is_correct, is_pre_selected, is_neutral } => {
+        let is_correct = if *is_correct { "\\right " } else { "\\wrong " };
+        format!("{} ", is_correct)
+      },
       Self::AplusQuestionnaireHints { .. } => "\\begin{hints}\n".to_string(),
       Self::AplusQuestionnaireHint { label, show_when_not_selected } => "\n".to_string(),
     };
@@ -554,7 +559,10 @@ impl TreeNodeType {
       Self::AplusPickAny { .. } => "\\end{pick}\n\n".to_string(),
       Self::AplusFreeText { .. } => "\\end{freetext}\n\n".to_string(),
       Self::AplusPickChoices { .. } => "\\end{answers}\n\n".to_string(),
-      Self::AplusPickChoice { .. } => "\n".to_string(),
+      Self::AplusPickChoice { label, .. } => {
+        let label = format!(" \\label{{{}}}", label);
+        format!("{}\n", label)
+      },
       Self::AplusQuestionnaireHints { .. } => "\\end{hints}\n\n".to_string(),
       Self::AplusQuestionnaireHint { .. } => "}\n".to_string(),
     };

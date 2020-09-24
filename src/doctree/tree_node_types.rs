@@ -941,6 +941,7 @@ pub enum TreeNodeType {
   ///
   /// A single answer choice inside an A+ pick-(one|any) question.
   AplusPickChoice {
+    label: String,
     is_correct: bool,
     is_pre_selected: bool,
     is_neutral: bool, // Only set with pick-any nodes
