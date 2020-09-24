@@ -976,11 +976,13 @@ impl Parser {
       panic!("Found no choices for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
     }
 
+    doctree = doctree.focus_on_parent();
+
     // Read possible hints inside the answers environment
 
     Parser::skip_empty_lines(src_lines, line_cursor);
 
-    let mut has_hints = false;
+    doctree = doctree.push_data_and_focus(TreeNodeType::AplusQuestionnaireHints{ body_indent: body_indent });
 
     loop {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
@@ -1026,10 +1028,7 @@ impl Parser {
       for node in hint_nodes { doctree = doctree.push_data(node); }
       doctree = doctree.focus_on_parent();
 
-      has_hints = true;
-
       line_cursor.increment_by(1);
-
     }
 
     Parser::skip_empty_lines(src_lines, line_cursor);

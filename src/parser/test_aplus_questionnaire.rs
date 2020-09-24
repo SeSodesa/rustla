@@ -14,7 +14,7 @@ use std::path::PathBuf;
 #[test]
 fn aplus_questionnaire_01 () {
 
-  let src = String::from("
+  let src = String::from(r#"
 .. questionnaire:: 1 A
   :submissions: 4
   :points-to-pass: 0
@@ -36,7 +36,52 @@ fn aplus_questionnaire_01 () {
     b § That is correct!
     c § Too much
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+    (Hints can be included or omitted in any question.)
+
+    .. pick-one:: 10
+      :required:
+      :dropdown:
+  
+      What is 1+2?
+  
+      +0. 0
+      1. 1
+      2. 2
+      *3. 3
+  
+    .. pick-any:: 10
+      :partial-points:
+  
+      Pick the two **first**. Since the 'partial-points' option is set,
+      some points are awarded with a partially correct answer. If either one of the
+      correct options is not chosen or one of the wrong fields is chosen, 5 points are
+      still awarded. Selecting the last neutral option does not affect the points.
+  
+      +*a. this is the **first**
+      *b. this is the **second**
+      c. this is the **third**
+      d. this is the **fourth**
+      ?e. choosing this does not affect the granted points
+  
+    .. freetext:: 30 string-ignorews-ignorequotes-requirecase
+      :length: 10
+  
+      A textual input can be compared with the model solution as integer, float or string.
+      Here the correct answer is "test". Surrounding quotes are ignored in the solution
+      as well as whitespace everywhere (modifiers ignorequotes and ignorews).
+  
+      test
+      !test § Follow the instruction.
+      regexp:Test|TEST § Use the lower case!
+  
+    .. freetext:: 10 regexp
+  
+      This question accepts either "red" or "blue" as the correct answer.
+      The model solution is a regular expression.
+  
+      red|blue
+
+  "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
 

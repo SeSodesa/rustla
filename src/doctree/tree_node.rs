@@ -67,7 +67,7 @@ impl TreeNode {
       }
     ) {
       Some(Vec::new())
-    } else if let TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoice { .. } = data_variant {
+    } else if let TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoice { .. } | TreeNodeType::AplusQuestionnaireHint { .. } = data_variant {
       Some(Vec::new())
     } else {
       None
@@ -268,7 +268,7 @@ impl TreeNode {
         _ => false
       },
       TreeNodeType::AplusPickOne { .. } => match node_data {
-        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoices { .. } | TreeNodeType::AplusQuestionnaireHints { .. } => true,
         _ => false
       }
       TreeNodeType::AplusPickAny { .. } => match node_data {
