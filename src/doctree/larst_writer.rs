@@ -425,7 +425,7 @@ impl TreeNodeType {
       Self::AplusQuestionnaireHints { .. } => "".to_string(),
       Self::AplusQuestionnaireHint { label, show_when_not_selected } => {
         let show_when_not_selected = if *show_when_not_selected { "" } else { "!" };
-        format!("\\feedback{{{}{}}}{{", show_when_not_selected, label)
+        format!("\\feedback{{{}\\ref{{{}}}}}{{", show_when_not_selected, label)
       },
     };
 
