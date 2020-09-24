@@ -422,8 +422,11 @@ impl TreeNodeType {
         let is_correct = if *is_correct { "\\right " } else { "\\wrong " };
         format!("{} ", is_correct)
       },
-      Self::AplusQuestionnaireHints { .. } => "\\begin{hints}\n".to_string(),
-      Self::AplusQuestionnaireHint { label, show_when_not_selected } => "\n".to_string(),
+      Self::AplusQuestionnaireHints { .. } => "".to_string(),
+      Self::AplusQuestionnaireHint { label, show_when_not_selected } => {
+        let show_when_not_selected = if *show_when_not_selected { "" } else { "!" };
+        format!("\\feedback{{{}{}}}{{", show_when_not_selected, label)
+      },
     };
 
     use std::io::Write;
@@ -563,7 +566,7 @@ impl TreeNodeType {
         let label = format!(" \\label{{{}}}", label);
         format!("{}\n", label)
       },
-      Self::AplusQuestionnaireHints { .. } => "\\end{hints}\n\n".to_string(),
+      Self::AplusQuestionnaireHints { .. } => "\n".to_string(),
       Self::AplusQuestionnaireHint { .. } => "}\n".to_string(),
     };
 
