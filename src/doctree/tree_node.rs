@@ -61,13 +61,13 @@ impl TreeNode {
     let mut node_type_properties = data_variant.node_categories();
 
     if node_type_properties.any( |cat|
-        match cat {
-          NodeCategory::CompoundStructural | NodeCategory::CompoundBody | NodeCategory::CompoundSubBody => true,
-          _ => false
+      match cat {
+        NodeCategory::CompoundStructural | NodeCategory::CompoundBody | NodeCategory::CompoundSubBody => true,
+        _ => false
       }
     ) {
       Some(Vec::new())
-    } else if let TreeNodeType::Paragraph { .. } = data_variant {
+    } else if let TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickChoice { .. } = data_variant {
       Some(Vec::new())
     } else {
       None
@@ -92,9 +92,8 @@ impl TreeNode {
       if let Some(children) = &mut self.children {
         children.push(node);
       } else {
-        panic!("Node of type {:#?} is not allowed to have children. Computer says no...", node.data)
+        panic!("Node of type {:#?} is not allowed to have children. Computer says no...", self.data)
       }
-      
     } else {
       panic!("Child of type {:#?} not allowed inside a {:#?}. Computer says no...", node.data, self.data);
     }
@@ -265,11 +264,11 @@ impl TreeNode {
       TreeNodeType::AplusPOI{ .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::AplusColBreak = node_data { true } else { false },
       TreeNodeType::AplusColBreak => false,
       TreeNodeType::AplusQuestionnaire { .. } => match node_data {
-        TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickOne { .. } | TreeNodeType::AplusPickAny { .. } | TreeNodeType::AplusFreeText { .. } => true,
+        TreeNodeType::EmptyLine | TreeNodeType::Paragraph { .. } | TreeNodeType::AplusPickOne { .. } | TreeNodeType::AplusPickAny { .. } | TreeNodeType::AplusFreeText { .. } => true,
         _ => false
       },
       TreeNodeType::AplusPickOne { .. } => match node_data {
-        TreeNodeType::AplusQuestionInstructions | TreeNodeType::AplusPickChoices { .. } => true,
+        TreeNodeType::Paragraph{ .. } | TreeNodeType::AplusPickChoices { .. } => true,
         _ => false
       }
       TreeNodeType::AplusPickAny { .. } => match node_data {

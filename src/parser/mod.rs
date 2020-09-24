@@ -52,6 +52,7 @@ use crate::common::{self, ParsingResult, EnumDelims, EnumKind, FootnoteKind, Hyp
 // -----------------
 mod test_admonitions;
 mod test_aplus_point_of_interest;
+mod test_aplus_questionnaire;
 mod test_block_reading;
 mod test_block_quotes;
 mod test_comments;
@@ -825,5 +826,26 @@ impl Parser {
     } else {
       suffix
     }
+  }
+
+
+  /// ### skip_empty_lines
+  ///
+  /// Increments the given line cursor while empyt lines are found.
+  /// Returns the number of lines skipped.
+  fn skip_empty_lines (src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> usize {
+
+    let mut lines_skipped = 0 as usize; 
+
+    while let Some(line)= src_lines.get(line_cursor.relative_offset()) {
+      if line.trim().is_empty() {
+        line_cursor.increment_by(1); // Jump over empty lines
+        lines_skipped += 1;
+      } else {
+        break
+      }
+    }
+
+    lines_skipped
   }
 }

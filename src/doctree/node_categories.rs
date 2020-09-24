@@ -528,15 +528,18 @@ pub const APLUS_QUESTIONNAIRE_CATEGORIES: &[NodeCategory] = &[
 ];
 
 pub const APLUS_PICK_ONE_CATEGORIES: &[NodeCategory] = &[
-
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody
 ];
 
 pub const APLUS_PICK_ANY_CATEGORIES: &[NodeCategory] = &[
-
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody
 ];
 
 pub const APLUS_FREETEXT_CATEGORIES: &[NodeCategory] = &[
-
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody
 ];
 
 pub const APLUS_QUESTION_INSTRUCTION_CATEGORIES: &[NodeCategory] = &[
@@ -544,11 +547,13 @@ pub const APLUS_QUESTION_INSTRUCTION_CATEGORIES: &[NodeCategory] = &[
 ];
 
 pub const APLUS_PICK_CHOICES_CATEGORIES: &[NodeCategory] = &[
-
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody
 ];
 
 pub const APLUS_PICK_CHOICE_CATEGORIES: &[NodeCategory] = &[
-
+  NodeCategory::SubBody,
+  NodeCategory::SimpleSubBody
 ];
 
 pub const APLUS_FREE_TEXT_MODEL_CATEGORIES: &[NodeCategory] = &[

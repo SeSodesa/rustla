@@ -724,7 +724,7 @@ impl Parser {
 //  A+-specific directives
 // ========================
 
-  pub fn parse_aplus_questionnaire (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize, section_level: usize) -> TransitionResult {
+  pub fn parse_aplus_questionnaire (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize) -> TransitionResult {
     
     let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
@@ -736,7 +736,7 @@ impl Parser {
       }
 
       if let Some(captures) = QUESTIONNAIRE_ARGS_DFA.captures(arg.as_str()) {
-        let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { panic!("No reference key for questionnaire preceding line {}. Computer says no...", line_cursor.sum_total()) };
+        let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { String::new() };
         let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
         let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
         (key, difficulty, max_points)
@@ -809,7 +809,7 @@ impl Parser {
       doctree: doctree,
       next_states: Some(vec![StateMachine::AplusQuestionnaire]),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1)
+      line_advance: LineAdvance::None,
     }
   }
 
@@ -833,7 +833,7 @@ impl Parser {
     /// The initially selected options are pre-selected when the exercise is loaded.
     /// The `+` character is written before `*` or `?` if they are combined.
     const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+(?P<answer>.+)";
-    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])\.[ ]+§[ ]+(?P<hint>.+)";
+    const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<enumerator>[a-zA-Z0-9])[ ]*§[ ]*(?P<hint>.+)";
 
     use regex::{Regex, Captures};
     use lazy_static;
@@ -873,18 +873,17 @@ impl Parser {
       (None, None, None, None)
     };
 
+    //Parser::skip_empty_lines(src_lines, line_cursor);
+
     // Generating and focusing on node
 
     let pick_one_node = TreeNodeType::AplusPickOne {
       body_indent: body_indent,
-      has_assignment_text: false,
-      has_choices: false,
-      has_hints: false,
       class: class,
       points: points,
-      required: if required.is_some() { Some(()) } else { None },
+      required: if required.is_some() { true } else { false },
       key: key,
-      dropdown: if dropdown.is_some() { Some(()) } else { None },
+      dropdown: if dropdown.is_some() { true } else { false },
     };
 
     doctree = doctree.push_data_and_focus(pick_one_node);
@@ -905,9 +904,13 @@ impl Parser {
         _ => panic!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
       };
       
+      line_cursor.increment_by(offset);
+
       inline_nodes
 
     } else { Vec::new() };
+
+    // Add assignment node (paragraph) to tree
 
     if ! assignment_inline_nodes.is_empty() {
       let assignment_node = TreeNodeType::Paragraph { indent: body_indent };
@@ -918,7 +921,7 @@ impl Parser {
       doctree = doctree.focus_on_parent()
     }
 
-    line_cursor.increment_by(1);
+    Parser::skip_empty_lines(src_lines, line_cursor);
 
     // Read question choices
 
@@ -936,7 +939,7 @@ impl Parser {
 
       if indent != body_indent { break }
 
-      let captures = if let Some(capts) = CHOICE_RE.captures(current_line) { capts } else { break };
+      let captures: Captures = if let Some(capts) = CHOICE_RE.captures(current_line) { capts } else { break };
 
       let pre_selected = captures.name("pre_selected");
       let correct = captures.name("correct");
@@ -963,9 +966,7 @@ impl Parser {
       };
 
       doctree = doctree.push_data_and_focus(choice_node);
-
       for node in answer_nodes { doctree = doctree.push_data(node); }
-
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -976,6 +977,10 @@ impl Parser {
     }
 
     // Read possible hints inside the answers environment
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    let mut has_hints = false;
 
     loop {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
@@ -1018,16 +1023,19 @@ impl Parser {
       };
 
       doctree = doctree.push_data_and_focus(hint_node);
-      for node in hint_nodes {
-        doctree = doctree.push_data(node);
-      }
+      for node in hint_nodes { doctree = doctree.push_data(node); }
       doctree = doctree.focus_on_parent();
+
+      has_hints = true;
 
       line_cursor.increment_by(1);
 
     }
 
-    doctree = doctree.focus_on_parent();
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    doctree = doctree.focus_on_parent(); // Focus on pick-one
+    doctree = doctree.focus_on_parent(); // Focus on questionnaire
 
     // Return with modified doctree
 
@@ -1035,7 +1043,7 @@ impl Parser {
       doctree: doctree,
       next_states: None,
       push_or_pop: PushOrPop::Neither,
-      line_advance: LineAdvance::Some(1)
+      line_advance: LineAdvance::None
     }
   }
 
@@ -1440,11 +1448,10 @@ impl Parser {
         let option_key = captures.get(2).unwrap().as_str().trim();
 
         let option_val_indent = captures.get(0).unwrap().as_str().chars().count();
-        let index = match line.char_indices().nth(option_val_indent) {
-          Some((index, _)) => index,
-          None => panic!("Looks like a directive option might not have a value on line {}...", line_cursor.sum_total())
+        let option_val = match line.char_indices().nth(option_val_indent) {
+          Some((index, _)) => line[index..].trim(),
+          None => ""
         };
-        let option_val = line[index..].trim();
 
         eprintln!("Option value: {:#?}\n", option_val);
 

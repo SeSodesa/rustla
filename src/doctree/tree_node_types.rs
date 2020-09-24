@@ -880,15 +880,12 @@ pub enum TreeNodeType {
 
     // Needed by the parser
     body_indent: usize,
-    has_assignment_text: bool,
-    has_choices: bool,
-    has_hints: bool,
 
     points: QuizPoints,
     class: Option<String>,
-    required: Option<()>,
+    required: bool,
     key: Option<String>,
-    dropdown: Option<()>,
+    dropdown: bool,
   },
 
   /// See the documentation for the `quoestionnaire` directive:
