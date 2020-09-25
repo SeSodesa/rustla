@@ -732,13 +732,18 @@ impl Parser {
       use regex::{Regex, Captures};
 
       lazy_static! {
-        static ref QUESTIONNAIRE_ARGS_DFA: Regex = Regex::new(r"(?P<key>[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*)?(?:[ ]+)?(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)").unwrap();
+        static ref QUESTIONNAIRE_ARGS_DFA: Regex = Regex::new(r"^(?P<key>[a-zA-Z0-9]+)?[ ]*(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)?").unwrap();
       }
+
+      eprintln!("{:#?}\n", arg);
 
       if let Some(captures) = QUESTIONNAIRE_ARGS_DFA.captures(arg.as_str()) {
         let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { String::new() };
         let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
         let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
+        eprintln!("{:#?}", key);
+        eprintln!("{:#?}", difficulty);
+        eprintln!("{:#?}\n", max_points);
         (key, difficulty, max_points)
       } else {
         // No allocations for strings with zero size
@@ -786,8 +791,8 @@ impl Parser {
       body_indent: body_indent,
       key: key,
       difficulty: if difficulty.is_empty() { None } else { Some(difficulty) },
-      max_points: if let Ok(result) = max_points.parse::<QuizPoints>() { result } else { 50 },
-      points_from_children: Vec::new(),
+      max_points: if let Ok(result) = max_points.parse::<QuizPoints>() { Some(result) } else { None },
+      points_from_children: 0,
       submissions: submissions,
       points_to_pass: points_to_pass,
       feedback: feedback,
@@ -852,6 +857,10 @@ impl Parser {
     } else {
       panic!("No points provided for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
     };
+
+    if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
+      *points_from_children += points;
+    }
 
     // Parsing directive options
 
@@ -1071,6 +1080,10 @@ impl Parser {
     } else {
       panic!("No points provided for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
     };
+
+    if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
+      *points_from_children += points;
+    }
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
@@ -1305,6 +1318,10 @@ impl Parser {
     } else {
       panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
     };
+
+    if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
+      *points_from_children += points;
+    }
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 

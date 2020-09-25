@@ -402,11 +402,9 @@ impl TreeNodeType {
       Self::AplusColBreak => "\\newcol\n\n".to_string(),
       Self::AplusQuestionnaire { max_points, key, points_from_children, difficulty, submissions, points_to_pass, feedback, title, no_override, pick_randomly, preserve_questions_between_attempts, category, status, reveal_model_at_max_submissions, show_model, allow_assistant_viewing, allow_assistant_grading, .. } => {
 
-        let key = if key.is_empty() { String::new() } else {
-          format!("{{{}}}", key)
-        };
+        let max_points = if let Some(points) = max_points { points } else { points_from_children };
 
-        format!("\\begin{{quiz}}{}{{{}}}\n", key, *max_points)
+        format!("\\begin{{quiz}}{{{}}}{{{}}}\n", key, *max_points)
       },
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => {
         format!("\\begin{{pick}}{{one}}{{{}}}\n", points)
