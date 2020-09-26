@@ -960,6 +960,33 @@ pub enum TreeNodeType {
     label: String,
     show_when_not_selected: bool,
   },
+
+  /// #### AplusSubmit
+  /// A+ submit-type exercise. See https://github.com/apluslms/a-plus-rst-tools#3-submittable-exercise.
+  AplusSubmit {
+    body_indent: usize,
+    key: String,
+    difficulty: String,
+    max_points: QuizPoints,
+
+    config: String,
+    max_submissions: u32,
+    points_to_pass: QuizPoints,
+    class: String,
+    title: String,
+    category: String, // Default: submit
+    status: String,
+    ajax: bool,
+    allow_assistant_viewing: bool,
+    allow_assistant_grading: bool,
+    quiz: bool,
+    url: String,
+    radar_tokenizer: String,
+    radar_minimum_match_tokens: u32,
+    lti_resource_link_id: String,
+    lti_open_in_iframe: bool,
+    lti_aplus_get_and_post: bool,
+  }
 }
 
 use std::collections::HashSet;
@@ -1098,6 +1125,7 @@ impl TreeNodeType {
       Self::AplusPickChoice { .. } => None,
       Self::AplusQuestionnaireHints { body_indent } => Some(*body_indent),
       Self::AplusQuestionnaireHint { .. } => None,
+      Self::AplusSubmit { body_indent, .. } => Some(*body_indent)
     }
   }
 
@@ -1229,7 +1257,8 @@ impl TreeNodeType {
       Self::AplusPickChoices { body_indent, .. } => &APLUS_PICK_CHOICES_CATEGORIES,
       Self::AplusPickChoice { .. } => &APLUS_PICK_CHOICE_CATEGORIES,
       Self::AplusQuestionnaireHints { .. } => &APLUS_QUESTIONNAIRE_HINTS_CATEGORIES,
-      Self::AplusQuestionnaireHint { .. } => & APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
+      Self::AplusQuestionnaireHint { .. } => &APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
+      Self::AplusSubmit { .. } => &APLUS_SUBMIT_CATEGORIES,
     };
 
     categories.iter()

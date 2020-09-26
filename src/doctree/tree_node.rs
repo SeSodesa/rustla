@@ -293,6 +293,9 @@ impl TreeNode {
       TreeNodeType::AplusQuestionnaireHint { .. } => {
         if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false }
       }
+      TreeNodeType::AplusSubmit { .. } => {
+        if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false }
+      }
     }
   }
 

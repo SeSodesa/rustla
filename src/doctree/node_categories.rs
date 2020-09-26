@@ -566,3 +566,8 @@ pub const APLUS_QUESTIONNAIRE_HINT_CATEGORIES: &[NodeCategory] = &[
   NodeCategory::SimpleSubBody
 ];
 
+pub const APLUS_SUBMIT_CATEGORIES: &[NodeCategory] = &[
+  NodeCategory::Body,
+  NodeCategory::CompoundBody
+];
+
