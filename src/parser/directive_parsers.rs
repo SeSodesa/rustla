@@ -1468,7 +1468,38 @@ impl Parser {
       panic!("A+ submit exercise on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
     };
 
+    Parser::skip_empty_lines(src_lines, line_cursor);
 
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post) = if let Some(mut options) = options {
+      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
+        eprintln!("A+ submit exercise received unknown options before line {}. Ignoring those...", line_cursor.sum_total());
+      }
+
+      let config = options.remove("config");
+      let submissions = options.remove("submissions");
+      let points_to_pass = options.remove("points-to-pass");
+      let class = options.remove("class");
+      let title = options.remove("title");
+      let category = options.remove("category");
+      let status = options.remove("status");
+      let ajax = options.remove("ajax");
+      let allow_assistant_viewing = options.remove("allow-assistant-viewing");
+      let allow_assistant_grading = options.remove("allow-assistant-grading");
+      let quiz = options.remove("quiz");
+      let url = options.remove("url");
+      let radar_tokenizer = options.remove("radar-tokenizer");
+      let radar_minimum_match_tokens = options.remove("radar_minimum_match_tokens");
+      let lti_resource_link_id = options.remove("lti_resource_link_id");
+      let lti_open_in_iframe = options.remove("lti_open_in_iframe");
+      let lti_aplus_get_and_post = options.remove("lti_aplus_get_and_post");
+      
+      (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post)
+
+    } else {
+      (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+    };
 
     todo!()
   }
