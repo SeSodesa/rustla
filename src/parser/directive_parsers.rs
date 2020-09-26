@@ -1501,6 +1501,10 @@ impl Parser {
       (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
     };
 
+    if config.is_none() {
+      panic!("A+ submit exercise on line {} has to specify a configuration file location via the :config: option. Computer says no...", line_cursor.sum_total())
+    }
+
     todo!()
   }
 
