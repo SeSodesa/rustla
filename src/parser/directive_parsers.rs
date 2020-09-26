@@ -1161,9 +1161,6 @@ impl Parser {
       let pre_selected = captures.name("pre_selected");
       let correct = captures.name("correct");
       let neutral = captures.name("neutral");
-      eprintln!("{:#?}", pre_selected.is_some());
-      eprintln!("{:#?}", correct.is_some());
-      eprintln!("{:#?}", neutral.is_some());
 
       let label = captures.name("label").unwrap().as_str().to_string();
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
@@ -1468,10 +1465,10 @@ impl Parser {
 
       Parser::aplus_key_difficulty_and_max_points(arg.as_str(), line_cursor)
     } else {
-      panic!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
+      panic!("A+ submit exercise on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
     };
 
-    
+
 
     todo!()
   }
