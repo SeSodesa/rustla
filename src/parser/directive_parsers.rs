@@ -728,28 +728,7 @@ impl Parser {
     
     let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
-      use lazy_static::lazy_static;
-      use regex::{Regex, Captures};
-
-      lazy_static! {
-        static ref QUESTIONNAIRE_ARGS_DFA: Regex = Regex::new(r"^(?P<key>[a-zA-Z0-9]+)?[ ]*(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)?").unwrap();
-      }
-
-      eprintln!("{:#?}\n", arg);
-
-      if let Some(captures) = QUESTIONNAIRE_ARGS_DFA.captures(arg.as_str()) {
-        let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { String::new() };
-        let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
-        let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
-        eprintln!("{:#?}", key);
-        eprintln!("{:#?}", difficulty);
-        eprintln!("{:#?}\n", max_points);
-        (key, difficulty, max_points)
-      } else {
-        // No allocations for strings with zero size
-        eprintln!("Either no arguments or invalid argument format for questionnaire preceding line {}...", line_cursor.sum_total());
-        (String::new(), String::new(), String::new())
-      }
+      Parser::aplus_key_difficulty_and_max_points (arg.as_str(), line_cursor)
     } else {
       panic!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
     };
@@ -822,7 +801,7 @@ impl Parser {
   /// ### parse_aplus_pick_one
   ///
   /// A `pick-one` type questionnaire question parser.
-  pub fn parse_aplus_pick_one (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+  pub fn parse_aplus_pick_one (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
 
     // Constants related to this parser
 
@@ -1056,7 +1035,7 @@ impl Parser {
   /// ### parse_aplus_pick_any
   ///
   /// A `pick-any` type questionnaire question parser.
-  pub fn parse_aplus_pick_any (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+  pub fn parse_aplus_pick_any (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
 
     const RECOGNIZED_OPTIONS: &[&str] = &[
       "class", "required", "key", "partial-points",  "randomized", "correct-count", "preserve-questions-between-attempts",
@@ -1290,7 +1269,7 @@ impl Parser {
   /// ### parse_aplus_freetext
   ///
   /// A `freetext` type questionnaire question parser.
-  pub fn parse_aplus_freetext (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult  {
+  pub fn parse_aplus_freetext (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
 
     const RECOGNIZED_OPTIONS: &[&str] = &[
       "class", "required", "key", "length",  "height",
@@ -1479,7 +1458,21 @@ impl Parser {
   }
 
 
-  pub fn parse_aplus_submit () {
+  pub fn parse_aplus_submit (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "config", "submissions", "points-to-pass", "class",  "title", "category", "status", "ajax", "allow-assistant-viewing", "allow-assistant-grading", "quiz", "url", "radar-tokenizer", "radar_minimum_match_tokens", "lti_resource_link_id", "lti_open_in_iframe", "lti_aplus_get_and_post",
+    ];
+
+    let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+
+      Parser::aplus_key_difficulty_and_max_points(arg.as_str(), line_cursor)
+    } else {
+      panic!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
+    };
+
+    
+
     todo!()
   }
 
@@ -1769,5 +1762,35 @@ impl Parser {
 
     // All option keys should be found in recognized keys
     option_iter.all( |option_key| recognized_iter.any(|recognized_key| option_key == recognized_key) )
+  }
+
+
+  /// ### aplus_key_difficulty_and_max_points
+  ///
+  /// Parses the given `&str` for the directive key,
+  /// difficulty and maximum points.
+  /// Empty strings are returned for every missing part.
+  fn aplus_key_difficulty_and_max_points (arg_str: &str, line_cursor: &mut LineCursor) -> (String, String, String) {
+
+    use lazy_static::lazy_static;
+    use regex::{Regex, Captures};
+
+    lazy_static! {
+      static ref EXERCISE_ARGS_RE: Regex = Regex::new(r"^(?P<key>[a-zA-Z0-9]+)?[ ]*(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)?").unwrap();
+    }
+
+    if let Some(captures) = EXERCISE_ARGS_RE.captures(arg_str) {
+      let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { String::new() };
+      let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
+      let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
+      eprintln!("{:#?}", key);
+      eprintln!("{:#?}", difficulty);
+      eprintln!("{:#?}\n", max_points);
+      (key, difficulty, max_points)
+    } else {
+      // No allocations for strings with zero size
+      eprintln!("Either no arguments or invalid argument format for questionnaire preceding line {}...", line_cursor.sum_total());
+      (String::new(), String::new(), String::new())
+    }
   }
 }
