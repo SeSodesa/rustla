@@ -394,6 +394,7 @@ impl ParsingResult {
 /// * enrollment: Questions for students when they enroll to a course.
 /// * enrollment_ext: Same as enrollment but for external students.
 /// * maintenance: Hides the exercise description and prevents submissions.
+#[derive(Debug)]
 pub enum AplusExerciseStatus {
   Ready,
   Unlisted,
@@ -409,12 +410,14 @@ pub enum AplusExerciseStatus {
 /// An enumeration of the different tokenizers offered by the A+ Radar tokenizer.
 /// 
 /// See [the docs](https://github.com/Aalto-LeTech/radar/tree/master/tokenizer#tokenizers)  for more details.
+#[derive(Clone, Copy, Debug)]
 pub enum AplusRadarTokenizer {
   Python3,
   Scala,
   JavaScript,
   CSS,
-  HTML
+  HTML,
+  None
 }
 
 

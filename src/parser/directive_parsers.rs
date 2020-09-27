@@ -1472,7 +1472,7 @@ impl Parser {
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
-    let (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post) = if let Some(mut options) = options {
+    let (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post) = if let Some(mut options) = options {
       if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
         eprintln!("A+ submit exercise received unknown options before line {}. Ignoring those...", line_cursor.sum_total());
       }
@@ -1491,21 +1491,105 @@ impl Parser {
       let url = options.remove("url");
       let radar_tokenizer = options.remove("radar-tokenizer");
       let radar_minimum_match_tokens = options.remove("radar_minimum_match_tokens");
+      let lti = options.remove("lti");
       let lti_resource_link_id = options.remove("lti_resource_link_id");
       let lti_open_in_iframe = options.remove("lti_open_in_iframe");
       let lti_aplus_get_and_post = options.remove("lti_aplus_get_and_post");
       
-      (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post)
+      (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post)
 
     } else {
-      (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
+      (None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None)
     };
 
     if config.is_none() {
       panic!("A+ submit exercise on line {} has to specify a configuration file location via the :config: option. Computer says no...", line_cursor.sum_total())
     }
 
-    todo!()
+    // Unpacking some options
+    let max_points = if let Ok(result) = max_points.parse() { result } else { 10 };
+    let points_to_pass = if let Some(ptp) = points_to_pass {
+      if let Ok(result) = ptp.parse() { result } else { max_points }
+    } else {
+      max_points
+    };
+
+    use crate::common::AplusExerciseStatus;
+    let status = if let Some(status) = status {
+      match status.as_str().trim() {
+        "ready" => AplusExerciseStatus::Ready,
+        "unlisted" => AplusExerciseStatus::Unlisted,
+        "hidden" => AplusExerciseStatus::Hidden,
+        "enrollment" => AplusExerciseStatus::Enrollment,
+        "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
+        "maintenance" => AplusExerciseStatus::Maintenance,
+        _ => panic!("No such exercise status for A+ submit exerciose on line {}. Computer says no...", line_cursor.sum_total())
+      }
+    } else {
+      AplusExerciseStatus::Unlisted // Default
+    };
+
+    use crate::common::AplusRadarTokenizer;
+    let tokenizer = if let Some(tokenizer) = radar_tokenizer {
+      match tokenizer.as_str().trim() {
+        "python" => AplusRadarTokenizer::Python3,
+        "scala" => AplusRadarTokenizer::Scala,
+        "javascript" => AplusRadarTokenizer::JavaScript,
+        "css" => AplusRadarTokenizer::CSS,
+        "html" => AplusRadarTokenizer::HTML,
+        _ => panic!("No such tokenizer A+ submit exerciose on line {}. Computer says no...", line_cursor.sum_total())
+      }
+    } else {
+      AplusRadarTokenizer::None // Default
+    };
+
+    let lti = if let Some(lti) = lti { lti } else { String::new() };
+
+    // Crate submit node
+
+    let submit_node = TreeNodeType::AplusSubmit {
+      body_indent: body_indent,
+      key: key,
+      difficulty: difficulty,
+      max_points: max_points,
+      config: config.unwrap(),
+      max_submissions: if let Some(submissions) = submissions {
+        if let Ok(result) = submissions.parse() { result } else { 10 }
+      } else {
+        10
+      },
+      points_to_pass: points_to_pass,
+      class: if let Some(class) = class { class } else { String::new() },
+      title: if let Some(title) = title { title } else { String::new() },
+      category: if let Some(category) = category { category } else { String::from("submit") },
+      status: status,
+      ajax: ajax.is_some(),
+      allow_assistant_viewing: allow_assistant_viewing.is_some(),
+      allow_assistant_grading: allow_assistant_grading.is_some(),
+      quiz: quiz.is_some(),
+      url: if let Some(url) = url { url } else { String::new() },
+      radar_tokenizer: tokenizer, // implements Copy, so can be used below
+      radar_minimum_match_tokens: if let Some(min) = radar_minimum_match_tokens {
+        if let AplusRadarTokenizer::None = tokenizer { None } else {
+          if let Ok(result) = min.parse() { Some(result) } else { None }
+        }
+      } else {
+        None
+      },
+      lti: lti,
+      lti_resource_link_id: if let Some(id) = lti_resource_link_id { id } else { String::new() },
+      lti_open_in_iframe: lti_open_in_iframe.is_some(),
+      lti_aplus_get_and_post: lti_aplus_get_and_post.is_some(),
+    };
+
+    doctree = doctree.push_data_and_focus(submit_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::Body]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::Some(1),
+    }
   }
 
 

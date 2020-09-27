@@ -425,7 +425,7 @@ impl TreeNodeType {
         let show_when_not_selected = if *show_when_not_selected { "" } else { "!" };
         format!("\\feedback{{{}\\ref{{{}}}}}{{", show_when_not_selected, label)
       },
-      Self::AplusSubmit { body_indent, key, difficulty, max_points, config, max_submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post } => {
+      Self::AplusSubmit { body_indent, key, difficulty, max_points, config, max_submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post } => {
         todo!()
       }
     };

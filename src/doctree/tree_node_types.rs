@@ -7,6 +7,8 @@
 
 use super::*;
 use crate::common::QuizPoints;
+use crate::common::AplusExerciseStatus;
+use crate::common::AplusRadarTokenizer;
 
 
 /// ### TreeNodeType
@@ -975,19 +977,21 @@ pub enum TreeNodeType {
     class: String,
     title: String,
     category: String, // Default: submit
-    status: String,
+    status: AplusExerciseStatus,
     ajax: bool,
     allow_assistant_viewing: bool,
     allow_assistant_grading: bool,
     quiz: bool,
     url: String,
-    radar_tokenizer: String,
-    radar_minimum_match_tokens: u32,
+    radar_tokenizer: AplusRadarTokenizer,
+    radar_minimum_match_tokens: Option<u32>,
+    lti: String,
     lti_resource_link_id: String,
     lti_open_in_iframe: bool,
     lti_aplus_get_and_post: bool,
   }
 }
+
 
 use std::collections::HashSet;
 use lazy_static::lazy_static;
