@@ -1588,7 +1588,7 @@ impl Parser {
       doctree: doctree,
       next_states: Some(vec![StateMachine::Body]),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(1),
+      line_advance: LineAdvance::None,
     }
   }
 

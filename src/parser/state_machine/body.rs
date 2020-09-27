@@ -773,7 +773,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
   
         "submit" => {
   
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_aplus_submit(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker)
         }
   
         "ae-input" => {

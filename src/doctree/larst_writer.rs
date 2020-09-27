@@ -450,7 +450,7 @@ impl TreeNodeType {
         option_string = if *ajax { option_string + "ajax" + SEPARATOR } else { String::new() };
         option_string = if *allow_assistant_viewing { option_string + "allow-assistant-viewing" + SEPARATOR } else { option_string };
         option_string = if *allow_assistant_grading { option_string + "allow-assistant-grading" + SEPARATOR } else { option_string };
-        option_string = if *quiz { String::from("quiz") + SEPARATOR } else { String::new() };
+        option_string = if *quiz { String::from("quiz") + SEPARATOR } else { option_string };
         option_string = if ! lti.is_empty() { option_string + "lti" + SEPARATOR } else { option_string };
         option_string = if ! lti_resource_link_id.is_empty() { option_string + "resource_link_id=" + lti_resource_link_id + SEPARATOR } else { option_string };
         option_string = if *lti_open_in_iframe { option_string + "lti_open_in_iframe" + SEPARATOR } else { option_string };
@@ -513,7 +513,7 @@ impl TreeNodeType {
       Self::EmptyLine                       => "".to_string(),
       Self::Entry                           => todo!(),
       Self::EnumeratedList { .. }           => "\\end{enumerate}\n\n".to_string(),
-      Self::EnumeratedListItem { .. }       => "\n".to_string(),
+      Self::EnumeratedListItem { .. }       => "".to_string(),
       Self::ExternalHyperlinkTarget { .. }  => "\n".to_string(),
       Self::Field                           => todo!(),
       Self::FieldBody { .. }                => todo!(),
