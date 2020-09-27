@@ -447,7 +447,7 @@ impl TreeNodeType {
           AplusExerciseStatus::EnrollmentExt => option_string + "status=enrollment_ext" + SEPARATOR,
           AplusExerciseStatus::Maintenance => option_string + "status=maintenance" + SEPARATOR,
         };
-        option_string = if *ajax { option_string + "ajax" + SEPARATOR } else { String::new() };
+        option_string = if *ajax { option_string + "ajax" + SEPARATOR } else { option_string };
         option_string = if *allow_assistant_viewing { option_string + "allow-assistant-viewing" + SEPARATOR } else { option_string };
         option_string = if *allow_assistant_grading { option_string + "allow-assistant-grading" + SEPARATOR } else { option_string };
         option_string = if *quiz { String::from("quiz") + SEPARATOR } else { option_string };
