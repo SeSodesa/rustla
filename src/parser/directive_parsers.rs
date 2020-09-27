@@ -1178,7 +1178,7 @@ impl Parser {
         label: label,
         is_pre_selected: pre_selected.is_some(),
         is_correct: correct.is_some(),
-        is_neutral: false // pick-one nodes don't have this set
+        is_neutral: neutral.is_some()
       };
 
       doctree = doctree.push_data_and_focus(choice_node);
