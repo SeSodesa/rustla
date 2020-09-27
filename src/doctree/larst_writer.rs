@@ -362,43 +362,24 @@ impl TreeNodeType {
       //  A+ specific directives
       // ========================
 
-      Self::AplusPOI {
+      Self::AplusPOI { title, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, id, .. } => {
 
-        title,
-    
-        // Options
-        id,
-        previous,
-        next,
-        hidden,
-        class,
-        height,
-        columns,
-        bgimg,
-        not_in_slides,
-        not_in_book,
-        no_poi_box,
-        ..
-      } => {
-
-        let mut options = String::from("[");
+        let mut options = String::new();
         let delim = ", ";
 
-        if let Some(option) = id { options = options + option + delim};
-        if let Some(option) = previous { options = options + option + delim};
-        if let Some(option) = next { options = options + option + delim};
-        if let Some(option) = hidden { options = options + option + delim};
-        if let Some(option) = class { options = options + option + delim};
-        if let Some(option) = height { options = options + option + delim};
-        if let Some(option) = columns { options = options + option + delim};
-        if let Some(option) = bgimg { options = options + option + delim};
-        if let Some(option) = not_in_slides { options = options + option + delim};
-        if let Some(option) = not_in_book { options = options + option + delim};
-        if let Some(option) = no_poi_box { options = options + option + delim};
+        if let Some(option) = id { options = options + "id=" +option + delim};
+        if let Some(option) = previous { options = options + "previous=" + option + delim};
+        if let Some(option) = next { options = options + "next=" + option + delim};
+        if let Some(option) = hidden { options = options + "hidden" + option + delim};
+        if let Some(option) = class { options = options + "class=" + option + delim};
+        if let Some(option) = height { options = options + "height=" + option + delim};
+        if let Some(option) = columns { options = options + "columns=" + option + delim};
+        if let Some(option) = bgimg { options = options + "bgimg=" + option + delim};
+        if let Some(option) = not_in_slides { options = options + "not_in_slides" + delim};
+        if let Some(option) = not_in_book { options = options + "not_in_slides" + delim};
+        if let Some(option) = no_poi_box { options = options + "not_in_slides" + delim};
 
-        options.push(']');
-
-        let option_string =  if options.as_mut_str() == "[]" { "" } else { options.as_str() };
+        let option_string =  if options.is_empty() { options } else { format!("[{}]", options.as_str()) };
         format!("\\begin{{poi}}{}{{{}}}\n\n", option_string, title)
       },
       Self::AplusColBreak => "\\newcol\n\n".to_string(),
