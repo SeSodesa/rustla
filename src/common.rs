@@ -384,6 +384,26 @@ impl ParsingResult {
 }
 
 
+/// ### AplusExerciseStatus
+/// 
+/// There are 6 possible statuses for A+ exercises:
+/// 
+/// * ready: Visible exercise listed in table of contents.
+/// * unlisted (default): Unlisted in table of contents, otherwise same as ready.
+/// * hidden: Hidden from non course staff.
+/// * enrollment: Questions for students when they enroll to a course.
+/// * enrollment_ext: Same as enrollment but for external students.
+/// * maintenance: Hides the exercise description and prevents submissions.
+pub enum AplusExerciseStatus {
+  Ready,
+  Unlisted,
+  Hidden,
+  Enrollment,
+  EnrollmentExt,
+  Maintenance
+}
+
+
 // ===========
 //  Constants
 // ===========
