@@ -404,6 +404,20 @@ pub enum AplusExerciseStatus {
 }
 
 
+/// ### AplusRadarTokenizer
+///
+/// An enumeration of the different tokenizers offered by the A+ Radar tokenizer.
+/// 
+/// See [the docs](https://github.com/Aalto-LeTech/radar/tree/master/tokenizer#tokenizers)  for more details.
+pub enum AplusRadarTokenizer {
+  Python3,
+  Scala,
+  JavaScript,
+  CSS,
+  HTML
+}
+
+
 // ===========
 //  Constants
 // ===========
