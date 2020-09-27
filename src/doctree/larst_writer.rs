@@ -7,6 +7,8 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use crate::common::AplusExerciseStatus;
+use crate::common::AplusRadarTokenizer;
 
 impl DocTree {
 
@@ -427,13 +429,36 @@ impl TreeNodeType {
       },
       Self::AplusSubmit { body_indent, key, difficulty, max_points, config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post } => {
 
-        let mut option_string = String::from("[");
-
         // Read relevant options
+        let mut option_string = String::new();
+        const SEPARATOR: &str = ", ";
 
-        if option_string.as_str() == "[" { option_string.clear() } else { option_string.push(']') }
+        option_string = if ! config.is_empty() { option_string + "config=" + config + SEPARATOR } else { option_string };
+        option_string = option_string + "submissions=" + submissions.to_string().as_str() + SEPARATOR;
+        option_string = option_string + "points-to-pass=" + points_to_pass.to_string().as_str() + SEPARATOR;
+        option_string = if ! class.is_empty() { option_string + "class=" + class + SEPARATOR } else { option_string };
+        option_string = if ! title.is_empty() { option_string + "title=" + title + SEPARATOR } else { option_string };
+        option_string = if ! category.is_empty() { option_string + "category=" + category + SEPARATOR } else { option_string };
+        option_string = match status {
+          AplusExerciseStatus::Ready => option_string + "status=ready" + SEPARATOR,
+          AplusExerciseStatus::Unlisted => option_string + "status=unlisted" + SEPARATOR,
+          AplusExerciseStatus::Hidden => option_string + "status=hidden" + SEPARATOR,
+          AplusExerciseStatus::Enrollment => option_string + "status=enrollment" + SEPARATOR,
+          AplusExerciseStatus::EnrollmentExt => option_string + "status=enrollment_ext" + SEPARATOR,
+          AplusExerciseStatus::Maintenance => option_string + "status=maintenance" + SEPARATOR,
+        };
+        option_string = if *ajax { option_string + "ajax" + SEPARATOR } else { String::new() };
+        option_string = if *allow_assistant_viewing { option_string + "allow-assistant-viewing" + SEPARATOR } else { option_string };
+        option_string = if *allow_assistant_grading { option_string + "allow-assistant-grading" + SEPARATOR } else { option_string };
+        option_string = if *quiz { String::from("quiz") + SEPARATOR } else { String::new() };
+        option_string = if ! lti.is_empty() { option_string + "lti" + SEPARATOR } else { option_string };
+        option_string = if ! lti_resource_link_id.is_empty() { option_string + "resource_link_id=" + lti_resource_link_id + SEPARATOR } else { option_string };
+        option_string = if *lti_open_in_iframe { option_string + "lti_open_in_iframe" + SEPARATOR } else { option_string };
+        option_string = if *lti_aplus_get_and_post { option_string + "lti_aplus_get_and_post" + SEPARATOR } else { option_string };
 
-        format!("\\begin{{submit}}{}{{{}}}{{{}}}", option_string, key, max_points )
+        if ! option_string.is_empty() { option_string = format!("[{}]", option_string) }
+
+        format!("\\begin{{submit}}{}{{{}}}{{{}}}\n", option_string, key, max_points )
       }
     };
 
