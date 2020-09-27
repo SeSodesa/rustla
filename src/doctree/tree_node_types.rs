@@ -972,7 +972,7 @@ pub enum TreeNodeType {
     max_points: QuizPoints,
 
     config: String,
-    max_submissions: u32,
+    submissions: u32,
     points_to_pass: QuizPoints,
     class: String,
     title: String,

@@ -1509,9 +1509,9 @@ impl Parser {
     // Unpacking some options
     let max_points = if let Ok(result) = max_points.parse() { result } else { 10 };
     let points_to_pass = if let Some(ptp) = points_to_pass {
-      if let Ok(result) = ptp.parse() { result } else { max_points }
+      if let Ok(result) = ptp.parse() { result } else { 0 }
     } else {
-      max_points
+      0
     };
 
     use crate::common::AplusExerciseStatus;
@@ -1553,7 +1553,7 @@ impl Parser {
       difficulty: difficulty,
       max_points: max_points,
       config: config.unwrap(),
-      max_submissions: if let Some(submissions) = submissions {
+      submissions: if let Some(submissions) = submissions {
         if let Ok(result) = submissions.parse() { result } else { 10 }
       } else {
         10
