@@ -1608,7 +1608,7 @@ impl Parser {
     let id_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
-      panic!("A+ active element input before line {} has no key for output. Compter says no...", line_cursor.sum_total())
+      panic!("A+ active element input before line {} has no key for output. Computer says no...", line_cursor.sum_total())
     };
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
@@ -1644,7 +1644,7 @@ impl Parser {
     let id_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
-      panic!("A+ active element output before line {} has no key for output. Compter says no...", line_cursor.sum_total())
+      panic!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total())
     };
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
