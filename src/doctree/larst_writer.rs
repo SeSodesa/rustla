@@ -505,6 +505,35 @@ impl TreeNodeType {
         let mut options = String::new();
         let title = if let Some(title) = title { title } else { "" };
 
+        use crate::common::{ AplusActiveElementClear, AplusActiveElementOutputType};
+
+        options = options + "config=" + config + LATEX_OPTION_DELIM;
+        options = options + "inputs=" + inputs + LATEX_OPTION_DELIM;
+        if let Some(option) = class  { options = options + "class=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = width  { options = options + "class=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = height { options = options + "class=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = clear {
+          match option {
+            AplusActiveElementClear::Both   => options = options + "clear=both" + LATEX_OPTION_DELIM,
+            AplusActiveElementClear::Left   =>  options = options + "clear=left" + LATEX_OPTION_DELIM,
+            AplusActiveElementClear::Right  =>  options = options + "clear=right" + LATEX_OPTION_DELIM,
+          }
+        }
+        match output_type {
+          AplusActiveElementOutputType::Text => options = options + "type=text" + LATEX_OPTION_DELIM,
+          AplusActiveElementOutputType::Image => options = options + "type=image" + LATEX_OPTION_DELIM,
+        }
+        if let Some(option) = submissions { options = options + "submissions=" + &option.to_string() + LATEX_OPTION_DELIM }
+        if *scale_size { options = options + "scale-size" + LATEX_OPTION_DELIM }
+        match status {
+          AplusExerciseStatus::Ready    => { options = options + "status=ready" + LATEX_OPTION_DELIM }
+          AplusExerciseStatus::Unlisted => { options = options + "status=unlisted" + LATEX_OPTION_DELIM }
+          AplusExerciseStatus::Hidden   => { options = options + "status=hidden" + LATEX_OPTION_DELIM }
+          AplusExerciseStatus::Enrollment    => { options = options + "status=enrollment" + LATEX_OPTION_DELIM }
+          AplusExerciseStatus::EnrollmentExt => { options = options + "status=enrollment-ext" + LATEX_OPTION_DELIM }
+          AplusExerciseStatus::Maintenance   => { options = options + "status=maintenance" + LATEX_OPTION_DELIM }
+        }
+
         if ! options.is_empty() { options = format!("[{}]", options) }
 
         format!("\\aeoutput{}{{{}}}{{{}}}", options, key_for_output, title)
