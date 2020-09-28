@@ -296,6 +296,8 @@ impl TreeNode {
       TreeNodeType::AplusSubmit { .. } => {
         if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false }
       }
+      TreeNodeType::AplusActiveElementInput { .. } => false,
+      TreeNodeType::AplusActiveElementOutput { .. } => false,
     }
   }
 

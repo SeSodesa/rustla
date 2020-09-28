@@ -9,6 +9,9 @@ use super::*;
 use crate::common::QuizPoints;
 use crate::common::AplusExerciseStatus;
 use crate::common::AplusRadarTokenizer;
+use crate::common::AplusActiveElementClear;
+use crate::common::AplusActiveElementInputType;
+use crate::common::AplusActiveElementOutputType;
 
 
 /// ### TreeNodeType
@@ -989,7 +992,35 @@ pub enum TreeNodeType {
     lti_resource_link_id: String,
     lti_open_in_iframe: bool,
     lti_aplus_get_and_post: bool,
+  },
+
+  AplusActiveElementInput {
+    key_for_input: String,
+    title: Option<String>,
+    default: Option<String>,
+    class: Option<String>,
+    width: Option<String>,
+    height: Option<String>,
+    clear: Option<AplusActiveElementClear>,
+    input_type: Option<AplusActiveElementInputType>,
+    file: Option<String>,
+  },
+
+  AplusActiveElementOutput {
+    key_for_output: String,
+    config: String,
+    inputs: String,
+    title: Option<String>,
+    class: Option<String>,
+    width: Option<String>,
+    height: Option<String>,
+    clear: Option<AplusActiveElementClear>,
+    output_type: AplusActiveElementOutputType,
+    submissions: Option<u32>,
+    scale_size: bool,
+    status: AplusExerciseStatus,
   }
+
 }
 
 
@@ -1129,7 +1160,9 @@ impl TreeNodeType {
       Self::AplusPickChoice { .. } => None,
       Self::AplusQuestionnaireHints { body_indent } => Some(*body_indent),
       Self::AplusQuestionnaireHint { .. } => None,
-      Self::AplusSubmit { body_indent, .. } => Some(*body_indent)
+      Self::AplusSubmit { body_indent, .. } => Some(*body_indent),
+      Self::AplusActiveElementInput { .. } => None,
+      Self::AplusActiveElementOutput { .. } => None,
     }
   }
 
@@ -1263,6 +1296,8 @@ impl TreeNodeType {
       Self::AplusQuestionnaireHints { .. } => &APLUS_QUESTIONNAIRE_HINTS_CATEGORIES,
       Self::AplusQuestionnaireHint { .. } => &APLUS_QUESTIONNAIRE_HINT_CATEGORIES,
       Self::AplusSubmit { .. } => &APLUS_SUBMIT_CATEGORIES,
+      Self::AplusActiveElementInput { .. } => &APLUS_ACTIVE_ELEMENT_INPUT_CATEGORIES,
+      Self::AplusActiveElementOutput { .. } => &APLUS_ACTIVE_ELEMENT_OUTPUT_CATEGORIES,
     };
 
     categories.iter()

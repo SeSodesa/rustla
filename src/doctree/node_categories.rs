@@ -571,3 +571,13 @@ pub const APLUS_SUBMIT_CATEGORIES: &[NodeCategory] = &[
   NodeCategory::CompoundBody
 ];
 
+pub const APLUS_ACTIVE_ELEMENT_INPUT_CATEGORIES: &[NodeCategory] = &[
+  NodeCategory::Body,
+  NodeCategory::SimpleBody
+];
+
+pub const APLUS_ACTIVE_ELEMENT_OUTPUT_CATEGORIES: &[NodeCategory] = &[
+  NodeCategory::Body,
+  NodeCategory::SimpleBody
+];
+

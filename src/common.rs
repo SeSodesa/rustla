@@ -421,6 +421,52 @@ pub enum AplusRadarTokenizer {
 }
 
 
+/// ### AplusActiveElementClear
+///
+/// The variant "both" forces the element to a new line, "left" ("right") allows
+/// no floating elements on the left (right)
+#[derive(Clone, Copy, Debug)]
+pub enum AplusActiveElementClear {
+  /// Forces the element to a new line
+  Both,
+
+  /// Allows no floating elements on the left.
+  Left,
+
+  /// Allows no floating elements on the right.
+  Right
+}
+
+
+/// ### AplusActiveElementInputType
+///
+/// Use "file" for file inputs, "clickable" for clickable inputs, and
+/// "dropdown" for dropdown. For dropdowns, the available options should
+/// be listed after the type indicating "dropdown" in this
+/// format: "dropdown:option1,option2,option3"
+#[derive(Clone, Copy, Debug)]
+pub enum AplusActiveElementInputType {
+  /// Use for file inputs
+  File,
+
+  /// Use for clickable inputs
+  Clickable,
+
+  /// Use for dropdown menu
+  Dropdown,
+}
+
+
+/// ### AplusActiveElementOutputType
+///
+/// Default type is text; for image (png) outputs use "image"
+#[derive(Clone, Copy, Debug)]
+pub enum AplusActiveElementOutputType {
+  Text,
+  Image,
+}
+
+
 // ===========
 //  Constants
 // ===========

@@ -461,6 +461,10 @@ impl TreeNodeType {
 
         format!("\\begin{{submit}}{}{{{}}}{{{}}}\n", option_string, key, max_points )
       }
+
+      Self::AplusActiveElementInput { .. } => todo!(),
+      Self::AplusActiveElementOutput { .. } => todo!(),
+
     };
 
     use std::io::Write;
@@ -605,6 +609,9 @@ impl TreeNodeType {
       Self::AplusSubmit { .. } => {
         "\\end{submit}\n\n".to_string()
       }
+      Self::AplusActiveElementInput { .. } => todo!(),
+      Self::AplusActiveElementOutput { .. } => todo!(),
+
     };
 
     use std::io::Write;
