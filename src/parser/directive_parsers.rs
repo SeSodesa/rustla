@@ -1665,7 +1665,6 @@ impl Parser {
       let scale_size = options.remove("scale-size");
       let status = options.remove("status");
 
-
       (config, inputs, title, class, width, height, clear, output_type, submissions, scale_size, status)
       
     } else {
