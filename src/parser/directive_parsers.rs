@@ -1523,7 +1523,10 @@ impl Parser {
         "enrollment" => AplusExerciseStatus::Enrollment,
         "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
         "maintenance" => AplusExerciseStatus::Maintenance,
-        _ => panic!("No such exercise status for A+ submit exerciose on line {}. Computer says no...", line_cursor.sum_total())
+        _ => {
+          eprintln!("No such exercise status for A+ submit exercise before line {}. Setting as unlisted...", line_cursor.sum_total());
+          AplusExerciseStatus::Unlisted
+        }
       }
     } else {
       AplusExerciseStatus::Unlisted // Default
@@ -1652,7 +1655,10 @@ impl Parser {
           "file" => Some(AplusActiveElementInputType::File),
           "clickable" => Some(AplusActiveElementInputType::Clickable),
           "dropdown" => Some(AplusActiveElementInputType::Dropdown),
-          _ => panic!("No such input type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total())
+          _ => {
+            eprintln!("No such input type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total());
+            None
+          }
         }
       } else { None },
       file: if let (Some(input_type), Some(file)) = (input_type, file) {
@@ -1691,7 +1697,6 @@ impl Parser {
       let config = options.remove("config");
       let inputs = options.remove("inputs");
       let title = options.remove("title");
-      let default = options.remove("default");
       let class = options.remove("class");
       let width = options.remove("width");
       let height = options.remove("height");
@@ -1708,7 +1713,81 @@ impl Parser {
       (None, None, None, None, None, None, None, None, None, None, None)
     };
 
-    todo!()
+    use crate::common::{ AplusExerciseStatus, AplusActiveElementClear, AplusActiveElementOutputType };
+
+    let ae_output_node = TreeNodeType::AplusActiveElementOutput {
+      key_for_output: key_for_output,
+      config: if let Some(config) = config { config } else {
+        panic!("A+ active element output before line {} must have a set config file via the \"config\" option. Computer says no...", line_cursor.sum_total())
+      },
+      inputs: if let Some(inputs) = inputs { inputs } else {
+        panic!("A+ active element output before line {} must have a set of inputs set via the \"inputs\" setting. Computer says no...", line_cursor.sum_total())
+      },
+      title: title,
+      class: class,
+      width: width,
+      height: height,
+      clear: if let Some(clear) = clear {
+        match clear.as_str() {
+          "both" => Some(AplusActiveElementClear::Both),
+          "left" => Some(AplusActiveElementClear::Left),
+          "right" => Some(AplusActiveElementClear::Right),
+          _ => panic!("No such clear type for A+ active element output before line {}. Computer says no...", line_cursor.sum_total())
+        }
+      } else { None },
+      output_type: if let Some(output_type) = output_type {
+        match output_type.as_str() {
+          "text" => AplusActiveElementOutputType::Text,
+          "image" => AplusActiveElementOutputType::Image,
+          _ => {
+            eprintln!("Warning: No such output type for A+ active element output beforeline {}. Setting it as text...", line_cursor.sum_total());
+            AplusActiveElementOutputType::Text
+          }
+        }
+      } else {
+        AplusActiveElementOutputType::Text
+      },
+      submissions: if let Some(submissions) = submissions {
+        if let Ok(result) = submissions.parse::<u32>() {
+          Some(result)
+        } else {
+          None
+        }
+      } else {
+        None
+      },
+      scale_size: if let Some(_) = scale_size {
+        true
+      } else {
+        false
+      },
+      status: if let Some(status) = status {
+        match status.as_str().trim() {
+          "ready" => AplusExerciseStatus::Ready,
+          "unlisted" => AplusExerciseStatus::Unlisted,
+          "hidden" => AplusExerciseStatus::Hidden,
+          "enrollment" => AplusExerciseStatus::Enrollment,
+          "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
+          "maintenance" => AplusExerciseStatus::Maintenance,
+          _ => {
+            eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
+            AplusExerciseStatus::Unlisted    
+          }
+
+        }
+      } else {
+        AplusExerciseStatus::Unlisted
+      }
+    };
+
+    doctree = doctree.push_data(ae_output_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::None
+    }
   }
 
 
