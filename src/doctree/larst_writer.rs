@@ -491,11 +491,19 @@ impl TreeNodeType {
 
         }
 
+        if ! options.is_empty() { options = format!("[{}]", options) }
+
         format!("\\aeinput{}{{{}}}{{{}}}", options, key_for_input, title)
       },
 
-      Self::AplusActiveElementOutput { .. } => {
-        format!("")
+      Self::AplusActiveElementOutput { key_for_output, config, inputs, title, class, width, height, clear, output_type, submissions, scale_size, status } => {
+
+        let mut options = String::new();
+        let title = if let Some(title) = title { title } else { "" };
+
+        if ! options.is_empty() { options = format!("[{}]", options) }
+
+        format!("\\aeoutput{}{{{}}}{{{}}}", options, key_for_output, title)
       },
 
     };
