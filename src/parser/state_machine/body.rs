@@ -778,12 +778,12 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
   
         "ae-input" => {
   
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_aplus_active_element_input(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent)
         }
   
         "ae-output" => {
   
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_aplus_active_element_output(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent)
         }
   
         "hidden_block" => {
