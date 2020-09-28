@@ -487,8 +487,12 @@ impl TreeNodeType {
             AplusActiveElementInputType::Dropdown(option_string)   => options = options + "type=dropdown:" + option_string + LATEX_OPTION_DELIM,
           }
         }
-        if let (Some(in_type), Some(option)) = (input_type, file) {
-
+        if let (Some(input_type), Some(file)) = (input_type, file) {
+          if let AplusActiveElementInputType::Clickable =  input_type {
+            options = options + "file=" + file + LATEX_OPTION_DELIM;
+          } else {
+            eprintln!("LarST writer found an alleged file path but active element input type not \"clickable\". Ignoring...")
+          }
         }
 
         if ! options.is_empty() { options = format!("[{}]", options) }
