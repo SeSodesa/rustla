@@ -1773,7 +1773,6 @@ impl Parser {
             eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
             AplusExerciseStatus::Unlisted    
           }
-
         }
       } else {
         AplusExerciseStatus::Unlisted
