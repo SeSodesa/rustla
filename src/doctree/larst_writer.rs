@@ -484,11 +484,11 @@ impl TreeNodeType {
           match option {
             AplusActiveElementInputType::File       => options = options + "type=file" + LATEX_OPTION_DELIM,
             AplusActiveElementInputType::Clickable  => options = options + "type=clickable" + LATEX_OPTION_DELIM,
-            AplusActiveElementInputType::Dropdown   => options = options + "type=dropdown" + LATEX_OPTION_DELIM,
+            AplusActiveElementInputType::Dropdown(option_string)   => options = options + "type=dropdown:" + option_string + LATEX_OPTION_DELIM,
           }
         }
         if let (Some(in_type), Some(option)) = (input_type, file) {
-          
+
         }
 
         format!("\\aeinput{}{{{}}}{{{}}}", options, key_for_input, title)

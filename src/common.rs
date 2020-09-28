@@ -444,7 +444,7 @@ pub enum AplusActiveElementClear {
 /// "dropdown" for dropdown. For dropdowns, the available options should
 /// be listed after the type indicating "dropdown" in this
 /// format: "dropdown:option1,option2,option3"
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug)]
 pub enum AplusActiveElementInputType {
   /// Use for file inputs
   File,
@@ -452,8 +452,8 @@ pub enum AplusActiveElementInputType {
   /// Use for clickable inputs
   Clickable,
 
-  /// Use for dropdown menu
-  Dropdown,
+  /// Use for dropdown menu. Comes with options in a String.
+  Dropdown(String),
 }
 
 

@@ -1651,18 +1651,27 @@ impl Parser {
         }
       } else { None },
       input_type: if let Some(input_type) = &input_type {
-        match input_type.as_str() {
-          "file" => Some(AplusActiveElementInputType::File),
-          "clickable" => Some(AplusActiveElementInputType::Clickable),
-          "dropdown" => Some(AplusActiveElementInputType::Dropdown),
-          _ => {
-            eprintln!("No such input type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total());
-            None
-          }
+        if input_type == "file" {
+          Some(AplusActiveElementInputType::File)
+        } else if input_type == "clickable" {
+          Some(AplusActiveElementInputType::Clickable)
+        } else if input_type.starts_with("dropdown:") {
+          let options = if let Some(options) = input_type.split(":").last() {
+            options
+          } else {
+            panic!("No options for dropdown input for A+ activ element input before line {}. Computer says no...", line_cursor.sum_total());
+          };
+          Some(common::AplusActiveElementInputType::Dropdown(options.to_string()))
+        } else {
+          panic!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total())
         }
       } else { None },
       file: if let (Some(input_type), Some(file)) = (input_type, file) {
-        Some(file)
+        if input_type == "clickable" {
+          Some(file)
+        } else {
+          None
+        }
       } else { None }
     };
 
