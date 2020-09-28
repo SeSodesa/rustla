@@ -1732,7 +1732,10 @@ impl Parser {
           "both" => Some(AplusActiveElementClear::Both),
           "left" => Some(AplusActiveElementClear::Left),
           "right" => Some(AplusActiveElementClear::Right),
-          _ => panic!("No such clear type for A+ active element output before line {}. Computer says no...", line_cursor.sum_total())
+          _ => {
+            eprintln!("No such clear type for A+ active element output before line {}. Ignoring...", line_cursor.sum_total());
+            None
+          }
         }
       } else { None },
       output_type: if let Some(output_type) = output_type {
@@ -2017,7 +2020,7 @@ impl Parser {
 
       eprintln!("Line: {:#?}", line);
 
-      if line.trim().is_empty() { ended_with_blank = true; eprintln!("Ended with blank: {}\n", ended_with_blank); break } // End of option list
+      if line.trim().is_empty() { ended_with_blank = true; break } // End of option list
 
       if let Some(captures) = FIELD_MARKER_RE.captures(line) {
         let line_indent = captures.get(1).unwrap().as_str().chars().count();
