@@ -10,6 +10,8 @@ use super::*;
 use crate::common::AplusExerciseStatus;
 use crate::common::AplusRadarTokenizer;
 
+const LATEX_OPTION_DELIM: &str = ", ";
+
 impl DocTree {
 
   /// ### write_to_larst
@@ -248,13 +250,11 @@ impl TreeNodeType {
       Self::Image { uri, alt, height, width, scale, align, target, name, class } => {
 
         let mut options = String::new();
-        let connector = ", ";
-
-        options = if let Some(val) = alt    { if options.is_empty() { options + val } else { options + connector + val } } else { options };
-        options = if let Some(val) = height { if options.is_empty() { options + val } else { options + connector + val } } else { options };
-        options = if let Some(val) = width  { if options.is_empty() { options + val } else { options + connector + val } } else { options };
-        options = if let Some(val) = scale  { if options.is_empty() { options + val } else { options + connector + val } } else { options };
-        options = if let Some(val) = align  { if options.is_empty() { options + val } else { options + connector + val } } else { options };
+        options = if let Some(val) = alt    { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        options = if let Some(val) = height { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        options = if let Some(val) = width  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        options = if let Some(val) = scale  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        options = if let Some(val) = align  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
 
         format!("\\includegraphics[{}]{{{}}}\n", options, uri)
       },
@@ -365,19 +365,18 @@ impl TreeNodeType {
       Self::AplusPOI { id, title, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, .. } => {
 
         let mut options = String::new();
-        let delim = ", ";
 
-        if let Some(option) = id { options = options + "id=" +option + delim};
-        if let Some(option) = previous { options = options + "prev=" + option + delim};
-        if let Some(option) = next { options = options + "next=" + option + delim};
-        if let Some(option) = hidden { options = options + "hidden" + delim};
-        // if let Some(option) = class { options = options + "class=" + option + delim};
-        // if let Some(option) = height { options = options + "height=" + option + delim};
-        if let Some(option) = columns { options = options + "columns=" + option + delim};
-        if let Some(option) = bgimg { options = options + "bgimg=" + option + delim};
-        // if let Some(option) = not_in_slides { options = options + "not_in_slides" + delim};
-        // if let Some(option) = not_in_book { options = options + "not_in_book" + delim};
-        // if let Some(option) = no_poi_box { options = options + "no_poi_box" + delim};
+        if let Some(option) = id        { options = options + "id=" +option + LATEX_OPTION_DELIM};
+        if let Some(option) = previous  { options = options + "prev=" + option + LATEX_OPTION_DELIM};
+        if let Some(option) = next      { options = options + "next=" + option + LATEX_OPTION_DELIM};
+        if let Some(option) = hidden    { options = options + "hidden" + LATEX_OPTION_DELIM};
+        // if let Some(option) = class              { options = options + "class=" + option + delim};
+        // if let Some(option) = height             { options = options + "height=" + option + delim};
+        if let Some(option) = columns   { options = options + "columns=" + option + LATEX_OPTION_DELIM};
+        if let Some(option) = bgimg     { options = options + "bgimg=" + option + LATEX_OPTION_DELIM};
+        // if let Some(option) = not_in_slides      { options = options + "not_in_slides" + delim};
+        // if let Some(option) = not_in_book        { options = options + "not_in_book" + delim};
+        // if let Some(option) = no_poi_box         { options = options + "no_poi_box" + delim};
 
         if ! options.is_empty() { options = format!("[{}]", options.as_str()) };
         format!("\\begin{{poi}}{}{{{}}}\n\n", options, title)
@@ -392,10 +391,10 @@ impl TreeNodeType {
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => {
 
         let mut options = String::new();
-        const OPTION_DELIM: &str = ", ";
-        if let Some(option) = class { options = options + "id=" +option + OPTION_DELIM };
-        if *required { options = options + "required" + OPTION_DELIM };
-        if let Some(option) = key { options = options + "key=" + option + OPTION_DELIM };
+        const LATEX_OPTION_DELIM: &str = ", ";
+        if let Some(option) = class { options = options + "id=" +option + LATEX_OPTION_DELIM };
+        if *required { options = options + "required" + LATEX_OPTION_DELIM };
+        if let Some(option) = key { options = options + "key=" + option + LATEX_OPTION_DELIM };
         // if *dropdown { options = options + "dropdown" + OPTION_DELIM };
 
         let options = if ! options.is_empty() { format!("[{}]", options) } else { options };
@@ -405,14 +404,13 @@ impl TreeNodeType {
       Self::AplusPickAny { points, class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts, .. } => {
 
         let mut options = String::new();
-        const OPTION_DELIM: &str = ", ";
-        if let Some(option) = class { options = options + "id=" +option + OPTION_DELIM };
-        if *required { options = options + "required" + OPTION_DELIM };
-        if let Some(option) = key { options = options + "key=" + option + OPTION_DELIM };
-        if *partial_points { options = options + "partial-points" + OPTION_DELIM };
-        if *randomized { options = options + "randomized" + OPTION_DELIM };
-        if let Some(correct_count) = correct_count { options = options + "correct-count=" + correct_count.to_string().as_str() + OPTION_DELIM };
-        if *preserve_questions_between_attempts { options = options + "preserve-questions-between-attempts" + OPTION_DELIM };
+        if let Some(option) = class { options = options + "id=" +option + LATEX_OPTION_DELIM };
+        if *required { options = options + "required" + LATEX_OPTION_DELIM };
+        if let Some(option) = key { options = options + "key=" + option + LATEX_OPTION_DELIM };
+        if *partial_points { options = options + "partial-points" + LATEX_OPTION_DELIM };
+        if *randomized { options = options + "randomized" + LATEX_OPTION_DELIM };
+        if let Some(correct_count) = correct_count { options = options + "correct-count=" + correct_count.to_string().as_str() + LATEX_OPTION_DELIM };
+        if *preserve_questions_between_attempts { options = options + "preserve-questions-between-attempts" + LATEX_OPTION_DELIM };
 
         if ! options.is_empty() { options = format!("[{}]", options) }
 
@@ -435,30 +433,29 @@ impl TreeNodeType {
 
         // Read relevant options
         let mut option_string = String::new();
-        const SEPARATOR: &str = ", ";
 
-        option_string = if ! config.is_empty() { option_string + "config=" + config + SEPARATOR } else { option_string };
-        option_string = option_string + "submissions=" + submissions.to_string().as_str() + SEPARATOR;
-        option_string = option_string + "points-to-pass=" + points_to_pass.to_string().as_str() + SEPARATOR;
-        option_string = if ! class.is_empty() { option_string + "class=" + class + SEPARATOR } else { option_string };
-        option_string = if ! title.is_empty() { option_string + "title=" + title + SEPARATOR } else { option_string };
-        option_string = if ! category.is_empty() { option_string + "category=" + category + SEPARATOR } else { option_string };
+        option_string = if ! config.is_empty() { option_string + "config=" + config + LATEX_OPTION_DELIM } else { option_string };
+        option_string = option_string + "submissions=" + submissions.to_string().as_str() + LATEX_OPTION_DELIM;
+        option_string = option_string + "points-to-pass=" + points_to_pass.to_string().as_str() + LATEX_OPTION_DELIM;
+        option_string = if ! class.is_empty() { option_string + "class=" + class + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if ! title.is_empty() { option_string + "title=" + title + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if ! category.is_empty() { option_string + "category=" + category + LATEX_OPTION_DELIM } else { option_string };
         option_string = match status {
-          AplusExerciseStatus::Ready => option_string + "status=ready" + SEPARATOR,
-          AplusExerciseStatus::Unlisted => option_string + "status=unlisted" + SEPARATOR,
-          AplusExerciseStatus::Hidden => option_string + "status=hidden" + SEPARATOR,
-          AplusExerciseStatus::Enrollment => option_string + "status=enrollment" + SEPARATOR,
-          AplusExerciseStatus::EnrollmentExt => option_string + "status=enrollment_ext" + SEPARATOR,
-          AplusExerciseStatus::Maintenance => option_string + "status=maintenance" + SEPARATOR,
+          AplusExerciseStatus::Ready => option_string + "status=ready" + LATEX_OPTION_DELIM,
+          AplusExerciseStatus::Unlisted => option_string + "status=unlisted" + LATEX_OPTION_DELIM,
+          AplusExerciseStatus::Hidden => option_string + "status=hidden" + LATEX_OPTION_DELIM,
+          AplusExerciseStatus::Enrollment => option_string + "status=enrollment" + LATEX_OPTION_DELIM,
+          AplusExerciseStatus::EnrollmentExt => option_string + "status=enrollment_ext" + LATEX_OPTION_DELIM,
+          AplusExerciseStatus::Maintenance => option_string + "status=maintenance" + LATEX_OPTION_DELIM,
         };
-        option_string = if *ajax { option_string + "ajax" + SEPARATOR } else { option_string };
-        option_string = if *allow_assistant_viewing { option_string + "allow-assistant-viewing" + SEPARATOR } else { option_string };
-        option_string = if *allow_assistant_grading { option_string + "allow-assistant-grading" + SEPARATOR } else { option_string };
-        option_string = if *quiz { String::from("quiz") + SEPARATOR } else { option_string };
-        option_string = if ! lti.is_empty() { option_string + "lti" + SEPARATOR } else { option_string };
-        option_string = if ! lti_resource_link_id.is_empty() { option_string + "resource_link_id=" + lti_resource_link_id + SEPARATOR } else { option_string };
-        option_string = if *lti_open_in_iframe { option_string + "lti_open_in_iframe" + SEPARATOR } else { option_string };
-        option_string = if *lti_aplus_get_and_post { option_string + "lti_aplus_get_and_post" + SEPARATOR } else { option_string };
+        option_string = if *ajax { option_string + "ajax" + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if *allow_assistant_viewing { option_string + "allow-assistant-viewing" + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if *allow_assistant_grading { option_string + "allow-assistant-grading" + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if *quiz { String::from("quiz") + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if ! lti.is_empty() { option_string + "lti" + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if ! lti_resource_link_id.is_empty() { option_string + "resource_link_id=" + lti_resource_link_id + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if *lti_open_in_iframe { option_string + "lti_open_in_iframe" + LATEX_OPTION_DELIM } else { option_string };
+        option_string = if *lti_aplus_get_and_post { option_string + "lti_aplus_get_and_post" + LATEX_OPTION_DELIM } else { option_string };
 
         if ! option_string.is_empty() { option_string = format!("[{}]", option_string) }
 
