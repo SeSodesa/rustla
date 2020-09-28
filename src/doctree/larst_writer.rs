@@ -683,8 +683,8 @@ impl TreeNodeType {
       Self::AplusSubmit { .. } => {
         "\\end{submit}\n\n".to_string()
       }
-      Self::AplusActiveElementInput { .. } => "\n".to_string(),
-      Self::AplusActiveElementOutput { .. } => "\n".to_string(),
+      Self::AplusActiveElementInput { .. } => "\n\n".to_string(),
+      Self::AplusActiveElementOutput { .. } => "\n\n".to_string(),
 
     };
 
