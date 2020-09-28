@@ -462,8 +462,41 @@ impl TreeNodeType {
         format!("\\begin{{submit}}{}{{{}}}{{{}}}\n", option_string, key, max_points )
       }
 
-      Self::AplusActiveElementInput { .. } => todo!(),
-      Self::AplusActiveElementOutput { .. } => todo!(),
+      Self::AplusActiveElementInput { key_for_input, title, default, class, width, height, clear, input_type, file } => {
+
+        use crate::common::{ AplusActiveElementClear, AplusActiveElementInputType};
+
+        let mut options = String::new();
+
+        let title = if let Some(title) = title { title } else { "" };
+        if let Some(option) = default { options = options + "default=" + option + LATEX_OPTION_DELIM  }
+        if let Some(option) = class   { options = options + "class=" + option + LATEX_OPTION_DELIM  }
+        if let Some(option) = width   { options = options + "width=" + option + LATEX_OPTION_DELIM  }
+        if let Some(option) = height  { options = options + "height=" + option + LATEX_OPTION_DELIM  }
+        if let Some(option) = clear {
+          match option {
+            AplusActiveElementClear::Both   => options = options + "clear=both" + LATEX_OPTION_DELIM,
+            AplusActiveElementClear::Left   =>  options = options + "clear=left" + LATEX_OPTION_DELIM,
+            AplusActiveElementClear::Right  =>  options = options + "clear=right" + LATEX_OPTION_DELIM,
+          }
+        }
+        if let Some(option) = input_type {
+          match option {
+            AplusActiveElementInputType::File       => options = options + "type=file" + LATEX_OPTION_DELIM,
+            AplusActiveElementInputType::Clickable  => options = options + "type=clickable" + LATEX_OPTION_DELIM,
+            AplusActiveElementInputType::Dropdown   => options = options + "type=dropdown" + LATEX_OPTION_DELIM,
+          }
+        }
+        if let (Some(in_type), Some(option)) = (input_type, file) {
+          
+        }
+
+        format!("\\aeinput{}{{{}}}{{{}}}", options, key_for_input, title)
+      },
+
+      Self::AplusActiveElementOutput { .. } => {
+        format!("")
+      },
 
     };
 
@@ -609,8 +642,8 @@ impl TreeNodeType {
       Self::AplusSubmit { .. } => {
         "\\end{submit}\n\n".to_string()
       }
-      Self::AplusActiveElementInput { .. } => todo!(),
-      Self::AplusActiveElementOutput { .. } => todo!(),
+      Self::AplusActiveElementInput { .. } => "\n".to_string(),
+      Self::AplusActiveElementOutput { .. } => "\n".to_string(),
 
     };
 
