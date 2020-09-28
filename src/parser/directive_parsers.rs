@@ -1598,12 +1598,80 @@ impl Parser {
   }
 
 
-  pub fn parse_aplus_active_element_input () {
+  pub fn parse_aplus_active_element_input (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize) -> TransitionResult {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "title", "default", "class", "width",
+      "height", "clear", "type", "file",
+    ];
+
+    let id_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      args
+    } else {
+      panic!("A+ active element input before line {} has no key for output. Compter says no...", line_cursor.sum_total())
+    };
+
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (title, default, class, width, height, clear, input_type, file) = if let Some(mut options) = options {
+
+      let title = options.remove("title");
+      let default = options.remove("default");
+      let class = options.remove("class");
+      let width = options.remove("width");
+      let height = options.remove("height");
+      let clear = options.remove("clear");
+      let input_type = options.remove("type");
+      let file = options.remove("file");
+
+      (title, default, class, width, height, clear, input_type, file)
+      
+    } else {
+      (None, None, None, None, None, None, None, None)
+    };
+
     todo!()
   }
 
 
-  pub fn parse_aplus_active_element_output () {
+  pub fn parse_aplus_active_element_output (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize) -> TransitionResult {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "config", "inputs", "title", "class", "width", "height",
+      "clear", "type", "submissions", "scale-size", "status"
+    ];
+
+    let id_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      args
+    } else {
+      panic!("A+ active element output before line {} has no key for output. Compter says no...", line_cursor.sum_total())
+    };
+
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (config, inputs, title, class, width, height, clear, output_type, submissions, scale_size, status) = if let Some(mut options) = options {
+
+      let config = options.remove("config");
+      let inputs = options.remove("inputs");
+      let title = options.remove("title");
+      let default = options.remove("default");
+      let class = options.remove("class");
+      let width = options.remove("width");
+      let height = options.remove("height");
+      let clear = options.remove("clear");
+      let output_type = options.remove("type");
+      let file = options.remove("file");
+      let submissions = options.remove("submissions");
+      let scale_size = options.remove("scale-size");
+      let status = options.remove("status");
+
+
+      (config, inputs, title, class, width, height, clear, output_type, submissions, scale_size, status)
+      
+    } else {
+      (None, None, None, None, None, None, None, None, None, None, None)
+    };
+
     todo!()
   }
 

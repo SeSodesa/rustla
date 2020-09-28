@@ -233,8 +233,8 @@ impl TreeNodeType {
         format!("{}\\item ", " ".repeat(*enumerator_indent))
       },
       Self::ExternalHyperlinkTarget { .. }      => todo!(),
-      Self::Field                               => todo!(),
-      Self::FieldBody { .. }                    => todo!(),
+      Self::Field                               => unimplemented!(),
+      Self::FieldBody { .. }                    => unimplemented!(),
       Self::FieldList { marker_indent } => {
         format!("\\begin{{itemize}}\n")
       },
