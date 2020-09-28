@@ -362,22 +362,22 @@ impl TreeNodeType {
       //  A+ specific directives
       // ========================
 
-      Self::AplusPOI { title, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, id, .. } => {
+      Self::AplusPOI { id, title, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, .. } => {
 
         let mut options = String::new();
         let delim = ", ";
 
         if let Some(option) = id { options = options + "id=" +option + delim};
-        if let Some(option) = previous { options = options + "previous=" + option + delim};
+        if let Some(option) = previous { options = options + "prev=" + option + delim};
         if let Some(option) = next { options = options + "next=" + option + delim};
         if let Some(option) = hidden { options = options + "hidden" + delim};
-        if let Some(option) = class { options = options + "class=" + option + delim};
-        if let Some(option) = height { options = options + "height=" + option + delim};
+        // if let Some(option) = class { options = options + "class=" + option + delim};
+        // if let Some(option) = height { options = options + "height=" + option + delim};
         if let Some(option) = columns { options = options + "columns=" + option + delim};
         if let Some(option) = bgimg { options = options + "bgimg=" + option + delim};
-        if let Some(option) = not_in_slides { options = options + "not_in_slides" + delim};
-        if let Some(option) = not_in_book { options = options + "not_in_book" + delim};
-        if let Some(option) = no_poi_box { options = options + "no_poi_box" + delim};
+        // if let Some(option) = not_in_slides { options = options + "not_in_slides" + delim};
+        // if let Some(option) = not_in_book { options = options + "not_in_book" + delim};
+        // if let Some(option) = no_poi_box { options = options + "no_poi_box" + delim};
 
         if ! options.is_empty() { options = format!("[{}]", options.as_str()) };
         format!("\\begin{{poi}}{}{{{}}}\n\n", options, title)
@@ -409,7 +409,7 @@ impl TreeNodeType {
         if let Some(option) = class { options = options + "id=" +option + OPTION_DELIM };
         if *required { options = options + "required" + OPTION_DELIM };
         if let Some(option) = key { options = options + "key=" + option + OPTION_DELIM };
-        if *partial_points { options = options + "partial_points" + OPTION_DELIM };
+        if *partial_points { options = options + "partial-points" + OPTION_DELIM };
         if *randomized { options = options + "randomized" + OPTION_DELIM };
         if let Some(correct_count) = correct_count { options = options + "correct-count=" + correct_count.to_string().as_str() + OPTION_DELIM };
         if *preserve_questions_between_attempts { options = options + "preserve-questions-between-attempts" + OPTION_DELIM };
