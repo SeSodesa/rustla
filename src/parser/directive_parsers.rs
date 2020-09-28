@@ -1605,7 +1605,7 @@ impl Parser {
       "height", "clear", "type", "file",
     ];
 
-    let id_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+    let key_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
       panic!("A+ active element input before line {} has no key for output. Computer says no...", line_cursor.sum_total())
@@ -1630,7 +1630,44 @@ impl Parser {
       (None, None, None, None, None, None, None, None)
     };
 
-    todo!()
+    use crate::common::{ AplusActiveElementClear, AplusActiveElementInputType };
+
+    let ae_input_node = TreeNodeType::AplusActiveElementInput {
+      key_for_input: key_for_input,
+      title: title,
+      default: default,
+      class: class,
+      width: width,
+      height: height,
+      clear: if let Some(clear) = clear {
+        match clear.as_str() {
+          "both" => Some(AplusActiveElementClear::Both),
+          "left" => Some(AplusActiveElementClear::Left),
+          "right" => Some(AplusActiveElementClear::Right),
+          _ => panic!("No such clear type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total())
+        }
+      } else { None },
+      input_type: if let Some(input_type) = &input_type {
+        match input_type.as_str() {
+          "file" => Some(AplusActiveElementInputType::File),
+          "clickable" => Some(AplusActiveElementInputType::Clickable),
+          "dropdown" => Some(AplusActiveElementInputType::Dropdown),
+          _ => panic!("No such input type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total())
+        }
+      } else { None },
+      file: if let (Some(input_type), Some(file)) = (input_type, file) {
+        Some(file)
+      } else { None }
+    };
+
+    doctree = doctree.push_data(ae_input_node);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::None,
+    }
   }
 
 
@@ -1641,7 +1678,7 @@ impl Parser {
       "clear", "type", "submissions", "scale-size", "status"
     ];
 
-    let id_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+    let key_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
       panic!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total())
