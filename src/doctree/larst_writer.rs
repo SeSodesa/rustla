@@ -223,14 +223,14 @@ impl TreeNodeType {
         format!("\\textit{{{}}}", text)
       },
       Self::EmptyLine => {
-        format!("") // Notice, not "\n\n" but "\n"
+        format!("")
       },
       Self::Entry => todo!(),
       Self::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => {
         format!("\\begin{{enumerate}}\n")
       },
       Self::EnumeratedListItem { delims, kind, index_in_list, enumerator_indent, text_indent } => {
-        format!("{}\\item ", " ".repeat(*enumerator_indent))
+        format!("\\item ")
       },
       Self::ExternalHyperlinkTarget { .. }      => todo!(),
       Self::Field                               => unimplemented!(),
