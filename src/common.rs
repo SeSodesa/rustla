@@ -242,45 +242,49 @@ pub enum MetricType {
   Lenght(f32),
 }
 
+/// ### LengthNum
+/// A type alias for the number type used in the `LengthUnit` enum.
+pub type LengthNum = f64;
+
 /// ### LengthUnit
 /// Units of length recognized by reStructuredText.
 #[derive(Debug)]
-pub enum LenghtUnit {
+pub enum Length {
 
   /// #### Em
   /// em unit, the element's font size
-  Em(u32),
+  Em(LengthNum),
 
   /// ### Ex
   /// ex unit, x-height of the element's font size
-  Ex(u32),
+  Ex(LengthNum),
 
   /// ### Mn
   /// Millimeters
-  Mm(u32),
+  Mm(LengthNum),
 
   /// #### Cm
   /// Centimeters.
-  Cm(u32),
+  Cm(LengthNum),
 
   /// #### In
   /// Inches. 1in == 2.54 cm == 96 px.
-  In(u32),
+  In(LengthNum),
 
   /// #### Px
   /// Pixels. 1px == 1/96 in
   /// 
   /// ##### Note!
   /// In LaTeX, 1 px == 1/72 in.
-  Px(u32),
+  Px(LengthNum),
 
   /// #### Pt
   /// Points. 1pt == 1/72 in
-  Pt(u32),
+  Pt(LengthNum),
 
   /// #### Pc
   /// Picas. 1 pc == 1/6 in == 12 pt
-  Pc(u32),
+  Pc(LengthNum),
 }
 
 

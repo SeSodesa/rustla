@@ -28,7 +28,7 @@ use crate::common::{
   SectionLineStyle,
   EnumDelims, EnumKind, NodeId,
   EnumAsInt, PatternName, FootnoteKind,
-  HTMLAlignment, HorizontalAlignment, LenghtUnit,
+  HTMLAlignment, HorizontalAlignment, Length,
   TableColWidths, MetricType, ToCBacklinks
 };
 

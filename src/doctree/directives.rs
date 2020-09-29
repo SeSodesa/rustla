@@ -285,7 +285,7 @@ pub enum TableDirective {
     class:  Option<String>,
     align:  Option<HorizontalAlignment>,
     widths: Option<Vec<usize>>,
-    width:  Option<LenghtUnit>
+    width:  Option<Length>
   },
 
   /// #### CSVTable
