@@ -170,11 +170,8 @@ impl Parser {
         _ => ()
       }
 
-
       // Convert the contents of the buffer to usize, if valid.
-      let buf_str = buffer.as_str();
-
-      match buf_str {
+      match buffer.as_str() {
         "M"   => num_val += 1000,
         "CM"  => num_val += 900,
         "D"   => num_val += 500,
@@ -189,7 +186,7 @@ impl Parser {
         "IV"  => num_val += 4,
         "I"   => num_val += 1,
         _     => {
-          eprintln!("No match for supposed upper-case Roman numeral {}...\n", buf_str);
+          eprintln!("No match for supposed upper-case Roman numeral {}...\n", buffer.as_str());
           return None
         }
       }
@@ -257,9 +254,7 @@ impl Parser {
 
 
       // Convert the contents of the buffer to usize, if valid.
-      let buf_str = buffer.as_str();
-
-      match buf_str {
+      match buffer.as_str() {
         "m"   => num_val += 1000,
         "cm"  => num_val += 900,
         "d"   => num_val += 500,
@@ -274,7 +269,7 @@ impl Parser {
         "iv"  => num_val += 4,
         "i"   => num_val += 1,
         _     => {
-          eprintln!("No match for supposed lower-case Roman numeral {}...\n", buf_str);
+          eprintln!("No match for supposed lower-case Roman numeral {}...\n", buffer.as_str());
           return None
         }
       }
@@ -289,5 +284,4 @@ impl Parser {
 
     Some(num_val)
   }
-
 }
