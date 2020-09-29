@@ -403,7 +403,7 @@ pub enum TreeNodeType {
 
     // Options
     align:    Option<String>, // not passed to contained image
-    figwidth: Option<String>,
+    figwidth: Option<Length>,
     figclass: Option<String>
   },
 

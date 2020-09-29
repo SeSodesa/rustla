@@ -295,7 +295,11 @@ impl Parser {
       body_indent: content_indent,
       align: align,
       figclass: figclass,
-      figwidth: figwidth
+      figwidth: if let Some(w) = &figwidth {
+        Parser::str_to_length(w)
+      } else {
+        None
+      },
     };
 
     // Add figure node to tree and focus on it
