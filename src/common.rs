@@ -243,7 +243,7 @@ pub enum MetricType {
 }
 
 /// ### LengthNum
-/// A type alias for the number type used in the `LengthUnit` enum.
+/// A type alias for the number type used in the `Length` enum.
 pub type LengthNum = f64;
 
 /// ### Length
