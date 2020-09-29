@@ -159,7 +159,7 @@ impl Parser {
 
   pub fn parse_image (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, empty_after_marker: bool, first_indent: Option<usize>) -> TransitionResult {
 
-    use crate::doctree::directives::ImageDirective;
+    // use crate::doctree::directives::ImageDirective;
 
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
@@ -1672,8 +1672,16 @@ impl Parser {
       title: title,
       default: default,
       class: class,
-      width: width,
-      height: height,
+      width: if let Some(w) = &width {
+        Parser::str_to_length(w)
+      } else {
+        None
+      },
+      height: if let Some(h) = &height {
+        Parser::str_to_length(h)
+      } else {
+        None
+      },
       clear: if let Some(clear) = clear {
         match clear.as_str() {
           "both" => Some(AplusActiveElementClear::Both),
@@ -1766,8 +1774,16 @@ impl Parser {
       },
       title: title,
       class: class,
-      width: width,
-      height: height,
+      width: if let Some(w) = &width {
+        Parser::str_to_length(w)
+      } else {
+        None
+      },
+      height: if let Some(h) = &height {
+        Parser::str_to_length(h)
+      } else {
+        None
+      },
       clear: if let Some(clear) = clear {
         match clear.as_str() {
           "both" => Some(AplusActiveElementClear::Both),

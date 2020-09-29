@@ -487,8 +487,14 @@ impl TreeNodeType {
         let title = if let Some(title) = title { title } else { "" };
         if let Some(option) = default { options = options + "default=" + option + LATEX_OPTION_DELIM  }
         if let Some(option) = class   { options = options + "class=" + option + LATEX_OPTION_DELIM  }
-        if let Some(option) = width   { options = options + "width=" + option + LATEX_OPTION_DELIM  }
-        if let Some(option) = height  { options = options + "height=" + option + LATEX_OPTION_DELIM  }
+        if let Some(option) = width   {
+          let width = rst_length_to_string(option);
+          options = options + "width=" + &width + LATEX_OPTION_DELIM
+        }
+        if let Some(option) = height  {
+          let height = rst_length_to_string(option);
+          options = options + "height=" + &height + LATEX_OPTION_DELIM
+        }
         if let Some(option) = clear {
           match option {
             AplusActiveElementClear::Both   => options = options + "clear=both" + LATEX_OPTION_DELIM,
@@ -526,8 +532,14 @@ impl TreeNodeType {
         options = options + "config=" + config + LATEX_OPTION_DELIM;
         // options = options + "inputs=" + inputs + LATEX_OPTION_DELIM;
         if let Some(option) = class  { options = options + "class=" + option + LATEX_OPTION_DELIM }
-        if let Some(option) = width  { options = options + "width=" + option + LATEX_OPTION_DELIM }
-        if let Some(option) = height { options = options + "height=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = width  {
+          let width = rst_length_to_string(option);
+          options = options + "width=" + &width + LATEX_OPTION_DELIM
+        }
+        if let Some(option) = height {
+          let height = rst_length_to_string(option);
+          options = options + "height=" + &height + LATEX_OPTION_DELIM
+        }
         if let Some(option) = clear {
           match option {
             AplusActiveElementClear::Both   => options = options + "clear=both" + LATEX_OPTION_DELIM,
