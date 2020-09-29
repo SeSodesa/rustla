@@ -489,10 +489,10 @@ lazy_static! {
 
     let mut map = HashMap::new();
 
-    map.insert('\\', r#"\textbackslash"#);
-    map.insert('^', r#"\textasciicircum"#);
-    map.insert('_', r#"\textunderscore"#);
-    map.insert('~', r#"\textasciitilde"#);
+    map.insert('\\', r#"\textbackslash "#);
+    map.insert('^', r#"\textasciicircum "#);
+    map.insert('_', r#"\textunderscore "#);
+    map.insert('~', r#"\textasciitilde "#);
     // map.insert('@', r#"\@ "#);
     map.insert('#', r#"\#"#);
 
