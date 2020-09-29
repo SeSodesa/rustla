@@ -369,7 +369,7 @@ impl TreeNodeType {
         let mut options = String::new();
 
         if let Some(option) = id        { options = options + "id=" +option + LATEX_OPTION_DELIM};
-        if let Some(option) = previous  { options = options + "prev=" + option + LATEX_OPTION_DELIM};
+        if let Some(option) = previous  { options = options + "previous=" + option + LATEX_OPTION_DELIM};
         if let Some(option) = next      { options = options + "next=" + option + LATEX_OPTION_DELIM};
         if let Some(option) = hidden    { options = options + "hidden" + LATEX_OPTION_DELIM};
         // if let Some(option) = class              { options = options + "class=" + option + delim};
