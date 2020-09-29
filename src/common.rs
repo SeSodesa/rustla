@@ -246,7 +246,7 @@ pub enum MetricType {
 /// A type alias for the number type used in the `LengthUnit` enum.
 pub type LengthNum = f64;
 
-/// ### LengthUnit
+/// ### Length
 /// Units of length recognized by reStructuredText.
 #[derive(Debug)]
 pub enum Length {
