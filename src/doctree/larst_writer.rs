@@ -251,8 +251,14 @@ impl TreeNodeType {
 
         let mut options = String::new();
         options = if let Some(val) = alt    { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
-        options = if let Some(val) = height { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
-        options = if let Some(val) = width  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        if let Some(h) = height {
+          let width = rst_length_to_string(h);
+          options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
+        }
+        if let Some(w) = width {
+          let width = rst_length_to_string(w);
+          options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
+        }
         options = if let Some(val) = scale  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
         options = if let Some(val) = align  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
 
@@ -968,4 +974,21 @@ r#"%
 % \hrulefill
 
 "#
+}
+
+
+/// rst_length_to_string
+///
+/// Converts a given reStructuredText length reference into a string.
+fn rst_length_to_string (length: &Length) -> String {
+  match length {
+    Length::Em(val) => val.to_string() + "em",
+    Length::Ex(val) => val.to_string() + "ex",
+    Length::Mm(val) => val.to_string() + "mm",
+    Length::Cm(val) => val.to_string() + "cm",
+    Length::In(val) => val.to_string() + "in",
+    Length::Px(val) => val.to_string() + "px",
+    Length::Pt(val) => val.to_string() + "pt",
+    Length::Pc(val) => val.to_string() + "pc",
+  }
 }

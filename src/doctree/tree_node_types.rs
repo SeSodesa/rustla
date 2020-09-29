@@ -456,8 +456,8 @@ pub enum TreeNodeType {
     // Options
 
     alt:    Option<String>,
-    height: Option<String>,
-    width:  Option<String>,
+    height: Option<Length>,
+    width:  Option<Length>,
     scale:  Option<String>,
     align:  Option<String>,
     target: Option<String>,

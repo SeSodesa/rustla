@@ -197,8 +197,16 @@ impl Parser {
     let image_data = TreeNodeType::Image {
       uri: argument,
       alt:    alt,
-      height: height,
-      width:  width,
+      height: if let Some(h) = &height {
+        Parser::str_to_length(h)
+      } else {
+        None
+      },
+      width:  if let Some(w) = &width {
+        Parser::str_to_length(w)
+      } else {
+        None
+      },
       scale:  scale,
       align:  align,
       target: target,
@@ -258,8 +266,16 @@ impl Parser {
       uri: argument,
 
       alt: alt,
-      height:height,
-      width: width,
+      height: if let Some(h) = height {
+        Parser::str_to_length(&h)
+      } else {
+        None
+      },
+      width: if let Some(w) = width {
+        Parser::str_to_length(&w)
+      } else {
+        None
+      },
       scale: scale,
       align: None, // Image does not have alignenment inside a figure.
       target: target,

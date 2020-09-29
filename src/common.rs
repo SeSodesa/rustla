@@ -239,7 +239,7 @@ pub enum InterpretedTextKind {
 #[derive(Debug)]
 pub enum MetricType {
   Percentage(u32),
-  Lenght(f32),
+  Lenght(Length),
 }
 
 /// ### LengthNum

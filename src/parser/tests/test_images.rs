@@ -39,24 +39,18 @@ fn image_01 () {
 
   match doctree.shared_child(1).shared_data() {
 
-    TreeNodeType::Image {
-          uri, alt, height, width, scale, align, target, name, class
-        } => match (uri, alt, height, width, scale, align, target, name, class) {
-        (
-          uri, Some(alt), Some(height), Some(width), Some(scale), Some(align), Some(target), Some(name), Some(class)
-        ) if
-          uri.as_str() == "this/is/an/image/uri.png"
-          && alt.as_str() == "This is alternate text for the visually impaired"
-          && height.as_str() == "200(px|ex|em|pt|...)"
-          && width.as_str() == "100(px|ex|em|pt|...)"
-          && scale.as_str() == "50%?"
-          && align.as_str() == "left"
-          && target.as_str() == "turns image into link"
-          && name.as_str() == "here is a reference name"
-          && class.as_str() == "html class attributes"
-          => {}
-        _ => panic!("One of the image options doesn't match...")
-      },
+    TreeNodeType::Image { uri, alt, height, width, scale, align, target, name, class } => {
+          assert_eq!(uri.as_str(), "this/is/an/image/uri.png");
+          assert_eq!(alt.as_ref().unwrap().as_str(), "This is alternate text for the visually impaired");
+          assert_eq!(height.is_none(), true);
+          assert_eq!(width.is_none(), true);
+          assert_eq!(scale.as_ref().unwrap().as_str(), "50%?");
+          assert_eq!(align.as_ref().unwrap().as_str(), "left");
+          assert_eq!(target.as_ref().unwrap().as_str(), "turns image into link");
+          assert_eq!(name.as_ref().unwrap().as_str(), "here is a reference name");
+          assert_eq!(class.as_ref().unwrap().as_str(), "html class attributes");
+
+        }
     _ => panic!("Not a simple image...")
   }
 

@@ -6,6 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use common::{Length, LengthNum};
 
 impl Parser {
 
@@ -284,52 +285,50 @@ impl Parser {
 
     Some(num_val)
   }
-}
 
-use common::{Length, LengthNum};
+  /// ### str_to_length_unit
+  ///
+  /// Converts a given string into a `LengthUnit` enum variant, if possible.
+  /// if conversion succeedds, returns `Some(LengthUnit)`, else returns `None`.
+  pub fn str_to_length (length_str: &str) -> Option<Length> {
 
-/// ### str_to_length_unit
-///
-/// Converts a given string into a `LengthUnit` enum variant, if possible.
-/// if conversion succeedds, returns `Some(LengthUnit)`, else returns `None`.
-pub fn str_to_length (length_str: &str) -> Option<Length> {
+    use lazy_static::lazy_static;
+    use regex::{Regex, Captures};
 
-  use lazy_static::lazy_static;
-  use regex::{Regex, Captures};
+    const VALID_LENGTH_PATTERN: &str = r#"(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)"#;
 
-  const VALID_LENGTH_PATTERN: &str = r#"(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)"#;
-
-  lazy_static! {
-    static ref VALID_LENGTH_RE: Regex = Regex::new(VALID_LENGTH_PATTERN).unwrap();
-  }
-
-  let captures = if let Some(capts) = VALID_LENGTH_RE.captures(length_str.trim()) {
-    capts
-  } else {
-    return None
-  };
-
-  let number: LengthNum = if let Some(num) = captures.name("number") {
-    if let Ok(result) = num.as_str().parse() { result } else { return None }
-  } else {
-    return None
-  };
-
-  let length_unit = if let Some(unit) = captures.name("unit") {
-    match unit.as_str() {
-      "em" => Length::Em(number),
-      "ex" => Length::Ex(number),
-      "mm" => Length::Mm(number),
-      "cm" => Length::Cm(number),
-      "in" => Length::In(number),
-      "px" => Length::Px(number),
-      "pt" => Length::Pt(number),
-      "pc" => Length::Pc(number),
-      _ => return None,
+    lazy_static! {
+      static ref VALID_LENGTH_RE: Regex = Regex::new(VALID_LENGTH_PATTERN).unwrap();
     }
-  } else {
-    return None
-  };
 
-  Some(length_unit)
+    let captures = if let Some(capts) = VALID_LENGTH_RE.captures(length_str.trim()) {
+      capts
+    } else {
+      return None
+    };
+
+    let number: LengthNum = if let Some(num) = captures.name("number") {
+      if let Ok(result) = num.as_str().parse() { result } else { return None }
+    } else {
+      return None
+    };
+
+    let length_unit = if let Some(unit) = captures.name("unit") {
+      match unit.as_str() {
+        "em" => Length::Em(number),
+        "ex" => Length::Ex(number),
+        "mm" => Length::Mm(number),
+        "cm" => Length::Cm(number),
+        "in" => Length::In(number),
+        "px" => Length::Px(number),
+        "pt" => Length::Pt(number),
+        "pc" => Length::Pc(number),
+        _ => return None,
+      }
+    } else {
+      return None
+    };
+
+    Some(length_unit)
+  }
 }
