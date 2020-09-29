@@ -289,7 +289,7 @@ impl Parser {
   /// ### str_to_length_unit
   ///
   /// Converts a given string into a `Length` enum variant, if possible.
-  /// If conversion succeeds, returns `Some(LengthUnit)`, else returns `None`.
+  /// If conversion succeeds, returns `Some(Length)`, else returns `None`.
   pub fn str_to_length (length_str: &str) -> Option<Length> {
 
     use lazy_static::lazy_static;
@@ -333,6 +333,10 @@ impl Parser {
   }
 
 
+  /// ### str_to_percentage
+  ///
+  /// Converts a given string to a positive percentage (`Option<f64>`),
+  /// if it can be intrepreted as such. Else returns `None`
   pub fn str_to_percentage (percentage_str: &str) -> Option<f64>{
 
     use lazy_static::lazy_static;
