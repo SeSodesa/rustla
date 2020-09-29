@@ -354,13 +354,13 @@ impl Parser {
       return None
     };
 
-    let number = if let Some(num) = captures.name("number") {
+    let percentage = if let Some(num) = captures.name("number") {
       if let Ok(result) = num.as_str().parse::<f64>() { result } else { return None }
     } else {
       return None
     };
 
-    Some(number)
+    Some(percentage)
   }
 
 
