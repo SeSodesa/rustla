@@ -212,7 +212,11 @@ impl Parser {
       } else {
         None
       },
-      align:  align,
+      align: if let Some(a) = &align {
+        Parser::str_to_html_alignment(a)
+      } else {
+        None
+      },
       target: target,
       name:   name,
       class:  classes,
@@ -294,7 +298,7 @@ impl Parser {
     let figure = TreeNodeType::Figure {
       body_indent: content_indent,
       align: if let Some(a) = &align {
-        Parser::str_to_html_alignment(a)
+        Parser::str_to_horizontal_alignment(a)
       } else {
         None
       },

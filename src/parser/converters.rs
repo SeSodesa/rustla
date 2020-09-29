@@ -6,7 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
-use common::{Length, LengthNum, HTMLAlignment};
+use common::{Length, LengthNum, HTMLAlignment, HorizontalAlignment};
 
 impl Parser {
 
@@ -377,6 +377,21 @@ impl Parser {
       "left" => Some(HTMLAlignment::Left),
       "center" => Some(HTMLAlignment::Center),
       "right" => Some(HTMLAlignment::Right),
+      _ => None
+    }
+  }
+
+
+  /// ### str_to_horizontal_alignment
+  ///
+  /// Converts a given `&str` to a suitable HTMLAlignment variant, if possible.
+  /// Successful conversion results in a `Some(HTMLAlignment)`.
+  /// Else `None` is returned.
+  pub fn str_to_horizontal_alignment (alignment_str: &str) -> Option<HorizontalAlignment> {
+    match alignment_str.trim() {
+      "left" => Some(HorizontalAlignment::Left),
+      "center" => Some(HorizontalAlignment::Center),
+      "right" => Some(HorizontalAlignment::Right),
       _ => None
     }
   }

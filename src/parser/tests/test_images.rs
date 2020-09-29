@@ -37,6 +37,8 @@ fn image_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
+  use common::HTMLAlignment;
+
   match doctree.shared_child(1).shared_data() {
 
     TreeNodeType::Image { uri, alt, height, width, scale, align, target, name, class } => {
@@ -45,7 +47,7 @@ fn image_01 () {
           assert_eq!(height.is_none(), true);
           assert_eq!(width.is_none(), true);
           assert_eq!(scale.as_ref().unwrap().to_string(), "50");
-          assert_eq!(align.as_ref().unwrap().as_str(), "left");
+          if let HTMLAlignment::Left = align.as_ref().unwrap() {} else { panic!() }
           assert_eq!(target.as_ref().unwrap().as_str(), "turns image into link");
           assert_eq!(name.as_ref().unwrap().as_str(), "here is a reference name");
           assert_eq!(class.as_ref().unwrap().as_str(), "html class attributes");

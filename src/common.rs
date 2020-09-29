@@ -303,7 +303,7 @@ pub enum TableColWidths {
 /// `Left`, `Middle` or `Right`.
 #[derive(Debug)]
 pub enum HorizontalAlignment {
-  Left, Middle, Right
+  Left, Center, Right
 }
 
 

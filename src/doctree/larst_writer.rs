@@ -250,7 +250,7 @@ impl TreeNodeType {
       Self::Image { uri, alt, height, width, scale, align, target, name, class } => {
 
         let mut options = String::new();
-        options = if let Some(val) = alt { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        if let Some(val) = alt { options = options + LATEX_OPTION_DELIM + val };
         if let Some(h) = height {
           let width = rst_length_to_string(h);
           options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
@@ -264,7 +264,8 @@ impl TreeNodeType {
           options = options + "scale=" + percentage_val.as_str() +  LATEX_OPTION_DELIM
         };
         if let Some(val) = align {
-          options = options + LATEX_OPTION_DELIM + val
+          let alignment = html_alignment_to_string(val);
+          options = options + LATEX_OPTION_DELIM + &alignment
         };
 
         format!("\\includegraphics[{}]{{{}}}\n", options, uri)
@@ -1010,5 +1011,32 @@ fn rst_length_to_string (length: &Length) -> String {
     Length::Px(val) => val.to_string() + "px",
     Length::Pt(val) => val.to_string() + "pt",
     Length::Pc(val) => val.to_string() + "pc",
+  }
+}
+
+
+/// ### html_alignment_to_string
+///
+/// Converts a HTMLAlignment variant to the corresponding string.
+fn html_alignment_to_string (alignment: &HTMLAlignment) -> String {
+  match alignment {
+    HTMLAlignment::Top => String::from("top"),
+    HTMLAlignment::Middle => String::from("middle"),
+    HTMLAlignment::Bottom => String::from("bottom"),
+    HTMLAlignment::Left => String::from("left"),
+    HTMLAlignment::Center => String::from("center"),
+    HTMLAlignment::Right => String::from("right"),
+  }
+}
+
+
+/// ### horizontal_alignment_to_string
+///
+/// Converts a HorizontalAlignment variant to the corresponding string.
+fn horizontal_alignment_to_string (alignment: &HorizontalAlignment) -> String {
+  match alignment {
+    HorizontalAlignment::Left => String::from("left"),
+    HorizontalAlignment::Center => String::from("center"),
+    HorizontalAlignment::Right => String::from("right"),
   }
 }
