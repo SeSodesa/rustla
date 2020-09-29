@@ -379,9 +379,12 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 /// Parses phrase references.
 pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (TreeNodeType, usize) {
 
+  let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
   let content = captures.name("content").unwrap().as_str();
+  let embedded_uri = if let Some(uri) = captures.name("embedded_uri") { uri.as_str() } else { "" };
+  eprintln!("{:#?}", embedded_uri);
   let ref_type = captures.name("ref_type").unwrap().as_str();
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
@@ -412,28 +415,36 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
     return (TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}, lookbehind_str.chars().count())
   }
 
-  let target_label: String = match ref_type {
-    "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
-
-      if let Some(doctree) = opt_doctree_ref {
-        doctree.next_anon_reference_label()
-      } else {
-        eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
+  let target_label: String = if ! embedded_uri.is_empty() {
+    normalize_refname(embedded_uri)
+  } else {
+    match ref_type {
+      "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
+  
+        if let Some(doctree) = opt_doctree_ref {
+          doctree.next_anon_reference_label()
+        } else {
+          eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
+          normalize_refname(content)
+        }
+      }
+      "_" => { // Manual reference label
         normalize_refname(content)
       }
+      _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
     }
-    "_" => { // Manual reference label
-      normalize_refname(content)
-    }
-    _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
-  };
+  }; 
 
   let ref_node = TreeNodeType::Reference {
     displayed_text: content.to_string(),
     target_label: target_label
   };
 
-  let match_len = (lookbehind_str.to_string() + markup_start_str + content + markup_end_str + ref_type).chars().count();
+  let match_len = if embedded_uri.is_empty() {
+    (lookbehind_str.to_string() + markup_start_str + content + markup_end_str + ref_type).chars().count()
+  } else {
+    whole_match.chars().count()
+  };
 
   (ref_node, match_len)
 }

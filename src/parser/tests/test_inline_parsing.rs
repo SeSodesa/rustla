@@ -95,9 +95,30 @@ fn references_02 () {
     assert_eq!(displayed_text.as_str(), "not so simple refereNce");
     assert_eq!(target_label.as_str(), "not so simple reference");
   } else {panic!()}
-
 }
 
+
+#[test]
+fn embedded_uri_01 () {
+
+  let src = String::from(r#"
+`embedded uri <https://docs.rs/regex/1.3.9/regex/>`_
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(0).shared_data() {
+    assert_eq!(displayed_text, "embedded uri");
+    assert_eq!(target_label, "https://docs.rs/regex/1.3.9/regex/");
+  }
+}
 
 
 #[test]
