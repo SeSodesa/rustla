@@ -383,13 +383,16 @@ impl TreeNodeType {
         if let Some(option) = previous  { options = options + "previous=" + option + LATEX_OPTION_DELIM};
         if let Some(option) = next      { options = options + "next=" + option + LATEX_OPTION_DELIM};
         if let Some(option) = hidden    { options = options + "hidden" + LATEX_OPTION_DELIM};
-        // if let Some(option) = class              { options = options + "class=" + option + delim};
-        // if let Some(option) = height             { options = options + "height=" + option + delim};
+        if let Some(option) = class     { options = options + "class=" + option + LATEX_OPTION_DELIM};
+        if let Some(option) = height    {
+          let height = rst_length_to_string(option);
+          options = options + "height=" + &height + LATEX_OPTION_DELIM
+        };
         if let Some(option) = columns   { options = options + "columns=" + option + LATEX_OPTION_DELIM};
         if let Some(option) = bgimg     { options = options + "bgimg=" + option + LATEX_OPTION_DELIM};
-        // if let Some(option) = not_in_slides      { options = options + "not_in_slides" + delim};
-        // if let Some(option) = not_in_book        { options = options + "not_in_book" + delim};
-        // if let Some(option) = no_poi_box         { options = options + "no_poi_box" + delim};
+        if let Some(option) = not_in_slides      { options = options + "not_in_slides" + LATEX_OPTION_DELIM};
+        if let Some(option) = not_in_book        { options = options + "not_in_book" + LATEX_OPTION_DELIM};
+        if let Some(option) = no_poi_box         { options = options + "no_poi_box" + LATEX_OPTION_DELIM};
 
         if ! options.is_empty() { options = format!("[{}]", options.as_str()) };
         format!("\\begin{{poi}}{}{{{}}}\n\n", options, title)
