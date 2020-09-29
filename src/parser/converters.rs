@@ -288,8 +288,8 @@ impl Parser {
 
   /// ### str_to_length_unit
   ///
-  /// Converts a given string into a `LengthUnit` enum variant, if possible.
-  /// if conversion succeedds, returns `Some(LengthUnit)`, else returns `None`.
+  /// Converts a given string into a `Length` enum variant, if possible.
+  /// If conversion succeeds, returns `Some(LengthUnit)`, else returns `None`.
   pub fn str_to_length (length_str: &str) -> Option<Length> {
 
     use lazy_static::lazy_static;
