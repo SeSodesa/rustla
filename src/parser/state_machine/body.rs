@@ -441,7 +441,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
               }
             }
 
-            Some(TreeNodeType::Reference { target_label, displayed_text }) =>  {
+            Some(TreeNodeType::Reference { target_label, displayed_text, has_embedded_uri }) =>  {
 
               TreeNodeType::IndirectHyperlinkTarget {
                 target: label_as_string,

@@ -629,7 +629,8 @@ pub enum TreeNodeType {
   /// A general reference to a reference target.
   Reference {
     displayed_text: String,
-    target_label: String
+    target_label: String,
+    has_embedded_uri: bool,
   },
 
   /// #### Revision

@@ -296,8 +296,10 @@ impl TreeNodeType {
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
       Self::Raw { .. }                      => "\\begin{codeblock}\n".to_string(),
-      Self::Reference { displayed_text, target_label } => {
-        format!("\\hyperref[{}]{{{}}}", target_label, displayed_text)
+      Self::Reference { displayed_text, target_label, has_embedded_uri } => {
+        let command = if *has_embedded_uri { "href" } else { "hyperref" };
+        let parens = if *has_embedded_uri { ("{", "}") } else { ("[", "]") };
+        format!("\\{}{}{}{}{{{}}}", command, parens.0, target_label, parens.1, displayed_text)
       },
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),

@@ -211,12 +211,12 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       let zeroes = "0".repeat(4 - content_len);
       let pep_ref = format!("https://www.python.org/peps/pep-{pep_num}.html", pep_num = zeroes + content);
       let displayed_text = "PEP ".to_string() + content;
-      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: pep_ref}, match_len)
+      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: pep_ref, has_embedded_uri: false}, match_len)
     }
     "rfc-reference" | "RFC" => {
       let rfc_ref = format!("https://www.faqs.org/rfcs/rfc{rfc_num}.html", rfc_num = content);
       let displayed_text = "RFC ".to_string() + content;
-      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: rfc_ref }, match_len)
+      (TreeNodeType::Reference { displayed_text: displayed_text, target_label: rfc_ref, has_embedded_uri: false}, match_len)
     }
     "strong" => {
       (TreeNodeType::StrongEmphasis { text: content.to_string() }, match_len)
@@ -302,7 +302,8 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
 
       TreeNodeType::Reference{
         displayed_text: displayed_text.to_string(),
-        target_label: target_label
+        target_label: target_label,
+        has_embedded_uri: false
       }
     },
     PatternName::FootNoteRef => {
@@ -365,7 +366,8 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 
   let ref_node = TreeNodeType::Reference {
     displayed_text: content.to_string(),
-    target_label: target_label
+    target_label: target_label,
+    has_embedded_uri: false
   };
 
   let match_len = (lookbehind_str.to_string() + content + ref_type).chars().count();
@@ -437,7 +439,8 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 
   let ref_node = TreeNodeType::Reference {
     displayed_text: content.to_string(),
-    target_label: target_label
+    target_label: target_label,
+    has_embedded_uri: ! embedded_uri.is_empty(),
   };
 
   let match_len = if embedded_uri.is_empty() {

@@ -91,9 +91,10 @@ fn references_02 () {
     "simple-reference"
   );
 
-  if let TreeNodeType::Reference{target_label, displayed_text} = &nodes[12] {
+  if let TreeNodeType::Reference{target_label, displayed_text, has_embedded_uri} = &nodes[12] {
     assert_eq!(displayed_text.as_str(), "not so simple refereNce");
     assert_eq!(target_label.as_str(), "not so simple reference");
+    assert_eq!(*has_embedded_uri, false);
   } else {panic!()}
 }
 
@@ -114,9 +115,10 @@ fn embedded_uri_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(0).shared_data() {
+  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(1).shared_child(0).shared_data() {
     assert_eq!(displayed_text, "embedded uri");
     assert_eq!(target_label, "https://docs.rs/regex/1.3.9/regex/");
+    assert_eq!(*has_embedded_uri, true)
   }
 }
 
@@ -265,9 +267,10 @@ maybe a -simple-reference__- as well.
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(17).shared_data() {
+  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(1).shared_child(17).shared_data() {
     assert_eq!(displayed_text, "a phrase reference with automatic labeling");
     assert_eq!(target_label, "[[-ANON-LABEL-1-]]");
+    assert_eq!(*has_embedded_uri, false);
   } else {
     panic!()
   }
@@ -284,9 +287,10 @@ maybe a -simple-reference__- as well.
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label } = doctree.shared_child(1).shared_child(25).shared_data() {
+  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(1).shared_child(25).shared_data() {
     assert_eq!(displayed_text, "simple-reference");
     assert_eq!(target_label, "[[-ANON-LABEL-2-]]");
+    assert_eq!(*has_embedded_uri, false);
   } else {
     panic!()
   }
