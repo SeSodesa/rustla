@@ -538,7 +538,7 @@ impl TreeNodeType {
 
         if ! options.is_empty() { options = format!("[{}]", options) }
 
-        format!("\\aeoutput{}{{{}}}{{{}}}", options, key_for_output, title)
+        format!("\\aeoutput{}{{{}}}{{{}}}{{{}}}", options, key_for_output, inputs, title)
       },
 
     };
