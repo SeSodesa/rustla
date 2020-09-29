@@ -295,7 +295,7 @@ impl Parser {
     use lazy_static::lazy_static;
     use regex::{Regex, Captures};
 
-    const VALID_LENGTH_PATTERN: &str = r#"(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)"#;
+    const VALID_LENGTH_PATTERN: &str = r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)$"#;
 
     lazy_static! {
       static ref VALID_LENGTH_RE: Regex = Regex::new(VALID_LENGTH_PATTERN).unwrap();
@@ -330,5 +330,32 @@ impl Parser {
     };
 
     Some(length_unit)
+  }
+
+
+  pub fn str_to_percentage (percentage_str: &str) -> Option<f64>{
+
+    use lazy_static::lazy_static;
+    use regex::{Regex, Captures};
+
+    const VALID_PERCENTAGE_PATTERN: &str = r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)\s*(?P<unit>%)$"#;
+
+    lazy_static! {
+      static ref VALID_PERCENTAGE_RE: Regex = Regex::new(VALID_PERCENTAGE_PATTERN).unwrap();
+    }
+
+    let captures = if let Some(capts) = VALID_PERCENTAGE_RE.captures(percentage_str.trim()) {
+      capts
+    } else {
+      return None
+    };
+
+    let number = if let Some(num) = captures.name("number") {
+      if let Ok(result) = num.as_str().parse::<f64>() { result } else { return None }
+    } else {
+      return None
+    };
+
+    Some(number)
   }
 }

@@ -250,7 +250,7 @@ impl TreeNodeType {
       Self::Image { uri, alt, height, width, scale, align, target, name, class } => {
 
         let mut options = String::new();
-        options = if let Some(val) = alt    { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        options = if let Some(val) = alt { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
         if let Some(h) = height {
           let width = rst_length_to_string(h);
           options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
@@ -259,8 +259,13 @@ impl TreeNodeType {
           let width = rst_length_to_string(w);
           options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
         }
-        options = if let Some(val) = scale  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
-        options = if let Some(val) = align  { if options.is_empty() { options + val } else { options + LATEX_OPTION_DELIM + val } } else { options };
+        if let Some(val) = scale  {
+          let percentage_val = val.to_string();
+          options = options + "scale=" + percentage_val.as_str() +  LATEX_OPTION_DELIM
+        };
+        if let Some(val) = align {
+          options = options + LATEX_OPTION_DELIM + val
+        };
 
         format!("\\includegraphics[{}]{{{}}}\n", options, uri)
       },

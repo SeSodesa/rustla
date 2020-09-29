@@ -20,7 +20,7 @@ fn image_01 () {
   :alt: This is alternate text for the visually impaired
   :height: 200(px|ex|em|pt|...)
   :width: 100(px|ex|em|pt|...)
-  :scale: 50%?
+  :scale: 50%
   :align: left
   :target: turns image into link
 
@@ -44,12 +44,11 @@ fn image_01 () {
           assert_eq!(alt.as_ref().unwrap().as_str(), "This is alternate text for the visually impaired");
           assert_eq!(height.is_none(), true);
           assert_eq!(width.is_none(), true);
-          assert_eq!(scale.as_ref().unwrap().as_str(), "50%?");
+          assert_eq!(scale.as_ref().unwrap().to_string(), "50");
           assert_eq!(align.as_ref().unwrap().as_str(), "left");
           assert_eq!(target.as_ref().unwrap().as_str(), "turns image into link");
           assert_eq!(name.as_ref().unwrap().as_str(), "here is a reference name");
           assert_eq!(class.as_ref().unwrap().as_str(), "html class attributes");
-
         }
     _ => panic!("Not a simple image...")
   }

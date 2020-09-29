@@ -207,7 +207,11 @@ impl Parser {
       } else {
         None
       },
-      scale:  scale,
+      scale:  if let Some(scale) = &scale {
+        Parser::str_to_percentage(scale)
+      } else {
+        None
+      },
       align:  align,
       target: target,
       name:   name,
@@ -276,7 +280,11 @@ impl Parser {
       } else {
         None
       },
-      scale: scale,
+      scale: if let Some(scale) = &scale {
+        Parser::str_to_percentage(scale)
+      } else {
+        None
+      },
       align: None, // Image does not have alignenment inside a figure.
       target: target,
       class: classes,
