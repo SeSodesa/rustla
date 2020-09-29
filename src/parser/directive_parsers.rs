@@ -2083,7 +2083,7 @@ impl Parser {
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
-      eprintln!("Line: {:#?}", line);
+      // eprintln!("Line: {:#?}", line);
 
       if line.trim().is_empty() { ended_with_blank = true; break } // End of option list
 
@@ -2098,7 +2098,7 @@ impl Parser {
           None => ""
         };
 
-        eprintln!("Option value: {:#?}\n", option_val);
+        // eprintln!("Option value: {:#?}\n", option_val);
 
         if let Some(val) = option_map.insert(option_key.to_string(), option_val.to_string()) {
           eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())
