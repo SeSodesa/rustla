@@ -510,10 +510,10 @@ impl TreeNodeType {
         use crate::common::{ AplusActiveElementClear, AplusActiveElementOutputType};
 
         options = options + "config=" + config + LATEX_OPTION_DELIM;
-        options = options + "inputs=" + inputs + LATEX_OPTION_DELIM;
+        // options = options + "inputs=" + inputs + LATEX_OPTION_DELIM;
         if let Some(option) = class  { options = options + "class=" + option + LATEX_OPTION_DELIM }
-        if let Some(option) = width  { options = options + "class=" + option + LATEX_OPTION_DELIM }
-        if let Some(option) = height { options = options + "class=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = width  { options = options + "width=" + option + LATEX_OPTION_DELIM }
+        if let Some(option) = height { options = options + "height=" + option + LATEX_OPTION_DELIM }
         if let Some(option) = clear {
           match option {
             AplusActiveElementClear::Both   => options = options + "clear=both" + LATEX_OPTION_DELIM,
