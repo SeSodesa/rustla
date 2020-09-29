@@ -249,38 +249,38 @@ pub enum LenghtUnit {
 
   /// #### Em
   /// em unit, the element's font size
-  Em,
+  Em(u32),
 
   /// ### Ex
   /// ex unit, x-height of the element's font size
-  Ex,
+  Ex(u32),
 
   /// ### Mn
   /// Millimeters
-  Mm,
+  Mm(u32),
 
   /// #### Cm
   /// Centimeters.
-  Cm,
+  Cm(u32),
 
   /// #### In
   /// Inches. 1in == 2.54 cm == 96 px.
-  In,
+  In(u32),
 
   /// #### Px
   /// Pixels. 1px == 1/96 in
   /// 
   /// ##### Note!
   /// In LaTeX, 1 px == 1/72 in.
-  Px,
+  Px(u32),
 
   /// #### Pt
   /// Points. 1pt == 1/72 in
-  Pt,
+  Pt(u32),
 
   /// #### Pc
   /// Picas. 1 pc == 1/6 in == 12 pt
-  Pc,
+  Pc(u32),
 }
 
 
