@@ -231,6 +231,13 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
       (TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }, match_len)
     }
+
+    // Sphinx-specific roles
+    "ref" => {
+
+      (TreeNodeType::Reference { displayed_text: content.to_string(), target_label: normalize_refname(content), has_embedded_uri: false }, match_len)
+    }
+
     _ => { // Unknown role into literal
       let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
       let match_string: String = whole_match
