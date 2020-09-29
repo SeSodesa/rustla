@@ -402,7 +402,7 @@ pub enum TreeNodeType {
     body_indent: usize,
 
     // Options
-    align:    Option<String>, // not passed to contained image
+    align:    Option<HTMLAlignment>, // not passed to contained image
     figwidth: Option<Length>,
     figclass: Option<String>
   },

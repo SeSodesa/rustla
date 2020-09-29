@@ -6,7 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
-use common::{Length, LengthNum};
+use common::{Length, LengthNum, HTMLAlignment};
 
 impl Parser {
 
@@ -357,5 +357,23 @@ impl Parser {
     };
 
     Some(number)
+  }
+
+
+  /// ### str_to_html_alignment
+  ///
+  /// Converts a given `&str` to a suitable HTMLAlignment variant, if possible.
+  /// Successful conversion results in a `Some(HTMLAlignment)`.
+  /// Else `None` is returned.
+  pub fn str_to_html_alignment (alignment_str: &str) -> Option<HTMLAlignment> {
+    match alignment_str.trim() {
+      "top" => Some(HTMLAlignment::Top),
+      "middle" => Some(HTMLAlignment::Middle),
+      "bottom" => Some(HTMLAlignment::Bottom),
+      "left" => Some(HTMLAlignment::Left),
+      "center" => Some(HTMLAlignment::Center),
+      "right" => Some(HTMLAlignment::Right),
+      _ => None
+    }
   }
 }

@@ -293,7 +293,11 @@ impl Parser {
 
     let figure = TreeNodeType::Figure {
       body_indent: content_indent,
-      align: align,
+      align: if let Some(a) = &align {
+        Parser::str_to_html_alignment(a)
+      } else {
+        None
+      },
       figclass: figclass,
       figwidth: if let Some(w) = &figwidth {
         Parser::str_to_length(w)
