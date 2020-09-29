@@ -10,7 +10,7 @@ use super::*;
 use crate::common::AplusExerciseStatus;
 use crate::common::AplusRadarTokenizer;
 
-const LATEX_OPTION_DELIM: &str = ", ";
+const LATEX_OPTION_DELIM: &str = ",";
 
 impl DocTree {
 
