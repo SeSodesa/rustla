@@ -833,7 +833,7 @@ pub enum TreeNodeType {
     next: Option<String>,
     hidden: Option<String>,
     class: Option<String>,
-    height: Option<String>,
+    height: Option<Length>,
     columns: Option<String>,
     bgimg: Option<String>,
     not_in_slides: Option<String>,

@@ -52,7 +52,7 @@ fn poi_01 () {
     assert_eq!(next.as_ref().unwrap(), r#"id of next point-of-interest (optional)"#);
     assert_eq!(hidden.as_ref().unwrap(), r#"(if this flag is present, the content of this poi is hidden by default)"#);
     assert_eq!(class.as_ref().unwrap(), r#"any additional css classes"#);
-    assert_eq!(height.as_ref().unwrap(), r#"fixed height in pixels"#);
+    assert_eq!(height.is_none(), true);
     assert_eq!(columns.as_ref().unwrap(), r#"relative width of each column (e.g. for three columns 2 2 3)"#);
     assert_eq!(bgimg.as_ref().unwrap(), r#"path to background image"#);
     assert_eq!(not_in_slides.as_ref().unwrap(), r#"a flag used with the presentation maker. This POI does not show in the slides if this is defined."#);

@@ -1881,7 +1881,11 @@ impl Parser {
       next: next,
       hidden: hidden,
       class: class,
-      height: height,
+      height: if let Some(h) = &height {
+        Parser::str_to_length(h)
+      } else {
+        None
+      },
       columns: columns,
       bgimg: bgimg,
       not_in_slides: not_in_slides,
