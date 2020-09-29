@@ -215,7 +215,7 @@ impl TreeNodeType {
       Self::Document { .. }   => {
         format!(
 "\
-\\documentclass[12pt]{{aplus}}
+\\documentclass{{aplus}}
 
 \\begin{{document}}\n\n")
       },
@@ -316,7 +316,7 @@ impl TreeNodeType {
       Self::StrongEmphasis { text }  => {
         format!("\\textbf{{{}}}", text)
       },
-      Self::Subscript { text }                => {
+      Self::Subscript { text }       => {
         format!(r"\textsubscript{{{}}}", text)
       },
       Self::SubstitutionDefinition { .. }   => todo!(),
