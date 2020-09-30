@@ -162,12 +162,14 @@ impl TreeNodeType {
       Self::Acronym { .. }      => todo!(),
       Self::Address             => todo!(),
       Self::Admonition { .. }   => todo!(),
-      Self::Attribution { .. }  => todo!(),
+      Self::Attribution { raw_text,  }  => {
+        format!("-- {}", raw_text)
+      },
       Self::Author { .. }       => todo!(),
       Self::Authors {..}        => todo!(),
       Self::AutomaticSectionNumbering {..} => todo!(),
       Self::BlockQuote { body_indent } => {
-        format!(r"\begin{{quotation}}")
+        format!("\\begin{{quotation}}\n")
       },
       Self::BulletList { bullet, bullet_indent, text_indent } => {
         format!("\\begin{{itemize}}\n")
@@ -589,11 +591,11 @@ impl TreeNodeType {
       Self::Acronym { .. }                  => todo!(),
       Self::Address                         => todo!(),
       Self::Admonition { .. }               => "\n".to_string(),
-      Self::Attribution { .. }              => todo!(),
+      Self::Attribution { .. }              => "\n".to_string(),
       Self::Author { .. }                   => todo!(),
       Self::Authors { .. }                  => todo!(),
       Self::AutomaticSectionNumbering {..}  => todo!(),
-      Self::BlockQuote { .. }               => "\n".to_string(),
+      Self::BlockQuote { .. }               => "\\end{quotation}\n".to_string(),
       Self::BulletList { .. }               => format!("\\end{{itemize}}\n\n"),
       Self::BulletListItem{ .. }            => "".to_string(),
       Self::Caption { .. }                  => "}\n".to_string(),
