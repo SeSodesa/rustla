@@ -173,10 +173,8 @@ impl StateMachine {
 
   /// ### ENUMERATED_LIST_TRANSITIONS
   /// An array of transitions related to `StateMachine::EnumeratedList`.
-  pub const ENUMERATED_LIST_TRANSITIONS: [UncompiledTransition; 31] = [
+  pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-
-    (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::back_up),
 
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Arabic}, ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Arabic}, ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
@@ -201,25 +199,6 @@ impl StateMachine {
     (PatternName::Enumerator{delims: EnumDelims::Parens, kind: EnumKind::Automatic}, AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::RParen, kind: EnumKind::Automatic}, AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
     (PatternName::Enumerator{delims: EnumDelims::Period, kind: EnumKind::Automatic}, AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Footnote { kind: FootnoteKind::Manual }, MANUAL_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote { kind: FootnoteKind::AutoNumbered }, AUTO_NUM_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote { kind: FootnoteKind::SimpleRefName }, SIMPLE_NAME_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote { kind: FootnoteKind::AutoSymbol }, AUTO_SYM_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Citation, CITATION_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Directive, DIRECTIVE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Comment, COMMENT_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Line, LINE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Text, TEXT_PATTERN, unknown_transitions::back_up)
   ];
 
 
