@@ -675,6 +675,63 @@ const SIMPLE_REF_PATTERN: &str = r#"(?x)^
   )
 "#;
 
+const FOOTNOTE_REF_PATTERN: &str = r#"(?x)^
+  (?P<lookbehind>
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
+  )?
+  (?P<markup_start>
+    \[
+  )
+  (?P<content>
+    (?P<number>
+      [0-9]+
+    )
+    |
+    (?P<auto_number>
+      #
+    )
+    |
+    (?P<auto_number_label>
+      #[a-z](-?[a-z0-9]+)*
+    )
+    |
+    (?P<symbol>
+      \*
+    )
+
+  )
+  (?P<markup_end>
+    \]
+  )
+  (?P<ref_type>
+    __?
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
+  )
+"#;
+const CITATION_REF_PATTERN: &str = r#"(?x)^"
+  (?P<lookbehind>
+    [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
+  )?
+  (?P<markup_start>
+    \[
+  )
+  (?P<content>
+    [a-zA-Z0-9]+([-_.]?[a-zA-Z0-9]+)*
+  )
+  (?P<markup_end>
+    \]
+  )
+  (?P<ref_type>
+    __?
+  )
+  (?P<lookahead>
+    \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
+  )
+"#;
+
+
 const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
