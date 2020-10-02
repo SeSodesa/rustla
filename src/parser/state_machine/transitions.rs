@@ -507,7 +507,7 @@ impl StateMachine {
 
   /// #### DIRECTIVE_PATTERN
   /// A pattern for matching directives. The directive label is used to determine the type of directive
-  /// inside a transition function. The label itself if a simple reference name (an identifier).
+  /// inside a transition function. The label itself is a simple reference name (an identifier).
   const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
   /// #### COMMENT_PATTERN
