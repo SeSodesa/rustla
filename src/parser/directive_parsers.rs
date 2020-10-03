@@ -657,8 +657,8 @@ impl Parser {
       align: if let Some(alignment) = align {
         match alignment.as_str() {
           "left" => Some(HorizontalAlignment::Left),
-          "center" => Some(HorizontalAlignment::Left),
-          "right" => Some(HorizontalAlignment::Left),
+          "center" => Some(HorizontalAlignment::Center),
+          "right" => Some(HorizontalAlignment::Right),
           _ => {
             eprintln!("Found an alignment setting for list table on line {}, but setting not valid...", line_cursor.sum_total());
             None
