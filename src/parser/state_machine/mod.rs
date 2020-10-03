@@ -153,6 +153,10 @@ pub enum StateMachine {
   /// Empty and line block lines (lines beginning with '`|`') are recognized in this state.
   LineBlock,
 
+  /// #### ListTable
+  /// A state for recognizing bullet list items inside a ListTable
+  ListTable,
+
   /// #### ExtensionOptions
   /// A state for parsing field lists inside diretives. Field lists located inside directive nodes
   /// work as directive parameters or settings.

@@ -669,7 +669,16 @@ impl Parser {
       }
     };
 
-    todo!()
+    doctree = doctree.push_data_and_focus(list_table_node);
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: Some(vec![StateMachine::ListTable]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None
+    }
   }
 
 
