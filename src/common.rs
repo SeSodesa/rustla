@@ -238,7 +238,7 @@ pub enum InterpretedTextKind {
 /// This includes precentages of current context and absolute length
 #[derive(Debug)]
 pub enum MetricType {
-  Percentage(u32),
+  Percentage(f64),
   Lenght(Length),
 }
 
@@ -293,8 +293,9 @@ pub enum Length {
 /// An enumeration of different horizontal alignment options.
 #[derive(Debug)]
 pub enum TableColWidths {
-  Vals(Vec<u32>),
-  Auto
+  Multiple(Vec<u32>),
+  Single(u32),
+  Auto // Determined by writer
 }
 
 

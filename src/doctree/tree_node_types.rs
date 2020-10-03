@@ -528,11 +528,19 @@ pub enum TreeNodeType {
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table
   ListTable {
+
+    /// An optional title, given as the directive argument.
     title:        Option<String>,
+    /// A comma- or space-separated list of relative column widths. The default is equal-width columns (100%/#columns).
+    /// The special value "auto" may be used by writers to decide whether to delegate the determination of column widths to the backend (LaTeX, the HTML browser, ...).
     widths:       Option<TableColWidths>,
+    /// Forces the width of the table to the specified length or percentage of the line width. If omitted, the renderer determines the width of the table based on its contents.
     width:        Option<MetricType>,
+    /// The number of rows of list data to use in the table header. Defaults to 0.
     header_rows:  Option<u32>,
+    /// The number of table columns to use as stubs (row titles, on the left). Defaults to 0.
     stub_columns: Option<u32>,
+    /// The horizontal alignment of the table. (New in Docutils 0.13)
     align:        Option<HorizontalAlignment>
   },
 

@@ -600,6 +600,75 @@ impl Parser {
       (None, None, None, None, None, None, None)
     };
 
+    use common::{TableColWidths, MetricType, HorizontalAlignment};
+
+    let list_table_node = TreeNodeType::ListTable {
+      title: if ! table_title.is_empty() {Some(table_title)} else { None },
+      widths: if let Some(widths) =  widths {
+        if widths.as_str().trim() == "auto" {
+          Some(TableColWidths::Auto)
+        } else {
+          let widths = widths.split_whitespace()
+            .filter(|s| ! s.is_empty())
+            .map(|int| if let Ok(result) = int.parse::<u32>() { result } else { panic!("Tried converting a list table column width into a integer on line {} but failed. Computer says no...", line_cursor.sum_total()); })
+            .collect::<Vec<u32>>();
+          if widths.len() == 0 {
+            None
+          } else if widths.len() == 1 {
+            Some(TableColWidths::Single(widths[0]))
+          } else {
+            Some(TableColWidths::Multiple(widths))
+          }
+        }
+      } else {
+        None
+      },
+      width: if let Some(width) = width {
+        if let Some(length) = Parser::str_to_length(&width) {
+          Some(MetricType::Lenght(length))
+        } else if let Some(percentage) = Parser::str_to_percentage(&width) {
+          Some(common::MetricType::Percentage(percentage))
+        } else {
+          None
+        }
+      } else {
+        None
+      },
+      header_rows: if let Some(num) = header_rows {
+        if let Ok(result) = num.parse::<u32>() {
+          Some(result)
+        } else {
+          eprintln!("Could not parse list-table header-rows setting to integer on line {}...", line_cursor.sum_total());
+          None
+        }
+      } else {
+        None
+      },
+      stub_columns: if let Some(num) = stub_columns {
+        if let Ok(result) = num.parse::<u32>() {
+          Some(result)
+        } else {
+          eprintln!("Could not parse list-table stub-columns setting to integer on line {}...", line_cursor.sum_total());
+          None
+        }
+      } else {
+        None
+      },
+      align: if let Some(alignment) = align {
+        match alignment.as_str() {
+          "left" => Some(HorizontalAlignment::Left),
+          "center" => Some(HorizontalAlignment::Left),
+          "right" => Some(HorizontalAlignment::Left),
+          _ => {
+            eprintln!("Found an alignment setting for list table on line {}, but setting not valid...", line_cursor.sum_total());
+            None
+          }
+        }
+      } else {
+        None
+      }
+    };
+
     todo!()
   }
 
