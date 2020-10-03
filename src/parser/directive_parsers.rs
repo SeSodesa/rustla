@@ -570,7 +570,36 @@ impl Parser {
   }
 
 
-  pub fn parse_list_table () {
+  pub fn parse_list_table (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, body_indent: usize) -> TransitionResult {
+
+    const RECOGNIZED_OPTIONS: &[&str] = &[
+      "header-rows", "stub-columns", "width", "widths", "class", "name", "align"
+    ];
+
+    let table_title = if let Some(title) = Parser::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      title
+    } else {
+      String::new()
+    };
+
+    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
+
+    let (header_rows, stub_columns, width, widths, class, name, align) = if let Some(mut options) = options {
+
+      let header_rows = options.remove("header-rows");
+      let stub_columns = options.remove("stub-columns");
+      let width = options.remove("width");
+      let widths = options.remove("widths");
+      let class = options.remove("class");
+      let name = options.remove("name");
+      let align = options.remove("align");
+
+      (header_rows, stub_columns, width, widths, class, name, align)
+
+    } else {
+      (None, None, None, None, None, None, None)
+    };
+
     todo!()
   }
 
