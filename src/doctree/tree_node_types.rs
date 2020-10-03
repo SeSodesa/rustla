@@ -528,6 +528,7 @@ pub enum TreeNodeType {
   ///
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table
   ListTable {
+    title:        Option<String>,
     widths:       Option<TableColWidths>,
     width:        Option<MetricType>,
     header_rows:  Option<u32>,
