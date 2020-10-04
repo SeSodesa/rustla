@@ -603,6 +603,9 @@ impl Parser {
     use common::{TableColWidths, MetricType, HorizontalAlignment};
 
     let list_table_node = TreeNodeType::ListTable {
+
+      body_indent: body_indent,
+
       title: if ! table_title.is_empty() {Some(table_title)} else { None },
       widths: if let Some(widths) =  widths {
         if widths.as_str().trim() == "auto" {

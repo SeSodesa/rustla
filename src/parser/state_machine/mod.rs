@@ -215,7 +215,6 @@ impl StateMachine {
       | StateMachine::Citation
       | Self::Admonition
       | Self::Figure            => Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap()),
-      Self::ListTable           => Ok(TRANSITION_MAP.get(&Self::BulletList).unwrap()),
       _                         => if let Some(transition_table) = TRANSITION_MAP.get(self) {
         Ok(transition_table)
       } else {
@@ -303,6 +302,9 @@ lazy_static! {
 
     let line_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_TRANSITIONS);
     action_map.insert(StateMachine::Line, line_actions);
+
+    let list_table_actions = StateMachine::compile_state_transitions(&StateMachine::LIST_TABLE_TRANSITIONS);
+    action_map.insert(StateMachine::ListTable, list_table_actions);
 
     // A+
     let aplus_multicol_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_MULTICOL_TRANSITIONS);

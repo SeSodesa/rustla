@@ -278,6 +278,11 @@ impl StateMachine {
 
   ];
 
+  pub const LIST_TABLE_TRANSITIONS: &'static [UncompiledTransition] = &[
+    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
+    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+  ];
+
 
   /// ### APLUS_MULTICOL_TRANSITIONS
   /// An array of transitions allowed in multi-column A+ directives such as points of interest.

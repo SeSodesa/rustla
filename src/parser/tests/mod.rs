@@ -6,6 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use std::path::PathBuf;
 
 mod test_admonitions;
 mod test_aplus_point_of_interest;
@@ -20,6 +21,7 @@ mod test_enumerated_lists;
 mod test_field_lists;
 mod test_hyperlink_targets;
 mod test_images;
+mod test_list_tables;
 mod test_math_blocks;
 mod test_mixed_structures;
 mod test_inline_parsing;
