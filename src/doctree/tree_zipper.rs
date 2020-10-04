@@ -49,10 +49,17 @@ impl TreeZipper {
 
   /// ### shared_children
   /// 
-  /// Optionally returns the children of current node,
-  /// if they exist.
-  fn shared_children (&self) -> &Option<Vec<TreeNode>> {
+  /// Optionally returns a shared reference to the children of the focused-on node.
+  pub fn shared_children (&self) -> &Option<Vec<TreeNode>> {
     &self.node.children
+  }
+
+
+  /// ### mut_children
+  /// 
+  /// Optionally returns a mutable reference to the children of the focused-on node.
+  pub fn mut_children (&mut self) -> &mut Option<Vec<TreeNode>> {
+    &mut self.node.children
   }
 
 
