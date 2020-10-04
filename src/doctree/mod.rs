@@ -331,9 +331,9 @@ impl DocTree {
   /// Retrieves a shared reference to the data of the given child of the current node.
   pub fn get_child_data (&self, index: usize) -> &TreeNodeType {
 
-    if let Some(children) = &self.tree.node.children {
+    if let Some(children) = self.tree.node.shared_children() {
       match children.get(index) {
-        Some(node) => &node.data,
+        Some(node) => node.shared_data(),
         None => {
           eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
           panic!()
@@ -354,9 +354,9 @@ impl DocTree {
   /// Retrieves a mutable reference to the data of the given child of the current node.
   pub fn get_mut_child_data (&mut self, index: usize) -> &mut TreeNodeType {
 
-    if let Some(children) = &mut self.tree.node.children {
+    if let Some(children) = self.tree.node.mut_children() {
       match children.get_mut(index) {
-        Some(node) => &mut node.data,
+        Some(node) => node.mut_data(),
         None => {
           eprintln!("Focused on node does not have as many children as is implied.\nComputer says no...\n");
           panic!()
@@ -372,7 +372,7 @@ impl DocTree {
   /// Retrieves a shared reference to a given child.
   pub fn shared_child (&self, index: usize) -> &TreeNode {
 
-    if let Some(children) = &self.tree.node.children {
+    if let Some(children) = self.tree.node.shared_children() {
       match children.get(index) {
         Some(node) => node,
         None => {
@@ -387,7 +387,7 @@ impl DocTree {
   /// Retrieves a shared reference to a given child.
   pub fn mut_child (&mut self, index: usize) -> &mut TreeNode {
 
-    if let Some(children) = &mut self.tree.node.children {
+    if let Some(children) = self.tree.node.mut_children() {
       match children.get_mut(index) {
         Some(node) => node,
         None => {

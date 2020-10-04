@@ -85,7 +85,7 @@ impl TreeNode {
       TreeNodeType::FieldList { .. } =>  {},
       TreeNodeType::FieldListItem { .. } =>  {},
       TreeNodeType::Figure { .. } =>  {
-        if let Some(children) = &mut self.children {
+        if let Some(children) = self.mut_children() {
           if let Some(child) = children.get_mut(1) {
             if let TreeNodeType::Paragraph {  indent} = child.mut_data() {
               // Transform paragraph data into a caption
@@ -143,7 +143,9 @@ impl TreeNode {
       TreeNodeType::SystemMessage { .. } =>  {},
       TreeNodeType::Table { .. } =>  {},
       TreeNodeType::Target { .. } =>  {},
-      TreeNodeType::TBody { .. } =>  {},
+      TreeNodeType::TBody { .. } =>  {
+
+      },
       TreeNodeType::Term { .. } =>  {},
       TreeNodeType::Text { .. } =>  {},
       TreeNodeType::TGroup { .. } =>  {},
@@ -181,7 +183,7 @@ impl TreeNode {
       TreeNodeType::AplusActiveElementOutput { .. } =>  {},
     };
 
-    if let Some(children) = &mut self.children {
+    if let Some(children) = self.mut_children() {
       for child in children {
         child.perform_restructuredtext_transforms()
       }

@@ -17,7 +17,7 @@ fn new_doctree() {
 
   let dt = DocTree::new(doc_name);
 
-  let root_is_root:bool = match dt.tree.node.data {
+  let root_is_root:bool = match dt.tree.node.shared_data() {
     TreeNodeType::Document{..} => true,
     _ => false
   };

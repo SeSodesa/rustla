@@ -14,7 +14,7 @@ pub struct TreeNode {
   pub id: NodeId,
   target_label: Option<Vec<String>>,
   pub data : TreeNodeType,
-  pub children: Option<Children>,
+  children: Option<Children>,
 
 }
 
@@ -139,8 +139,15 @@ impl TreeNode {
   /// 
   /// Optionally returns a shared reference to vector containing child nodes.
   pub fn shared_children (&self) -> &Option<Children> {
-
     &self.children
+  }
+
+
+  /// ### mut_children
+  /// 
+  /// Optionally returns a mutable reference to vector containing child nodes.
+  pub fn mut_children (&mut self) -> &mut Option<Children> {
+    &mut self.children
   }
 
 

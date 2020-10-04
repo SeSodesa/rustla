@@ -121,7 +121,7 @@ impl TreeNode {
       String::new()
     };
 
-    self.data.larst_pre_order_write(file_ptr, refnames)
+    self.shared_data().larst_pre_order_write(file_ptr, refnames)
   }
 
 
@@ -141,7 +141,7 @@ impl TreeNode {
       String::new()
     };
 
-    self.data.larst_post_order_write(file_ptr, refnames)
+    self.shared_data().larst_post_order_write(file_ptr, refnames)
   }
 }
 

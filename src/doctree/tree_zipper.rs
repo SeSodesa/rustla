@@ -51,7 +51,7 @@ impl TreeZipper {
   /// 
   /// Optionally returns a shared reference to the children of the focused-on node.
   pub fn shared_children (&self) -> &Option<Vec<TreeNode>> {
-    &self.node.children
+    self.node.shared_children()
   }
 
 
@@ -59,7 +59,7 @@ impl TreeZipper {
   /// 
   /// Optionally returns a mutable reference to the children of the focused-on node.
   pub fn mut_children (&mut self) -> &mut Option<Vec<TreeNode>> {
-    &mut self.node.children
+    self.node.mut_children()
   }
 
 
@@ -72,7 +72,7 @@ impl TreeZipper {
 
     let child: TreeNode;
 
-    if let Some(children) = &mut self.node.children {
+    if let Some(children) = self.node.mut_children() {
       if !children.is_empty() && index < children.len() {
         child = children.swap_remove(index);
       } else {
@@ -125,7 +125,7 @@ impl TreeZipper {
     };
 
     // Perform the opposite of Vec::swap_remove
-    if let Some(children) = &mut parent_node.children {
+    if let Some(children) = parent_node.mut_children() {
       children.push(node);
       let len = children.len();
       children.swap(index, len - 1);
@@ -202,7 +202,7 @@ impl TreeZipper {
   /// Moves the focus to the last child of the current focus.
   pub fn focus_on_last_child (self) -> Result<Self, Self> {
 
-    let children_len = if let Some(children) = &self.node.children {
+    let children_len = if let Some(children) = self.node.shared_children() {
       self.n_of_children()
     } else {
       eprintln!("Cannot focus on last child, as current node is not allowed any children.\nComputer says no...\n");
@@ -306,9 +306,9 @@ impl TreeZipper {
       return None
     };
 
-    if let Some(children) = &parent_ref.node.children {
+    if let Some(children) = parent_ref.node.shared_children() {
       if let Some(sibling) = children.get(sibling_index) {
-        Some(&sibling.data)
+        Some(sibling.shared_data())
       } else {
         None
       }
@@ -328,7 +328,7 @@ impl TreeZipper {
   /// ### n_of_children
   /// Returns the number of children of the current node.
   pub fn n_of_children (&self) -> usize {
-    if let Some(children) = &self.node.children {
+    if let Some(children) = self.node.shared_children() {
       children.len()
     } else {
       panic!("Tried retrieving the number of children for node, but children not allowed.\nComputer says no...\n")
