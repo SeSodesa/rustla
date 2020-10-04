@@ -204,7 +204,7 @@ impl StateMachine {
   /// using a `match` statement. First checks for end states that don't contain transitions,
   /// such as `EOF` or `Failure` and if these are not matched,
   /// retrieves a list of transitions from the `TRANSITION_MAP`.
-  pub fn get_transitions (&self) -> Result<&Vec<Transition>, &'static str> {
+  pub fn get_transitions (&self, line_cursor: &LineCursor) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
       StateMachine::EOF         => Err("Already moved past EOF. No transitions to perform.\n"),
@@ -215,7 +215,12 @@ impl StateMachine {
       | StateMachine::Citation
       | Self::Admonition
       | Self::Figure            => Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap()),
-      _                                => Ok(TRANSITION_MAP.get(self).unwrap()),
+      Self::ListTable           => Ok(TRANSITION_MAP.get(&Self::BulletList).unwrap()),
+      _                         => if let Some(transition_table) = TRANSITION_MAP.get(self) {
+        Ok(transition_table)
+      } else {
+        panic!("Found no transition table for state {:#?} on line {}", self, line_cursor.sum_total())
+      },
     }
   }
 }

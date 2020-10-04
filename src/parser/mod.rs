@@ -175,7 +175,7 @@ impl Parser {
           }
 
           _ => {
-            if let Ok(transitions_ref) = machine.get_transitions() {
+            if let Ok(transitions_ref) = machine.get_transitions(&self.line_cursor) {
               transitions_ref
             } else {
               return ParsingResult::Failure { message: String::from("No transitions for this state...\n") }
