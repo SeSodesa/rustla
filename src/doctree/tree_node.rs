@@ -209,7 +209,10 @@ impl TreeNode {
       TreeNodeType::Legend { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::Line { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::LineBlock { .. } => match node_data { TreeNodeType::EmptyLine | TreeNodeType::Line { .. } => true, _ => false },
-      TreeNodeType::ListTable { .. } => todo!(),
+      TreeNodeType::ListTable { .. } => match node_data {
+        TreeNodeType::BulletList { .. } => true,
+        _ => false
+      },
       TreeNodeType::Literal { .. } => false,
       TreeNodeType::LiteralBlock { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Math { .. } => false,

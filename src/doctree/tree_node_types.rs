@@ -529,6 +529,8 @@ pub enum TreeNodeType {
   /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#list-table
   ListTable {
 
+    body_indent: usize,
+
     /// An optional title, given as the directive argument.
     title:        Option<String>,
     /// A comma- or space-separated list of relative column widths. The default is equal-width columns (100%/#columns).
@@ -1105,7 +1107,7 @@ impl TreeNodeType {
       Self::Legend { body_indent, .. } => Some(*body_indent),
       Self::Line { .. } => None,
       Self::LineBlock { .. } => None,
-      Self::ListTable { .. } => None,
+      Self::ListTable { body_indent, .. } => Some(*body_indent),
       Self::Literal { .. } => None,
       Self::LiteralBlock { .. } => None,
       Self::Math { .. } => None,
