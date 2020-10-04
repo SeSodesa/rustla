@@ -37,8 +37,35 @@ fn list_table_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::ListTable { title, .. } = doctree.shared_child(1).shared_data() {
+  use common::{TableColWidths, MetricType, HorizontalAlignment};
+
+  if let TreeNodeType::ListTable { title, widths, width, header_rows, stub_columns, align, .. } = doctree.shared_child(1).shared_data() {
     assert_eq!(title.as_ref().unwrap().as_str(), "A title");
+    if let Some(TableColWidths::Multiple(vals)) = widths {
+      assert_eq!(vals, &vec![2u32,2u32,2u32]);
+    } else {
+      panic!()
+    }
+    if let Some(MetricType::Percentage(val)) = width {
+      assert_eq!(*val, 50.0f64);
+    } else {
+      panic!()
+    }
+    if let Some(val) = header_rows {
+      assert_eq!(*val, 2);
+    } else {
+      panic!()
+    }
+    if let Some(val) = stub_columns {
+      assert_eq!(*val, 1);
+    } else {
+      panic!()
+    }
+    if let Some(HorizontalAlignment::Center) = align {
+      // Ok
+    } else {
+      panic!()
+    }
   } else {
     panic!()
   }
@@ -60,12 +87,9 @@ fn list_table_01 () {
   } else {
     panic!()
   }
-
-
   if let TreeNodeType::BulletListItem { .. } = doctree.shared_child(1).shared_child(0).shared_child(1).shared_data() {
     // etc.
   } else {
     panic!()
   }
-  todo!()
 }
