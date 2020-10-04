@@ -44,7 +44,7 @@ impl TreeNode {
 
     use crate::doctree::tree_node_types::TreeNodeType;
 
-    match self.shared_data() {
+    match self.mut_data() {
       TreeNodeType::Abbreviation { .. } => {},
       TreeNodeType::AbsoluteURI { .. } =>  {},
       TreeNodeType::Acronym { .. } =>  {},
@@ -88,7 +88,20 @@ impl TreeNode {
       TreeNodeType::FieldBody { .. } =>  {},
       TreeNodeType::FieldList { .. } =>  {},
       TreeNodeType::FieldListItem { .. } =>  {},
-      TreeNodeType::Figure { .. } =>  {},
+      TreeNodeType::Figure { .. } =>  {
+        if let Some(children) = &mut self.children {
+          if let Some(child) = children.get_mut(1) {
+            if let TreeNodeType::Paragraph {  indent} = child.mut_data() {
+              // Transform paragraph data into a caption
+              child.data = TreeNodeType::Caption {
+                indent: *indent
+              };
+            }
+          } else {
+            // Do nothing
+          }
+        }
+      },
       TreeNodeType::Footer { .. } =>  {},
       TreeNodeType::Footnote { .. } =>  {},
       TreeNodeType::FootnoteReference { .. } =>  {},

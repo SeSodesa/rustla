@@ -337,15 +337,13 @@ impl TreeNode {
 
   /// ### shared_data
   /// For retrieving an immutable reference to the data type of a node.
-  /// Mainly for printing purposes.
   pub fn shared_data (&self) -> &TreeNodeType {
     &self.data
   }
 
 
   /// ### mut_data
-  /// For retrieving an immutable reference to the data type of a node.
-  /// Mainly for printing purposes.
+  /// For retrieving a mutable reference to the data type of a node.
   pub fn mut_data (&mut self) -> &mut TreeNodeType {
     &mut self.data
   }
