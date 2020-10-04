@@ -353,6 +353,7 @@ impl TreeNodeType {
       },
       Self::TGroup { .. }                   => todo!(),
       Self::THead { .. }                    => todo!(),
+      Self::TRow { .. }                    => "".to_string(),
       Self::Title { .. }                    => todo!(),
       Self::TitleReference { displayed_text, target_label } =>  {
         format!("\\hyperref[{}]{{{}}}", target_label, displayed_text)
@@ -680,6 +681,7 @@ impl TreeNodeType {
       Self::Text { .. }                     => "".to_string(),
       Self::TGroup { .. }                   => todo!(),
       Self::THead { .. }                    => "\n".to_string(),
+      Self::TRow                            => " \\\\\n".to_string(),
       Self::Title { .. }                    => todo!(),
       Self::TitleReference { .. }           => "".to_string(),
       Self::Topic { .. }                    => todo!(),

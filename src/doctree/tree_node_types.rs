@@ -321,6 +321,8 @@ pub enum TreeNodeType {
   EmptyLine,
 
   /// #### Entry
+  ///
+  /// Table data cells or entries may contain arbitrary body elements.
   Entry,
 
   /// #### EnumeratedList
@@ -769,6 +771,9 @@ pub enum TreeNodeType {
   /// #### THead
   THead,
 
+  /// #### TRow
+  TRow,
+
   /// #### Title
   Title,
 
@@ -1143,6 +1148,7 @@ impl TreeNodeType {
       Self::Text { .. } => None,
       Self::TGroup { .. } => None,
       Self::THead { .. } => None,
+      Self::TRow { .. } => None,
       Self::Title { .. } => None,
       Self::TitleReference { .. } => None,
       Self::Topic { .. } => None,
@@ -1279,6 +1285,7 @@ impl TreeNodeType {
       Self::Text { .. } => &TEXT_CATEGORIES,
       Self::TGroup { .. } => &T_GROUP_CATEGORIES,
       Self::THead { .. } => &T_HEAD_CATEGORIES,
+      Self::TRow { .. } => &T_ROW_CATEGORIES,
       Self::Title { .. } => &TITLE_CATEGORIES,
       Self::TitleReference { .. } => &TITLE_REF_CATEGORIES,
       Self::Topic { .. } => &TOPIC_CATEGORIES,

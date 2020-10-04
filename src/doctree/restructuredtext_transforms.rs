@@ -112,7 +112,31 @@ impl TreeNode {
       TreeNodeType::Legend { .. } =>  {},
       TreeNodeType::Line { .. } =>  {},
       TreeNodeType::LineBlock { .. } =>  {},
-      TreeNodeType::ListTable { .. } =>  {},
+      TreeNodeType::ListTable { .. } =>  {
+        if let Some(children) = self.mut_children() { // The table itself
+          if let Some(child) = children.get_mut(0) {
+            if let TreeNodeType::BulletList { bullet, bullet_indent, text_indent } = child.mut_data() {
+              child.data = TreeNodeType::TBody;
+              if let Some(rows) = child.mut_children() {
+                for row in children {
+                  if let TreeNodeType::BulletListItem { .. } = row.mut_data() {
+                    row.data = TreeNodeType::TRow;
+                    if let Some(columns) = row.mut_children() {
+                      for column in columns {
+                        // We must go deeper...
+                      }
+                    }
+                  } else if let TreeNodeType::EmptyLine = row.mut_data() {
+                    // Keep as is
+                  } else {
+                    eprintln!("Cannot transform anything other than bullet list items or empty lines inside a list table...")
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       TreeNodeType::Literal { .. } =>  {},
       TreeNodeType::LiteralBlock { .. } =>  {},
       TreeNodeType::Math { .. } =>  {},
@@ -150,6 +174,7 @@ impl TreeNode {
       TreeNodeType::Text { .. } =>  {},
       TreeNodeType::TGroup { .. } =>  {},
       TreeNodeType::THead { .. } =>  {},
+      TreeNodeType::TRow { .. } =>  {},
       TreeNodeType::Title { .. } =>  {},
       TreeNodeType::TitleReference { .. } =>  {},
       TreeNodeType::Topic { .. } =>  {},

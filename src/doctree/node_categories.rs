@@ -480,6 +480,10 @@ pub const T_HEAD_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
   NodeCategory::CompoundSubBody,
 ];
+pub const T_ROW_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::SubBody,
+  NodeCategory::CompoundSubBody,
+];
 pub const TITLE_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::SubStructural
 ];
