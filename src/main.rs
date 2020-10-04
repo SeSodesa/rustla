@@ -86,6 +86,7 @@ fn main() -> Result<(), ()>{
       _ => panic!("Parsing ended in failure...")
     };
 
+    doctree = doctree.perform_restructuredtext_transforms();
     doctree.write_to_larst();
   }
 

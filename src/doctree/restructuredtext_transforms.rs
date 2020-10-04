@@ -14,9 +14,9 @@ impl DocTree {
   /// Modifies `self.tree` with the known reStrucuturedText transforms.
   pub fn perform_restructuredtext_transforms (mut self) -> Self {
 
-    self.tree = self.tree.walk_to_root();
-    self.tree = self.tree.perform_restructuredtext_transforms().unwrap();
-
+    self = self.walk_to_root();
+    self.tree = self.tree.perform_restructuredtext_transforms();
+    self = self.walk_to_root();
     self
   }
 }
@@ -25,21 +25,17 @@ impl TreeZipper {
 
   /// Recursively modifies the data of `self.node` and its children,
   /// based on the node type `self.node.data`.
-  pub fn perform_restructuredtext_transforms (mut self) -> Result<Self, Self> {
+  pub fn perform_restructuredtext_transforms (mut self) -> Self {
 
-    if let Some(children) = self.mut_children() {
-      for child in children {
-        child.perform_restructuredtext_transforms()
-      }
-    }
-
-    todo!()
+    self.node.perform_restructuredtext_transforms();
+    self
   }
 }
 
 impl TreeNode {
 
   /// Transforms `self.data` into a different type based on its current value.
+  /// This is where the recursion really kicks in.
   pub fn perform_restructuredtext_transforms (&mut self) {
 
     use crate::doctree::tree_node_types::TreeNodeType;
@@ -184,5 +180,11 @@ impl TreeNode {
       TreeNodeType::AplusActiveElementInput { .. } =>  {},
       TreeNodeType::AplusActiveElementOutput { .. } =>  {},
     };
+
+    if let Some(children) = &mut self.children {
+      for child in children {
+        child.perform_restructuredtext_transforms()
+      }
+    }
   }
 }

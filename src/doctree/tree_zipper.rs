@@ -111,7 +111,7 @@ impl TreeZipper {
     } = match parent {
       Some(parent) => *parent,
       None => {
-        eprintln!("No parent, returning unmodified zipper...\n");
+        // eprintln!("No parent, returning unmodified zipper...\n");
         return Err(Self{node: node, parent: parent, index_in_parent: index_in_parent})
       }
     };
