@@ -290,7 +290,7 @@ impl TreeNodeType {
             TableColWidths::Columns(vals) => {
               let mut col_widths = Vec::<String>::with_capacity(vals.len());
               for val in vals {
-                col_widths.push(format!("p{{{}\\textwidth}}", *val));
+                col_widths.push(format!("p{{{0:.2}\\textwidth}}", *val));
               }
               col_widths.join("")
             }
