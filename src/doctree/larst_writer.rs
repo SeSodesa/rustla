@@ -282,8 +282,24 @@ impl TreeNodeType {
       Self::Legend { .. }                   => todo!(),
       Self::Line { .. }                     => todo!(),
       Self::LineBlock { .. }                => todo!(),
-      Self::ListTable { title, widths, width, header_rows, stub_columns, align, .. }                => {
-        format!("\\begin{{tabular}}{{}}\n")
+      Self::ListTable { title, widths, width, header_rows, stub_columns, align, .. } => {
+
+        let widths = if let Some(widths) = widths {
+          match widths {
+            TableColWidths::Auto => String::new(),
+            TableColWidths::Columns(vals) => {
+              let mut col_widths = Vec::<String>::with_capacity(vals.len());
+              for val in vals {
+                col_widths.push(format!("p{{{}\\textwidth}}", *val));
+              }
+              col_widths.join("")
+            }
+          }
+        } else {
+          panic!("Columns widths need to be set for all list tables. Computer says no...")
+        };
+
+        format!("\\begin{{tabular}}{{{}}}\n", widths)
       },
       Self::Literal { text }       => format!("\\texttt{{{}}}", text),
       Self::LiteralBlock { text }  => {
