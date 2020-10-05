@@ -611,7 +611,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
   
         "list-table" => {
 
-          Parser::parse_list_table(src_lines, doctree,  line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), body_indent)
+          Parser::parse_list_table(src_lines, doctree,  line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), body_indent, *section_level)
         }
   
         // DOCUMENT PARTS

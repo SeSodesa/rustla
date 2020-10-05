@@ -328,9 +328,7 @@ impl Parser {
       panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
     };
 
-    let current_node_id = doctree.current_node_id();
-
-    let (mut doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message } => panic!("{}", message)
@@ -345,7 +343,7 @@ impl Parser {
 
     // if let TreeNodeType::Figure { .. } = doctree.shared_data() {  } else { panic!("Not focused on parent figure after nested parsing session. Computer says no...") };
 
-    let first_child_data = doctree.mut_child(1).mut_data();
+    // let first_child_data = doctree.mut_child(1).mut_data();
 
     // if let TreeNodeType::Paragraph { indent } = first_child_data {
     //   *first_child_data = TreeNodeType::Caption { indent: *indent }
@@ -570,7 +568,7 @@ impl Parser {
   }
 
 
-  pub fn parse_list_table (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, body_indent: usize) -> TransitionResult {
+  pub fn parse_list_table (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, body_indent: usize, section_level: usize) -> TransitionResult {
 
     const RECOGNIZED_OPTIONS: &[&str] = &[
       "header-rows", "stub-columns", "width", "widths", "class", "name", "align"
@@ -672,15 +670,98 @@ impl Parser {
       }
     };
 
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
     doctree = doctree.push_data_and_focus(list_table_node);
 
-    Parser::skip_empty_lines(src_lines, line_cursor);
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), None, false) {
+      (lines, offset)
+    } else {
+      panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::ListTable), section_level).parse() {
+      ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::Failure { message } => panic!("{}", message)
+    };
+
+    // Focus back on list-table
+    while nested_state_stack.len() > 1 {
+      nested_state_stack.pop();
+      doctree = doctree.focus_on_parent()
+    }
+
+    if let TreeNodeType::ListTable { .. } = doctree.shared_data() {
+      // A-Ok
+    } else {
+      panic!("Not focused on list-table after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total())
+    };
+
+    // Check largest number of columns and validate list at the same time
+
+    let n_of_columns = {
+
+      let mut max_cols: u32 = 0;
+
+      if let Some(children) = doctree.shared_children() {
+        if let Some(child_list) = children.get(0) {
+          if let TreeNodeType::BulletList { .. } = child_list.shared_data() {
+
+            if let Some(list_items) = child_list.shared_children() {
+              // Go over sublists and count the number of children in them
+              for list_item in child_list.shared_children() {
+
+                eprintln!("{:#?}", list_item);
+
+                if let Some(child) = list_item.get(0) {
+                  if let TreeNodeType::BulletListItem { .. } = child.shared_data() {
+                    use std::cmp;
+                    if let Some(nested_items) = child.shared_children() {
+                      max_cols = cmp::max(max_cols, nested_items.len() as u32) // No overflow checks with raw cast "as"
+                    } else {
+                      panic!("Nested bullet list in list-table on line {} has no list items. Computer says no...")
+                    }
+                  } else {
+                    panic!("No second level bullet list in list-table on line {}. Computer says no...", line_cursor.sum_total())
+                  }
+                }
+              }
+            } else {
+              panic!("Bullet list in list-table on line {} cannot have children? Computer says no...", line_cursor.sum_total())
+            }
+          } else {
+            panic!("First child if list-table on line {} is not a bullet list. Computer says no...", line_cursor.sum_total())
+          }
+        } else {
+          panic!("List-table on line {} has no children. Computer says no...", line_cursor.sum_total())
+        }
+      } else {
+        panic!("List-table before line {} cannot have children? Computer says no...", line_cursor.sum_total())
+      }
+      max_cols
+    };
+
+    if let TreeNodeType::ListTable { widths, .. } = doctree.mut_node_data() {
+      if widths.is_none() {
+        if n_of_columns == 1 {
+          *widths = Some(TableColWidths::Single(1))
+        } else if n_of_columns > 1 {
+          use std::iter;
+          *widths = Some(TableColWidths::Multiple(iter::repeat(1/n_of_columns).take(n_of_columns as usize).collect()))
+        }
+      }
+    } else {
+      panic!("Again, not focused on")
+    }
+
+    eprintln!("{:#?}", n_of_columns);
 
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(vec![StateMachine::ListTable]),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::None
+      line_advance: LineAdvance::Some(offset)
     }
   }
 
