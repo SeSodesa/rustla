@@ -227,7 +227,9 @@ impl TreeNodeType {
       Self::EmptyLine => {
         format!("")
       },
-      Self::Entry => todo!(),
+      Self::Entry => {
+        format!("")
+      },
       Self::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => {
         format!("\\begin{{enumerate}}\n")
       },
@@ -280,7 +282,9 @@ impl TreeNodeType {
       Self::Legend { .. }                   => todo!(),
       Self::Line { .. }                     => todo!(),
       Self::LineBlock { .. }                => todo!(),
-      Self::ListTable { .. }                => todo!(),
+      Self::ListTable { title, widths, width, header_rows, stub_columns, align, .. }                => {
+        format!("\\begin{{tabular}}{{}}\n")
+      },
       Self::Literal { text }       => format!("\\texttt{{{}}}", text),
       Self::LiteralBlock { text }  => {
         use crate::utf8_to_latex::unicode_text_to_latex;
@@ -346,7 +350,7 @@ impl TreeNodeType {
       Self::SystemMessage { .. }            => todo!(),
       Self::Table { .. }                    => todo!(),
       Self::Target { .. }                   => todo!(),
-      Self::TBody { .. }                    => todo!(),
+      Self::TBody { .. }                    => "".to_string(),
       Self::Term { .. }                     => todo!(),
       Self::Text { text }          => {
         format!("{}", text)
@@ -622,7 +626,7 @@ impl TreeNodeType {
       Self::Document { .. }                 => "\\end{document}\n".to_string(),
       Self::Emphasis { .. }                 => "".to_string(),
       Self::EmptyLine                       => "".to_string(),
-      Self::Entry                           => todo!(),
+      Self::Entry                           => "&\n".to_string(),
       Self::EnumeratedList { .. }           => "\\end{enumerate}\n\n".to_string(),
       Self::EnumeratedListItem { .. }       => "".to_string(),
       Self::ExternalHyperlinkTarget { .. }  => "\n".to_string(),
@@ -645,7 +649,7 @@ impl TreeNodeType {
       Self::Legend { .. }                   => "\n".to_string(),
       Self::Line { .. }                     => "\n".to_string(),
       Self::LineBlock { .. }                => "\n".to_string(),
-      Self::ListTable { .. }                => "\n".to_string(),
+      Self::ListTable { .. }                => "\\end{tabular}\n\n".to_string(),
       Self::Literal { .. }                  => "".to_string(),
       Self::LiteralBlock { .. }             => "\n\\end{codeblock}\n\n".to_string(),
       Self::Math { .. }                     => "".to_string(),
@@ -654,7 +658,7 @@ impl TreeNodeType {
       Self::OptionListItem { .. }           => "\n".to_string(),
       Self::OptionString { .. }             => todo!(),
       Self::Organization { .. }             => todo!(),
-      Self::Paragraph { .. }                => "\n\n".to_string(),
+      Self::Paragraph { .. }                => "\n".to_string(),
       Self::ParsedLiteralBlock { .. }       => "\n\n".to_string(),
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),

@@ -113,20 +113,53 @@ impl TreeNode {
       TreeNodeType::Line { .. } =>  {},
       TreeNodeType::LineBlock { .. } =>  {},
       TreeNodeType::ListTable { .. } =>  {
-        if let Some(children) = self.mut_children() { // The table itself
-          if let Some(child) = children.get_mut(0) {
-            if let TreeNodeType::BulletList { bullet, bullet_indent, text_indent } = child.mut_data() {
-              child.data = TreeNodeType::TBody;
-              if let Some(rows) = child.mut_children() {
-                for row in children {
-                  if let TreeNodeType::BulletListItem { .. } = row.mut_data() {
-                    row.data = TreeNodeType::TRow;
-                    if let Some(columns) = row.mut_children() {
-                      for column in columns {
-                        // We must go deeper...
+
+        // Reconstruct the contained bullet list into a table
+        let rows: Vec<TreeNodeType> = Vec::new();
+
+        if let Some(children) = self.mut_children() {
+          if let Some(bullet_list) = children.get_mut(0) {
+
+            if let TreeNodeType::BulletList { bullet, bullet_indent, text_indent } = bullet_list.mut_data() {
+
+              // Transform the contained bullet list into a table body...
+              bullet_list.data = TreeNodeType::TBody;
+
+              // Retrieve the list items from the bullet list...
+              if let Some(list_items) = bullet_list.mut_children() {
+
+                // Iterate over the list items and transform them into table rows
+                for list_item in list_items {
+
+                  if let TreeNodeType::BulletListItem { .. } = list_item.mut_data() {
+
+                    list_item.data = TreeNodeType::TRow;
+
+                    if let Some(list_item_children) = list_item.mut_children() {
+
+                      if let Some(nested_child) = list_item_children.get_mut(0) {
+
+                        if let TreeNodeType::BulletList { .. } = nested_child.mut_data() {
+
+                          // Remove the list items from nested bullet list and turn them into table cells or entries
+                          let mut table_row_cells: Vec<TreeNode> = if let Some(cells) = nested_child.mut_children() {
+                            cells.drain(..).collect()
+                          } else {
+                            panic!("List table row has no cells. Computer says no...")
+                          };
+
+                          for mut cell in table_row_cells.iter_mut() {
+                            cell.data = TreeNodeType::Entry;
+                          }
+
+                          // Remove the bullet list from between table row and table cells...
+                          list_item.mut_children().as_mut().unwrap().drain(..);
+                          // Insert entries into table row...
+                          list_item.append_children(&mut table_row_cells);
+                        }
                       }
                     }
-                  } else if let TreeNodeType::EmptyLine = row.mut_data() {
+                  } else if let TreeNodeType::EmptyLine = list_item.mut_data() {
                     // Keep as is
                   } else {
                     eprintln!("Cannot transform anything other than bullet list items or empty lines inside a list table...")

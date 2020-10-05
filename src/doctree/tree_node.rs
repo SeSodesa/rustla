@@ -255,7 +255,7 @@ impl TreeNode {
       TreeNodeType::Text { .. } => false,
       TreeNodeType::TGroup { .. } => todo!(),
       TreeNodeType::THead { .. } => todo!(),
-      TreeNodeType::TRow { .. } => todo!(),
+      TreeNodeType::TRow { .. } => if let TreeNodeType::Entry = node_data { true } else { false },
       TreeNodeType::Title { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::TitleReference { .. } => false,
       TreeNodeType::Topic { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
