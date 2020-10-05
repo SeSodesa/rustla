@@ -76,7 +76,7 @@ impl TreeNode {
       TreeNodeType::Document { .. }   =>  {},
       TreeNodeType::Emphasis { .. } =>  {},
       TreeNodeType::EmptyLine =>  {},
-      TreeNodeType::Entry =>  {},
+      TreeNodeType::Entry { .. } =>  {},
       TreeNodeType::EnumeratedList { .. } =>  {},
       TreeNodeType::EnumeratedListItem { .. } =>  {},
       TreeNodeType::ExternalHyperlinkTarget { .. } =>  {},
@@ -148,8 +148,13 @@ impl TreeNode {
                             panic!("List table row has no cells. Computer says no...")
                           };
 
-                          for mut cell in table_row_cells.iter_mut() {
-                            cell.data = TreeNodeType::Entry;
+                          let n_of_entries = table_row_cells.len();
+                          for mut cell in table_row_cells.iter_mut().take(n_of_entries-1) {
+                            cell.data = TreeNodeType::Entry { is_last: false };
+                          }
+
+                          if let Some(entry) = table_row_cells.last_mut() {
+                            entry.data = TreeNodeType::Entry { is_last: true };
                           }
 
                           // Remove the bullet list from between table row and table cells...

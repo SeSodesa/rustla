@@ -323,7 +323,10 @@ pub enum TreeNodeType {
   /// #### Entry
   ///
   /// Table data cells or entries may contain arbitrary body elements.
-  Entry,
+  Entry {
+    // Whether this node is the last element in its container row.
+    is_last: bool
+  },
 
   /// #### EnumeratedList
   /// An enumerated list node. Can only contain `EnumeratedListItem` and `EmptyLine`
@@ -1089,7 +1092,7 @@ impl TreeNodeType {
       Self::Document { .. }   => Some(0),
       Self::Emphasis { .. } => None,
       Self::EmptyLine => None,
-      Self::Entry => None,
+      Self::Entry { .. } => None,
       Self::EnumeratedList { enumerator_indent, .. } => Some(*enumerator_indent),
       Self::EnumeratedListItem { text_indent, .. } => Some(*text_indent),
       Self::ExternalHyperlinkTarget { .. } => None,
@@ -1226,7 +1229,7 @@ impl TreeNodeType {
       Self::Document { .. }   => &DOCUMENT_CATEGORIES,
       Self::Emphasis { .. } => &EMPHASIS_CATEGORIES,
       Self::EmptyLine => &EMPTY_LINE_CATEGORIES,
-      Self::Entry => &ENTRY_CATEGORIES,
+      Self::Entry { .. } => &ENTRY_CATEGORIES,
       Self::EnumeratedList { .. } => &ENUMERATED_LIST_CATEGORIES,
       Self::EnumeratedListItem { .. } => &ENUMERATED_LIST_ITEM_CATEGORIES,
       Self::ExternalHyperlinkTarget { .. } => &EXTERNAL_HYPERLINK_TARGET_CATEGORIES,

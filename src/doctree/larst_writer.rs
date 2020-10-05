@@ -227,7 +227,7 @@ impl TreeNodeType {
       Self::EmptyLine => {
         format!("")
       },
-      Self::Entry => {
+      Self::Entry { .. } => {
         format!("")
       },
       Self::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => {
@@ -626,7 +626,10 @@ impl TreeNodeType {
       Self::Document { .. }                 => "\\end{document}\n".to_string(),
       Self::Emphasis { .. }                 => "".to_string(),
       Self::EmptyLine                       => "".to_string(),
-      Self::Entry                           => "&\n".to_string(),
+      Self::Entry { is_last }        => {
+        let suffix = if *is_last { "" } else { "&\n" };
+        format!("{}", suffix)
+      },
       Self::EnumeratedList { .. }           => "\\end{enumerate}\n\n".to_string(),
       Self::EnumeratedListItem { .. }       => "".to_string(),
       Self::ExternalHyperlinkTarget { .. }  => "\n".to_string(),
@@ -685,7 +688,7 @@ impl TreeNodeType {
       Self::Text { .. }                     => "".to_string(),
       Self::TGroup { .. }                   => todo!(),
       Self::THead { .. }                    => "\n".to_string(),
-      Self::TRow                            => " \\\\\n".to_string(),
+      Self::TRow                            => "\\\\\n".to_string(),
       Self::Title { .. }                    => todo!(),
       Self::TitleReference { .. }           => "".to_string(),
       Self::Topic { .. }                    => todo!(),
