@@ -707,24 +707,27 @@ impl Parser {
       if let Some(children) = doctree.shared_children() {
         if let Some(child_list) = children.get(0) {
           if let TreeNodeType::BulletList { .. } = child_list.shared_data() {
-
             if let Some(list_items) = child_list.shared_children() {
               // Go over sublists and count the number of children in them
-              for list_item in child_list.shared_children() {
-
-                eprintln!("{:#?}", list_item);
-
-                if let Some(child) = list_item.get(0) {
-                  if let TreeNodeType::BulletListItem { .. } = child.shared_data() {
-                    use std::cmp;
-                    if let Some(nested_items) = child.shared_children() {
-                      max_cols = cmp::max(max_cols, nested_items.len() as u32) // No overflow checks with raw cast "as"
+              for list_item in list_items {
+                if let Some(children) = list_item.shared_children() {
+                  if let Some(nested_list) = children.get(0) {
+                    if let TreeNodeType::BulletList { .. } = nested_list.shared_data() {
+                      if let Some(items) = nested_list.shared_children() {
+                        let row_entry_count = items.iter().filter( |item| if let TreeNodeType::BulletListItem { .. } = item.shared_data() { true } else { false } ).count() as u32;
+                        use std::cmp;
+                        max_cols = cmp::max(max_cols, row_entry_count);
+                      } else {
+                        panic!("Second level list has no children inside list-table before line {}. Computer says no...", line_cursor.sum_total())
+                      }
                     } else {
-                      panic!("Nested bullet list in list-table on line {} has no list items. Computer says no...")
+                      panic!("No second level bullet list inside list-table before line {}. Computer says no...", line_cursor.sum_total())
                     }
                   } else {
-                    panic!("No second level bullet list in list-table on line {}. Computer says no...", line_cursor.sum_total())
+                    panic!("List item in list-table on line {} does not contain children. Computer says no...", line_cursor.sum_total())
                   }
+                } else {
+                  panic!("First level list item inside list-table on line {} has no children. Computer says no...", line_cursor.sum_total())
                 }
               }
             } else {
@@ -742,6 +745,8 @@ impl Parser {
       max_cols
     };
 
+    // Set column widths, if not yet set
+
     if let TreeNodeType::ListTable { widths, .. } = doctree.mut_node_data() {
       if widths.is_none() {
         if n_of_columns == 1 {
@@ -752,10 +757,8 @@ impl Parser {
         }
       }
     } else {
-      panic!("Again, not focused on")
+      panic!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total())
     }
-
-    eprintln!("{:#?}", n_of_columns);
 
     TransitionResult::Success {
       doctree: doctree,
