@@ -311,6 +311,42 @@ impl DocTree {
   }
 
 
+  /// ### shared_node
+  /// Returns a shared reference to the current node .
+  pub fn shared_node (&self) -> &TreeNode {
+    &self.tree.node
+  }
+
+
+  /// ### mut_node
+  /// Returns a shared reference to the current node .
+  pub fn mut_node (&mut self) -> &mut TreeNode {
+    &mut self.tree.node
+  }
+
+
+  /// ### shared_children
+  /// Returns an optional shared reference to the current node's children, if the exist.
+  pub fn shared_children (&self) -> Option<&Vec<TreeNode>> {
+    if let Some(children) = self.tree.shared_children() {
+      Some(children)
+    } else {
+      None
+    }
+  }
+
+
+  /// ### mut_children
+  /// Returns an optional mutable reference to the current node's children, if the exist.
+  pub fn mut_children (&mut self) -> Option<&mut Vec<TreeNode>> {
+    if let Some(children) = self.tree.mut_children() {
+      Some(children)
+    } else {
+      None
+    }
+  }
+
+
   /// ### shared_node_data
   /// Retrieves a shared reference to the data of the
   /// currently focused on node.
