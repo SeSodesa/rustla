@@ -616,7 +616,7 @@ impl TreeNodeType {
       Self::Author { .. }                   => todo!(),
       Self::Authors { .. }                  => todo!(),
       Self::AutomaticSectionNumbering {..}  => todo!(),
-      Self::BlockQuote { .. }               => "\\end{quotation}\n".to_string(),
+      Self::BlockQuote { .. }               => "\\end{quotation}\n\n".to_string(),
       Self::BulletList { .. }               => format!("\\end{{itemize}}\n\n"),
       Self::BulletListItem{ .. }            => "".to_string(),
       Self::Caption { .. }                  => "}\n".to_string(),
