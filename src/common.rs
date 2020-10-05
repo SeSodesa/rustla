@@ -293,8 +293,7 @@ pub enum Length {
 /// An enumeration of different horizontal alignment options.
 #[derive(Debug)]
 pub enum TableColWidths {
-  Multiple(Vec<u32>),
-  Single(u32),
+  Columns(Vec<f64>),
   Auto // Determined by writer
 }
 

@@ -611,14 +611,12 @@ impl Parser {
         } else {
           let widths = widths.split_whitespace()
             .filter(|s| ! s.is_empty())
-            .map(|int| if let Ok(result) = int.parse::<u32>() { result } else { panic!("Tried converting a list table column width into a integer on line {} but failed. Computer says no...", line_cursor.sum_total()); })
-            .collect::<Vec<u32>>();
+            .map(|int| if let Ok(result) = int.parse::<f64>() { result } else { panic!("Tried converting a list table column width into a integer on line {} but failed. Computer says no...", line_cursor.sum_total()); })
+            .collect::<Vec<f64>>();
           if widths.len() == 0 {
             None
-          } else if widths.len() == 1 {
-            Some(TableColWidths::Single(widths[0]))
           } else {
-            Some(TableColWidths::Multiple(widths))
+            Some(TableColWidths::Columns(widths))
           }
         }
       } else {
@@ -749,12 +747,8 @@ impl Parser {
 
     if let TreeNodeType::ListTable { widths, .. } = doctree.mut_node_data() {
       if widths.is_none() {
-        if n_of_columns == 1 {
-          *widths = Some(TableColWidths::Single(1))
-        } else if n_of_columns > 1 {
-          use std::iter;
-          *widths = Some(TableColWidths::Multiple(iter::repeat(1/n_of_columns).take(n_of_columns as usize).collect()))
-        }
+        use std::iter;
+        *widths = Some(TableColWidths::Columns(iter::repeat(1.0/n_of_columns as f64).take(n_of_columns as usize).collect()))
       }
     } else {
       panic!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total())

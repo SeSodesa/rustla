@@ -41,8 +41,8 @@ fn list_table_01 () {
 
   if let TreeNodeType::ListTable { title, widths, width, header_rows, stub_columns, align, .. } = doctree.shared_child(1).shared_data() {
     assert_eq!(title.as_ref().unwrap().as_str(), "A title");
-    if let Some(TableColWidths::Multiple(vals)) = widths {
-      assert_eq!(vals, &vec![2u32,2u32,2u32]);
+    if let Some(TableColWidths::Columns(vals)) = widths {
+      assert_eq!(vals, &vec![2f64,2f64,2f64]);
     } else {
       panic!()
     }
