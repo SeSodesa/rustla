@@ -52,7 +52,10 @@ impl Parser {
 
       match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, false, Some(content_indent)) {
         Ok((lines, _)) => (lines, content_indent),
-        Err(e) => panic!("{}", e)
+        Err(e) => return TransitionResult::Failure {
+          message: e,
+          doctree: doctree
+        }
       }
     } else {
 
@@ -60,7 +63,10 @@ impl Parser {
 
       match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(false), Some(content_indent), Some(directive_marker_line_indent), false) {
         Ok((lines, _, offset, _)) => (lines, directive_marker_line_indent),
-        Err(e) => panic!("{}", e)
+        Err(e) => return TransitionResult::Failure {
+          message: e,
+          doctree: doctree
+        }
       }
     };
 
@@ -122,13 +128,19 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None => panic!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+      None =>       return TransitionResult::Failure {
+        message: format!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       arg
     } else {
-      panic!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
@@ -172,13 +184,19 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+      None => return TransitionResult::Failure {
+        message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       arg
     } else {
-      panic!("Image on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Image on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
@@ -246,12 +264,18 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+      None => return TransitionResult::Failure {
+        message: format!("Figure on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
     let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       arg
     } else {
-      panic!("Image on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Figure on line {} does not contain a compulsory image URI. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
@@ -333,7 +357,10 @@ impl Parser {
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
       (lines, offset)
     } else {
-      panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Could not read legend contents of a figure on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
@@ -349,19 +376,6 @@ impl Parser {
     };
 
     use common::TraversalType;
-
-    // Ensure we are focused on the figure that started the above nested parsing session.
-    // This might still be buggy in situations where a figure was constructed inside of a figure.
-    // Might need to be TreeNodeType AND ID-based instead.
-    // doctree = doctree.walk(TraversalType::ID(current_node_id));
-
-    // if let TreeNodeType::Figure { .. } = doctree.shared_data() {  } else { panic!("Not focused on parent figure after nested parsing session. Computer says no...") };
-
-    // let first_child_data = doctree.mut_child(1).mut_data();
-
-    // if let TreeNodeType::Paragraph { indent } = first_child_data {
-    //   *first_child_data = TreeNodeType::Caption { indent: *indent }
-    // }
 
     TransitionResult::Success {
       doctree: doctree,
@@ -400,7 +414,10 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None => panic!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+      None => return TransitionResult::Failure {
+        message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
     let language = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       Some(arg)
@@ -427,7 +444,10 @@ impl Parser {
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
       (lines, offset)
     } else {
-      panic!("Could not read the code block on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Could not read the code block on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let code_block = TreeNodeType::Code {
@@ -469,7 +489,10 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None => panic!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total())
+      None => return TransitionResult::Failure {
+        message: format!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     line_cursor.increment_by(content_offset + 1);
@@ -477,7 +500,7 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, &["class", "name"]) {
+      if ! Self::all_options_recognized(&options, &["class", "name"]) {
         eprintln!("Math block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
       }
 
@@ -502,7 +525,10 @@ impl Parser {
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, true) {
       (lines, offset)
     } else {
-      panic!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Could not read the math block on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     // Scan lines for blocks separated by blank lines
@@ -527,7 +553,12 @@ impl Parser {
       blocks
     };
 
-    if blocks.is_empty() { panic!("Tried reading a math block on line {} but didn't find any actual content. Computer says no...", line_cursor.sum_total()) }
+    if blocks.is_empty() {
+      return TransitionResult::Failure {
+        message: format!("Tried reading a math block on line {} but didn't find any actual content. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
+    }
 
     for block in blocks {
       doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: block.trim().to_string(), name: name.clone(), class: classes.clone() })
@@ -689,7 +720,10 @@ impl Parser {
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), None, false) {
       (lines, offset)
     } else {
-      panic!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::ListTable), section_level).parse() {
@@ -713,7 +747,10 @@ impl Parser {
     if let TreeNodeType::ListTable { .. } = doctree.shared_data() {
       // A-Ok
     } else {
-      panic!("Not focused on list-table after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Not focused on list-table after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     // Check largest number of columns and validate list at the same time
@@ -736,29 +773,53 @@ impl Parser {
                         use std::cmp;
                         max_cols = cmp::max(max_cols, row_entry_count);
                       } else {
-                        panic!("Second level list has no children inside list-table before line {}. Computer says no...", line_cursor.sum_total())
+                        return TransitionResult::Failure {
+                          message: format!("Second level list has no children inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
+                          doctree: doctree
+                        }
                       }
                     } else {
-                      panic!("No second level bullet list inside list-table before line {}. Computer says no...", line_cursor.sum_total())
+                      return TransitionResult::Failure {
+                        message: format!("No second level bullet list inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
+                        doctree: doctree
+                      }
                     }
                   } else {
-                    panic!("List item in list-table on line {} does not contain children. Computer says no...", line_cursor.sum_total())
+                    return TransitionResult::Failure {
+                      message: format!("List item in list-table on line {} does not contain children. Computer says no...", line_cursor.sum_total()),
+                      doctree: doctree
+                    }
                   }
                 } else {
-                  panic!("First level list item inside list-table on line {} has no children. Computer says no...", line_cursor.sum_total())
+                  return TransitionResult::Failure {
+                    message: format!("First level list item inside list-table on line {} has no children. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                  }
                 }
               }
             } else {
-              panic!("Bullet list in list-table on line {} cannot have children? Computer says no...", line_cursor.sum_total())
+              return TransitionResult::Failure {
+                message: format!("Bullet list in list-table on line {} cannot have children? Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+              }
             }
           } else {
-            panic!("First child if list-table on line {} is not a bullet list. Computer says no...", line_cursor.sum_total())
+            return TransitionResult::Failure {
+              message: format!("First child if list-table on line {} is not a bullet list. Computer says no...", line_cursor.sum_total()),
+              doctree: doctree
+            }
           }
         } else {
-          panic!("List-table on line {} has no children. Computer says no...", line_cursor.sum_total())
+          return TransitionResult::Failure {
+            message: format!("List-table on line {} has no children. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+          }
         }
       } else {
-        panic!("List-table before line {} cannot have children? Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("List-table before line {} cannot have children? Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
       max_cols
     };
@@ -771,7 +832,10 @@ impl Parser {
         *widths = Some(TableColWidths::Columns(iter::repeat(1.0/n_of_columns as f64).take(n_of_columns as usize).collect()))
       }
     } else {
-      panic!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     }
 
     TransitionResult::Success {
@@ -933,7 +997,10 @@ impl Parser {
     };
 
     if expression.is_empty() {
-      panic!(r#"The expression of an "only" Sphinx directive on line {} should not be empty. Computer says no..."#, line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!(r#"The expression of an "only" Sphinx directive on line {} should not be empty. Computer says no..."#, line_cursor.sum_total()),
+        doctree: doctree
+      }
     }
 
     let only_node = TreeNodeType::SphinxOnly {
@@ -974,7 +1041,10 @@ impl Parser {
 
       Parser::aplus_key_difficulty_and_max_points (arg.as_str(), line_cursor)
     } else {
-      panic!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, body_indent);
@@ -1076,9 +1146,17 @@ impl Parser {
     use common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+      if let Ok(points) = arg.as_str().parse() { points } else {
+        return TransitionResult::Failure {
+          message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
+      }
     } else {
-      panic!("No points provided for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("No points provided for pick-one question on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
@@ -1133,7 +1211,10 @@ impl Parser {
         );
       let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       
       line_cursor.increment_by(1);
@@ -1164,7 +1245,10 @@ impl Parser {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
         line
       } else {
-        panic!("Tried scanning pick-one question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Tried scanning pick-one question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
@@ -1179,12 +1263,18 @@ impl Parser {
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
 
       if answer.trim().is_empty() {
-        panic!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       let choice_node = TreeNodeType::AplusPickChoice {
@@ -1202,7 +1292,10 @@ impl Parser {
     }
 
     if doctree.n_of_children() == 0 {
-      panic!("Found no choices for pick-one question on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Found no choices for pick-one question on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     }
 
     doctree = doctree.focus_on_parent();
@@ -1217,7 +1310,10 @@ impl Parser {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
         line
       } else {
-        panic!("Tried scanning pick-one question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Tried scanning pick-one question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
@@ -1229,23 +1325,38 @@ impl Parser {
       let show_not_answered = captures.name("show_not_answered");
       let label = match captures.name("label") {
         Some(label) => label.as_str().to_string(),
-        None => panic!("No enumerator for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+        None => return TransitionResult::Failure {
+          message: format!("No enumerator for pick-one hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
-        panic!("No hint text for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No hint text for pick-one hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint.is_empty() {
-        panic!("Empty  hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Empty  hint text for hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint_nodes.is_empty() {
-        panic!("No inline nodes found for pick-one hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No inline nodes found for pick-one hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
@@ -1299,9 +1410,17 @@ impl Parser {
     use common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      if let Ok(points) = arg.as_str().parse() { points } else { panic!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()) }
+      if let Ok(points) = arg.as_str().parse() { points } else {
+        return TransitionResult::Failure {
+          message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
+      }
     } else {
-      panic!("No points provided for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("No points provided for pick-any question on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
@@ -1341,7 +1460,10 @@ impl Parser {
         if let Ok(result) = correct_count.unwrap().parse() {
           Some(result)
         } else {
-          panic!("No correct count provided for pick-any on line {} with randomization activated. Computer says no...", line_cursor.sum_total())
+          return TransitionResult::Failure {
+            message: format!("No correct count provided for pick-any on line {} with randomization activated. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+          }
         }
       } else { None },
       preserve_questions_between_attempts: if preserve_questions_between_attempts.is_some() { true }  else { false }
@@ -1362,7 +1484,10 @@ impl Parser {
         );
       let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       
       line_cursor.increment_by(1);
@@ -1393,7 +1518,10 @@ impl Parser {
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
         line
       } else {
-        panic!("Tried scanning pick-any question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Tried scanning pick-any question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
@@ -1410,12 +1538,18 @@ impl Parser {
       let answer = if let Some(capture) = captures.name("answer") { capture.as_str() } else { "" };
 
       if answer.trim().is_empty() {
-        panic!("Discovered a pick-any answer without content on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Discovered a pick-any answer without content on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       let choice_node = TreeNodeType::AplusPickChoice {
@@ -1433,7 +1567,10 @@ impl Parser {
     }
 
     if doctree.n_of_children() == 0 {
-      panic!("Found no choices for pick-any question on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Found no choices for pick-any question on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     }
 
     doctree = doctree.focus_on_parent();
@@ -1460,23 +1597,38 @@ impl Parser {
       let show_not_answered = captures.name("show_not_answered");
       let label = match captures.name("label") {
         Some(enumerator) => enumerator.as_str().to_string(),
-        None => panic!("No label for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+        None => return TransitionResult::Failure {
+          message: format!("No label for pick-any hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
-        panic!("No hint text for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No hint text for pick-any hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint.is_empty() {
-        panic!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint_nodes.is_empty() {
-        panic!("No inline nodes found for pick-any hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No inline nodes found for pick-any hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
@@ -1526,17 +1678,26 @@ impl Parser {
 
       let points: QuizPoints = if let Some(string) = points_string {
         if let Ok(result) = string.parse() { result } else {
-          panic!("Quiz freetext question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total())
+          return TransitionResult::Failure {
+            message: format!("Quiz freetext question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+          }
         }
       } else {
-        panic!("No points found for freetext on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No points found for freetext on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       let method_string = if let Some(string) = method_str { string.to_string() } else { String::new() };
 
       (points, method_string)
 
     } else {
-      panic!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("No points provided for freetext question on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     if let TreeNodeType::AplusQuestionnaire {points_from_children, .. } = doctree.mut_node_data() {
@@ -1587,7 +1748,10 @@ impl Parser {
         );
       let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       
       line_cursor.increment_by(1);
@@ -1612,19 +1776,28 @@ impl Parser {
 
       let indent = answer.chars().take_while(|c| c.is_whitespace()).count();
       if indent != body_indent {
-        panic!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       if let TreeNodeType::AplusFreeText { model_answer, .. } = doctree.mut_node_data() {
         model_answer.push_str(answer.trim());
       } else {
-        panic!("Not focused on A+ freetext node when reading its model answer on line {}? Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Not focused on A+ freetext node when reading its model answer on line {}? Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       line_cursor.increment_by(1);
 
     } else {
-      panic!("Tried scanning freetext question for correct answer but encountered end of input on line {}. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("Tried scanning freetext question for correct answer but encountered end of input on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     // Read possible hints
@@ -1654,23 +1827,38 @@ impl Parser {
       let show_not_answered = captures.name("show_not_answered");
       let label = match captures.name("label") {
         Some(label) => label.as_str().trim().to_string(),
-        None => panic!("No text for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+        None => return TransitionResult::Failure {
+          message: format!("No text for freetext hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
       let hint: &str = if let Some(hint) = captures.name("hint") { hint.as_str().trim() } else {
-        panic!("No hint text for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No hint text for freetext hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint.is_empty() {
-        panic!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Empty hint text for hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
         InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse freetext hint on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("Could not parse freetext hint on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       if hint_nodes.is_empty() {
-        panic!("No inline nodes found for freetext hint on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("No inline nodes found for freetext hint on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
@@ -1709,7 +1897,10 @@ impl Parser {
 
       Parser::aplus_key_difficulty_and_max_points(arg.as_str(), line_cursor)
     } else {
-      panic!("A+ submit exercise on line {} was not given arguments. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("A+ submit exercise on line {} was not given arguments. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     Parser::skip_empty_lines(src_lines, line_cursor);
@@ -1747,7 +1938,10 @@ impl Parser {
     };
 
     if config.is_none() {
-      panic!("A+ submit exercise on line {} has to specify a configuration file location via the :config: option. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("A+ submit exercise on line {} has to specify a configuration file location via the :config: option. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     }
 
     // Unpacking some options
@@ -1784,7 +1978,10 @@ impl Parser {
         "javascript" => AplusRadarTokenizer::JavaScript,
         "css" => AplusRadarTokenizer::CSS,
         "html" => AplusRadarTokenizer::HTML,
-        _ => panic!("No such tokenizer A+ submit exerciose on line {}. Computer says no...", line_cursor.sum_total())
+        _ => return TransitionResult::Failure {
+          message: format!("No such tokenizer A+ submit exerciose on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
     } else {
       AplusRadarTokenizer::None // Default
@@ -1855,7 +2052,10 @@ impl Parser {
     let key_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
-      panic!("A+ active element input before line {} has no key for output. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("A+ active element input before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
@@ -1899,7 +2099,10 @@ impl Parser {
           "both" => Some(AplusActiveElementClear::Both),
           "left" => Some(AplusActiveElementClear::Left),
           "right" => Some(AplusActiveElementClear::Right),
-          _ => panic!("No such clear type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total())
+          _ => return TransitionResult::Failure {
+            message: format!("No such clear type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+          }
         }
       } else { None },
       input_type: if let Some(input_type) = &input_type {
@@ -1911,11 +2114,17 @@ impl Parser {
           let options = if let Some(options) = input_type.split(":").last() {
             options
           } else {
-            panic!("No options for dropdown input for A+ activ element input before line {}. Computer says no...", line_cursor.sum_total());
+            return TransitionResult::Failure {
+              message: format!("No options for dropdown input for A+ activ element input before line {}. Computer says no...", line_cursor.sum_total()),
+              doctree: doctree
+            }
           };
           Some(common::AplusActiveElementInputType::Dropdown(options.to_string()))
         } else {
-          panic!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total())
+          return TransitionResult::Failure {
+            message: format!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total()),
+            doctree: doctree
+          }
         }
       } else { None },
       file: if let (Some(input_type), Some(file)) = (input_type, file) {
@@ -1948,7 +2157,10 @@ impl Parser {
     let key_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       args
     } else {
-      panic!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total())
+      return TransitionResult::Failure {
+        message: format!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
     };
 
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
@@ -1979,10 +2191,16 @@ impl Parser {
     let ae_output_node = TreeNodeType::AplusActiveElementOutput {
       key_for_output: key_for_output,
       config: if let Some(config) = config { config } else {
-        panic!("A+ active element output before line {} must have a set config file via the \"config\" option. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("A+ active element output before line {} must have a set config file via the \"config\" option. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       },
       inputs: if let Some(inputs) = inputs { inputs } else {
-        panic!("A+ active element output before line {} must have a set of inputs set via the \"inputs\" setting. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("A+ active element output before line {} must have a set of inputs set via the \"inputs\" setting. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       },
       title: title,
       class: class,
@@ -2197,7 +2415,10 @@ impl Parser {
         eprintln!("{:#?}\n", lines);
         (lines.join("\n"), offset)
       },
-      Err(message) => panic!("Error when reading an unknown directive as literal text: {}", message)
+      Err(message) => return TransitionResult::Failure {
+        message: format!("Error when reading an unknown directive as literal text: {}", message),
+        doctree: doctree
+      }
     };
 
     let literal_node = TreeNodeType::LiteralBlock { text: unknown_directive_as_text };
