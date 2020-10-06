@@ -38,14 +38,16 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
       let mut term_and_classifiers= line.split(" : ");
       let term: String = if let Some(term) = term_and_classifiers.next() { term.to_string() } else {
         return TransitionResult::Failure {
-          message: format!("A definition without a term to be defined on line {}?\nComputer says no...\n", line_cursor.sum_total())
+          message: format!("A definition without a term to be defined on line {}?\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
         }
       };
       let classifiers: Vec<String> = term_and_classifiers.filter(|s| !s.trim().is_empty()).map(|s| s.to_string()).collect();
       (term, classifiers)
     } else {
       return TransitionResult::Failure {
-        message: format!("Could not extract term (and classifiers)? from a definition list item.\nComputer says no...\n")
+        message: format!("Could not extract term (and classifiers)? from a definition list item.\nComputer says no...\n"),
+        doctree: doctree
       }
     };
 

@@ -83,7 +83,10 @@ fn main() -> Result<(), ()>{
 
     doctree = match parser.parse() {
       ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => doctree,
-      _ => panic!("Parsing ended in failure...")
+      ParsingResult::Failure { message, doctree } => {
+        eprintln!("Parsing error: {}", message);
+        doctree
+      }
     };
 
     doctree = doctree.perform_restructuredtext_transforms();

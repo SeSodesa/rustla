@@ -90,8 +90,16 @@ impl Parser {
 
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, content_indent, Some(first_line_indent), StateMachine::Admonition, &mut section_level, false) {
-      Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-      None => return TransitionResult::Failure {message: format!("Looks like {} admonition on line {:#?} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total())}
+      Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+        (doctree, offset, state_stack)
+      } else {
+        unreachable!("Returned from a nested parsing session without necessary information. Computer says no...")
+      },
+      Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+        message: format!("Looks like {} admonition on line {} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total()),
+        doctree: doctree
+      },
+      _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
     };
    
     TransitionResult::Success {
@@ -331,7 +339,13 @@ impl Parser {
     let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
-      ParsingResult::Failure { message } => panic!("{}", message)
+      ParsingResult::Failure { message, doctree } => {
+        eprintln!("Error when parsing a figure on line {}: {}", line_cursor.sum_total(), message);
+        return TransitionResult::Failure {
+          message: message,
+          doctree: doctree
+        }
+      }
     };
 
     use common::TraversalType;
@@ -681,7 +695,13 @@ impl Parser {
     let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::ListTable), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
-      ParsingResult::Failure { message } => panic!("{}", message)
+      ParsingResult::Failure { message, doctree } => {
+        eprintln!("Error when parsing a list-table on line {}: {}", line_cursor.sum_total(), message);
+        return TransitionResult::Failure {
+          message: message,
+          doctree: doctree
+        }
+      }
     };
 
     // Focus back on list-table

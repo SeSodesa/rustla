@@ -81,14 +81,16 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {
-      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n")
+      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n"),
+      doctree: tree_wrapper
     }
   };
 
   let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, &detected_kind, false, None, None) {
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
-      message: String::from("Unknown enumerator type detected...?\n")
+      message: String::from("Unknown enumerator type detected...?\n"),
+      doctree: tree_wrapper
     }
   };
 
@@ -217,7 +219,8 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
     (label_and_target.0, label_and_target.1)
   } else {
     return TransitionResult::Failure {
-      message: String::from("Cound not transform a footnote marker into a label--target-pair.\nComputer says no...\n")
+      message: String::from("Cound not transform a footnote marker into a label--target-pair.\nComputer says no...\n"),
+      doctree: tree_wrapper
     }
   };
 
@@ -237,8 +240,16 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
   
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level, false) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+        Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+          (doctree, offset, state_stack)
+        } else {
+          unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
+        },
+        Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+          message: format!("Looks like footnote on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
+        },
+        _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
       };
   
       tree_wrapper = doctree;
@@ -313,8 +324,16 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
   
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level,false) {
-        Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-        None => return TransitionResult::Failure {message: format!("Could not parse the first block of footnote on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+        Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+          (doctree, offset, state_stack)
+        } else {
+          unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
+        },
+        Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+          message: format!("Looks like citation on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
+        },
+        _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
       };
   
       tree_wrapper = doctree;
@@ -387,7 +406,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
       let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
         Ok(( block, _, offset, _)) => (block.join("\n").chars().filter(|c| !c.is_whitespace()).collect(), offset),
         Err(e) => {
-          return TransitionResult::Failure { message: e }
+          return TransitionResult::Failure {
+            message: e,
+            doctree: doctree
+          }
         }
       };
 
@@ -426,7 +448,8 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
           if nodes_data.len() != 1 {
             return TransitionResult::Failure {
-              message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n")
+              message: String::from("Hyperlink targets should only contain a single node.\nComputer says no...\n"),
+              doctree: doctree
             }
           }
 
@@ -1113,7 +1136,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
   let paragraph_indent = if n_of_children == 0 {
     return TransitionResult::Failure {
-      message: format!("No preceding node before literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+      message: format!("No preceding node before literal block on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+      doctree: doctree
     }
   } else {
 
@@ -1123,7 +1147,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
         TreeNodeType::Paragraph { indent } => { par_indent = *indent; break }
         TreeNodeType::EmptyLine => continue,
         _ => return TransitionResult::Failure {
-          message: format!("No paragraph preceding a literal block on line {}.\nComputer says no...\n", line_cursor.sum_total())
+          message: format!("No paragraph preceding a literal block on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
         }
       }
     }
@@ -1143,7 +1168,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
       } else {
         return TransitionResult::Failure {
-          message: format!("Error when reading an indented block of literal text on line {}.\nComputer says no...\n", line_cursor.sum_total())
+          message: format!("Error when reading an indented block of literal text on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
         }
       };
 
@@ -1166,7 +1192,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
       let quote_char = if let Some(c) = captures.get(2) { c.as_str().chars().next().unwrap() } else {
         return TransitionResult::Failure {
-          message: format!("Supposed quoted literal block found on line {} but no quote symbol?\nComputer says no...\n", line_cursor.sum_total())
+          message: format!("Supposed quoted literal block found on line {} but no quote symbol?\nComputer says no...\n", line_cursor.sum_total()),
+          doctree: doctree
         }
       };
 
@@ -1177,7 +1204,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
           if *c == quote_char { break} else { i += 1; }
         } else {
           return TransitionResult::Failure {
-            message: format!("Unknown char '{}' used to quote literal block starting on line {}.\nComputer says no...\n", quote_char, line_cursor.sum_total())
+            message: format!("Unknown char '{}' used to quote literal block starting on line {}.\nComputer says no...\n", quote_char, line_cursor.sum_total()),
+            doctree: doctree
           }
         }
       };
@@ -1192,7 +1220,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
                 *line = chars.as_str().trim_start().to_string()
               } else {
                 return TransitionResult::Failure {
-                  message: format!("Found mismatching line start symbol in a quoted literal block starting on line {}.\nComputer says no...\n", line_cursor.sum_total())
+                  message: format!("Found mismatching line start symbol in a quoted literal block starting on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+                  doctree: doctree
                 }
               }
             }
@@ -1202,7 +1231,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
         Err(e) => {
           eprintln!("{}", e);
           return TransitionResult::Failure {
-            message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
+            message: String::from("Error when reading lines of text of a supposed paragraph block. Computer says no..."),
+            doctree: doctree
           }
         }
       };
@@ -1218,7 +1248,8 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
     }
 
     _ => return TransitionResult::Failure {
-        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name, detected_indent, paragraph_indent, line_cursor.sum_total())
+        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name, detected_indent, paragraph_indent, line_cursor.sum_total()),
+        doctree: doctree
     }
   }
 }
@@ -1257,7 +1288,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
   if at_input_end {
     return TransitionResult::Failure {
-      message: format!("Discovered a transition or an incomplete section at the end of (nested) input on line {}.\nComputer says no...\n", line_cursor.sum_total())
+      message: format!("Discovered a transition or an incomplete section at the end of (nested) input on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+      doctree: doctree
     }
   }
 
@@ -1347,19 +1379,22 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
   
             } else {
               return TransitionResult::Failure {
-                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+                doctree: doctree
               }
             }
   
           } else {
             return TransitionResult::Failure {
-              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
+              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+              doctree: doctree
             }
           }
   
         } else {
           return TransitionResult::Failure {
-            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
+            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total()),
+            doctree: doctree
           }
         }
   
@@ -1446,19 +1481,22 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
             } else {
               return TransitionResult::Failure {
-                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total())
+                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+                doctree: doctree
               }
             }
 
           } else {
             return TransitionResult::Failure {
-              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total())
+              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+              doctree: doctree
             }
           }
 
         } else {
           return TransitionResult::Failure {
-            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total())
+            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total()),
+            doctree: doctree
           }
         }
 
@@ -1473,7 +1511,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
     _ => {
       return TransitionResult::Failure {
-        message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total())
+        message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total()),
+        doctree: doctree
       };
     }
   }
@@ -1594,7 +1633,8 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         Err(e) => {
           eprintln!("{}", e);
           return TransitionResult::Failure {
-            message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n")
+            message: String::from("Error when reading lines of text of a supposed paragraph block.\nComputer says no...\n"),
+            doctree: doctree
           }
         }
       };
@@ -1620,7 +1660,8 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         for _ in 0..indicator_len {
           if let None = block.pop() {
             return TransitionResult::Failure { // This should not ever be triggered
-              message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total())
+              message: format!("Tried removing a literal block indicator from a paragraph starting on line {} but failed.\nComputer says no...\n", line_cursor.sum_total()),
+              doctree: doctree
             }
           }
         }
@@ -1639,9 +1680,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         returned_doctree.focus_on_parent()
   
       } else {
-        return TransitionResult::Failure {
-          message: String::from("Couldn't parse paragraph for inline nodes\n")
-        }
+        panic!("Doctree was lost inside inline parsing method when parsing a paragraph starting on line {}. Computer says no...", line_cursor.sum_total())
       };
   
       if literal_block_next {

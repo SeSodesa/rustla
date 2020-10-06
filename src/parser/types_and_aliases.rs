@@ -72,6 +72,7 @@ pub enum TransitionResult {
   /// encountered in a transition method functions. Contains an error message and the doctree in its current state.
   Failure {
     message: String,
+    doctree: DocTree
   }
 }
 

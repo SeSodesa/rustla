@@ -165,20 +165,30 @@ impl Parser {
                 return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
               }
               None => {
-                return ParsingResult::Failure { message: String::from("Tree should not be in the possession of a transition method after moving past EOF...\n") }
+                panic!("Tree should not be in the possession of a transition method after moving past EOF...")
               }
             };
           }
 
           StateMachine::Failure{ .. } => {
-            return ParsingResult::Failure { message: String::from("Parsing ended in Failure state...\n") }
+            return ParsingResult::Failure {
+              message: String::from("Parsing ended in Failure state...\n"),
+              doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+              }
+            }
           }
 
           _ => {
             if let Ok(transitions_ref) = machine.get_transitions(&self.line_cursor) {
               transitions_ref
             } else {
-              return ParsingResult::Failure { message: String::from("No transitions for this state...\n") }
+              return ParsingResult::Failure {
+                message: String::from("No transitions for this state...\n"),
+                doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                  panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                }
+              }
             }
           }
         }
@@ -191,7 +201,12 @@ impl Parser {
         let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
           Some(line) => line,
           None => {
-            return ParsingResult::Failure { message: String::from("Parsing ended prematurely because of an unqualified move past EOF...\n") }
+            return ParsingResult::Failure {
+              message: String::from("Parsing ended prematurely because of an unqualified move past EOF...\n"),
+              doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+              }
+            }
           }
         };
 
@@ -226,7 +241,12 @@ impl Parser {
                   match self.state_stack.pop() {
                     Some(machine) => (),
                     None => {
-                      return ParsingResult::Failure { message: String::from("Can't pop from empty stack...\n") }
+                      return ParsingResult::Failure {
+                        message: String::from("Can't pop from empty stack...\n"),
+                        doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                          panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                        }
+                      }
                     }
                   };
                 }
@@ -237,7 +257,10 @@ impl Parser {
                     self.state_stack.append(&mut next_states.unwrap());
                   } else {
                     return ParsingResult::Failure {
-                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor.sum_total())
+                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor.sum_total()),
+                      doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                        panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                      }
                     }
                   }
                 }
@@ -247,7 +270,10 @@ impl Parser {
                 (push_or_pop, next_states) => {
                   eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
                   return ParsingResult::Failure {
-                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor.sum_total())
+                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor.sum_total()),
+                    doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                      panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                    }
                   }
                 }
               };
@@ -267,9 +293,14 @@ impl Parser {
               Some(doctree)
             }
 
-            TransitionResult::Failure {message} => {
+            TransitionResult::Failure {message, doctree} => {
               eprintln!("{}", message);
-              return ParsingResult::Failure { message: String::from("An error was encountered while executing a transition method.\n") }
+              return ParsingResult::Failure {
+                message: String::from("An error was encountered while executing a transition method.\n"),
+                doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                  panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                }
+              }
             }
           };
 
@@ -292,7 +323,10 @@ impl Parser {
           self.doctree = Some(doctree.focus_on_parent());
         } else {
           return ParsingResult::Failure {
-            message: format!("Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total())
+            message: format!("Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total()),
+            doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+              panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+            }
           }
         }
       }
@@ -499,7 +533,7 @@ impl Parser {
   /// ### parse_first_node_block
   /// Parses the first block of a node, in case it contains body level nodes
   /// right after a marker such as an enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize, force_alignment: bool) -> Option<(DocTree, usize, Vec<StateMachine>)> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize, force_alignment: bool) -> Result<(ParsingResult, usize), ParsingResult> {
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
@@ -515,22 +549,38 @@ impl Parser {
       }
       Err(e) => {
         eprintln!("{}\n", e);
-        eprintln!("Error when reading list item block.\n");
-        return None
+        return Err(
+          ParsingResult::Failure {
+            message: String::from("Error when reading in a block of text for nested parse."),
+            doctree: doctree
+          }
+        )
       }
     };
 
     // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    let (doctree, state_stack) = match Parser::new(block, doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
-      ParsingResult::EOF {doctree, state_stack} | ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
-      ParsingResult::Failure {message} => {
+    match Parser::new(block, doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
+      ParsingResult::EOF {doctree, state_stack} => {
+        return Ok(
+          (ParsingResult::EOF { doctree: doctree, state_stack: state_stack }, line_offset)
+        )
+      }
+      ParsingResult::EmptyStateStack { doctree, state_stack } => {
+        return Ok(
+          (ParsingResult::EmptyStateStack { doctree: doctree, state_stack: state_stack }, line_offset)
+        )
+      }
+      ParsingResult::Failure {message, doctree} => {
         eprintln!("{}", message);
         eprintln!("Nested parse ended in failure...\n");
-        return None
+        return Err(
+          ParsingResult::Failure {
+            message: message,
+            doctree: doctree
+          }
+        )
       }
     };
-
-    Some((doctree, line_offset, state_stack))
   }
 
 

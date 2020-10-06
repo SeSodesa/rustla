@@ -38,7 +38,8 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
           nodes_data
         } else {
           return TransitionResult::Failure { // Should not happen in the first place, if a field marker was detected...
-            message: format!("Tried parsing a field marker on line {} for inline nodes but none found.\nMarker not valid...\n", line_cursor.sum_total())
+            message: format!("Tried parsing a field marker on line {} for inline nodes but none found.\nMarker not valid...\n", line_cursor.sum_total()),
+            doctree: tree_wrapper
           }
         };
 
@@ -51,8 +52,16 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
         tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
 
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level, false) {
-          Some((doctree, nested_parse_offset, state_stack)) => (doctree, nested_parse_offset, state_stack),
-          None => return TransitionResult::Failure {message: format!("Could not parse the first block of field marker on line {:#?}.\nComputer says no...\n", line_cursor.sum_total())}
+          Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+            (doctree, offset, state_stack)
+          } else {
+            unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
+          },
+          Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+            message: format!("Looks like field list item on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+            doctree: doctree
+          },
+          _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
         };
 
         tree_wrapper = doctree;
@@ -77,7 +86,8 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
     }
 
     _ => return TransitionResult::Failure {
-        message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}.\nComputer says no...\n", line_cursor.sum_total())
+        message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+        doctree: tree_wrapper
     }
   }
 }

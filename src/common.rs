@@ -369,7 +369,8 @@ pub enum ParsingResult {
   /// #### Failure
   /// A simple failure type. This will be returned when there was clearly no way to recover.
   Failure {
-    message: String
+    message: String,
+    doctree: DocTree
   }
 }
 
