@@ -1113,10 +1113,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
       } else {
         // Paragraph line unaligned with previous lines => syntax error
 
-        return TransitionResult::Failure {
-          message: format!("Found paragraph line with too little indentation on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
+        return parse_paragraph(src_lines, base_indent, line_cursor, doctree, detected_indent)
       }
     } else {
       return parse_paragraph(src_lines, base_indent, line_cursor, doctree, detected_indent)
