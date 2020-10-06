@@ -294,12 +294,9 @@ impl Parser {
             }
 
             TransitionResult::Failure {message, doctree} => {
-              eprintln!("{}", message);
               return ParsingResult::Failure {
-                message: String::from("An error was encountered while executing a transition method.\n"),
-                doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                  panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                }
+                message: message,
+                doctree: doctree
               }
             }
           };
