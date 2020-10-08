@@ -5,6 +5,10 @@ ruSTLa is an implementation of the rSTLa
 written in the Rust programming language.
 rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ ⟶ reStructuredText) transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
 
+## Build instructions
+
+If you wish to build the project yourself, the easiest way to do it is to install [`rustup`](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run path/to/rst/file`). To run the unit tests, type `cargo test`. Running a specific test includes typing `cargo test path::to::test::function`. Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
+
 ## Project structure
 
 The current structure of the project is given below.
@@ -66,7 +70,3 @@ src
 
 4 directories, 48 files
 ```
-
-## Build instructions
-
-If you wish to build the project yourself, the easiest way to do it is to install [`rustup`](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run`). To run the unit tests, type `cargo test`. Running a specific test includes typing `cargo test path::to::test::function`. Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
