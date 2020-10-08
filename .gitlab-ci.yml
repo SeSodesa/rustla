@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-image: rust:latest
+image: rust:1.46.0-alpine3.11
 
 build-rust-latest:
   stage: build
