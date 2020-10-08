@@ -12,5 +12,6 @@ build-rust-latest:
 test-rust-latest:
   stage: test
   script:
+    - rustc --version && cargo --version
     - cargo test --verbose
   allow_failure: true
