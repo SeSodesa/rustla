@@ -8,7 +8,7 @@ edition = "2018"
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "main"
+name = "rustla"
 path= "src/main.rs"
 
 
