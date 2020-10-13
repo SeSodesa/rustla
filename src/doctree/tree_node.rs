@@ -109,8 +109,7 @@ impl TreeNode {
       if self.child_is_allowed(&child.data) {
         continue
       } else {
-        eprintln!("Found incompatible child {} when appending children to {}. Computer says no...", child.data, self.data);
-        panic!();
+        panic!("Found incompatible child {} when appending children to {}. Computer says no...", child.data, self.data);
       }
     }
 
