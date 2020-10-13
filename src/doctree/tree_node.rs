@@ -92,10 +92,10 @@ impl TreeNode {
       if let Some(children) = &mut self.children {
         children.push(node);
       } else {
-        panic!("Node of type {:#?} is not allowed to have children. Computer says no...", self.data)
+        panic!("Node of type {} is not allowed to have children. Computer says no...", self.data)
       }
     } else {
-      panic!("Child of type {:#?} not allowed inside a {:#?}. Computer says no...", node.data, self.data);
+      panic!("Child of type {} not allowed inside a {}. Computer says no...", node.data, self.data);
     }
   }
 
@@ -109,7 +109,7 @@ impl TreeNode {
       if self.child_is_allowed(&child.data) {
         continue
       } else {
-        eprintln!("Found incompatible child {:#?} when appending children to {:#?}.\nComputer says no...\n", child.data, self.data);
+        eprintln!("Found incompatible child {} when appending children to {}. Computer says no...", child.data, self.data);
         panic!();
       }
     }
@@ -117,7 +117,7 @@ impl TreeNode {
     if let Some(child_vec) = &mut self.children {
       child_vec.append(children);
     } else {
-
+      panic!("Node of type {} is not allowed to have children. Coputer says no...", self.data)
     }
   }
 
