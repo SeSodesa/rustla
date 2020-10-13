@@ -116,7 +116,7 @@ impl TreeNode {
     if let Some(child_vec) = &mut self.children {
       child_vec.append(children);
     } else {
-      panic!("Node of type {} is not allowed to have children. Coputer says no...", self.data)
+      panic!("Node of type {} is not allowed to have children. Computer says no...", self.data)
     }
   }
 
