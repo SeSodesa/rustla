@@ -280,7 +280,7 @@ impl TreeZipper {
     let node_result = match self.focus_on_last_child() {
       Ok(child_zipper) => Ok(child_zipper),
       Err(node_itself) => {
-        eprintln!("Warning: Couldn't focus on lates child node.\nReturning node itself.\n");
+        eprintln!("Warning: Couldn't focus on latest child node.\nReturning node itself.\n");
         Err(node_itself)
       }
     };
