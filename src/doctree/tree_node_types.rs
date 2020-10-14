@@ -164,6 +164,14 @@ pub enum TreeNodeType {
     target_label: String
   },
 
+  /// #### Class
+  /// A container that triggers the storage of HTML classes
+  /// into the DocTree and gives these to its children, if it has any.
+  Class {
+    body_indent: usize,
+    classes: Vec<String>
+  },
+
   /// #### Classifier
   /// A classifier for a `DefinitionTerm` in a `DefinitionList`.
   /// Could be the type of a varible in a function decraration, or something similar.
@@ -1072,6 +1080,7 @@ impl TreeNodeType {
       Self::Caption { .. } => None,
       Self::Citation { body_indent, .. } => Some(*body_indent),
       Self::CitationReference { .. } => None,
+      Self::Class { body_indent, .. } => Some(*body_indent),
       Self::Classifier { .. } => None,
       Self::Code { .. } => None,
       Self::ColSpec { .. } => None,
@@ -1209,6 +1218,7 @@ impl TreeNodeType {
       Self::Caption { .. } => &CAPTION_CATEGORIES,
       Self::Citation { .. } => &CITATION_CATEGORIES,
       Self::CitationReference { .. } => &CITATION_REFERENCE_CATEGORIES,
+      Self::Class { .. } => &CLASS_CATEGORIES,
       Self::Classifier { .. } => &CLASSIFIER_CATEGORIES,
       Self::Code { .. } => &CODE_CATEGORIES,
       Self::ColSpec { .. } => &COLSPEC_CATEGORIES,
@@ -1347,6 +1357,7 @@ impl fmt::Display for TreeNodeType {
       Self::Caption { .. } => "caption",
       Self::Citation { .. } => "citation",
       Self::CitationReference { .. } => "citation reference",
+      Self::Class { .. } => "class",
       Self::Classifier { .. } => "classifier",
       Self::Code { .. } => "colspec",
       Self::ColSpec { .. } => "colspec",

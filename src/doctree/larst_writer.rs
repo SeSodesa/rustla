@@ -186,6 +186,7 @@ impl TreeNodeType {
       Self::CitationReference { displayed_text, target_label } => {
         format!(r"\hyperref[{}]{{{}}}", target_label, displayed_text)
       },
+      Self::Class { .. }              => "".to_string(),
       Self::Classifier { .. }         => todo!(),
       Self::Code { text, language, name, class, number_lines } => {
 
@@ -622,6 +623,7 @@ impl TreeNodeType {
       Self::Caption { .. }                  => "}\n".to_string(),
       Self::Citation { .. }                 => "\n".to_string(),
       Self::CitationReference { .. }        => "".to_string(),
+      Self::Class { .. }                    => "".to_string(),
       Self::Classifier { .. }               => todo!(),
       Self::Code { .. }                     => "\\end{codeblock}\n\n".to_string(),
       Self::ColSpec { .. }                  => todo!(),

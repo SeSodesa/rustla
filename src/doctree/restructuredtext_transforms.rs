@@ -56,6 +56,7 @@ impl TreeNode {
       TreeNodeType::Caption { .. } =>  {},
       TreeNodeType::Citation { .. } =>  {},
       TreeNodeType::CitationReference { .. } =>  {},
+      TreeNodeType::Class { .. } =>  {},
       TreeNodeType::Classifier { .. } =>  {},
       TreeNodeType::Code { .. } =>  {},
       TreeNodeType::ColSpec { .. } =>  {},

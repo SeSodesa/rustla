@@ -183,6 +183,10 @@ pub const CITATION_CATEGORIES: [NodeCategory; 2] = [
 pub const CITATION_REFERENCE_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Inline
 ];
+pub const CLASS_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
+];
 pub const CLASSIFIER_CATEGORIES: [NodeCategory; 2] = [
   NodeCategory::SubBody,
   NodeCategory::SimpleSubBody,
