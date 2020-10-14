@@ -45,7 +45,10 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
           text_indent: detected_text_indent
         };
 
-        tree_wrapper = tree_wrapper.push_data_and_focus(item_node_data);
+        tree_wrapper = match tree_wrapper.push_data_and_focus(item_node_data) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
 
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem, section_level, false) {
           Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {

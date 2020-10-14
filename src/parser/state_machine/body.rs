@@ -29,7 +29,10 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(sublist_data);
+      tree_wrapper = match tree_wrapper.push_data_and_focus(sublist_data) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BulletList]),
@@ -39,7 +42,10 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
     }
     IndentationMatch::TooMuch => {
 
-      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_bullet_indent });
+      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_bullet_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -106,7 +112,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
+      tree_wrapper = match tree_wrapper.push_data_and_focus(list_node_data) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::EnumeratedList]),
@@ -115,7 +124,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_enumerator_indent });
+      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_enumerator_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -153,7 +165,10 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(list_node_data);
+      tree_wrapper = match tree_wrapper.push_data_and_focus(list_node_data) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::FieldList]),
@@ -162,7 +177,10 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -237,7 +255,10 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         label: label.clone(),
         target: target.clone()
       };
-      tree_wrapper = tree_wrapper.push_data_and_focus(footnote_data);
+      tree_wrapper = match tree_wrapper.push_data_and_focus(footnote_data) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
   
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level, false) {
         Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
@@ -262,7 +283,10 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -321,7 +345,10 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         body_indent: detected_body_indent,
         label: normalize_refname(detected_label_str),
       };
-      tree_wrapper = tree_wrapper.push_data_and_focus(citation_data);
+      tree_wrapper = match tree_wrapper.push_data_and_focus(citation_data) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
   
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Citation, section_level,false) {
         Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
@@ -346,7 +373,10 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -494,7 +524,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
       }
     }
     IndentationMatch::TooMuch => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -883,7 +916,10 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
       }
     }
     IndentationMatch::TooMuch => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -970,7 +1006,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       }
     }
     IndentationMatch::TooMuch => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),
@@ -1025,7 +1064,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
         match doctree.shared_data() {
 
           TreeNodeType::Document { .. } => {
-            doctree = doctree.push_data_and_focus(section_data);
+            doctree = match doctree.push_data_and_focus(section_data) {
+              Ok(tree) => tree,
+              Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+            };
             *section_level = detected_level;
           }
 
@@ -1041,7 +1083,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
               }
             } else {
               *section_level = detected_level;
-              doctree = doctree.push_data_and_focus(section_data);
+              doctree = match doctree.push_data_and_focus(section_data) {
+                Ok(tree) => tree,
+                Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+              };
             }
           }
 
@@ -1084,7 +1129,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
         match Parser::parent_indent_matches(doctree.shared_data(), detected_indent) {
 
           IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-            doctree = doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent });
+            doctree = match doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent }) {
+              Ok(tree) => tree,
+              Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+            };
 
             return TransitionResult::Success {
               doctree: doctree,
@@ -1094,7 +1142,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             }
           }
           IndentationMatch::TooMuch => {
-            doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent });
+            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent }) {
+              Ok(tree) => tree,
+              Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+            };
             return TransitionResult::Success {
               doctree: doctree,
               next_states: Some(vec![StateMachine::BlockQuote]),
@@ -1335,7 +1386,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                 match doctree.shared_data() {
   
                   TreeNodeType::Document { .. } => {
-                    doctree = doctree.push_data_and_focus(section_data);
+                    doctree = match doctree.push_data_and_focus(section_data) {
+                      Ok(tree) => tree,
+                      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+                    };
                     *section_level = detected_level;
                   }
   
@@ -1352,7 +1406,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       }
                     } else {
                       *section_level = detected_level;
-                      doctree = doctree.push_data_and_focus(section_data);
+                      doctree = match doctree.push_data_and_focus(section_data) {
+                        Ok(tree) => tree,
+                        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+                      };
                     }
                   }
   
@@ -1437,7 +1494,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                 match doctree.shared_data() {
 
                   TreeNodeType::Document { .. } => {
-                    doctree = doctree.push_data_and_focus(section_data);
+                    doctree = match doctree.push_data_and_focus(section_data) {
+                      Ok(tree) => tree,
+                      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+                    };
                     *section_level = detected_level;
                   }
 
@@ -1454,7 +1514,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       }
                     } else {
                       *section_level = detected_level;
-                      doctree = doctree.push_data_and_focus(section_data);
+                      doctree = match doctree.push_data_and_focus(section_data) {
+                        Ok(tree) => tree,
+                        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+                      };
                     }
                   }
 
@@ -1626,7 +1689,10 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
 
       let relative_indent = detected_indent - base_indent;
     
@@ -1705,7 +1771,10 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
     }
 
     IndentationMatch::TooMuch => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),

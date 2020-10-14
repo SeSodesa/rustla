@@ -37,7 +37,10 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
       }
     }
     IndentationMatch::TooMuch => {
-      doctree = doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent });
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),

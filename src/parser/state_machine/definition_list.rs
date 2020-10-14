@@ -57,7 +57,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
       body_indent: next_line_indent
     };
 
-    doctree = doctree.push_data_and_focus(list_item_node);
+    doctree = match doctree.push_data_and_focus(list_item_node) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     return TransitionResult::Success {
       doctree: doctree,

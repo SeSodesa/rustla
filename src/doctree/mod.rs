@@ -192,12 +192,20 @@ impl DocTree {
   /// Creates a new node from given data, pushes it to the
   /// children of currently focused on node and focuses on the new node.
   /// If this succeeds, also increments `self.node_count`.
-  pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Self {
+  pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.node_specific_actions(&node_data);
-    self.tree = self.tree.push_data_and_focus(node_data, self.node_count, target_labels).unwrap();
-    self.node_count += 1;
-    self
+    match self.tree.push_data_and_focus(node_data, self.node_count, target_labels) {
+      Ok(tree) => {
+        self.node_count += 1;
+        self.tree = tree;
+        Ok(self)
+      }
+      Err(tree) => {
+        self.tree = tree;
+        Err(self)
+      }
+    }
   }
 
 

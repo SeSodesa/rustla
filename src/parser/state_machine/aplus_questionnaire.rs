@@ -36,7 +36,10 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
       };
 
       let paragraph = TreeNodeType::Paragraph { indent: detected_indent };
-      doctree = doctree.push_data_and_focus(paragraph);
+      doctree = match doctree.push_data_and_focus(paragraph) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       for node in inline_nodes {
         doctree = doctree.push_data(node);
       }
