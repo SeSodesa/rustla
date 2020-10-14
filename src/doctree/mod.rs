@@ -189,9 +189,9 @@ impl DocTree {
 
 
   /// ### push_data_and_focus
-  /// Creates a new node from given data, pushes it to the
-  /// children of currently focused on node and focuses on the new node.
+  /// Creates a new node from given data, pushes it to the children of currently focused on node and focuses on the new node.
   /// If this succeeds, also increments `self.node_count`.
+  /// Returns `Result::{Ok(self), Err(self)}`, depending on the success of this operation.
   pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.node_specific_actions(&node_data);
@@ -210,9 +210,9 @@ impl DocTree {
 
 
   /// ### push_data
-  /// Creates a new node from given data and pushes it to the
-  /// children of currently focused on node.
+  /// Creates a new node from given data and pushes it to the children of currently focused on node.
   /// If this succeeds, also increments `self.node_count`.
+  /// Returns self in either `Ok` or an `Err`.
   pub fn push_data (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.node_specific_actions(&node_data);
@@ -232,6 +232,7 @@ impl DocTree {
 
   /// ### push_child
   /// Pushes a new node to the children of the node currently focused on.
+  /// If the addition was successful, returns `Ok(())`, else returns the given node wrapped in an `Err`.
   pub fn push_child (&mut self, mut node: TreeNode) -> Result<(), TreeNode> {
 
     // Check if there is an incoming internal target label and if there is, add it to the node being processed.
