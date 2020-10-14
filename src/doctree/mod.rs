@@ -194,7 +194,7 @@ impl DocTree {
   /// Returns `Result::{Ok(self), Err(self)}`, depending on the success of this operation.
   pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
-    let target_labels = self.node_specific_actions(&node_data);
+    let target_labels = self.hyperref_actions(&node_data);
     match self.tree.push_data_and_focus(node_data, self.node_count, target_labels) {
       Ok(tree) => {
         self.node_count += 1;
@@ -215,7 +215,7 @@ impl DocTree {
   /// Returns self in either `Ok` or an `Err`.
   pub fn push_data (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
-    let target_labels = self.node_specific_actions(&node_data);
+    let target_labels = self.hyperref_actions(&node_data);
     match self.tree.push_data(node_data, self.node_count, target_labels) {
       Ok(tree) => {
         self.tree = tree;
@@ -249,7 +249,7 @@ impl DocTree {
       }
     };
 
-    self.node_specific_actions(node.shared_data());
+    self.hyperref_actions(node.shared_data());
     match self.tree.push_child(node) {
       Ok(()) => {
         self.node_count += 1;
@@ -263,7 +263,7 @@ impl DocTree {
   /// ### node_specific_actions
   /// Performs any node specific actions to the doctree based on given node data.
   /// Returns an optional internal target label
-  fn node_specific_actions (&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
+  fn hyperref_actions (&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
 
     use crate::common::normalize_refname;
 
@@ -283,7 +283,7 @@ impl DocTree {
       }
     };
 
-    // Check for targetable or referential nodes. If one is encountered, add it to the known targes or references.
+    // Check for targetable or referential nodes. If one is encountered, add it to the known targets or references.
     let normalized_refname = match &shared_node_data {
       TreeNodeType::Footnote {target, label, .. } => {
 
