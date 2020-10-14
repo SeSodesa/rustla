@@ -12,7 +12,8 @@ use super::*;
 #[derive(Debug)]
 pub struct TreeNode {
   pub id: NodeId,
-  target_label: Option<Vec<String>>,
+  refnames: Option<Vec<String>>,
+  classes: Option<Vec<String>>,
   pub data : TreeNodeType,
   children: Option<Children>,
 
@@ -22,32 +23,15 @@ impl TreeNode {
 
   /// ### new
   /// A `TreeNode` constructor.
-  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<Vec<String>>) -> Self {
+  pub fn new(data: TreeNodeType, id: NodeId, target_label: Option<Vec<String>>, classes: Option<Vec<String>>) -> Self {
 
     TreeNode {
       id: id,
-      target_label: target_label,
+      refnames: target_label,
+      classes: classes,
       children: Self::children_or_none(&data),
       data: data
     }
-  }
-
-
-  /// ### new_from_id_ref
-  /// Works similarly to `TreeNode::new`, except also increments the id
-  /// behind the given address in addition to assignning the previous value
-  /// to the node being constructred.
-  pub fn new_from_id_ref (data: TreeNodeType, id_ref: &mut NodeId, target_label: Option<Vec<String>>) -> Self {
-
-    let node = Self {
-      id: *id_ref, // assign current id value to node
-      target_label: target_label,
-      children: Self::children_or_none(&data),
-      data: data,
-    };
-
-    *id_ref += 1; // increment the id before returning with new node
-    node
   }
 
 
@@ -80,7 +64,7 @@ impl TreeNode {
   /// If the label is `None`, as is hasn't been set, returns an
   /// empty string slice instead.
   pub fn shared_target_label (&self) -> &Option<Vec<String>> {
-    &self.target_label
+    &self.refnames
   }
   
   
@@ -125,7 +109,7 @@ impl TreeNode {
 
 
   pub fn shared_target_labels (&self) -> &Option<Vec<String>> {
-    &self.target_label
+    &self.refnames
   }
 
 
@@ -133,7 +117,7 @@ impl TreeNode {
   /// Sets the target label of the node to given `Option<Vec<String>>`.
   pub fn set_target_label (&mut self, label: Option<Vec<String>>) {
 
-    self.target_label = label;
+    self.refnames = label;
   }
 
 

@@ -21,6 +21,8 @@ pub mod directives;
 use directives::{DirectiveNode, AdmonitionDirective, ImageDirective, BodyElementDirective, TableDirective, DocumentPartDirective, ReferenceDirective, HTMLSpecificDirective, SubstitutionDefDirective, MiscellaneousDirective, AplusDirective};
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
+mod class_data;
+use class_data::ClassData;
 mod section_data;
 use section_data::SectionData;
 mod walkers;
@@ -72,6 +74,10 @@ pub struct DocTree {
   /// The container for hyperref data related to the doctree.
   hyperref_data: HyperrefData,
 
+  /// #### class_data
+  /// A container that holds on to the possibly generated HTML classes.
+  class_data: ClassData,
+
   /// #### section_data
   /// A container that keeps track of known section styles and section levels corresponding to them.
   section_data: SectionData
@@ -90,7 +96,7 @@ impl DocTree {
 
     let root_id: NodeId = 0;
     let root_data = TreeNodeType::Document;
-    let root_node = TreeNode::new(root_data, root_id, None);
+    let root_node = TreeNode::new(root_data, root_id, None, None);
 
     let file_stem: String = if let Some(path_os_str) = doc_name.file_stem() {
       if let Some(path_str) = path_os_str.to_str() {
@@ -118,6 +124,7 @@ impl DocTree {
       tree: TreeZipper::new(root_node, None, None),
       node_count: root_id + 1,
       hyperref_data: HyperrefData::new(),
+      class_data: ClassData::new(),
       section_data: SectionData::new()
     }
   }
@@ -195,7 +202,8 @@ impl DocTree {
   pub fn push_data_and_focus (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.hyperref_actions(&node_data);
-    match self.tree.push_data_and_focus(node_data, self.node_count, target_labels) {
+    let classes = self.classes();
+    match self.tree.push_data_and_focus(node_data, self.node_count, target_labels, classes) {
       Ok(tree) => {
         self.node_count += 1;
         self.tree = tree;
@@ -216,7 +224,8 @@ impl DocTree {
   pub fn push_data (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.hyperref_actions(&node_data);
-    match self.tree.push_data(node_data, self.node_count, target_labels) {
+    let classes = self.classes();
+    match self.tree.push_data(node_data, self.node_count, target_labels, classes) {
       Ok(tree) => {
         self.tree = tree;
         self.node_count += 1;
@@ -329,6 +338,16 @@ impl DocTree {
     }
 
     target_label
+  }
+
+  /// ### class_actions
+  ///
+  /// Returns the stack of incoming classes, if there are any.
+  fn classes (&mut self) -> Option<Vec<String>>{
+    let classes = self.class_data.mut_classes();
+    if classes.is_empty() { None } else {
+      Some(classes.drain(..).collect())
+    }
   }
 
 

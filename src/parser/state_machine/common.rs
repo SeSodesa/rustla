@@ -13,7 +13,7 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
   let mut doctree = doctree.unwrap();
 
-  let node = TreeNode::new(TreeNodeType::EmptyLine, doctree.node_count(), None);
+  let node = TreeNode::new(TreeNodeType::EmptyLine, doctree.node_count(), None, None);
   
   match doctree.push_child(node) {
     Ok(()) => {},

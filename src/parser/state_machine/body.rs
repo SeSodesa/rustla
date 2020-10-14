@@ -509,7 +509,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
         _ => panic!("Inline parser failed when parsing a hyperlink target on line {} .Computer says no...", line_cursor.sum_total())
       };
 
-      let node = TreeNode::new(node_type, doctree.node_count(), None);
+      let node = TreeNode::new(node_type, doctree.node_count(), None, None);
 
       match doctree.push_child(node) {
         Ok(()) => {},
