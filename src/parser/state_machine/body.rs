@@ -969,7 +969,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       };
     
       if is_empty_comment {
-        doctree = doctree.push_data(TreeNodeType::Comment { text: None });
+        doctree = match doctree.push_data(TreeNodeType::Comment { text: None }) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
         return TransitionResult::Success {
           doctree: doctree,
           next_states: None,
@@ -997,7 +1000,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
         panic!("Could not read comment block on line {}...", line_cursor.sum_total())
       };
 
-      doctree = doctree.push_data(TreeNodeType::Comment { text: Some(comment_block_string) });
+      doctree = match doctree.push_data(TreeNodeType::Comment { text: Some(comment_block_string) }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
@@ -1228,7 +1234,10 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
         }
       };
 
-      doctree = doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string } );
+      doctree = match doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string } ) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
 
       return TransitionResult::Success {
         doctree: doctree,
@@ -1292,7 +1301,10 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
         }
       };
 
-      doctree = doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string });
+      doctree = match doctree.push_data(TreeNodeType::LiteralBlock { text: literal_string }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
 
       return TransitionResult::Success {
         doctree: doctree,
@@ -1352,7 +1364,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
     (Some(p_line), Some(n_line)) => {
       if p_line.trim().is_empty() && n_line.trim().is_empty() && detected_line_length >= TRANSITION_LINE_LENGTH {
 
-        doctree = doctree.push_data(TreeNodeType::Transition);
+        doctree = match doctree.push_data(TreeNodeType::Transition) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
   
         return TransitionResult::Success {
           doctree: doctree,
@@ -1743,7 +1758,10 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
   
         if !nodes_data.is_empty() {
           for data in nodes_data {
-            returned_doctree = returned_doctree.push_data(data);
+            returned_doctree = match returned_doctree.push_data(data) {
+              Ok(tree) => tree,
+              Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+            };
           }
         }
   

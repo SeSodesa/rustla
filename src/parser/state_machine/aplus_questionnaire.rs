@@ -41,7 +41,10 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
       for node in inline_nodes {
-        doctree = doctree.push_data(node);
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
       }
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {

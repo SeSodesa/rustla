@@ -213,12 +213,20 @@ impl DocTree {
   /// Creates a new node from given data and pushes it to the
   /// children of currently focused on node.
   /// If this succeeds, also increments `self.node_count`.
-  pub fn push_data (mut self, node_data: TreeNodeType) -> Self {
+  pub fn push_data (mut self, node_data: TreeNodeType) -> Result<Self, Self> {
 
     let target_labels = self.node_specific_actions(&node_data);
-    self.tree = self.tree.push_data(node_data, self.node_count, target_labels).unwrap();
-    self.node_count += 1;
-    self
+    match self.tree.push_data(node_data, self.node_count, target_labels) {
+      Ok(tree) => {
+        self.tree = tree;
+        self.node_count += 1;
+        Ok(self)
+      },
+      Err(tree) => {
+        self.tree = tree;
+        Err(self)
+      }
+    }
   }
 
 
@@ -645,7 +653,9 @@ impl DocTree {
 
     let section_data = self.new_section_data(title_text, section_style);
 
-    self = self.push_data(section_data);
+    self = match self.push_data(section_data) {
+      Ok(tree) | Err(tree) => tree
+    };
     self
   }
 

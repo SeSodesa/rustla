@@ -52,7 +52,10 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
         panic!("Could not read comment block on line {}...", line_cursor.sum_total())
       };
 
-      doctree = doctree.push_data(TreeNodeType::Attribution { raw_text: attribution_string });
+      doctree = match doctree.push_data(TreeNodeType::Attribution { raw_text: attribution_string }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       doctree = doctree.focus_on_parent();
 
       TransitionResult::Success {

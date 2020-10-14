@@ -254,7 +254,10 @@ impl Parser {
       class:  classes,
     };
 
-    doctree = doctree.push_data(image_data);
+    doctree = match doctree.push_data(image_data) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     TransitionResult::Success {
       doctree: doctree,
@@ -355,7 +358,10 @@ impl Parser {
     };
 
     // Add image to figure
-    doctree = doctree.push_data(image);
+    doctree = match doctree.push_data(image) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
 
     // Transition to figure state to scan for a possible caption
@@ -469,7 +475,10 @@ impl Parser {
       name: name
     };
 
-    doctree = doctree.push_data(code_block);
+    doctree = match doctree.push_data(code_block) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     TransitionResult::Success {
       doctree: doctree,
@@ -522,7 +531,10 @@ impl Parser {
     };
 
     if let Some(math) = math_after_marker {
-      doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: math, class: classes, name: name });
+      doctree = match doctree.push_data(TreeNodeType::MathBlock { block_text: math, class: classes, name: name }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
       return TransitionResult::Success {
         doctree: doctree,
         next_states: None,
@@ -570,7 +582,10 @@ impl Parser {
     }
 
     for block in blocks {
-      doctree = doctree.push_data(TreeNodeType::MathBlock { block_text: block.trim().to_string(), name: name.clone(), class: classes.clone() })
+      doctree = match doctree.push_data(TreeNodeType::MathBlock { block_text: block.trim().to_string(), name: name.clone(), class: classes.clone() }) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
     }
     
     TransitionResult::Success {
@@ -1253,7 +1268,10 @@ impl Parser {
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
       for node in assignment_inline_nodes {
-        doctree = doctree.push_data(node);
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
       }
       doctree = doctree.focus_on_parent()
     }
@@ -1315,7 +1333,12 @@ impl Parser {
         Ok(tree) => tree,
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
-      for node in answer_nodes { doctree = doctree.push_data(node); }
+      for node in answer_nodes {
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
+      }
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -1401,7 +1424,12 @@ impl Parser {
         Ok(tree) => tree,
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
-      for node in hint_nodes { doctree = doctree.push_data(node); }
+      for node in hint_nodes {
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
+      }
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -1544,7 +1572,10 @@ impl Parser {
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
       for node in assignment_inline_nodes {
-        doctree = doctree.push_data(node);
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
       }
       doctree = doctree.focus_on_parent()
     }
@@ -1608,7 +1639,12 @@ impl Parser {
         Ok(tree) => tree,
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
-      for node in answer_nodes { doctree = doctree.push_data(node); }
+      for node in answer_nodes {
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
+      }
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -1691,7 +1727,12 @@ impl Parser {
         Ok(tree) => tree,
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
-      for node in hint_nodes { doctree = doctree.push_data(node); }
+      for node in hint_nodes {
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
+      }
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -1824,7 +1865,10 @@ impl Parser {
       Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
     };
     for node in assignment_inline_nodes {
-      doctree = doctree.push_data(node);
+      doctree = match doctree.push_data(node) {
+        Ok(tree) => tree,
+        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      };
     }
     doctree = doctree.focus_on_parent();
 
@@ -1933,7 +1977,12 @@ impl Parser {
         Ok(tree) => tree,
         Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
       };
-      for node in hint_nodes { doctree = doctree.push_data(node); }
+      for node in hint_nodes {
+        doctree = match doctree.push_data(node) {
+          Ok(tree) => tree,
+          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        };
+      }
       doctree = doctree.focus_on_parent();
 
       line_cursor.increment_by(1);
@@ -2205,7 +2254,10 @@ impl Parser {
       } else { None }
     };
 
-    doctree = doctree.push_data(ae_input_node);
+    doctree = match doctree.push_data(ae_input_node) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     TransitionResult::Success {
       doctree: doctree,
@@ -2338,7 +2390,10 @@ impl Parser {
       }
     };
 
-    doctree = doctree.push_data(ae_output_node);
+    doctree = match doctree.push_data(ae_output_node) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     TransitionResult::Success {
       doctree: doctree,
@@ -2495,7 +2550,10 @@ impl Parser {
 
     let literal_node = TreeNodeType::LiteralBlock { text: unknown_directive_as_text };
 
-    doctree = doctree.push_data(literal_node);
+    doctree = match doctree.push_data(literal_node) {
+      Ok(tree) => tree,
+      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+    };
 
     TransitionResult::Success {
       doctree: doctree,
