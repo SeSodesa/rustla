@@ -919,7 +919,16 @@ impl Parser {
   }
 
 
-  pub fn parse_class () {
+  pub fn parse_class (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
+
+    let title = if let Some(title) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      title
+    } else {
+      return TransitionResult::Failure {
+        message: format!("Class directive on line {} doesn't provide any classes. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      };
+    };
     todo!()
   }
 
