@@ -481,7 +481,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
       let node = TreeNode::new(node_type, doctree.node_count(), None);
 
-      doctree.push_child(node);
+      match doctree.push_child(node) {
+        Ok(()) => {},
+        Err(node) => panic!("Could not insert node into tree on line {}. Computer says no...", line_cursor.sum_total())
+      };
 
       return TransitionResult::Success {
         doctree: doctree,

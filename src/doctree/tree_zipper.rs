@@ -30,13 +30,17 @@ impl TreeZipper {
       parent: parent,
       index_in_parent: index_in_parent,
     }
-
   }
 
   /// ### push child
   /// Adds a child node to the contained node.
-  pub fn push_child (&mut self, tree_node: TreeNode) {
-    self.node.push_child(tree_node);
+  /// Returns and `Ok`-wrapped empty value if sucessful,
+  /// else returns the given `TreeNode` wrapped in an `Err`.
+  pub fn push_child (&mut self, tree_node: TreeNode) -> Result<(), TreeNode> {
+    match self.node.push_child(tree_node) {
+      Ok(()) => Ok(()),
+      Err(node) => Err(node)
+    }
   }
 
 
@@ -253,10 +257,11 @@ impl TreeZipper {
   /// pushes it to current node's children.
   pub fn push_data(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<Vec<String>>) -> Result<Self, Self> {
 
-    let list_node = TreeNode::new(node_data, node_id, target_label);
-    self.node.push_child(list_node);
-
-    Ok(self)
+    let new_node = TreeNode::new(node_data, node_id, target_label);
+    match self.push_child(new_node) {
+      Ok(()) => Ok(self),
+      Err(node) => Err(self)
+    }
   }
 
 
@@ -265,9 +270,12 @@ impl TreeZipper {
   /// pushes it to current node's children and focuses on it.
   pub fn push_data_and_focus(mut self, node_data: TreeNodeType, node_id: NodeId, target_label: Option<Vec<String>>) -> Result<Self, Self> {
 
-    let list_node = TreeNode::new(node_data, node_id, target_label);
+    let new_node = TreeNode::new(node_data, node_id, target_label);
 
-    self.node.push_child(list_node);
+    match self.push_child(new_node) {
+      Ok(()) => (),
+      Err(node) => return Err(self)
+    };
 
     let node_result = match self.focus_on_last_child() {
       Ok(child_zipper) => Ok(child_zipper),

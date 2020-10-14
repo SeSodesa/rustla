@@ -216,7 +216,7 @@ impl DocTree {
 
   /// ### push_child
   /// Pushes a new node to the children of the node currently focused on.
-  pub fn push_child (&mut self, mut node: TreeNode) {
+  pub fn push_child (&mut self, mut node: TreeNode) -> Result<(), TreeNode> {
 
     // Check if there is an incoming internal target label and if there is, add it to the node being processed.
     let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
@@ -225,7 +225,6 @@ impl DocTree {
       match node.shared_data() {
 
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
-
         _ => {
           node.set_target_label(Some(acc_target_label.drain(..).collect()));
           acc_target_label.clear();
@@ -234,8 +233,13 @@ impl DocTree {
     };
 
     self.node_specific_actions(node.shared_data());
-    self.tree.push_child(node);
-    self.node_count += 1;
+    match self.tree.push_child(node) {
+      Ok(()) => {
+        self.node_count += 1;
+        Ok(())
+      },
+      Err(node) => Err(node)
+    }
   }
 
 

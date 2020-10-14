@@ -86,16 +86,19 @@ impl TreeNode {
   
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
-  pub fn push_child (&mut self, node : TreeNode) {
+  pub fn push_child (&mut self, node : TreeNode) -> Result<(), TreeNode> {
 
     if self.child_is_allowed(&node.data) {
       if let Some(children) = &mut self.children {
         children.push(node);
+        Ok(())
       } else {
-        panic!("Node of type {} is not allowed to have children. Computer says no...", self.data)
+        eprintln!("Node of type {} is not allowed to have children. Computer says no...", self.data);
+        Err(node)
       }
     } else {
-      panic!("Child of type {} not allowed inside a {}. Computer says no...", node.data, self.data);
+      eprintln!("Child of type {} not allowed inside a {}. Computer says no...", node.data, self.data);
+      Err(node)
     }
   }
 
@@ -109,7 +112,7 @@ impl TreeNode {
       if self.child_is_allowed(&child.data) {
         continue
       } else {
-        panic!("Found incompatible child {} when appending children to {}. Computer says no...", child.data, self.data);
+        panic!("Found incompatible child {} when appending children to {}. Computer says no...", child.data, self.data)
       }
     }
 
