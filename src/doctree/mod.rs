@@ -268,16 +268,16 @@ impl DocTree {
     use crate::common::normalize_refname;
 
     // Check if there is an incoming internal target label
-    let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
-    let mut target_label: Option<Vec<String>> = if acc_target_label.is_empty() { None } else {
+    let accumulated_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
+    let mut target_label: Option<Vec<String>> = if accumulated_target_label.is_empty() { None } else {
 
       match shared_node_data {
 
         TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => { None },
 
         _ => {
-          let label = Some(acc_target_label.drain(..).collect());
-          acc_target_label.clear();
+          let label = Some(accumulated_target_label.drain(..).collect());
+          accumulated_target_label.clear();
           label
         }
       }
