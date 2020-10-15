@@ -223,7 +223,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
 /// A transition function for generating footnotes
 pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let mut tree_wrapper = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
   // Detected parameters...
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
@@ -248,15 +248,18 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
   let detected_kind = if let PatternName::Footnote { kind } = pattern_name {
     kind
   } else {
-    panic!("No footnote type information inside footnote transition function.\nComputer says no...\n")
+    return TransitionResult::Failure {
+      message: format!("No footnote type information inside footnote transition function. Computer says no..."),
+      doctree: doctree
+    }
   };
 
-  let (label, target) = if let Some( label_and_target ) = detected_footnote_label_to_ref_label(&tree_wrapper, pattern_name, detected_label_str) {
+  let (label, target) = if let Some( label_and_target ) = detected_footnote_label_to_ref_label(&doctree, pattern_name, detected_label_str) {
     (label_and_target.0, label_and_target.1)
   } else {
     return TransitionResult::Failure {
       message: String::from("Cound not transform a footnote marker into a label--target-pair.\nComputer says no...\n"),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -264,7 +267,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
 
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
-  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
       let footnote_data = TreeNodeType::Footnote {
@@ -273,7 +276,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         label: label.clone(),
         target: target.clone()
       };
-      tree_wrapper = match tree_wrapper.push_data_and_focus(footnote_data) {
+      doctree = match doctree.push_data_and_focus(footnote_data) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -281,7 +284,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         }
       };
   
-      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level, false) {
+      let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::Footnote, section_level, false) {
         Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
           (doctree, offset, state_stack)
         } else {
@@ -294,17 +297,15 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
       };
   
-      tree_wrapper = doctree;
-  
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: Some(state_stack),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::Some(offset),
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_marker_indent }) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -312,16 +313,16 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         }
       };
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: Some(vec![StateMachine::BlockQuote]),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::None,
       }
     }
     _ => {
-      tree_wrapper = tree_wrapper.focus_on_parent();
+      doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
@@ -533,7 +534,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
               }
             }
 
-            _ => panic!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total())
+            _ => return TransitionResult::Failure {
+              message: format!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total()),
+              doctree: doctree
+            }
           }
         }
         _ => panic!("Inline parser failed when parsing a hyperlink target on line {} .Computer says no...", line_cursor.sum_total())
@@ -543,7 +547,10 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
       match doctree.push_child(node) {
         Ok(()) => {},
-        Err(node) => panic!("Could not insert node into tree on line {}. Computer says no...", line_cursor.sum_total())
+        Err(node) => return TransitionResult::Failure {
+          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       return TransitionResult::Success {
@@ -992,7 +999,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
         line
       } else {
-        panic!("Found a comment marker on line {} but the line doesn't exist? Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Found a comment marker on line {} but the line doesn't exist? Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
     
       let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
@@ -1009,7 +1019,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
           Ok(tree) => tree,
           Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree  
+          doctree: tree
           }
         };
         return TransitionResult::Success {
@@ -1025,7 +1035,12 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 
         eprintln!("Indent: {}\nOffset: {}\n", indent, offset);
 
-        let next_indent = if offset == 0 { Some(indent) } else { panic!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.sum_total()) };
+        let next_indent = if offset == 0 { Some(indent) } else {
+          return TransitionResult::Failure {
+            message: format!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+          }
+        };
         let first_indent = if empty_after_marker { None } else {Some(match_len)};
         (next_indent, first_indent)
       } else {
@@ -1036,7 +1051,10 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       let (comment_block_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), next_indent, first_indent, false) {
         (lines.join("\n").trim().to_string(), offset)
       } else {
-        panic!("Could not read comment block on line {}...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Could not read comment block on line {}...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       };
 
       doctree = match doctree.push_data(TreeNodeType::Comment { text: Some(comment_block_string) }) {
@@ -1100,7 +1118,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
       // Underlined section title
       if detected_indent > 0 {
-        panic!("Found indented underlined section on line {}. Computer says no...", line_cursor.sum_total())
+        return TransitionResult::Failure {
+          message: format!("Found indented underlined section on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
+        }
       }
 
       let line_char = next_line_str.chars().next().unwrap();
@@ -1118,8 +1139,8 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             doctree = match doctree.push_data_and_focus(section_data) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree      
+                message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: tree
               }
             };
             *section_level = detected_level;
@@ -1140,8 +1161,8 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
               doctree = match doctree.push_data_and_focus(section_data) {
                 Ok(tree) => tree,
                 Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree        
+                  message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                  doctree: tree
                 }
               };
             }
@@ -1189,8 +1210,8 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             doctree = match doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent }) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree      
+                message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: tree
               }
             };
 
@@ -1205,8 +1226,8 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_indent }) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree      
+                message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: tree
               }
             };
             return TransitionResult::Success {
@@ -1418,8 +1439,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
         doctree = match doctree.push_data(TreeNodeType::Transition) {
           Ok(tree) => tree,
           Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree  
+            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: tree
           }
         };
   
@@ -1458,8 +1479,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                     doctree = match doctree.push_data_and_focus(section_data) {
                       Ok(tree) => tree,
                       Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree              
+                        message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                        doctree: tree
                       }
                     };
                     *section_level = detected_level;
@@ -1481,8 +1502,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       doctree = match doctree.push_data_and_focus(section_data) {
                         Ok(tree) => tree,
                         Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree                
+                          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                          doctree: tree
                         }
                       };
                     }
@@ -1577,8 +1598,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                     doctree = match doctree.push_data_and_focus(section_data) {
                       Ok(tree) => tree,
                       Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree              
+                        message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                        doctree: tree
                       }
                     };
                     *section_level = detected_level;
@@ -1600,8 +1621,8 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       doctree = match doctree.push_data_and_focus(section_data) {
                         Ok(tree) => tree,
                         Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree                
+                          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                          doctree: tree
                         }
                       };
                     }
@@ -1755,8 +1776,8 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         let index = n % n_of_symbols;
         let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
           Some(symb) => symb,
-          None       => {
-            panic!("No footnote symbol with index {}!\n", index)
+          None => {
+            panic!("No footnote symbol with index {}!", index)
           }
         };
 
@@ -1765,7 +1786,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
       }
     }
   } else {
-    eprintln!("No footnote pattern inside a footnote transition function.\nComputer says no...\n");
+    eprintln!("No footnote pattern inside a footnote transition function. Computer says no...");
     None
   }
 }
@@ -1832,7 +1853,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
             Ok(tree) => tree,
             Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree    
+          doctree: tree
             }
           };
 
@@ -1841,7 +1862,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree      
+          doctree: tree
               }
             };
           }
