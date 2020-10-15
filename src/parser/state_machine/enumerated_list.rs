@@ -8,13 +8,13 @@ use super::*;
 
 pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let mut tree_wrapper = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
-  let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match tree_wrapper.mut_node_data() {
+  let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match doctree.mut_node_data() {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (delims, kind, start_index, n_of_items, enumerator_indent),
     _ => return TransitionResult::Failure {
       message: String::from("Not focused on EnumeratedList...\n"),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -27,7 +27,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   } else {
     return TransitionResult::Failure {
       message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n"),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -35,7 +35,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
       message: String::from("Unknown enumerator type detected...?\n"),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -54,7 +54,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       text_indent: detected_text_indent
     };
 
-    tree_wrapper = match tree_wrapper.push_data_and_focus(item_node_data) {
+    doctree = match doctree.push_data_and_focus(item_node_data) {
       Ok(tree) => tree,
       Err(tree) => return TransitionResult::Failure {
         message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -62,7 +62,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       }
     };
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem, section_level, false) {
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem, section_level, false) {
       Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
         (doctree, offset, state_stack)
       } else {
@@ -75,20 +75,18 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
     };
 
-    tree_wrapper = doctree;
-
     return TransitionResult::Success {
-      doctree: tree_wrapper,
+      doctree: doctree,
       next_states: Some(state_stack),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(offset),
     }
 
   } else {
-    tree_wrapper = tree_wrapper.focus_on_parent();
+    doctree = doctree.focus_on_parent();
 
     return TransitionResult::Success {
-      doctree: tree_wrapper,
+      doctree: doctree,
       next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None,
