@@ -956,7 +956,7 @@ impl Parser {
       }
     };
 
-    let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::Body), section_level).parse() {
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::Body), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message, doctree } => {
@@ -967,26 +967,10 @@ impl Parser {
       }
     };
 
-    // Focus back on class node
-    while nested_state_stack.len() > 1 {
-      nested_state_stack.pop();
-      doctree = doctree.focus_on_parent()
-    }
-
-    if let TreeNodeType::Class { .. } = doctree.shared_data() {
-      // A-Ok
-    } else {
-      return TransitionResult::Failure {
-        message: format!("Not focused on class after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
-
-
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Pop,
+      next_states: Some(nested_state_stack),
+      push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None
     }
   }

@@ -13,6 +13,7 @@ mod test_aplus_point_of_interest;
 mod test_aplus_questionnaire;
 mod test_block_reading;
 mod test_block_quotes;
+mod test_class;
 mod test_comments;
 mod test_converters;
 mod test_bullet_lists;
