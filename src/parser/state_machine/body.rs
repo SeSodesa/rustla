@@ -1590,7 +1590,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
     }
 
     _ => return TransitionResult::Failure {
-      message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total()),
+      message: format!("Found a transition-like construct on line {}, but no existing previous or next line. Computer says no...", line_cursor.sum_total()),
       doctree: doctree
     }
   }
