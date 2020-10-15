@@ -1462,12 +1462,14 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
           }
         }
   
-      } else {
-        if captures.get(0).unwrap().as_str().trim() == "::" {
+      } else if captures.get(0).unwrap().as_str().trim() == "::" {
           // Empty paragraph
           return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
+      } else {
+        return TransitionResult::Failure {
+          message: format!("Unknown line construct on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
         }
-        panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
       }
     }
 
@@ -1551,31 +1553,33 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
             } else {
               return TransitionResult::Failure {
-                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+                message: format!("Found a section with unmatching over- and underline lengths or characters on line {}. Computer says no...", line_cursor.sum_total()),
                 doctree: doctree
               }
             }
 
           } else {
             return TransitionResult::Failure {
-              message: format!("Found section-like construct without underline on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+              message: format!("Found section-like construct without underline on line {}. Computer says no...", line_cursor.sum_total()),
               doctree: doctree
             }
           }
 
         } else {
           return TransitionResult::Failure {
-            message: format!("Found something akin to an section title but no underline at the end of input on line {}.\n Computer says no...\n", line_cursor.sum_total()),
+            message: format!("Found something akin to an section title but no underline at the end of input on line {}. Computer says no...", line_cursor.sum_total()),
             doctree: doctree
           }
         }
 
+      } else if captures.get(0).unwrap().as_str().trim() == "::" {
+        // Empty paragraph
+        return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
       } else {
-        if captures.get(0).unwrap().as_str().trim() == "::" {
-          // Empty paragraph
-          return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
+        return TransitionResult::Failure {
+          message: format!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: doctree
         }
-        panic!("No known pattern during a line transition on line {}. Computer says no...", line_cursor.sum_total())
       }
     }
 
