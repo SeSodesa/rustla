@@ -384,7 +384,7 @@ impl ParsingResult {
     match self {
       Self::EOF {doctree, state_stack} => doctree,
       Self::EmptyStateStack {doctree, state_stack} => doctree,
-      _ => panic!("ParsingResult::Failure does not contain a DocTree...\n")
+      Self::Failure { doctree, .. } => doctree
     }
   }
 }

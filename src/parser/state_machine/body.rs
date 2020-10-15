@@ -1195,30 +1195,18 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
   let n_of_children = doctree.n_of_children();
 
-  let paragraph_indent = if n_of_children == 0 {
+  let body_indent = if let Some(indent) = doctree.shared_data().body_indent() {
+    indent
+  } else {
     return TransitionResult::Failure {
-      message: format!("No preceding node before literal block on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+      message: format!("Literal block inside node that has no body indent on line {}. Computer says no...", line_cursor.sum_total()),
       doctree: doctree
     }
-  } else {
-
-    let mut par_indent = 0 as usize;
-    for sibling_index in (0..n_of_children).rev() {
-      match doctree.get_child_data(sibling_index) {
-        TreeNodeType::Paragraph { indent } => { par_indent = *indent; break }
-        TreeNodeType::EmptyLine => continue,
-        _ => return TransitionResult::Failure {
-          message: format!("No paragraph preceding a literal block on line {}.\nComputer says no...\n", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      }
-    }
-    par_indent
   };
 
   match pattern_name {
 
-    PatternName::IndentedLiteralBlock if detected_indent > paragraph_indent => {
+    PatternName::IndentedLiteralBlock if detected_indent > body_indent => {
 
       // Read in a block with minimal indentation as-is with Parser::read_indented_block
       // and feed it to a LiteralBlock node.
@@ -1247,7 +1235,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
       }
     }
 
-    PatternName::QuotedLiteralBlock if detected_indent == paragraph_indent => {
+    PatternName::QuotedLiteralBlock if detected_indent == body_indent => {
 
       // Read in an aligned contiguous block of text and check that all its lines start with one of the symbols in
       // `common::SECTION_AND_QUOTING_CHARS`, such as a '>'.
@@ -1315,7 +1303,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
     }
 
     _ => return TransitionResult::Failure {
-        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name, detected_indent, paragraph_indent, line_cursor.sum_total()),
+        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}.\nComputer says no...\n", pattern_name, detected_indent, body_indent, line_cursor.sum_total()),
         doctree: doctree
     }
   }
@@ -1704,10 +1692,6 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      doctree = match doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
-        Ok(tree) => tree,
-        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
-      };
 
       let relative_indent = detected_indent - base_indent;
     
@@ -1757,6 +1741,12 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
       doctree = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(doctree), line_cursor) {
   
         if !nodes_data.is_empty() {
+
+          returned_doctree = match returned_doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
+            Ok(tree) => tree,
+            Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+          };
+
           for data in nodes_data {
             returned_doctree = match returned_doctree.push_data(data) {
               Ok(tree) => tree,

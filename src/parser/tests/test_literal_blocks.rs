@@ -34,7 +34,6 @@ fn literal_block_01 () {
     }
     _ => panic!()
   }
-  todo!("Remove empty paragraph from doctree!")
 }
 
 
@@ -64,13 +63,12 @@ as that of the literal block indicator "::".
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::LiteralBlock { text } => {
       assert_eq!(text.as_str(), "An indented literal block with\nmultiple lines\n\n  Even more indent here.\n\n    And even more...\nReturn to original level of indentation\n")
     }
     _ => panic!()
   }
-  todo!("Remove empty paragraph from doctree!")
 }
 
 
