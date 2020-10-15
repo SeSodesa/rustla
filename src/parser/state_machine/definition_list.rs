@@ -59,7 +59,10 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
     doctree = match doctree.push_data_and_focus(list_item_node) {
       Ok(tree) => tree,
-      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      Err(tree) => return TransitionResult::Failure {
+        message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: tree
+      }
     };
 
     return TransitionResult::Success {

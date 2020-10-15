@@ -38,12 +38,18 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
       let paragraph = TreeNodeType::Paragraph { indent: detected_indent };
       doctree = match doctree.push_data_and_focus(paragraph) {
         Ok(tree) => tree,
-        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        Err(tree) => return TransitionResult::Failure {
+          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: tree
+        }
       };
       for node in inline_nodes {
         doctree = match doctree.push_data(node) {
           Ok(tree) => tree,
-          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+          Err(tree) => return TransitionResult::Failure {
+            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: tree
+          }
         };
       }
       doctree = doctree.focus_on_parent();

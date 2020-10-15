@@ -51,7 +51,10 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
         };
         doctree = match doctree.push_data_and_focus(item_node_data) {
           Ok(tree) => tree,
-          Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+          Err(tree) => return TransitionResult::Failure {
+            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: tree
+          }
         };
 
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level, false) {

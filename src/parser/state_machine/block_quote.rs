@@ -54,7 +54,10 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
 
       doctree = match doctree.push_data(TreeNodeType::Attribution { raw_text: attribution_string }) {
         Ok(tree) => tree,
-        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        Err(tree) => return TransitionResult::Failure {
+          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: tree
+        }
       };
       doctree = doctree.focus_on_parent();
 
@@ -69,7 +72,10 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
       // Create another block quote
       doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: attribution_line_indent }) {
         Ok(tree) => tree,
-        Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+        Err(tree) => return TransitionResult::Failure {
+          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: tree
+        }
       };
 
       return TransitionResult::Success {

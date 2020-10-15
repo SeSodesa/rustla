@@ -13,13 +13,6 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
   let doctree = doctree.unwrap();
 
-  // let node = TreeNode::new(TreeNodeType::EmptyLine, doctree.node_count(), None, None);
-  
-  // match doctree.push_child(node) {
-  //   Ok(()) => {},
-  //   Err(node) => panic!("Could not insert node into tree on line {}. Computer says no...", line_cursor.sum_total())
-  // };
-
   TransitionResult::Success {
     doctree: doctree,
     next_states: None,

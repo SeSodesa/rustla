@@ -56,7 +56,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
     tree_wrapper = match tree_wrapper.push_data_and_focus(item_node_data) {
       Ok(tree) => tree,
-      Err(tree) => panic!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total())
+      Err(tree) => return TransitionResult::Failure {
+        message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: tree
+      }
     };
 
     let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem, section_level, false) {
