@@ -1438,7 +1438,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                   line_advance: LineAdvance::Some(3) // Jump over the section underline
                 }
               } else {
-                panic!("No generated section where one was expected. Computer says no...")
+                return TransitionResult::Failure {
+                  message: format!("No generated section where one was expected on line {}. Computer says no...", line_cursor.sum_total()),
+                  doctree: doctree
+                }
               }
   
             } else {
@@ -1548,7 +1551,10 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                   line_advance: LineAdvance::Some(3) // Jump over the section underline
                 }
               } else {
-                panic!("No generated section where one was expected. Computer says no...")
+                return TransitionResult::Failure {
+                  message: format!("No generated section where one was expected on line {}. Computer says no...", line_cursor.sum_total()),
+                  doctree: doctree
+                }
               }
 
             } else {
@@ -1583,11 +1589,9 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
       }
     }
 
-    _ => {
-      return TransitionResult::Failure {
-        message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total()),
-        doctree: doctree
-      };
+    _ => return TransitionResult::Failure {
+      message: format!("Found a transition-like construct on line {}, but no existing previous or next line.\nComputer says no...\n", line_cursor.sum_total()),
+      doctree: doctree
     }
   }
 }
