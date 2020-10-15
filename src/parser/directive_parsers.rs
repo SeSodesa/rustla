@@ -919,17 +919,76 @@ impl Parser {
   }
 
 
-  pub fn parse_class (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
+  pub fn parse_class (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, first_indent: usize, body_indent: usize, empty_after_marker: bool, section_level: usize) -> TransitionResult {
 
-    let title = if let Some(title) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      title
+    let classes = if let Some(classes) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      classes
+        .split(" ")
+        .filter(|s| ! s.is_empty())
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>()
     } else {
       return TransitionResult::Failure {
         message: format!("Class directive on line {} doesn't provide any classes. Computer says no...", line_cursor.sum_total()),
         doctree: doctree
-      };
+      }
     };
-    todo!()
+
+    let class_node = TreeNodeType::Class {
+      body_indent: body_indent,
+      classes: classes
+    };
+
+    doctree = match doctree.push_data_and_focus(class_node) {
+      Ok(tree) => tree,
+      Err(tree) => return TransitionResult::Failure {
+        message: format!("Failed to push class node to tree on line {}...", line_cursor.sum_total()),
+        doctree: tree
+      }
+    };
+
+    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), None, false) {
+      (lines, offset)
+    } else {
+      return TransitionResult::Failure {
+        message: format!("Could not parse class contents starting from line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
+    };
+
+    let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::Body), section_level).parse() {
+      ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::Failure { message, doctree } => {
+        return TransitionResult::Failure {
+          message: format!("Error when parsing a class on line {}: {}", line_cursor.sum_total(), message),
+          doctree: doctree
+        }
+      }
+    };
+
+    // Focus back on class node
+    while nested_state_stack.len() > 1 {
+      nested_state_stack.pop();
+      doctree = doctree.focus_on_parent()
+    }
+
+    if let TreeNodeType::Class { .. } = doctree.shared_data() {
+      // A-Ok
+    } else {
+      return TransitionResult::Failure {
+        message: format!("Not focused on class after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: doctree
+      }
+    };
+
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Pop,
+      line_advance: LineAdvance::None
+    }
   }
 
 
@@ -2617,8 +2676,8 @@ impl Parser {
         line.chars().skip_while(|c| c.is_whitespace()).collect::<String>().as_str().trim().to_string()
       };
 
-      eprintln!("Line: {:#?}\n", line_without_indent);
-      eprintln!("Field marker matches: {}\n", FIELD_MARKER_RE.is_match(line_without_indent.as_str()));
+      // eprintln!("Line: {:#?}\n", line_without_indent);
+      // eprintln!("Field marker matches: {}\n", FIELD_MARKER_RE.is_match(line_without_indent.as_str()));
 
       if line_without_indent.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(line_without_indent.as_str()) {
         break
