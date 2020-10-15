@@ -33,32 +33,27 @@ fn block_quote_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::EmptyLine { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(3).shared_data() {
+  match doctree.shared_child(0).shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -89,37 +84,27 @@ fn block_quote_02 () {
   doctree.print_tree();
 
 
+  match doctree.shared_child(0).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(0).shared_child(0).shared_data() {
+    TreeNodeType::Paragraph { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(0).shared_child(1).shared_data() {
+    TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm" { panic!() }
+    _ => panic!()
+  }
+
   match doctree.shared_child(1).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
   match doctree.shared_child(1).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::EmptyLine { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(1).shared_child(2).shared_data() {
-    TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm" { panic!() }
-    _ => panic!()
-  }
-
-  match doctree.shared_child(2).shared_data() {
-    TreeNodeType::EmptyLine { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(3).shared_data() {
-    TreeNodeType::BlockQuote { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(3).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -152,37 +137,23 @@ fn block_quote_03 () {
   doctree.print_tree();
 
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
-
-  match doctree.shared_child(1).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
-
-  match doctree.shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::EmptyLine { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
-
-  match doctree.shared_child(1).shared_child(2).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm inside a nested block quote" { panic!() }
     _ => panic!()
   }
-
-  match doctree.shared_child(1).shared_child(3).shared_data() {
-    TreeNodeType::EmptyLine { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(1).shared_child(4).shared_data() {
+  match doctree.shared_child(0).shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -210,22 +181,17 @@ at least for now.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::Attribution { raw_text } => if raw_text.as_str() != "Santtu Söderholm and company" { panic!() }
     _ => panic!()
   }
 
-  match doctree.shared_child(2).shared_data() {
-    TreeNodeType::EmptyLine => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(3).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -253,22 +219,22 @@ fn block_quote_05 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
+  match doctree.shared_child(0).shared_data() {
+    TreeNodeType::BlockQuote { .. } => {}
+    _ => panic!()
+  }
+
+  match doctree.shared_child(0).shared_child(1).shared_data() {
+    TreeNodeType::Attribution { raw_text } => assert_eq!(raw_text, "Santtu Söderholm"),
+    _ => panic!()
+  }
+
   match doctree.shared_child(1).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_data() {
-    TreeNodeType::Attribution { raw_text } => assert_eq!(raw_text, "Santtu Söderholm"),
-    _ => panic!()
-  }
-
-  match doctree.shared_child(2).shared_data() {
-    TreeNodeType::BlockQuote { .. } => {}
-    _ => panic!()
-  }
-
-  match doctree.shared_child(2).shared_child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }

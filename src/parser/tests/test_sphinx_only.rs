@@ -33,13 +33,10 @@ fn sphinx_only_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::SphinxOnly { expression, .. } = doctree.shared_child(1).shared_data() {
+  if let TreeNodeType::SphinxOnly { expression, .. } = doctree.shared_child(0).shared_data() {
     assert_eq!(expression, r#"html and (latex or draft)"#);
-
-    if let TreeNodeType::EmptyLine = doctree.shared_child(1).shared_child(0).shared_data() {} else { panic!() }
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(1).shared_data() {} else { panic!() }
-    if let TreeNodeType::EmptyLine = doctree.shared_child(1).shared_child(2).shared_data() {} else { panic!() }
-    if let TreeNodeType::BulletList { .. } = doctree.shared_child(1).shared_child(3).shared_data() {} else { panic!() }
+    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {} else { panic!() }
+    if let TreeNodeType::BulletList { .. } = doctree.shared_child(0).shared_child(1).shared_data() {} else { panic!() }
   } else {
     panic!()
   }

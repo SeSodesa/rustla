@@ -32,12 +32,12 @@ A paragraph.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
   
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::LiteralBlock { text } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(2).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -75,27 +75,27 @@ This paragraph ends the block quote.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
   
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(3).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::BlockQuote { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(3).shared_child(0).shared_data() {
+  match doctree.shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::LiteralBlock { text } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(3).shared_child(1).shared_data() {
+  match doctree.shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(4).shared_data() {
+  match doctree.shared_child(2).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }

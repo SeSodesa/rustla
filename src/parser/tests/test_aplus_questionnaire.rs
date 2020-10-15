@@ -90,14 +90,12 @@ fn aplus_questionnaire_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(1).shared_data() {  } else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(0).shared_data() {  } else { panic!() }
-  if let TreeNodeType::EmptyLine = doctree.shared_child(1).shared_child(1).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(1).shared_child(2).shared_data() {  } else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(3).shared_data() {  } else { panic!() }
-  if let TreeNodeType::EmptyLine = doctree.shared_child(1).shared_child(4).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(1).shared_child(5).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickAny { .. } = doctree.shared_child(1).shared_child(6).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(1).shared_child(7).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(1).shared_child(8).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_data() {  } else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(1).shared_data() {  } else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(3).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusPickAny { .. } = doctree.shared_child(0).shared_child(4).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(5).shared_data() {  } else { panic!() }
+  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(6).shared_data() {  } else { panic!() }
 }

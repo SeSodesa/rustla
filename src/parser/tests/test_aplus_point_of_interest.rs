@@ -45,7 +45,7 @@ fn poi_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::AplusPOI { title, id, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, .. } = doctree.shared_child(1).shared_data() {
+  if let TreeNodeType::AplusPOI { title, id, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box, .. } = doctree.shared_child(0).shared_data() {
     assert_eq!(title, r#"Title text"#);
     assert_eq!(id.as_ref().unwrap(), r#"unique id, if not supplied a random id will be generated"#);
     assert_eq!(previous.as_ref().unwrap(), r#"id of previous point-of-interest (optional)"#);
@@ -62,8 +62,8 @@ fn poi_01 () {
     panic!()
   }
 
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(0).shared_data() {} else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(2).shared_data() {} else { panic!() }
-  if let TreeNodeType::AplusColBreak { .. } = doctree.shared_child(1).shared_child(4).shared_data() {} else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(6).shared_data() {} else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {} else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(1).shared_data() {} else { panic!() }
+  if let TreeNodeType::AplusColBreak { .. } = doctree.shared_child(0).shared_child(2).shared_data() {} else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(3).shared_data() {} else { panic!() }
 }

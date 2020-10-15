@@ -32,7 +32,7 @@ The line is at least 4 symbols long.
 
   doctree.print_tree();
 
-  match doctree.shared_child(4).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Transition => (),
     _ => panic!()
   }
@@ -64,7 +64,7 @@ not to the document root.
 
   doctree.print_tree();
 
-  match doctree.shared_child(4).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 1 { panic!() }
     }
@@ -131,92 +131,91 @@ Level 1 Section Title
 
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 1 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 3 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 4 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 5 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 2 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 6 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 7 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 8 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 9 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 10 { panic!() }
     }
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 11 { panic!() }
     }
     _ => panic!()
   }
 
-
-  match doctree.shared_child(2).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Section { level, .. } => {
       if *level != 1 { panic!() }
     }

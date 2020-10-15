@@ -31,7 +31,7 @@ fn math_block_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::MathBlock { block_text, name, class } => {
       assert_eq!(block_text.as_str(), r"\alpha + \beta = \gamma");
       assert_eq!(name.as_ref().unwrap().as_str(), r"name");
@@ -65,7 +65,7 @@ fn math_block_02 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::MathBlock { block_text, name, class } => {
       assert_eq!(block_text.as_str(), "(1) \\alpha + \\beta = \\gamma\n\\delta");
       assert_eq!(name.as_ref().unwrap().as_str(), r"name");
@@ -74,7 +74,7 @@ fn math_block_02 () {
     _ => panic!()
   }
 
-  match doctree.shared_child(2).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::MathBlock { block_text, name, class } => {
       assert_eq!(block_text.as_str(), r#"Another block with math (printed as "Anotherblockwithmath" in LaTeX)"#);
       assert_eq!(name.as_ref().unwrap().as_str(), r"name");

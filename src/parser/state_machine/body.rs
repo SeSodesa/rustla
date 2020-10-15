@@ -1008,7 +1008,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
         doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(offset - 1) // -1 because of read_until_blank of Parser::read_indented_block being false
+        line_advance: LineAdvance::Some(offset) // -1 because of read_until_blank of Parser::read_indented_block being false
       }
     }
     IndentationMatch::TooMuch => {

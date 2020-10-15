@@ -35,10 +35,25 @@ fn standard_admonition_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (None, None, AdmonitionDirective::Note) => {}
+        _ => panic!()
+      }
+    },
+    _ => panic!()
+  }
+
+  match doctree.shared_child(0).shared_child(0).shared_data() {
+    TreeNodeType::Paragraph {..} => {},
+    _ => panic!()
+  }
+
+  match doctree.shared_child(1).shared_data() {
+    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
+      match (classes, name, variant) {
+        (None, None, AdmonitionDirective::Warning) => {}
         _ => panic!()
       }
     },
@@ -53,21 +68,6 @@ fn standard_admonition_01 () {
   match doctree.shared_child(2).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
-        (None, None, AdmonitionDirective::Warning) => {}
-        _ => panic!()
-      }
-    },
-    _ => panic!()
-  }
-
-  match doctree.shared_child(2).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph {..} => {},
-    _ => panic!()
-  }
-
-  match doctree.shared_child(3).shared_data() {
-    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
-      match (classes, name, variant) {
         (Some(class), Some(name), AdmonitionDirective::Tip) if class.as_str() == "class" && name.as_str() == "test" => {}
         _ => panic!()
       }
@@ -75,7 +75,7 @@ fn standard_admonition_01 () {
     _ => panic!()
   }
 
-  match doctree.shared_child(3).shared_child(0).shared_data() {
+  match doctree.shared_child(2).shared_child(0).shared_data() {
     TreeNodeType::Paragraph {..} => {},
     _ => panic!()
   }
@@ -105,8 +105,7 @@ This paragraph no longer belongs to the above admonition.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionDirective::Admonition {title}) if title.as_str() == "This is a generic admonition with the argument on the first line after the directive marker and extending on the following line as well." && classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
@@ -116,12 +115,12 @@ This paragraph no longer belongs to the above admonition.
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(2).shared_data() {
+  match doctree.shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
@@ -155,7 +154,7 @@ fn generic_admonition_02 () {
   doctree.print_tree();
 
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionDirective::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the line following the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
@@ -165,22 +164,22 @@ fn generic_admonition_02 () {
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::BulletList { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
     TreeNodeType::BulletListItem { .. } => {}
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(2).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::BulletListItem { .. } => {}
     _ => panic!()
   }

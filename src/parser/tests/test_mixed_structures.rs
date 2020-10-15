@@ -35,47 +35,45 @@ fn mixed_nested_lists_01 () {
 
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
-
   doctree.print_tree();
 
-  match doctree.shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::BulletList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(0).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_child(0).shared_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::BulletListItem { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_child(0).shared_child(1).shared_child(2).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_child(1).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedList { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(0).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::Paragraph { .. } => (),
     _ => panic!()
   }
 
-  match doctree.shared_child(1).shared_child(1).shared_data() {
+  match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
-  }
- 
+  } 
 }

@@ -11,14 +11,14 @@ use super::*;
 /// Simply adds an empty line to the children of the curren node.
 pub fn empty_line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
 
-  let mut doctree = doctree.unwrap();
+  let doctree = doctree.unwrap();
 
-  let node = TreeNode::new(TreeNodeType::EmptyLine, doctree.node_count(), None, None);
+  // let node = TreeNode::new(TreeNodeType::EmptyLine, doctree.node_count(), None, None);
   
-  match doctree.push_child(node) {
-    Ok(()) => {},
-    Err(node) => panic!("Could not insert node into tree on line {}. Computer says no...", line_cursor.sum_total())
-  };
+  // match doctree.push_child(node) {
+  //   Ok(()) => {},
+  //   Err(node) => panic!("Could not insert node into tree on line {}. Computer says no...", line_cursor.sum_total())
+  // };
 
   TransitionResult::Success {
     doctree: doctree,
@@ -26,5 +26,4 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: usize, section_level: &
     push_or_pop: PushOrPop::Neither,
     line_advance: LineAdvance::Some(1),
   }
-
 }

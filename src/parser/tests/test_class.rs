@@ -33,13 +33,13 @@ This paragraph is no longer of classes 1, 2 and 3.
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::Class { classes, .. } = doctree.shared_child(1).shared_data() {
+  if let TreeNodeType::Class { classes, .. } = doctree.shared_child(0).shared_data() {
     assert_eq!(classes.join(" ").as_str(), "class1 class2 class3");
 
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_child(1).shared_data() {} else { panic!() }
-    if let TreeNodeType::BulletList { .. } = doctree.shared_child(1).shared_child(3).shared_data() {} else { panic!() }
+    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {} else { panic!() }
+    if let TreeNodeType::BulletList { .. } = doctree.shared_child(0).shared_child(1).shared_data() {} else { panic!() }
   } else {
     panic!()
   }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(2).shared_data() {} else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(1).shared_data() {} else { panic!() }
 }
