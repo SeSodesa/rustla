@@ -20,16 +20,6 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
   let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
-  // let (list_bullet, list_bullet_indent, list_text_indent) = match tree_wrapper.shared_node_data() {
-  //   TreeNodeType::BulletList{bullet, bullet_indent, text_indent} => (bullet, bullet_indent, text_indent),
-  //   _ => {
-  //     return TransitionResult::Failure {
-  //       message: String::from("Only bullet list nodes contain bullets\nCannot compare detected bullet with parent...\n")
-  //     }
-  //   }
-  // };
-
-
   match tree_wrapper.shared_node_data() {
 
     TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
@@ -60,7 +50,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
             unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
           },
           Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-            message: format!("Looks like bullet list item on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+            message: format!("Looks like bullet list item on line {} has no content.\nComputer says no...", line_cursor.sum_total()),
             doctree: doctree
           },
           _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
@@ -86,6 +76,6 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 
     }
 
-    _ => panic!("Tried parsing a bullet list item outside of a bullet list on line {}. Computer says no...\n", line_cursor.sum_total())
+    _ => panic!("Tried parsing a bullet list item outside of a bullet list on line {}. Computer says no...", line_cursor.sum_total())
   }
 }
