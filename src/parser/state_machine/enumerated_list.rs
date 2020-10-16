@@ -67,7 +67,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
         unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
       },
       Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-        message: format!("Looks like enumerated list item on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+        message: format!("Looks like enumerated list item on line {} has no content. Computer says no...", line_cursor.sum_total()),
         doctree: doctree
       },
       _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
