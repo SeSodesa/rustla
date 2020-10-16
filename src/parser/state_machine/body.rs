@@ -1767,7 +1767,8 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
         let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
           Some(symb) => symb,
           None => {
-            panic!("No footnote symbol with index {}!", index)
+            eprintln!("No footnote symbol with index {}!", index);
+            return None
           }
         };
 
