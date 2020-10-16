@@ -38,7 +38,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
           nodes_data
         } else {
           return TransitionResult::Failure { // Should not happen in the first place, if a field marker was detected...
-            message: format!("Tried parsing a field marker on line {} for inline nodes but none found.\nMarker not valid...\n", line_cursor.sum_total()),
+            message: format!("Tried parsing a field marker on line {} for inline nodes but none found. Marker not valid... ", line_cursor.sum_total()),
             doctree: doctree
           }
         };
@@ -64,7 +64,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
             unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
           },
           Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-            message: format!("Looks like field list item on line {} has no content.\nComputer says no...\n", line_cursor.sum_total()),
+            message: format!("Looks like field list item on line {} has no content. Computer says no... ", line_cursor.sum_total()),
             doctree: doctree
           },
           _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
@@ -90,7 +90,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
     }
 
     _ => return TransitionResult::Failure {
-        message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+        message: format!("Attempted parsing a FieldListItem outside a FieldList on line {}. Computer says no... ", line_cursor.sum_total()),
         doctree: doctree
     }
   }

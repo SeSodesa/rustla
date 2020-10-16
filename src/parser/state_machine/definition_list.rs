@@ -46,7 +46,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
       (term, classifiers)
     } else {
       return TransitionResult::Failure {
-        message: format!("Could not extract term (and classifiers)? from a definition list item on line {}.\nComputer says no...\n", line_cursor.sum_total()),
+        message: format!("Could not extract term (and classifiers)? from a definition list item on line {}. Computer says no...", line_cursor.sum_total()),
         doctree: doctree
       }
     };

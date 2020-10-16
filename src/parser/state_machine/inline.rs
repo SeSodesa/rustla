@@ -295,13 +295,13 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
         if let Some(doctree_ref) = opt_doctree_ref {
           doctree_ref.next_anon_reference_label()
         } else {
-          panic!("No doctree reference where one was expected while parsing an inline reference...\n")
+          panic!("No doctree reference where one was expected while parsing an inline reference...")
         }
       },
-      _ => panic!("No matching reference type when parsing an inline reference...\n")
+      _ => panic!("No matching reference type when parsing an inline reference...")
     }
   } else {
-    panic!("No reference type suffix (\"_\" or \"__\") when parsing an inline reference...\n")
+    panic!("No reference type suffix (\"_\" or \"__\") when parsing an inline reference...")
   };
 
   let data = match pattern_name {
@@ -319,13 +319,8 @@ pub fn reference(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNam
         target_label: target_label
       }
     },
-    // PatternName::SubstitutionRef => {
-    //   TreeNodeType::SubstitutionReference{
-    //     displayed_text: displayed_text.to_string(),
-    //     target_label: target_label
-    //   }
-    // },
-    _ => panic!("No such reference pattern.\n")
+
+    _ => panic!("No such reference pattern.")
   };
 
   let match_len = captures.get(0).unwrap().as_str().chars().count();
@@ -669,7 +664,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
       };
 
       if ! path.is_empty() && ! has_slash {
-        eprintln!("URI {} has an autority field and a non-empty path that doesn't start with a '/'...\n. URI invalid.", whole_match);
+        eprintln!("URI {} has an autority field and a non-empty path that doesn't start with a '/'. URI invalid.", whole_match);
         is_valid = false;
       }
     }
