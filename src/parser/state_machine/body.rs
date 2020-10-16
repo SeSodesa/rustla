@@ -1722,8 +1722,6 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
         for n in 1..=EnumAsInt::MAX {
 
-          eprintln!("{}", n);
-
           let n_str = n.to_string();
           if doctree.has_target_label(n_str.as_str()) {
             continue
