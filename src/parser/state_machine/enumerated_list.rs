@@ -26,7 +26,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {
-      message: String::from("No enumerator inside enumerator transition method.\nWhy...?\n"),
+      message: format!("No enumerator inside enumerator transition method on line {}. Computer says no...", line_cursor.sum_total()),
       doctree: doctree
     }
   };
@@ -34,7 +34,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, &list_kind, true, Some(*n_of_items), Some(*list_start_index)) {
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
-      message: String::from("Unknown enumerator type detected...?\n"),
+      message: format!("Unknown enumerator type detected on line {}. Computer says no...", line_cursor.sum_total()),
       doctree: doctree
     }
   };
