@@ -13,7 +13,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match doctree.mut_node_data() {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (delims, kind, start_index, n_of_items, enumerator_indent),
     _ => return TransitionResult::Failure {
-      message: String::from("Not focused on EnumeratedList...\n"),
+      message: format!("Not focused on enumerated list when parsing an enumerated list item on line {}. Computer says no...", line_cursor.sum_total()),
       doctree: doctree
     }
   };
@@ -38,8 +38,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       doctree: doctree
     }
   };
-
-  eprintln!("Detected enumerator type pair ({:#?}, {:#?}) as {:#?}...\n", detected_delims, detected_kind, detected_enum_as_usize);
 
   if *list_delims == detected_delims && detected_kind == *list_kind && *list_enumerator_indent == detected_enumerator_indent && detected_enum_as_usize == *n_of_items + *list_start_index {
 
