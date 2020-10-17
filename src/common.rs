@@ -479,8 +479,11 @@ pub enum AplusActiveElementOutputType {
 /// Currently stdout and files are supported.
 pub enum OutputStream {
 
-  /// Directs the output to the stdout.
+  /// Directs the output to the stdout stream.
   StdOut,
+
+  /// Directs the output to the stderr stream.
+  StdErr,
 
   /// Directs to output to a file.
   File
