@@ -60,7 +60,6 @@ fn main() -> Result<(), ()>{
     return Err(());
 
   } else if md.is_file() {
-    println!("{:?} is a file.", path);
 
     let src_lines = match common::read_path_lines(&path) {
       Ok(lines) => {
@@ -90,7 +89,9 @@ fn main() -> Result<(), ()>{
     };
 
     doctree = doctree.perform_restructuredtext_transforms();
-    doctree.write_to_larst();
+
+    use crate::common::OutputStream;
+    doctree.write_to_larst(OutputStream::StdOut);
   }
 
   return Ok(())
@@ -114,8 +115,8 @@ fn has_toctree (fc: &String) -> bool{
 /// # Copyright
 /// Prints out copyright information of ruSTLa
 fn copyright() {
-  println!("\nThis is ruSTLa, version {}", VERSION);
-  println!("© {} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
+  eprintln!("\nThis is ruSTLa, version {}", VERSION);
+  eprintln!("© {} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
 }
 
 /// # Usage
