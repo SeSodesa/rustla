@@ -96,6 +96,10 @@ pub type EnumAsInt = u32;
 /// A type alias for question points.
 pub type QuizPoints = u32;
 
+/// ### LengthNum
+/// A type alias for the number type used in the `Length` enum.
+pub type LengthNum = f64;
+
 
 // ==========================
 // Enumerators and converters
@@ -242,10 +246,6 @@ pub enum MetricType {
   Lenght(Length),
 }
 
-
-/// ### LengthNum
-/// A type alias for the number type used in the `Length` enum.
-pub type LengthNum = f64;
 
 /// ### Length
 /// Units of length recognized by reStructuredText.
@@ -470,6 +470,20 @@ pub enum AplusActiveElementInputType {
 pub enum AplusActiveElementOutputType {
   Text,
   Image,
+}
+
+
+/// ### OutputStream
+///
+/// An enumeration of the different writer output formats.
+/// Currently stdout and files are supported.
+pub enum OutputStream {
+
+  /// Directs the output to the stdout.
+  StdOut,
+
+  /// Directs to output to a file.
+  File
 }
 
 
