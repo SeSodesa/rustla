@@ -27,7 +27,7 @@ const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
 
 /// Program starting point
-fn main() -> Result<(), ()>{
+fn main() -> Result<(), ()> {
     
   copyright();
   
@@ -47,8 +47,6 @@ fn main() -> Result<(), ()>{
   } else {
     unreachable!("No arguments, not even the program itself? Computer says no...")
   };
-
-  eprintln!("{:#?}", src_file_path);
 
   if let Some(extension) = src_file_path.extension() {
     if let Some(extension_str) = extension.to_str() {

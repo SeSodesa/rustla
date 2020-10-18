@@ -73,9 +73,7 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
-        eprintln!("Admonition on line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
+
       let classes = options.remove("class");
       let name = options.remove("name");
 
@@ -152,9 +150,7 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, Self::COMMON_OPTIONS) {
-        eprintln!("Admonition preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
+
       let classes = options.remove("class");
       let name = options.remove("name");
 
@@ -214,9 +210,6 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (alt, height, width, scale, align, target, classes, name) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name"]) {
-        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
 
       let alt = options.remove("alt");
       let height = options.remove("height");
@@ -299,9 +292,6 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (alt, height, width, scale, align, target, classes, name, figwidth, figclass) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, &["alt","height", "width", "scale", "align", "target", "class", "name", "figwidth", "figclass"]) {
-        eprintln!("Image preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
 
       let alt = options.remove("alt");
       let height = options.remove("height");
@@ -458,9 +448,6 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name, number_lines) = if let Some(mut options) = directive_options {
-      if !Self::all_options_recognized(&options, &["class", "name", "number-lines"]) {
-        eprintln!("Code block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
 
       let classes = options.remove("class");
       let name = options.remove("name");
@@ -536,9 +523,6 @@ impl Parser {
     let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
-      if ! Self::all_options_recognized(&options, &["class", "name"]) {
-        eprintln!("Math block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
 
       let classes = options.remove("class");
       let name = options.remove("name");
@@ -578,8 +562,6 @@ impl Parser {
 
       let mut blocks = Vec::new();
       let mut block = String::new();
-
-      eprintln!("{:#?}", lines);
 
       for line in lines.iter() {
 
@@ -1165,10 +1147,6 @@ impl Parser {
 
       const RECOGNIZED_OPTIONS: &[&str] = &["submissions", "points-to-pass", "feedback", "title", "no_override", "pick_randomly", "preserve-questions-between-attempts", "category", "status", "reveal-model-at-max-submissions", "show-model", "allow-assistant-viewing", "allow-assistant-grading"];
 
-      if !Self::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("Math block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
-
       let submissions = options.remove("submissions");
       let points_to_pass= options.remove("points-to-pass");
       let feedback = options.remove("feedback");
@@ -1286,9 +1264,6 @@ impl Parser {
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (class, required, key, dropdown) = if let Some(mut options) = options {
-      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("Pick one -question received unknown options. ignoring those...");
-      }
 
       let class = options.remove("class");
       let required = options.remove("required");
@@ -1606,9 +1581,6 @@ impl Parser {
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts) = if let Some(mut options) = options {
-      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("Pick any -question received unknown options. Ignoring those...");
-      }
 
       let class = options.remove("class");
       let required = options.remove("required");
@@ -1941,9 +1913,6 @@ impl Parser {
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (class, required, key, length, height) = if let Some(mut options) = options {
-      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("A freetext-question received unknown options before line {}. Ignoring those...", line_cursor.sum_total());
-      }
 
       let class = options.remove("class");
       let required = options.remove("required");
@@ -2180,9 +2149,6 @@ impl Parser {
     let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post) = if let Some(mut options) = options {
-      if ! Parser::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("A+ submit exercise received unknown options before line {}. Ignoring those...", line_cursor.sum_total());
-      }
 
       let config = options.remove("config");
       let submissions = options.remove("submissions");
@@ -2234,7 +2200,7 @@ impl Parser {
         "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
         "maintenance" => AplusExerciseStatus::Maintenance,
         _ => {
-          eprintln!("No such exercise status for A+ submit exercise before line {}. Setting as unlisted...", line_cursor.sum_total());
+          // eprintln!("No such exercise status for A+ submit exercise before line {}. Setting as unlisted...", line_cursor.sum_total());
           AplusExerciseStatus::Unlisted
         }
       }
@@ -2504,7 +2470,7 @@ impl Parser {
           "left" => Some(AplusActiveElementClear::Left),
           "right" => Some(AplusActiveElementClear::Right),
           _ => {
-            eprintln!("No such clear type for A+ active element output before line {}. Ignoring...", line_cursor.sum_total());
+            // eprintln!("No such clear type for A+ active element output before line {}. Ignoring...", line_cursor.sum_total());
             None
           }
         }
@@ -2514,7 +2480,7 @@ impl Parser {
           "text" => AplusActiveElementOutputType::Text,
           "image" => AplusActiveElementOutputType::Image,
           _ => {
-            eprintln!("Warning: No such output type for A+ active element output beforeline {}. Setting it as text...", line_cursor.sum_total());
+            // eprintln!("Warning: No such output type for A+ active element output beforeline {}. Setting it as text...", line_cursor.sum_total());
             AplusActiveElementOutputType::Text
           }
         }
@@ -2544,7 +2510,7 @@ impl Parser {
           "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
           "maintenance" => AplusExerciseStatus::Maintenance,
           _ => {
-            eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
+            // eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
             AplusExerciseStatus::Unlisted    
           }
         }
@@ -2587,9 +2553,6 @@ impl Parser {
 
     // Read recognized options
     let (id, previous, next, hidden, class, height, columns, bgimg, not_in_slides, not_in_book, no_poi_box) = if let Some(mut options) = options {
-      if !Self::all_options_recognized(&options, RECOGNIZED_OPTIONS) {
-        eprintln!("A+ point of interest block preceding line {} received unknown options.\nIgnoring those...\n", line_cursor.sum_total())
-      }
 
       let id = options.remove("id");
       let previous = options.remove("previous");
@@ -2780,9 +2743,6 @@ impl Parser {
         line.chars().skip_while(|c| c.is_whitespace()).collect::<String>().as_str().trim().to_string()
       };
 
-      // eprintln!("Line: {:#?}\n", line_without_indent);
-      // eprintln!("Field marker matches: {}\n", FIELD_MARKER_RE.is_match(line_without_indent.as_str()));
-
       if line_without_indent.as_str().trim().is_empty() || FIELD_MARKER_RE.is_match(line_without_indent.as_str()) {
         break
       }
@@ -2814,8 +2774,6 @@ impl Parser {
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
 
-      // eprintln!("Line: {:#?}", line);
-
       if line.trim().is_empty() { ended_with_blank = true; break } // End of option list
 
       if let Some(captures) = FIELD_MARKER_RE.captures(line) {
@@ -2829,10 +2787,8 @@ impl Parser {
           None => ""
         };
 
-        // eprintln!("Option value: {:#?}\n", option_val);
-
         if let Some(val) = option_map.insert(option_key.to_string(), option_val.to_string()) {
-          eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())
+          // eprintln!("Duplicate directive option on line {}\n", line_cursor.sum_total())
         }
       } else {
         ended_with_blank = false;
@@ -2877,12 +2833,11 @@ impl Parser {
     }
 
     if let Some(captures) = EXERCISE_ARGS_RE.captures(arg_str) {
+
       let key = if let Some(key) = captures.name("key") { String::from(key.as_str()) } else { String::new() };
       let difficulty = if let Some(difficulty) = captures.name("difficulty") { String::from(difficulty.as_str()) } else { String::new() };
       let max_points = if let Some(points) = captures.name("max_points") { String::from(points.as_str()) } else { String::new() };
-      eprintln!("{:#?}", key);
-      eprintln!("{:#?}", difficulty);
-      eprintln!("{:#?}\n", max_points);
+
       (key, difficulty, max_points)
     } else {
       // No allocations for strings with zero size

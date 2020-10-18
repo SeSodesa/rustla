@@ -47,6 +47,8 @@ impl DocTree {
         object_file_path.push(self.filename_stem + TEX_FILE_SUFFIX);
         aplus_class_file_path.push(APLUS_CLASS_FILE_NAME);
 
+        eprintln!("Writing output to {:#?}...", object_file_path);
+
         // TODO: Add check for file existence...
         let mut object_file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(object_file_path) {
           Ok(file) => file,

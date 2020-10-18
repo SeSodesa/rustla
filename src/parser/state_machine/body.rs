@@ -112,7 +112,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     start_index: detected_enum_as_usize,
     n_of_items: 0,
     enumerator_indent: detected_enumerator_indent,
-    //latest_text_indent: detected_text_indent,
   };
 
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
@@ -482,8 +481,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
         // this set of labels will be set to reference that node.
 
         doctree.push_to_internal_target_stack(label_as_string);
-
-        doctree.print_internal_labels();
 
         return TransitionResult::Success {
           doctree: doctree,
@@ -1796,9 +1793,8 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
           lines.join("\n").trim_end().to_string()
         }
         Err(e) => {
-          eprintln!("{}", e);
           return TransitionResult::Failure {
-            message: String::from("Error when reading lines of text of a supposed paragraph block. Computer says no..."),
+            message: format!("Error on line {}: {}", line_cursor.sum_total(), e),
             doctree: doctree
           }
         }
@@ -1897,7 +1893,6 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
     }
 
     _ => {
-      eprintln!("Indent didn't match...");
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,

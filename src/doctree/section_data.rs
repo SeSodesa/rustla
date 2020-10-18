@@ -55,8 +55,6 @@ impl SectionData {
   /// returns `self.highest_encountered_section_level + 1`.
   pub fn line_style_section_level (&self, line_style: &SectionLineStyle) -> usize {
 
-    eprintln!("Section line style: {:#?}\n", line_style);
-
     match self.section_levels.get(line_style) {
       Some(section_level) => *section_level,
       None => self.highest_encountered_section_level + 1
@@ -71,8 +69,8 @@ impl SectionData {
     match self.section_levels.get(&section_style) {
       Some(section_level) => {}
       None => match self.section_levels.insert(section_style, self.highest_encountered_section_level + 1) {
-        Some(level) => eprintln!("Updating level of section style {:#?}\n", section_style),
-        None => eprintln!("Adding a new section level to known levels...\n")
+        Some(level) => {}//eprintln!("Updating level of section style {:#?}\n", section_style),
+        None => {}//eprintln!("Adding a new section level to known levels...\n")
       }
     }
   }

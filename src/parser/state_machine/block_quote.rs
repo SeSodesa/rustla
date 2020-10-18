@@ -27,15 +27,9 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
 
       let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
 
-      eprintln!("{}\n", line_after_marker);
-
       let empty_after_marker = line_after_marker.as_str().trim().is_empty();
 
-      eprintln!("{}\n", empty_after_marker);
-
       let first_indent = if empty_after_marker { None } else { Some(match_len)  };
-
-      eprintln!("{:#?}\n", first_indent);
 
       let next_indent = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
         if offset == 0 && indent >= attribution_line_indent { Some(indent) } else { Some(match_len) }
@@ -44,8 +38,6 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
       };
 
       let (attribution_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), next_indent, first_indent, true) {
-
-        eprintln!("{:#?}\n", lines);
 
         (lines.join(" ").trim().to_string(), offset)
       } else {

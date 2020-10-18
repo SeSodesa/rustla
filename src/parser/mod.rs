@@ -137,9 +137,9 @@ impl Parser {
     // The parsing loop
     loop {
 
-      eprintln!("Section level: {:#?}", self.section_level);
-      eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
-      eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
+      // eprintln!("Section level: {:#?}", self.section_level);
+      // eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
+      // eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
 
       if !line_changed && line_not_changed_count >= 10 {
         eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total());
@@ -159,7 +159,6 @@ impl Parser {
         match machine {
 
           StateMachine::EOF => {
-            eprintln!("Moved past EOF...\n");
             match self.doctree.take() {
               Some(doctree) => {
                 return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
@@ -213,14 +212,14 @@ impl Parser {
         // Running the current line of text through a DFA compiled from a regex
         if regex.is_match(src_line) {
 
-          eprintln!("Found match for {:?}...\n", pattern_name);
+          // eprintln!("Found match for {:?}...\n", pattern_name);
 
           match_found = true;
 
           let captures = regex.captures(src_line).unwrap();
 
-          eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
-          eprintln!("Executing transition method...\n");
+          // eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
+          // eprintln!("Executing transition method...\n");
 
           let line_before_transition = self.line_cursor.sum_total();
 
@@ -232,12 +231,12 @@ impl Parser {
 
                 (PushOrPop::Push, next_states) if next_states.is_some() => {
                   let mut next_states = next_states.unwrap();
-                  eprintln!("Appending {:#?} to stack...\n", next_states);
+                  // eprintln!("Appending {:#?} to stack...\n", next_states);
                   self.state_stack.append(&mut next_states);
                 },
 
                 (PushOrPop::Pop, _) => {
-                  eprintln!("Received POP instruction...\n");
+                  // eprintln!("Received POP instruction...\n");
                   match self.state_stack.pop() {
                     Some(machine) => (),
                     None => {
@@ -257,7 +256,7 @@ impl Parser {
                     self.state_stack.append(&mut next_states.unwrap());
                   } else {
                     return ParsingResult::Failure {
-                      message: format!("Attempted to POP from an empty stack on line {}...\n", self.line_cursor.sum_total()),
+                      message: format!("Attempted to POP from an empty stack on line {}...", self.line_cursor.sum_total()),
                       doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
                         panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
                       }
@@ -268,9 +267,9 @@ impl Parser {
                 (PushOrPop::Neither, None) => {} // No need to do anything to the stack...
 
                 (push_or_pop, next_states) => {
-                  eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
+                  // eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
                   return ParsingResult::Failure {
-                    message: format!("Transition performed, but conflicting result on line {:#?}\nAborting...\n", self.line_cursor.sum_total()),
+                    message: format!("Transition performed, but conflicting result on line {}. Aborting...", self.line_cursor.sum_total()),
                     doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
                       panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
                     }
@@ -309,10 +308,10 @@ impl Parser {
       // parsing in the previous state down stack
       if !match_found {
 
-        eprintln!("No match found.\nPopping from machine stack...\n");
+        // eprintln!("No match found.\nPopping from machine stack...\n");
 
         if let None = self.state_stack.pop() {
-          eprintln!("Cannot pop from an empty stack.\n");
+          // eprintln!("Cannot pop from an empty stack.\n");
           return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
         };
 
@@ -413,7 +412,7 @@ impl Parser {
     let src = match src_lines.get(line_num) {
       Some(line) => line.as_str(),
       None => {
-        eprintln!("No such line number ({} out of bounds).\nComputer says no...\n", line_num);
+        eprintln!("No such line number ({} out of bounds). Computer says no...", line_num);
         return None
       }
     };
@@ -444,12 +443,10 @@ impl Parser {
         // Move iterator to start of next possible match
         for _ in 0..offset - 1 {
           let c = src_chars.next().unwrap();
-          // eprintln!("Consuming {:#?}...", c);
 
           col += 1;
 
           if c == '\n' {
-            // eprintln!("Detected newline...\n");
             *line_cursor.relative_offset_mut_ref() += 1;
             col = 0;
           }
@@ -535,20 +532,15 @@ impl Parser {
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;
 
-    // eprintln!("First: {}", relative_first_indent);
-    // eprintln!("Block: {}\n", relative_block_indent);
-
     // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
     let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent), force_alignment) {
       Ok((lines, min_indent, line_offset, blank_finish)) => {
-        eprintln!("Block lines: {:#?}, line_offset: {:#?}\n", lines, line_offset);
         (lines, line_offset)
       }
       Err(e) => {
-        eprintln!("{}\n", e);
         return Err(
           ParsingResult::Failure {
-            message: String::from("Error when reading in a block of text for nested parse."),
+            message: format!("Error when reading in a block of text for nested parse: {}", e),
             doctree: doctree
           }
         )
@@ -568,11 +560,9 @@ impl Parser {
         )
       }
       ParsingResult::Failure {message, doctree} => {
-        eprintln!("{}", message);
-        eprintln!("Nested parse ended in failure...\n");
         return Err(
           ParsingResult::Failure {
-            message: message,
+            message: format!("Nested parse ended in failure: {}", message),
             doctree: doctree
           }
         )
@@ -619,7 +609,7 @@ impl Parser {
 
       let mut line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
-        None => return Err(format!("Text block could not be read because of line {}.\n", line_num))
+        None => return Err(format!("Text block could not be read because of line {}...", line_num))
       };
 
       if line.trim().is_empty() {
@@ -648,7 +638,6 @@ impl Parser {
 
     lines.shrink_to_fit();
     let offset = lines.len();
-    // eprintln!("Lines: {:#?}\n", lines);
     Ok((lines, offset))
   }
 
@@ -704,7 +693,7 @@ impl Parser {
 
       let line: String = match src_lines.get(line_num) {
         Some(line) => line.clone(),
-        None => return Err(format!("Line {} could not be read\nComputer says no...\n", line_num))
+        None => return Err(format!("Line {} could not be read. Computer says no...", line_num))
       };
 
       let line_is_empty = line.trim().is_empty();
@@ -746,8 +735,6 @@ impl Parser {
     }
 
     if !loop_broken { blank_finish = true; } // Made it to the end of input
-
-    // eprintln!("MINIMAL INDENT: {:#?}\n", minimal_indent);
 
     // Strip all minimal indentation from each line
     if let Some(min_indent) = minimal_indent {

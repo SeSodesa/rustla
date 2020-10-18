@@ -388,7 +388,6 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
   let content = captures.name("content").unwrap().as_str();
   let embedded_uri = if let Some(uri) = captures.name("embedded_uri") { uri.as_str() } else { "" };
-  eprintln!("{:#?}", embedded_uri);
   let ref_type = captures.name("ref_type").unwrap().as_str();
   let markup_end_str = captures.name("markup_end").unwrap().as_str();
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };

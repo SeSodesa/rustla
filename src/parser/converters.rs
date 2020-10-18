@@ -39,7 +39,7 @@ impl Parser {
         if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
           num
         } else {
-          eprintln!("Couldn't convert given alphabet to an integer...\n");
+          // eprintln!("Couldn't convert given alphabet to an integer...\n");
           return None
         }
       }
@@ -48,7 +48,7 @@ impl Parser {
         if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
           num
         } else {
-          eprintln!("Couldn't convert lower-case Roman numeral to an integer...\n");
+          // eprintln!("Couldn't convert lower-case Roman numeral to an integer...");
           return None
         }
       }
@@ -57,7 +57,7 @@ impl Parser {
         if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
           num
         } else {
-          eprintln!("Couldn't convert upper-case Roman numeral to an integer...\n");
+          // eprintln!("Couldn't convert upper-case Roman numeral to an integer...");
           return None
         }
       }
@@ -65,7 +65,7 @@ impl Parser {
       EnumKind::Automatic => {
 
         if list_item_number == 0 && !in_list_item {
-          eprintln!("No items in list yet.\nSetting enumerator kind to Arabic...\n");
+          // eprintln!("No items in list yet.\nSetting enumerator kind to Arabic...");
           detected_kind = EnumKind::Arabic;
         } else {
           detected_kind = list_kind;
