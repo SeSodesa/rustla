@@ -17,6 +17,7 @@ mod common;
 mod utf8_to_latex;
 
 use std::io::BufRead;
+use std::collections::HashMap;
 use std::{env, fs, path, io};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -31,29 +32,46 @@ fn main() -> Result<(), ()>{
   copyright();
   
   let args: Vec<String> = env::args().collect();
+  let args_len = args.len();
 
-  if args.len() < 2 {
-    usage();
-    return Err(())
-  }
+  if args_len < 2 { usage(); return Err(()) }
 
-  let src_file_path: std::path::PathBuf = if let Some(path) = &mut args.last() {
-    std::fs::canonicalize(path).expect("Cannot canonicalize last program argument. Source file path unreadable...")
+  let src_file_path: std::path::PathBuf = if let Some(path) = args.last() {
+    match std::fs::canonicalize(path) {
+      Ok(path) => path,
+      Err(e) => {
+        eprintln!("Could not canonicalize source file path: {}", e);
+        return Err(())
+      }
+    }
   } else {
     unreachable!("No arguments, not even the program itself? Computer says no...")
   };
 
+  eprintln!("{:#?}", src_file_path);
+
+  if let Some(extension) = src_file_path.extension() {
+    if let Some(extension_str) = extension.to_str() {
+      if extension_str != "rst" {
+        eprintln!("As a precaution, the source file name should have the suffix \".rst\".");
+        return Err(())
+      }
+    }
+  }
+
+  let option_map = read_known_options(&args);
+
   let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&src_file_path) {
     Ok(meta) => meta,
     Err(e) => {
-      eprintln!("\nCannot determine the type of input:\n{}", e);
+      eprintln!("Cannot determine the type of input:\n{}", e);
       return Err(())
     }
   };
 
   if src_file_metadata.is_dir() {
-    println!("At this stage, ruSTLa is designed to work with");
-    println!("files only. Please enter a valid rST file.");
+    println!("At this stage, ruSTLa is designed to work with files only.");
+    println!("Please enter a valid rST file.");
     return Err(());
 
   } else if src_file_metadata.is_file() {
@@ -88,16 +106,72 @@ fn main() -> Result<(), ()>{
     doctree = doctree.perform_restructuredtext_transforms();
 
     use crate::common::OutputStream;
-    doctree.write_to_larst(OutputStream::StdOut);
+    let out_stream = if let Some(stream) = option_map.get("output-stream") {
+      match stream.as_str() {
+        "stdout" => OutputStream::StdOut,
+        "stderr" => OutputStream::StdOut,
+        "file" => OutputStream::File,
+        _ => OutputStream::StdOut,
+      }
+    } else { OutputStream::StdOut };
+    doctree.write_to_larst(out_stream);
   }
 
   return Ok(())
 }
 
 
-fn read_arguments (args: std::env::Args) {
+/// Scans a vector of the command line arguments of ruSTLa for known options and their values.
+/// Unknown options and/or values are simply ignored.
+/// Any recognized options and their values are stored in a HashMap.
+fn read_known_options (args: &Vec<String>) -> HashMap<String, String> {
 
-  todo!()
+  const KNOWN_OPTIONS: [(&str, &[&str]); 1] = [
+    ("--output-stream", &["stdout", "stderr", "file"]),
+  ];
+
+  let mut arg_index = 0usize;
+  let args_len = args.len();
+
+  let mut option_map: HashMap<String, String> = HashMap::new();
+
+  loop {
+
+    let arg = if let Some(arg) = args.get(arg_index) { arg } else { break };
+
+    // Check for known options and act accordingly
+    match arg.as_str() {
+
+      "output-stream" => {
+
+        let option_name = "output-stream";
+
+        let option_value = if let Some(val) = args.get(arg_index + 1) { val } else {
+          eprintln!("The option \"{}\" has no value. Ignoring the option...", option_name);
+          break
+        };
+        match option_value.as_str() {
+          "stdout" | "stderr" | "file" => if let Some(val) = option_map.insert(option_name.to_string(), option_value.to_string()) {
+            eprintln!("Option \"{}\" given more than once. Overriding last value \"{}\" with a new one, \"{}\"...", option_name, val, option_value);
+            arg_index += 2;
+          } else {
+            arg_index += 2;
+          },
+          _ => {
+            eprintln!("Unknown value for the option \"{}\". Trying to interpret it as a different option...", option_name);
+            arg_index += 1;
+            continue
+          }
+        }
+      }
+
+      _ => { arg_index += 1; }
+    }
+
+    if arg_index >= args_len { break }
+  };
+
+  option_map
 }
 
 
