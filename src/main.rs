@@ -32,20 +32,18 @@ fn main() -> Result<(), ()>{
   
   let args: Vec<String> = env::args().collect();
 
-  if args.len() != 2 {
+  if args.len() < 2 {
     usage();
     return Err(())
   }
 
-  let path: path::PathBuf = match fs::canonicalize(&args[1]) {
-    Ok(p) => p,
-    Err(e) => {
-      eprintln!("Could not resolve file path:\n{}",e);
-      return Err(())
-    }
+  let src_file_path: std::path::PathBuf = if let Some(path) = &mut args.last() {
+    std::fs::canonicalize(path).expect("Cannot canonicalize last program argument. Source file path unreadable...")
+  } else {
+    unreachable!("No arguments, not even the program itself? Computer says no...")
   };
 
-  let md: fs::Metadata = match fs::metadata(&path) {
+  let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&src_file_path) {
     Ok(meta) => meta,
     Err(e) => {
       eprintln!("\nCannot determine the type of input:\n{}", e);
@@ -53,15 +51,14 @@ fn main() -> Result<(), ()>{
     }
   };
 
-  if md.is_dir() {
-    println!("{:?} is a directory", path);
+  if src_file_metadata.is_dir() {
     println!("At this stage, ruSTLa is designed to work with");
     println!("files only. Please enter a valid rST file.");
     return Err(());
 
-  } else if md.is_file() {
+  } else if src_file_metadata.is_file() {
 
-    let src_lines = match common::read_path_lines(&path) {
+    let src_lines = match common::read_path_lines(&src_file_path) {
       Ok(lines) => {
         lines.map(|s|
           match s {
@@ -75,7 +72,7 @@ fn main() -> Result<(), ()>{
 
     // Enter parser here...
 
-    let mut doctree = DocTree::new(path);
+    let mut doctree = DocTree::new(src_file_path);
     let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
     
     use common::ParsingResult;
@@ -97,18 +94,10 @@ fn main() -> Result<(), ()>{
   return Ok(())
 }
 
-/// # `has_toctree`
-/// Checks the file contents `fc`
-/// for the substring `.. toctree::`
-fn has_toctree (fc: &String) -> bool{
-  println!("Checking for toctree...");
-  if fc.contains(".. toctree::") {
-    println!("Toctree found...");
-    true
-  } else {
-    println!("No toctree to be seen...");
-    false
-  }
+
+fn read_arguments (args: std::env::Args) {
+
+  todo!()
 }
 
 
