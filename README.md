@@ -22,7 +22,7 @@ Alternatively, one might move the binary to one of the folders listed in the `PA
 and restarting the terminal or logging out, if your system requires this in order for the changes to `PATH`
 to become effective. This allows it to be run from anywhere by simply typing
 ```
-$ rustla path/to/rst/file
+$ rustla path/to/rst/file.rst
 ```
 
 Options can be given to `rustla` by typing the respective `key`--`value` pairs *before* the reStructuredText source file path:
