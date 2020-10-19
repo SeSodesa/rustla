@@ -53,7 +53,7 @@ pub struct DocTree {
   filename_stem: String,
 
   /// #### file_folder
-  /// The folder the source file is stored in.
+  /// The path to the folder the source file is stored in.
   /// The object file will be stored in the same folder with a different suffix.
   file_folder: String,
 
