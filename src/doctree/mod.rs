@@ -68,7 +68,7 @@ pub struct DocTree {
   /// in their behaviour depending on their insertion order into the tree.
   /// For example, a field list will be transformed into bibliographic data,
   /// if it is the first non-(whitespace|comment) node in the tree.
-  pub node_count: NodeId,
+  node_count: NodeId,
 
   /// #### hyperref_data
   /// The container for hyperref data related to the doctree.
