@@ -7,7 +7,9 @@
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-use super::*;
+use crate::doctree::DocTree;
+use crate::doctree::tree_zipper::TreeZipper;
+use crate::doctree::tree_node::TreeNode;
 
 impl DocTree {
 

@@ -1,4 +1,4 @@
-#![allow(dead_code, unused_variables, unused_imports)]
+#![allow(dead_code, unused_variables)]
 /// # This is ruSTLa
 ///
 /// ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
@@ -16,9 +16,8 @@ use doctree::DocTree;
 mod common;
 mod utf8_to_latex;
 
-use std::io::BufRead;
 use std::collections::HashMap;
-use std::{env, fs, path, io};
+use std::{env};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");

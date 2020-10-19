@@ -5,7 +5,6 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 

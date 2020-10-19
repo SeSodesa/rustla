@@ -10,7 +10,6 @@ use std::io::Write;
 
 use super::*;
 use crate::common::AplusExerciseStatus;
-use crate::common::AplusRadarTokenizer;
 use crate::common::OutputStream;
 
 const LATEX_OPTION_DELIM: &str = ",";
@@ -36,7 +35,6 @@ impl DocTree {
       OutputStream::StdErr => {}
       OutputStream::File => {
         use std::fs::{File, OpenOptions};
-        use std::path::Path;
 
         const TEX_FILE_SUFFIX: &str = ".tex";
         const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";
@@ -143,7 +141,6 @@ impl TreeNode {
     let refnames = self.ref_names_into_larst_labels();
 
     let pre_string = self.shared_data().larst_pre_order_string( refnames);
-    use std::io::Write;
     match file_ptr.write(pre_string.as_bytes()) {
       Ok(_) => {},
       Err(_) => panic!("Could not write the prefix string \"{}\" to file. Computer says no...", pre_string)

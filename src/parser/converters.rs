@@ -5,8 +5,8 @@
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-use super::*;
-use common::{Length, LengthNum, HTMLAlignment, HorizontalAlignment};
+use crate::parser::Parser;
+use crate::common::{Length, LengthNum, HTMLAlignment, HorizontalAlignment, EnumKind};
 
 impl Parser {
 
@@ -293,7 +293,7 @@ impl Parser {
   pub fn str_to_length (length_str: &str) -> Option<Length> {
 
     use lazy_static::lazy_static;
-    use regex::{Regex, Captures};
+    use regex::Regex;
 
     const VALID_LENGTH_PATTERN: &str = r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)$"#;
 
@@ -340,7 +340,7 @@ impl Parser {
   pub fn str_to_percentage (percentage_str: &str) -> Option<f64>{
 
     use lazy_static::lazy_static;
-    use regex::{Regex, Captures};
+    use regex::Regex;
 
     const VALID_PERCENTAGE_PATTERN: &str = r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)\s*(?P<unit>%)$"#;
 

@@ -3,7 +3,6 @@
 /// 
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-use std::collections::HashSet;
 
 use super::*;
 

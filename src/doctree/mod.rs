@@ -4,8 +4,6 @@
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-use std::rc::{Rc, Weak};
-
 use std::collections::HashMap;
 
 mod larst_writer;
@@ -18,7 +16,6 @@ use tree_node::TreeNode;
 pub mod tree_node_types;
 use tree_node_types::TreeNodeType;
 pub mod directives;
-use directives::{DirectiveNode, AdmonitionDirective, ImageDirective, BodyElementDirective, TableDirective, DocumentPartDirective, ReferenceDirective, HTMLSpecificDirective, SubstitutionDefDirective, MiscellaneousDirective, AplusDirective};
 mod hyperref_data;
 use hyperref_data::{HyperrefData, ANON_REF_LABEL_PREFIX, ANON_REF_LABEL_SUFFIX};
 mod class_data;
@@ -30,16 +27,15 @@ mod walkers;
 use crate::common::{
   SectionLineStyle,
   EnumDelims, EnumKind, NodeId,
-  EnumAsInt, PatternName, FootnoteKind,
+  FootnoteKind,
   HTMLAlignment, HorizontalAlignment, Length,
   TableColWidths, MetricType, ToCBacklinks
 };
 
 // --------------
-//  Test modules
+//  Test module
 // --------------
 mod tests;
-mod test_walkers;
 
 /// ### DocTree
 /// A container for the document tree.

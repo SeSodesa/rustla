@@ -6,7 +6,7 @@
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-use std::{str, path, fs, io, convert::TryFrom};
+use std::{str, path, fs, io};
 use std::io::BufRead;
 
 // =======================

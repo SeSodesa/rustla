@@ -1,14 +1,12 @@
-/// ## tests
-/// This is the test module for the DocTree struct.
-/// 
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/// ## test_constructor
+///
+/// A submodule for testing the DocTree constructor function.
+///
+/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
-
 
 #[test]
 fn new_doctree() {
@@ -25,5 +23,4 @@ fn new_doctree() {
   assert!(
     root_is_root
   );
-
 }

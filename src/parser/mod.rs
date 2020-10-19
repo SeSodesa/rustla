@@ -11,8 +11,6 @@
 
 // Standard library
 use std::cmp;
-use std::io::{BufReader, Lines};
-use std::fs::File;
 
 use std::str;
 use std::collections;
@@ -20,7 +18,7 @@ use std::collections;
 
 // External crates
 // ---------------
-use regex::{Regex, Captures};
+use regex::Regex;
 
 
 // Own modules
@@ -29,7 +27,6 @@ use regex::{Regex, Captures};
 use super::*;
 
 mod converters;
-use converters::*;
 
 mod types_and_aliases;
 use types_and_aliases::*;
@@ -45,8 +42,7 @@ mod directive_parsers;
 use crate::doctree::DocTree;
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
-use crate::doctree::directives::{DirectiveNode, ImageDirective, AdmonitionDirective};
-use crate::common::{self, ParsingResult, EnumDelims, EnumKind, FootnoteKind, HyperlinkTargetKind, InterpretedTextKind, NodeId, EnumAsInt, PatternName, SectionLineStyle};
+use crate::common::{ ParsingResult,  FootnoteKind, InterpretedTextKind, PatternName, SectionLineStyle};
 
 // Unit test modules
 // -----------------

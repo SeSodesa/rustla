@@ -24,16 +24,13 @@ pub mod transitions;
 mod unknown_transitions;
 use transitions::{LINE_PATTERN, TEXT_PATTERN, FIELD_MARKER_PATTERN};
 
-
-use std::cmp;
 use std::collections::HashMap;
 
 use regex;
 use lazy_static::lazy_static;
 
 use super::*;
-use crate::common::{EnumDelims, EnumKind, HyperlinkTargetKind, NodeId, EnumAsInt};
-use crate::doctree::{self};
+use crate::common::{EnumDelims, EnumKind, EnumAsInt};
 
 
 /// ### StateMachine
@@ -270,8 +267,6 @@ lazy_static! {
 
     let body_actions = StateMachine::compile_state_transitions(&StateMachine::BODY_TRANSITIONS);
     action_map.insert(StateMachine::Body, body_actions);
-
-    use crate::parser::state_machine::transitions::ATTRIBUTION_PATTERN;
 
     let block_quote_actions = StateMachine::compile_state_transitions(&StateMachine::BLOCK_QUOTE_TRANSITIONS);
     action_map.insert(StateMachine::BlockQuote, block_quote_actions);

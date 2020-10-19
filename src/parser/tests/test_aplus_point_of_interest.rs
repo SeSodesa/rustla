@@ -3,7 +3,6 @@
 /// A submodule for unit testing A+ point of interest parsing.
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 

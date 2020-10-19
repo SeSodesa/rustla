@@ -2,7 +2,6 @@
 /// A submodule for admonition unit tests
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 

@@ -5,7 +5,6 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 
@@ -37,7 +36,7 @@ fn image_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  use common::HTMLAlignment;
+  use crate::common::HTMLAlignment;
 
   match doctree.shared_child(0).shared_data() {
 

@@ -6,17 +6,11 @@
 /// email:  santtu.soderolm@tuni.fi
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 
-use crate::common::TraversalType;
-
 #[test]
 fn walk_to_id_01 () {
-
-  use crate::parser::Parser;
-  use crate::common::ParsingResult;
 
   let src = String::from("
 A simple test paragraph.
@@ -25,7 +19,7 @@ And another one.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+  let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
   doctree = parser.parse().unwrap_tree();
 
@@ -41,9 +35,6 @@ And another one.
 #[test]
 fn walk_to_id_02 () {
 
-  use crate::parser::Parser;
-  use crate::common::ParsingResult;
-
   let src = String::from("
 - A slightly more complicated test...
 - ... with more structure between inline nodes.
@@ -56,7 +47,7 @@ fn walk_to_id_02 () {
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+  let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
@@ -76,7 +67,6 @@ fn walk_to_id_02 () {
 fn walk_to_id_03 () {
 
   use crate::parser::Parser;
-  use crate::common::ParsingResult;
 
   let src = String::from("
 * This is a list
@@ -94,7 +84,7 @@ Now with a second row.
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+  let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 

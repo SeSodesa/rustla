@@ -2,7 +2,6 @@
 /// A submodule for definition list -related unit tests.
 
 use super::*;
-use std::path::PathBuf;
 
 #[cfg(test)]
 

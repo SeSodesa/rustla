@@ -37,7 +37,7 @@ fn list_table_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  use common::{TableColWidths, MetricType, HorizontalAlignment};
+  use crate::common::{TableColWidths, MetricType, HorizontalAlignment};
 
   if let TreeNodeType::ListTable { title, widths, width, header_rows, stub_columns, align, .. } = doctree.shared_child(0).shared_data() {
     assert_eq!(title.as_ref().unwrap().as_str(), "A title");

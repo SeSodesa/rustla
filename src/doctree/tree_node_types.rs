@@ -12,7 +12,7 @@ use crate::common::AplusRadarTokenizer;
 use crate::common::AplusActiveElementClear;
 use crate::common::AplusActiveElementInputType;
 use crate::common::AplusActiveElementOutputType;
-
+use crate::doctree::directives::AdmonitionDirective;
 
 /// ### TreeNodeType
 /// An enumeration of the different possible document node types.
@@ -1052,8 +1052,6 @@ pub enum TreeNodeType {
 }
 
 
-use std::collections::HashSet;
-use lazy_static::lazy_static;
 use crate::doctree::node_categories::{*};
 
 impl TreeNodeType {

@@ -4,8 +4,6 @@
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-use super::*;
-
 
 /// ### LineCursor
 /// A line cursor type of a parser that holds the start line and offset from it.

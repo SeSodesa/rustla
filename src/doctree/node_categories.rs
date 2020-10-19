@@ -127,8 +127,6 @@ pub enum NodeCategory {
 }
 
 
-use std::iter::FromIterator;
-
 // Node category constants
 
 pub const ABBREVIATION_CATEGORIES: [NodeCategory; 1] = [

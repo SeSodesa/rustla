@@ -262,8 +262,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
     }
   };
 
-  use crate::common::normalize_refname;
-
   // Match against the parent node. Only document root ignores indentation;
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
@@ -1692,7 +1690,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &PatternName, detected_label_str: &str) -> Option<(String, String)> {
 
-  use std::convert::TryFrom;
   use crate::common::normalize_refname;
 
   let normalized_name = normalize_refname(detected_label_str);

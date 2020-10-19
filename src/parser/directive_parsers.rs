@@ -8,10 +8,13 @@
 
 use std::collections::HashMap;
 
-use super::*;
-use crate::doctree::directives::DirectiveNode;
-
-
+use crate::common::{ParsingResult};
+use crate::parser::Parser;
+use crate::parser::line_cursor::LineCursor;
+use crate::parser::state_machine::StateMachine;
+use crate::parser::types_and_aliases::{TransitionResult, InlineParsingResult, PushOrPop, LineAdvance};
+use crate::doctree::DocTree;
+use crate::doctree::tree_node_types::TreeNodeType;
 
 impl Parser {
 
@@ -132,7 +135,7 @@ impl Parser {
     // Fetch content indentation and option|content offset from directive marker line
     let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
       Some( (indent, offset ) ) => (indent, offset),
-      None =>       return TransitionResult::Failure {
+      None => return TransitionResult::Failure {
         message: format!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
         doctree: doctree
       }
@@ -163,7 +166,7 @@ impl Parser {
       content_indent: content_indent,
       classes: classes,
       name: name,
-      variant: doctree::directives::AdmonitionDirective::Admonition {
+      variant: crate::doctree::directives::AdmonitionDirective::Admonition {
         title: argument
       }
     };
@@ -394,8 +397,6 @@ impl Parser {
         }
       }
     };
-
-    use common::TraversalType;
 
     TransitionResult::Success {
       doctree: doctree,
@@ -673,7 +674,7 @@ impl Parser {
       (None, None, None, None, None, None, None)
     };
 
-    use common::{TableColWidths, MetricType, HorizontalAlignment};
+    use crate::common::{TableColWidths, MetricType, HorizontalAlignment};
 
     let list_table_node = TreeNodeType::ListTable {
 
@@ -701,7 +702,7 @@ impl Parser {
         if let Some(length) = Parser::str_to_length(&width) {
           Some(MetricType::Lenght(length))
         } else if let Some(percentage) = Parser::str_to_percentage(&width) {
-          Some(common::MetricType::Percentage(percentage))
+          Some(crate::common::MetricType::Percentage(percentage))
         } else {
           None
         }
@@ -1168,7 +1169,6 @@ impl Parser {
     };
     
     use crate::common::QuizPoints;
-    use std::convert::TryFrom;
 
     let questionnaire_node = TreeNodeType::AplusQuestionnaire {
       body_indent: body_indent,
@@ -1230,7 +1230,6 @@ impl Parser {
     const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>\S+)[ ]*§[ ]*(?P<hint>.+)";
 
     use regex::{Regex, Captures};
-    use lazy_static;
 
     lazy_static::lazy_static! {
       static ref CHOICE_RE: Regex = Regex::new(APLUS_PICK_ONE_CHOICE_PATTERN).unwrap();
@@ -1239,7 +1238,7 @@ impl Parser {
 
     // Parsing the directive arguments
 
-    use common::QuizPoints;
+    use crate::common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       if let Ok(points) = arg.as_str().parse() { points } else {
@@ -1551,14 +1550,13 @@ impl Parser {
     const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>\S+)[ ]*§[ ]*(?P<hint>.+)";
 
     use regex::{Regex, Captures};
-    use lazy_static;
 
     lazy_static::lazy_static! {
       static ref CHOICE_RE: Regex = Regex::new(APLUS_PICK_ANY_CHOICE_PATTERN).unwrap();
       static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
     }
 
-    use common::QuizPoints;
+    use crate::common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       if let Ok(points) = arg.as_str().parse() { points } else {
@@ -1874,7 +1872,7 @@ impl Parser {
       "class", "required", "key", "length",  "height",
     ];
 
-    use common::QuizPoints;
+    use crate::common::QuizPoints;
 
     let (points, method_string) = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
@@ -2022,7 +2020,7 @@ impl Parser {
     };
 
     // Read possible hints
-
+    use regex::Regex;
     const APLUS_PICK_HINT_PATTERN: &'static str = r"^(\s*)(?P<show_not_answered>!)?(?P<label>.+)[ ]*§[ ]*(?P<hint>.+)";
     lazy_static::lazy_static! {
       static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
@@ -2363,7 +2361,7 @@ impl Parser {
               doctree: doctree
             }
           };
-          Some(common::AplusActiveElementInputType::Dropdown(options.to_string()))
+          Some(crate::common::AplusActiveElementInputType::Dropdown(options.to_string()))
         } else {
           return TransitionResult::Failure {
             message: format!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total()),
@@ -2825,10 +2823,9 @@ impl Parser {
   /// Empty strings are returned for every missing part.
   fn aplus_key_difficulty_and_max_points (arg_str: &str, line_cursor: &mut LineCursor) -> (String, String, String) {
 
-    use lazy_static::lazy_static;
-    use regex::{Regex, Captures};
+    use regex::Regex;
 
-    lazy_static! {
+    lazy_static::lazy_static! {
       static ref EXERCISE_ARGS_RE: Regex = Regex::new(r"^(?P<key>[a-zA-Z0-9]+)?[ ]*(?P<difficulty>[A-Z])?(?P<max_points>[0-9]+)?").unwrap();
     }
 
