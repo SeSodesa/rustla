@@ -349,4 +349,11 @@ impl TreeZipper {
   pub fn shared_data (&self) -> &TreeNodeType {
     self.node.shared_data()
   }
+
+
+  /// ### node_id
+  /// Reurn the id of the contained node.
+  pub fn node_id (&self) -> NodeId {
+    self.node.id()
+  }
 }

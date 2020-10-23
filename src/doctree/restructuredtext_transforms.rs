@@ -92,7 +92,7 @@ impl TreeNode {
           if let Some(child) = children.get_mut(1) {
             if let TreeNodeType::Paragraph {  indent} = child.mut_data() {
               // Transform paragraph data into a caption
-              child.data = TreeNodeType::Caption {
+              *child.mut_data() = TreeNodeType::Caption {
                 indent: *indent
               };
             }
@@ -126,7 +126,7 @@ impl TreeNode {
             if let TreeNodeType::BulletList { bullet, bullet_indent, text_indent } = bullet_list.mut_data() {
 
               // Transform the contained bullet list into a table body...
-              bullet_list.data = TreeNodeType::TBody;
+              *bullet_list.mut_data() = TreeNodeType::TBody;
 
               // Retrieve the list items from the bullet list...
               if let Some(list_items) = bullet_list.mut_children() {
@@ -136,7 +136,7 @@ impl TreeNode {
 
                   if let TreeNodeType::BulletListItem { .. } = list_item.mut_data() {
 
-                    list_item.data = TreeNodeType::TRow;
+                    *list_item.mut_data() = TreeNodeType::TRow;
 
                     if let Some(list_item_children) = list_item.mut_children() {
 
@@ -152,12 +152,12 @@ impl TreeNode {
                           };
 
                           let n_of_entries = table_row_cells.len();
-                          for mut cell in table_row_cells.iter_mut().take(n_of_entries-1) {
-                            cell.data = TreeNodeType::Entry { is_last: false };
+                          for cell in table_row_cells.iter_mut().take(n_of_entries-1) {
+                            *cell.mut_data() = TreeNodeType::Entry { is_last: false };
                           }
 
                           if let Some(entry) = table_row_cells.last_mut() {
-                            entry.data = TreeNodeType::Entry { is_last: true };
+                            *entry.mut_data() = TreeNodeType::Entry { is_last: true };
                           }
 
                           // Remove the bullet list from between table row and table cells...

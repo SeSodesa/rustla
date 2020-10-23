@@ -156,7 +156,7 @@ impl DocTree {
   /// 
   /// Prints the id of the currently focused on node.
   fn print_node_id (&self) {
-    eprintln!("{:#?}", self.tree.node.id)
+    eprintln!("{:#?}", self.tree.node_id())
   }
 
   /// ### node_count
@@ -509,7 +509,7 @@ impl DocTree {
   /// ### current_node_id
   /// Retrieves a copy of the node id currently focused on.
   pub fn current_node_id (&self) -> NodeId {
-    self.tree.node.id
+    self.tree.node_id()
   }
 
 

@@ -11,10 +11,10 @@ use super::*;
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
 pub struct TreeNode {
-  pub id: NodeId,
+  id: NodeId,
   refnames: Option<Vec<String>>,
   classes: Option<Vec<String>>,
-  pub data : TreeNodeType,
+  data : TreeNodeType,
   children: Option<Children>,
 
 }
@@ -56,6 +56,12 @@ impl TreeNode {
     } else {
       None
     }
+  }
+
+
+  /// Returns a copy of own id.
+  pub fn id (&self) -> NodeId {
+    self.id
   }
 
 

@@ -89,7 +89,7 @@ impl TreeZipper {
   /// using the NLR (pre-order) strategy.
   pub fn walk_to_node_with_id (mut self, id: NodeId) -> Result<Self, Self> {
 
-    if self.node.id == id { return Ok(self) }
+    if self.node_id() == id { return Ok(self) }
 
     let n_of_children = if let Some(children) = self.node.shared_children() {
       self.n_of_children()
