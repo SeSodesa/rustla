@@ -82,15 +82,15 @@ impl TreeZipper {
 
     self = self.walk_to_root(); // Start out by walking to root.
 
-    self.node.larst_pre_order_file_write(file_ptr);
+    self.shared_node().larst_pre_order_file_write(file_ptr);
 
-    if let Some(children) = self.node.shared_children() {
+    if let Some(children) = self.shared_node().shared_children() {
       for child in children {
         child.write_to_larst_file(file_ptr);
       }
     }
 
-    self.node.larst_post_order_file_write(file_ptr);
+    self.shared_node().larst_post_order_file_write(file_ptr);
   }
 
 
@@ -103,15 +103,15 @@ impl TreeZipper {
 
     self = self.walk_to_root(); // Start out by walking to root.
 
-    self.node.larst_pre_order_stdout_write(stdout);
+    self.shared_node().larst_pre_order_stdout_write(stdout);
 
-    if let Some(children) = self.node.shared_children() {
+    if let Some(children) = self.shared_node().shared_children() {
       for child in children {
         child.write_to_larst_stdout(stdout);
       }
     }
 
-    self.node.larst_post_order_stdout_write(stdout);
+    self.shared_node().larst_post_order_stdout_write(stdout);
   }
 }
 

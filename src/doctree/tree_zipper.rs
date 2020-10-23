@@ -12,7 +12,7 @@ use super::*;
 /// access a specific child/parent in constant time.
 #[derive(Debug)]
 pub struct TreeZipper {
-  pub node: TreeNode,
+  node: TreeNode,
   pub parent: Option<Box<TreeZipper>>,
   pub index_in_parent: Option<usize>,
 }
@@ -356,4 +356,17 @@ impl TreeZipper {
   pub fn node_id (&self) -> NodeId {
     self.node.id()
   }
+
+
+  /// Returns a shared reference to the contained node.
+  pub fn shared_node (&self) -> &TreeNode {
+    &self.node
+  }
+
+
+  /// Returns a mutable reference to the contained node.
+  pub fn mut_node (&mut self) -> &mut TreeNode {
+    &mut self.node
+  }
+
 }

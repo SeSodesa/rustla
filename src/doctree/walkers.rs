@@ -91,7 +91,7 @@ impl TreeZipper {
 
     if self.node_id() == id { return Ok(self) }
 
-    let n_of_children = if let Some(children) = self.node.shared_children() {
+    let n_of_children = if let Some(children) = self.shared_node().shared_children() {
       self.n_of_children()
     } else {
       match self.focus_on_parent() { Ok(zipper) | Err(zipper) => return Err(zipper) }

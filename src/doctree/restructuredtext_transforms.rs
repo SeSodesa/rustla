@@ -29,7 +29,7 @@ impl TreeZipper {
   /// based on the node type `self.node.data`.
   pub fn perform_restructuredtext_transforms (mut self) -> Self {
 
-    self.node.perform_restructuredtext_transforms();
+    self.mut_node().perform_restructuredtext_transforms();
     self
   }
 }
