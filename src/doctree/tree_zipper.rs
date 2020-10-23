@@ -13,8 +13,8 @@ use super::*;
 #[derive(Debug)]
 pub struct TreeZipper {
   node: TreeNode,
-  pub parent: Option<Box<TreeZipper>>,
-  pub index_in_parent: Option<usize>,
+  parent: Option<Box<TreeZipper>>,
+  index_in_parent: Option<usize>,
 }
 
 
