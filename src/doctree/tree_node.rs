@@ -16,7 +16,6 @@ pub struct TreeNode {
   classes: Option<Vec<String>>,
   data : TreeNodeType,
   children: Option<Children>,
-
 }
 
 impl TreeNode {

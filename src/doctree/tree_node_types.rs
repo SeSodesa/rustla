@@ -133,8 +133,7 @@ pub enum TreeNodeType {
   },
 
   /// #### BulletListItem
-  /// An unnumbered list item. Cna contain any `Body` level elements
-  /// as its direct children.
+  /// An unnumbered list item. Can contain any `Body` level elements as its direct children.
   BulletListItem{
     bullet: char,
     bullet_indent: usize,
