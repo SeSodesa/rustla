@@ -44,7 +44,7 @@ use crate::common::{EnumDelims, EnumKind, EnumAsInt};
 /// The variants are used as keys to the static `TRANSITION_MAP`, which stores vectors of
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
-pub enum StateMachine {
+pub enum State {
 
   /// #### Admonition
   /// A state for parsing body nodes inside admonitions.
@@ -185,14 +185,14 @@ pub enum StateMachine {
 // ====================
 // Statemachine methods
 // ====================
-impl StateMachine {
+impl State {
 
   /// ### to_failure
   /// Transitions a `StateMachine` into a `Failure` state using the From trait,
   /// the implementation of which automatically implements the Into trait.
   pub fn to_failure (self) -> Self {
     match self {
-      _ => StateMachine::Failure
+      _ => State::Failure
     }
   }
 
@@ -204,14 +204,14 @@ impl StateMachine {
   pub fn get_transitions (&self, line_cursor: &LineCursor) -> Result<&Vec<Transition>, &'static str> {
 
     match self {
-      StateMachine::EOF         => Err("Already moved past EOF. No transitions to perform.\n"),
-      StateMachine::Failure     => Err("Failure state has no transitions\n"),
-      StateMachine::Section
-      | StateMachine::ListItem
-      | StateMachine::Footnote
-      | StateMachine::Citation
+      State::EOF         => Err("Already moved past EOF. No transitions to perform.\n"),
+      State::Failure     => Err("Failure state has no transitions\n"),
+      State::Section
+      | State::ListItem
+      | State::Footnote
+      | State::Citation
       | Self::Admonition
-      | Self::Figure            => Ok(TRANSITION_MAP.get(&StateMachine::Body).unwrap()),
+      | Self::Figure            => Ok(TRANSITION_MAP.get(&State::Body).unwrap()),
       _                         => if let Some(transition_table) = TRANSITION_MAP.get(self) {
         Ok(transition_table)
       } else {
@@ -225,7 +225,7 @@ impl StateMachine {
 /// =================================
 /// StateMachine associated functions
 /// =================================
-impl StateMachine {
+impl State {
 
   /// ### compile_state_transitions
   /// Takes in a reference/slice to an associated array of uncompiled transitions
@@ -250,7 +250,7 @@ impl StateMachine {
 /// =================================
 /// StateMachine associated constants
 /// =================================
-impl StateMachine {
+impl State {
 
 }
 
@@ -261,52 +261,52 @@ lazy_static! {
   /// the `Parser` `StateMachine`.
   /// 
   /// With this regexes are only compiled into automata once.
-  pub static ref TRANSITION_MAP: HashMap<StateMachine, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
+  pub static ref TRANSITION_MAP: HashMap<State, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
 
     let mut action_map = collections::HashMap::with_capacity(10);
 
-    let body_actions = StateMachine::compile_state_transitions(&StateMachine::BODY_TRANSITIONS);
-    action_map.insert(StateMachine::Body, body_actions);
+    let body_actions = State::compile_state_transitions(&State::BODY_TRANSITIONS);
+    action_map.insert(State::Body, body_actions);
 
-    let block_quote_actions = StateMachine::compile_state_transitions(&StateMachine::BLOCK_QUOTE_TRANSITIONS);
-    action_map.insert(StateMachine::BlockQuote, block_quote_actions);
+    let block_quote_actions = State::compile_state_transitions(&State::BLOCK_QUOTE_TRANSITIONS);
+    action_map.insert(State::BlockQuote, block_quote_actions);
 
-    let bullet_actions = StateMachine::compile_state_transitions(&StateMachine::BULLET_LIST_TRANSITIONS);
-    action_map.insert(StateMachine::BulletList, bullet_actions);
+    let bullet_actions = State::compile_state_transitions(&State::BULLET_LIST_TRANSITIONS);
+    action_map.insert(State::BulletList, bullet_actions);
 
-    let definition_actions = StateMachine::compile_state_transitions(&StateMachine::DEFINITION_LIST_TRANSITIONS);
-    action_map.insert(StateMachine::DefinitionList, definition_actions);
+    let definition_actions = State::compile_state_transitions(&State::DEFINITION_LIST_TRANSITIONS);
+    action_map.insert(State::DefinitionList, definition_actions);
 
-    let enumerated_actions = StateMachine::compile_state_transitions(&StateMachine::ENUMERATED_LIST_TRANSITIONS);
-    action_map.insert(StateMachine::EnumeratedList, enumerated_actions);
+    let enumerated_actions = State::compile_state_transitions(&State::ENUMERATED_LIST_TRANSITIONS);
+    action_map.insert(State::EnumeratedList, enumerated_actions);
 
-    let field_actions = StateMachine::compile_state_transitions(&StateMachine::FIELD_LIST_TRANSITIONS);
-    action_map.insert(StateMachine::FieldList, field_actions);
+    let field_actions = State::compile_state_transitions(&State::FIELD_LIST_TRANSITIONS);
+    action_map.insert(State::FieldList, field_actions);
 
-    let option_actions = StateMachine::compile_state_transitions(&StateMachine::OPTION_LIST_TRANSITIONS);
-    action_map.insert(StateMachine::OptionList, option_actions);
+    let option_actions = State::compile_state_transitions(&State::OPTION_LIST_TRANSITIONS);
+    action_map.insert(State::OptionList, option_actions);
 
-    let line_block_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_BLOCK_TRANSITIONS);
-    action_map.insert(StateMachine::LineBlock, line_block_actions);
+    let line_block_actions = State::compile_state_transitions(&State::LINE_BLOCK_TRANSITIONS);
+    action_map.insert(State::LineBlock, line_block_actions);
 
-    let literal_block_actions = StateMachine::compile_state_transitions(&StateMachine::LITERAL_BLOCK_TRANSITIONS);
-    action_map.insert(StateMachine::LiteralBlock, literal_block_actions);
+    let literal_block_actions = State::compile_state_transitions(&State::LITERAL_BLOCK_TRANSITIONS);
+    action_map.insert(State::LiteralBlock, literal_block_actions);
 
-    let extension_option_actions = StateMachine::compile_state_transitions(&StateMachine::EXTENSION_OPTION_TRANSITIONS);
-    action_map.insert(StateMachine::ExtensionOptions, extension_option_actions);
+    let extension_option_actions = State::compile_state_transitions(&State::EXTENSION_OPTION_TRANSITIONS);
+    action_map.insert(State::ExtensionOptions, extension_option_actions);
 
-    let line_actions = StateMachine::compile_state_transitions(&StateMachine::LINE_TRANSITIONS);
-    action_map.insert(StateMachine::Line, line_actions);
+    let line_actions = State::compile_state_transitions(&State::LINE_TRANSITIONS);
+    action_map.insert(State::Line, line_actions);
 
-    let list_table_actions = StateMachine::compile_state_transitions(&StateMachine::LIST_TABLE_TRANSITIONS);
-    action_map.insert(StateMachine::ListTable, list_table_actions);
+    let list_table_actions = State::compile_state_transitions(&State::LIST_TABLE_TRANSITIONS);
+    action_map.insert(State::ListTable, list_table_actions);
 
     // A+
-    let aplus_multicol_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_MULTICOL_TRANSITIONS);
-    action_map.insert(StateMachine::AplusMultiCol, aplus_multicol_actions);
+    let aplus_multicol_actions = State::compile_state_transitions(&State::APLUS_MULTICOL_TRANSITIONS);
+    action_map.insert(State::AplusMultiCol, aplus_multicol_actions);
 
-    let aplus_questionnaire_actions = StateMachine::compile_state_transitions(&StateMachine::APLUS_QUESTIONNAIRE_TRANSITIONS);
-    action_map.insert(StateMachine::AplusQuestionnaire, aplus_questionnaire_actions);
+    let aplus_questionnaire_actions = State::compile_state_transitions(&State::APLUS_QUESTIONNAIRE_TRANSITIONS);
+    action_map.insert(State::AplusQuestionnaire, aplus_questionnaire_actions);
 
     action_map
 
@@ -322,9 +322,9 @@ lazy_static! {
   /// which is then scanned with regular expressions.
   pub static ref COMPILED_INLINE_TRANSITIONS: Vec<(PatternName, regex::Regex, InlineParsingMethod)> = {
 
-    let mut inline_transitions = Vec::with_capacity(StateMachine::INLINE_TRANSITIONS.len());
+    let mut inline_transitions = Vec::with_capacity(State::INLINE_TRANSITIONS.len());
 
-    for (pat_name, expr, fun) in StateMachine::INLINE_TRANSITIONS.iter() {
+    for (pat_name, expr, fun) in State::INLINE_TRANSITIONS.iter() {
       let r = regex::Regex::new(expr).unwrap();
       inline_transitions.push((*pat_name, r, *fun));
     }

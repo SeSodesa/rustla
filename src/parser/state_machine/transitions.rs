@@ -12,7 +12,7 @@ use super::*;
 /// =================================
 /// StateMachine associated constants
 /// =================================
-impl StateMachine {
+impl State {
 
   /// ### BODY_TRANSITIONS
   /// An array of transitions related to `StateMachine::Body`.

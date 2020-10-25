@@ -35,7 +35,7 @@ mod line_cursor;
 use line_cursor::{LineCursor, Line};
 
 pub mod state_machine;
-use state_machine::{StateMachine, COMPILED_INLINE_TRANSITIONS};
+use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
 
 mod directive_parsers;
 
@@ -91,7 +91,7 @@ pub struct Parser {
   /// #### machine_stack
   /// A stack of states that function as keys to vectors of state transitions.
   /// The set of transitios is chosen based on the current state on top of the stack.
-  state_stack: Vec<StateMachine>,
+  state_stack: Vec<State>,
 }
 
 
@@ -106,7 +106,7 @@ impl Parser {
   /// in `Option`s. This wrapping allows the passing of these to owned
   /// state machnes via swapping the optional contents
   /// to `None` before granting ownership of the original contents.
-  pub fn new(src: Vec<String>, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<StateMachine>, section_level: usize) -> Self {
+  pub fn new(src: Vec<String>, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<State>, section_level: usize) -> Self {
 
     Self {
       src_lines: src, //.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
@@ -114,7 +114,7 @@ impl Parser {
       base_indent: base_indent.unwrap_or(0),
       section_level: section_level,
       doctree: Some(doctree),
-      state_stack: vec!(initial_state.unwrap_or(StateMachine::Body))
+      state_stack: vec!(initial_state.unwrap_or(State::Body))
     }
   }
 
@@ -154,7 +154,7 @@ impl Parser {
 
         match machine {
 
-          StateMachine::EOF => {
+          State::EOF => {
             match self.doctree.take() {
               Some(doctree) => {
                 return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
@@ -165,7 +165,7 @@ impl Parser {
             };
           }
 
-          StateMachine::Failure{ .. } => {
+          State::Failure{ .. } => {
             return ParsingResult::Failure {
               message: String::from("Parsing ended in Failure state...\n"),
               doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
@@ -324,7 +324,7 @@ impl Parser {
       }
 
       if self.line_cursor.relative_offset() >= self.src_lines.len() {
-        self.state_stack.push(StateMachine::EOF);
+        self.state_stack.push(State::EOF);
       }
     };
 
@@ -523,7 +523,7 @@ impl Parser {
   /// ### parse_first_node_block
   /// Parses the first block of a node, in case it contains body level nodes
   /// right after a marker such as an enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: StateMachine, section_level: &mut usize, force_alignment: bool) -> Result<(ParsingResult, usize), ParsingResult> {
+  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: State, section_level: &mut usize, force_alignment: bool) -> Result<(ParsingResult, usize), ParsingResult> {
 
     let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
     let relative_block_indent = text_indent - base_indent;

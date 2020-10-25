@@ -5,8 +5,7 @@
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
-
-use super::{*};
+use super::*;
 
 // =====================================
 //   Type aliases needed by the parser
@@ -62,7 +61,7 @@ pub enum TransitionResult {
   /// its line cursor.
   Success {
     doctree: DocTree,
-    next_states: Option<Vec<StateMachine>>,
+    next_states: Option<Vec<State>>,
     push_or_pop: PushOrPop,
     line_advance: LineAdvance,
   },

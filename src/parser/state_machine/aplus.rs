@@ -52,7 +52,7 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![StateMachine::BlockQuote]),
+        next_states: Some(vec![State::BlockQuote]),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::None,
       }

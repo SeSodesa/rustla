@@ -57,7 +57,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
           }
         };
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), StateMachine::ListItem, section_level, false) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::ListItem, section_level, false) {
           Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
             (doctree, offset, state_stack)
           } else {

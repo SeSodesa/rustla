@@ -338,7 +338,7 @@ pub enum TraversalType {
 }
 
 
-use crate::parser::state_machine::StateMachine;
+use crate::parser::state_machine::State;
 use crate::doctree::DocTree;
 
 /// ### ParsingResult
@@ -353,7 +353,7 @@ pub enum ParsingResult {
   /// This generally indicates that the source file was parsed successfully.
   EOF {
     doctree: DocTree,
-    state_stack: Vec<StateMachine>
+    state_stack: Vec<State>
   },
 
   /// #### EmptyStateStack
@@ -363,7 +363,7 @@ pub enum ParsingResult {
   /// that there were no expected nested structures on the same line.
   EmptyStateStack {
     doctree: DocTree,
-    state_stack: Vec<StateMachine>
+    state_stack: Vec<State>
   },
 
   /// #### Failure

@@ -67,7 +67,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
     return TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::ListItem]),
+      next_states: Some(vec![State::ListItem]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(1)
     }

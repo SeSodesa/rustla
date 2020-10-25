@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use crate::common::{ParsingResult};
 use crate::parser::Parser;
 use crate::parser::line_cursor::LineCursor;
-use crate::parser::state_machine::StateMachine;
+use crate::parser::state_machine::State;
 use crate::parser::types_and_aliases::{TransitionResult, InlineParsingResult, PushOrPop, LineAdvance};
 use crate::doctree::DocTree;
 use crate::doctree::tree_node_types::TreeNodeType;
@@ -102,7 +102,7 @@ impl Parser {
 
 
 
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, content_indent, Some(first_line_indent), StateMachine::Admonition, &mut section_level, false) {
+    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, content_indent, Some(first_line_indent), State::Admonition, &mut section_level, false) {
       Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
         (doctree, offset, state_stack)
       } else {
@@ -181,7 +181,7 @@ impl Parser {
     
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Admonition]),
+      next_states: Some(vec![State::Admonition]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None
     }
@@ -386,7 +386,7 @@ impl Parser {
       }
     };
 
-    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(StateMachine::Figure), section_level).parse() {
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(State::Figure), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message, doctree } => {
@@ -763,7 +763,7 @@ impl Parser {
       }
     };
 
-    let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::ListTable), section_level).parse() {
+    let (mut doctree, mut nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(State::ListTable), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message, doctree } => {
@@ -877,7 +877,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::ListTable]),
+      next_states: Some(vec![State::ListTable]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(offset)
     }
@@ -966,7 +966,7 @@ impl Parser {
       }
     };
 
-    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(StateMachine::Body), section_level).parse() {
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(State::Body), section_level).parse() {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message, doctree } => {
@@ -1107,7 +1107,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Body]),
+      next_states: Some(vec![State::Body]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(1)
     }
@@ -1201,7 +1201,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::AplusQuestionnaire]),
+      next_states: Some(vec![State::AplusQuestionnaire]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None,
     }
@@ -2272,7 +2272,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::Body]),
+      next_states: Some(vec![State::Body]),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None,
     }
@@ -2600,7 +2600,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![StateMachine::AplusMultiCol]), // PoI contains body nodes and A+ specific column breaks
+      next_states: Some(vec![State::AplusMultiCol]), // PoI contains body nodes and A+ specific column breaks
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::None
     }

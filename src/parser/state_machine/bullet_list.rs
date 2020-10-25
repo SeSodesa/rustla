@@ -43,7 +43,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
           }
         };
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, StateMachine::ListItem, section_level, false) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, State::ListItem, section_level, false) {
           Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
             (doctree, offset, state_stack)
           } else {
