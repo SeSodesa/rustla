@@ -12,7 +12,7 @@ use crate::common::AplusRadarTokenizer;
 use crate::common::AplusActiveElementClear;
 use crate::common::AplusActiveElementInputType;
 use crate::common::AplusActiveElementOutputType;
-use crate::doctree::directives::AdmonitionDirective;
+use crate::doctree::directives::AdmonitionType;
 
 /// ### TreeNodeType
 /// An enumeration of the different possible document node types.
@@ -66,7 +66,7 @@ pub enum TreeNodeType {
     content_indent: usize,
     classes: Option<String>,
     name: Option<String>,
-    variant: AdmonitionDirective
+    variant: AdmonitionType
   },
 
   /// #### Attribution

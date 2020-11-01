@@ -15,7 +15,7 @@ use crate::parser::line_cursor::LineCursor;
 use crate::parser::types_and_aliases::InlineParsingResult;
 use crate::doctree::DocTree;
 use crate::doctree::tree_node_types::TreeNodeType;
-use crate::doctree::directives::AdmonitionDirective;
+use crate::doctree::directives::AdmonitionType;
 use crate::common::EnumKind;
 
 mod test_admonitions;

@@ -17,7 +17,7 @@ pub enum DirectiveNode {
     content_indent: usize,
     classes: Option<String>,
     name: Option<String>,
-    variant: AdmonitionDirective
+    variant: AdmonitionType
   },
   Image (ImageDirective),
   BodyElement (BodyElementDirective),
@@ -43,7 +43,7 @@ pub enum DirectiveNode {
 ///
 /// For details, see https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions
 #[derive(Debug)]
-pub enum AdmonitionDirective {
+pub enum AdmonitionType {
   Attention,
   Caution,
   Danger,

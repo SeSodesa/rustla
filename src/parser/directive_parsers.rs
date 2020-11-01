@@ -25,19 +25,19 @@ impl Parser {
 
   pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize, mut section_level: usize, directive_marker_line_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
 
-    use crate::doctree::directives::AdmonitionDirective;
+    use crate::doctree::directives::AdmonitionType;
 
-    let variant: AdmonitionDirective = match admonition_type {
+    let variant: AdmonitionType = match admonition_type {
 
-      "attention" => AdmonitionDirective::Attention,
-      "caution"   => AdmonitionDirective::Caution,
-      "danger"    => AdmonitionDirective::Danger,
-      "error"     => AdmonitionDirective::Error,
-      "hint"      => AdmonitionDirective::Hint,
-      "important" => AdmonitionDirective::Important,
-      "note"      => AdmonitionDirective::Note,
-      "tip"       => AdmonitionDirective::Tip,
-      "warning"   => AdmonitionDirective::Warning,
+      "attention" => AdmonitionType::Attention,
+      "caution"   => AdmonitionType::Caution,
+      "danger"    => AdmonitionType::Danger,
+      "error"     => AdmonitionType::Error,
+      "hint"      => AdmonitionType::Hint,
+      "important" => AdmonitionType::Important,
+      "note"      => AdmonitionType::Note,
+      "tip"       => AdmonitionType::Tip,
+      "warning"   => AdmonitionType::Warning,
       _           => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
     };
 
@@ -166,7 +166,7 @@ impl Parser {
       content_indent: content_indent,
       classes: classes,
       name: name,
-      variant: crate::doctree::directives::AdmonitionDirective::Admonition {
+      variant: crate::doctree::directives::AdmonitionType::Admonition {
         title: argument
       }
     };
