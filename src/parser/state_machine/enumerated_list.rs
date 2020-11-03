@@ -22,7 +22,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator ( delims, kind) = pattern_name {
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {

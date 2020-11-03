@@ -116,12 +116,12 @@ pub enum PatternName {
   Bullet,
   Citation,
   Comment,
-  Enumerator {delims: EnumDelims, kind: EnumKind},
+  Enumerator (EnumDelims, EnumKind),
   ExplicitMarkup,
   Directive,
   DocTest,
   FieldMarker,
-  Footnote { kind: FootnoteKind },
+  Footnote ( FootnoteKind ),
   HyperlinkTarget,
   IndentedLiteralBlock,
   Line,
@@ -135,7 +135,7 @@ pub enum PatternName {
   Escape,
   StrongEmphasis, // **strongly emphasised text**
   Emphasis, // *emphasized text*
-  Interpreted { kind: InterpretedTextKind }, // Plain interpreted text with the default role set by transpiler.
+  Interpreted, // Plain interpreted text with the default role set by transpiler.
   PhraseRef, // A reference in the form `text with spaces`__?
   SimpleRef, // A reference that doesn't need backticks: reference__?
   Literal, // Code

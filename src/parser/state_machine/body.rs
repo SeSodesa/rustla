@@ -89,7 +89,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
 
-  let (detected_delims, detected_kind) = if let PatternName::Enumerator { delims, kind} = pattern_name {
+  let (detected_delims, detected_kind) = if let PatternName::Enumerator ( delims, kind) = pattern_name {
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {
@@ -244,7 +244,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
     detected_text_indent
   };
 
-  let detected_kind = if let PatternName::Footnote { kind } = pattern_name {
+  let detected_kind = if let PatternName::Footnote ( kind ) = pattern_name {
     kind
   } else {
     return TransitionResult::Failure {
@@ -1694,7 +1694,7 @@ pub fn detected_footnote_label_to_ref_label (doctree: &DocTree, pattern_name: &P
 
   let normalized_name = normalize_refname(detected_label_str);
 
-  if let PatternName::Footnote { kind } = pattern_name {
+  if let PatternName::Footnote ( kind ) = pattern_name {
     match kind {
 
       FootnoteKind::Manual => {

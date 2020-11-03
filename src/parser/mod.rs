@@ -42,7 +42,7 @@ mod directive_parsers;
 use crate::doctree::DocTree;
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
-use crate::common::{ ParsingResult,  FootnoteKind, InterpretedTextKind, PatternName, SectionLineStyle};
+use crate::common::{ ParsingResult,  FootnoteKind, PatternName, SectionLineStyle};
 
 // Unit test modules
 // -----------------
