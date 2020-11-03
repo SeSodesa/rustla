@@ -15,7 +15,7 @@ use super::*;
 impl State {
 
   /// ### BODY_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Body`.
+  /// An array of transitions related to `State::Body`.
   pub const BODY_TRANSITIONS: [UncompiledTransition; 31] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
@@ -65,7 +65,7 @@ impl State {
 
 
   /// ### BLOCK_QUOTE_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Body`.
+  /// An array of transitions related to `State::Body`.
   pub const BLOCK_QUOTE_TRANSITIONS: [UncompiledTransition; 32] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Attribution, ATTRIBUTION_PATTERN, block_quote::attribution),
@@ -115,7 +115,7 @@ impl State {
   ];
 
   /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
-  /// An array of transitions related to `StateMachine::BulletList`.
+  /// An array of transitions related to `State::BulletList`.
   pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, bullet_list::bullet)
@@ -123,7 +123,7 @@ impl State {
 
 
   /// ### DEFINITION_LIST_TRANSITIONS
-  /// An array of transitions related to `StateMachine::DefinitionList`.
+  /// An array of transitions related to `State::DefinitionList`.
   pub const DEFINITION_LIST_TRANSITIONS: [UncompiledTransition; 31] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::back_up),
@@ -172,7 +172,7 @@ impl State {
   ];
 
   /// ### ENUMERATED_LIST_TRANSITIONS
-  /// An array of transitions related to `StateMachine::EnumeratedList`.
+  /// An array of transitions related to `State::EnumeratedList`.
   pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
 
@@ -203,7 +203,7 @@ impl State {
 
 
   /// ### FIELD_LIST_TRANSITIONS
-  /// An array of transitions related to `StateMachine::FieldList`.
+  /// An array of transitions related to `State::FieldList`.
   pub const FIELD_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, field_list::field_marker),
@@ -215,21 +215,21 @@ impl State {
   ];
 
   /// ### OPTION_LIST_TRANSITIONS
-  /// An array of transitions related to `StateMachine::OptionList`.
+  /// An array of transitions related to `State::OptionList`.
   pub const OPTION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### LINE_BLOCK_TRANSITIONS
-  /// An array of transitions related to `StateMachine::LineBlock`.
+  /// An array of transitions related to `State::LineBlock`.
   pub const LINE_BLOCK_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### LITERAL_BLOCK_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Line`.
+  /// An array of transitions related to `State::Line`.
   pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::QuotedLiteralBlock, QUOTED_LITERAL_BLOCK_PATTERN, body::literal_block),
@@ -238,42 +238,42 @@ impl State {
 
 
   /// ### EXTENSION_OPTIONS_TRANSITIONS
-  /// An array of transitions related to `StateMachine::ExtensionOptions`.
+  /// An array of transitions related to `State::ExtensionOptions`.
   pub const EXTENSION_OPTION_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### EXPLICIT_MARKUP_TRANSITIONS
-  /// An array of transitions related to `StateMachine::ExplicitMarkup`.
+  /// An array of transitions related to `State::ExplicitMarkup`.
   pub const EXPLICIT_MARKUP_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### TEXT_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Text`.
+  /// An array of transitions related to `State::Text`.
   pub const TEXT_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### DEFINITION_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Definition`.
+  /// An array of transitions related to `State::Definition`.
   pub const DEFINITION_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### LINE_TRANSITIONS
-  /// An array of transitions related to `StateMachine::Line`.
+  /// An array of transitions related to `State::Line`.
   pub const LINE_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
 
 
   /// ### SUBSTITUTION_DEF_TRANSITIONS
-  /// An array of transitions related to `StateMachine::SubstitutionDef`.
+  /// An array of transitions related to `State::SubstitutionDef`.
   pub const SUBSTITUTION_DEF_TRANSITIONS: [UncompiledTransition; 0] = [
 
   ];
@@ -460,12 +460,12 @@ impl State {
 
 
   /// #### INDENTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an indented block of text when in `StateMachine::LiteralBlock`.
+  /// A pattern for matching against an indented block of text when in `State::LiteralBlock`.
   const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
 
 
   /// #### QUOTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an "quoted" block of text when in `StateMachine::LiteralBlock`.
+  /// A pattern for matching against an "quoted" block of text when in `State::LiteralBlock`.
   const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
 
 

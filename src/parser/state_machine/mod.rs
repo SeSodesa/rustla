@@ -82,7 +82,7 @@ pub enum State {
   Body,
 
   /// #### Section
-  /// A state for detecting boyd elements inside a section.
+  /// A state for detecting body elements inside a section.
   Section,
 
   /// #### BlockQuote
