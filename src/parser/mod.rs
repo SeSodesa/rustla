@@ -426,62 +426,34 @@ impl Parser {
 
     let mut col: usize = 0;
 
-    // Remove backslashes
-    // let src_without_escapes = inline_src_block.replace("\\", "");
-
     let src_chars = &mut inline_src_block.chars();
 
-    match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
-      Some((node_data, offset)) => {
-
-        nodes_data.push(node_data);
-
-        // Move iterator to start of next possible match
-        for _ in 0..offset - 1 {
-          let c = src_chars.next().unwrap();
-
-          col += 1;
-
-          if c == '\n' {
-            *line_cursor.relative_offset_mut_ref() += 1;
-            col = 0;
-          }
-        }
-      },
-
-      None => {} // No match, do nothing
-    }
-
-    while let Some(c) = src_chars.next() {
-
-      col += 1;
-      if c == '\n' {
-        *line_cursor.relative_offset_mut_ref() += 1;
-        col = 0;
-      }
+    loop {
 
       match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
-        Some((node, offset)) => {
+        Some((node_data, offset)) => {
 
-          nodes_data.push(node);
+          nodes_data.push(node_data);
 
           // Move iterator to start of next possible match
-          for _ in 0..offset - 1 {
-            let c = src_chars.next().unwrap();
-            col += 1;
-            if c == '\n' {
-              *line_cursor.relative_offset_mut_ref() += 1;
-              col = 0;
+          for _ in 0..offset {
+            if let Some(c) = src_chars.next() {
+              col += 1;
+              if c == '\n' { line_cursor.increment_by(1); col = 0; }
+            } else {
+              break
             }
           }
         },
 
-        None => {}
+        // No match.
+        // This should not happen, as plain text should always be usable as a last resort.
+        // Return with no nodes if this should occur.
+        None => { break }
       }
     }
 
-    if doctree.is_some() {
-      let doctree = doctree.unwrap();
+    if let Some(doctree) = doctree {
       return InlineParsingResult::DoctreeAndNodes(doctree, nodes_data)
     } else {
       if nodes_data.is_empty() {
