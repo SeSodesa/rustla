@@ -502,7 +502,7 @@ impl DocTree {
   /// ### has_footnote_label
   /// Checks whether the doctree already contains a hyperlink target with the given label.
   pub fn has_target_label (&self, label_to_be_inspected_for: &str) -> bool {
-    self.hyperref_data.targets.contains_key(label_to_be_inspected_for)
+    self.hyperref_data.shared_targets().contains_key(label_to_be_inspected_for)
   }
 
 
@@ -518,7 +518,7 @@ impl DocTree {
   /// if a label is already in the known labels.
   pub fn add_target (&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
 
-    match self.hyperref_data.targets.insert(label.clone(), id) {
+    match self.hyperref_data.mut_targets().insert(label.clone(), id) {
       Some(node_id) => {
         eprintln!("Found an existing node with the target label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
       }
@@ -541,7 +541,7 @@ impl DocTree {
   /// if a label is already in the known labels.
   pub fn add_reference (&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
 
-    match self.hyperref_data.references.insert(label.clone(), id) {
+    match self.hyperref_data.mut_references().insert(label.clone(), id) {
       Some(node_id) => {
         eprintln!("Found an existing node with the reference label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
       }
@@ -562,35 +562,40 @@ impl DocTree {
   /// ### n_of_symbolic_footnotes
   /// Returns the number of symbolic footnotes that have been entered into the doctree.
   pub fn n_of_symbolic_footnotes (&self) -> u32 {
-    self.hyperref_data.n_of_sym_footnotes
+    self.hyperref_data.n_of_symbolic_footnotes()
   }
 
 
-  /// ### increment_symbolic_footnotes
   /// Increments symbolic footnote counter of the doctree by 1.
   pub fn increment_symbolic_footnotes (&mut self) {
-    self.hyperref_data.n_of_sym_footnotes += 1;
+    self.hyperref_data.increment_symbolic_footnote_counter_by(1);
+  }
+
+
+  /// Increments symbolic footnote reference counter of the doctree by 1.
+  pub fn increment_symbolic_footnote_refs (&mut self) {
+    self.hyperref_data.increment_symbolic_footnote_ref_counter_by(1);
   }
 
 
   /// ### increment_anon_targets
   /// Increases the counter for anonymous targets entered into the doctree thus far by one.
   pub fn increment_anon_targets (&mut self) {
-    self.hyperref_data.n_of_anon_targets += 1;
+    self.hyperref_data.increment_anonymous_target_counter_by(1);
   }
 
 
   /// ### increment_anon_references
   /// Increases the counter for anonymous targets entered into the doctree thus far by one.
   pub fn increment_anon_references (&mut self) {
-    self.hyperref_data.n_of_anon_references += 1;
+    self.hyperref_data.increment_anonymous_target_ref_counter_by(1);
   }
 
   /// ### next_anon_target_n
   /// Increments the anon target counter and returns a copy of the result.
   pub fn next_anon_target_n (&mut self) -> u32 {
     self.increment_anon_targets();
-    self.hyperref_data.n_of_anon_targets
+    self.hyperref_data.n_of_anon_targets()
   }
 
 
@@ -598,7 +603,7 @@ impl DocTree {
   /// Increments the anon reference counter and returns a copy of the result.
   pub fn next_anon_reference_n (&mut self) -> u32 {
     self.increment_anon_references();
-    self.hyperref_data.n_of_anon_references
+    self.hyperref_data.n_of_anon_target_refs()
   }
 
   /// ### next_anon_target_label

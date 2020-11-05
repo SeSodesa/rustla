@@ -14,11 +14,11 @@ pub struct HyperrefData {
 
   /// #### targets
   /// A mapping of foonote labels added to the doctree to node identifiers.
-  pub targets: HashMap<String, NodeId>,
+  targets: HashMap<String, NodeId>,
 
   /// #### references
   /// A map of references to node identifiers entered into the doctree thus far.
-  pub references: HashMap<String, NodeId>,
+  references: HashMap<String, NodeId>,
 
   /// #### n_of_sym_footnotes
   /// A counter of how many symbolic footnotes
@@ -32,15 +32,18 @@ pub struct HyperrefData {
   /// let label_length = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
   /// let symbol_index = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
   /// ```
-  pub n_of_sym_footnotes: u32,
+  n_of_sym_footnotes: u32,
+
+  /// Number of encountered symbolic footnote references
+  n_of_sym_footnote_refs: u32,
 
   /// #### n_of_anon_targets
   /// The number of anonymous targets entered into the document.
-  pub n_of_anon_targets: u32,
+  n_of_anon_targets: u32,
 
   /// #### n_of_anon_refs
   /// The number of anonymous targets entered into the document.
-  pub n_of_anon_references: u32,
+  n_of_anon_references: u32,
 
   /// #### accumulated_internal_target_label
   /// This label is accumulated when an internal hyperlink target is encountered
@@ -61,6 +64,7 @@ impl HyperrefData {
       targets: HashMap::new(),
       references: HashMap::new(),
       n_of_sym_footnotes: 0,
+      n_of_sym_footnote_refs: 0,
       n_of_anon_targets: 0,
       n_of_anon_references: 0,
       accumulated_internal_target_label: Vec::new()
@@ -126,10 +130,77 @@ impl HyperrefData {
   }
 
 
+  /// Returns a copy of the contained symbolic footnote counter
+  pub fn n_of_symbolic_footnotes(&self) -> u32 {
+    self.n_of_sym_footnotes
+  }
+
+
+  /// Returns a copy of the contained symbolic footnote reference counter
+  pub fn n_of_symbolic_footnote_refs(&self) -> u32 {
+    self.n_of_sym_footnote_refs
+  }
+
+
+  /// Returns a copy of the contained anonymous reference target counter
+  pub fn n_of_anon_targets (&self) -> u32 {
+    self.n_of_anon_targets
+  }
+
+
+  /// Returns a copy of the contained anonymous reference target counter
+  pub fn n_of_anon_target_refs (&self) -> u32 {
+    self.n_of_anon_references
+  }
+
+
+  /// Increments the number of symbolic footnotes by a given `amount`.
+  /// Performs an overflow check
+  pub fn increment_symbolic_footnote_counter_by(&mut self, amount: u32) {
+    if let Some(val) = self.n_of_sym_footnotes.checked_add(amount) {
+      self.n_of_sym_footnotes += val;
+    } else {
+      panic!("Tried incrementing symbolic footnote counter {} by {} but overflew. Computer says no...", self.n_of_sym_footnotes, amount)
+    }
+  }
+
+
+  /// Increments the number of symbolic footnote references by a given `amount`.
+  /// Performs an overflow check
+  pub fn increment_symbolic_footnote_ref_counter_by(&mut self, amount: u32) {
+    if let Some(val) = self.n_of_sym_footnotes.checked_add(amount) {
+      self.n_of_sym_footnotes += val;
+    } else {
+      panic!("Tried incrementing symbolic footnote referemce counter {} by {} but overflew. Computer says no...", self.n_of_sym_footnote_refs, amount)
+    }
+  }
+
+
+  /// Increments the number of symbolic footnotes by a given `amount`.
+  /// Performs an overflow check
+  pub fn increment_anonymous_target_counter_by(&mut self, amount: u32) {
+    if let Some(val) = self.n_of_anon_targets.checked_add(amount) {
+      self.n_of_anon_targets += val;
+    } else {
+      panic!("Tried incrementing the number of anonymous reference target counter {} by {} but overflew. Computer says no...", self.n_of_anon_targets, amount)
+    }
+  }
+
+
+  /// Increments the number of symbolic footnote references by a given `amount`.
+  /// Performs an overflow check
+  pub fn increment_anonymous_target_ref_counter_by(&mut self, amount: u32) {
+    if let Some(val) = self.n_of_anon_references.checked_add(amount) {
+      self.n_of_anon_references += val;
+    } else {
+      panic!("Tried incrementing anonymous target reference counter {} by {} but overflew. Computer says no...", self.n_of_anon_references, amount)
+    }
+  }
+
+
   /// ### INTERNAL_TARGET_CONNECTOR
   /// A string for connecting internal target labels into a single String.
-  pub const INTERNAL_TARGET_CONNECTOR: &'static str = "--"; 
-
+  pub const INTERNAL_TARGET_CONNECTOR: &'static str = "--";
 }
 
 
