@@ -499,20 +499,16 @@ fn hyperlink_target_04 () {
 
   match doctree.shared_child(0).shared_data() {
     TreeNodeType::ExternalHyperlinkTarget { target, uri, .. } => {
-      if target != "[[-ANON-LABEL-1-]]" || uri != "https://www.address.fi//" {
-        eprintln!("Target: {:#?}\nURI: {:#?}\n", target, uri);
-        panic!()
-      }
+      assert_eq!(target, "[[-ANON-LABEL-1-]]");
+      assert_eq!(uri, "https://www.address.fi//");
     }
     _ => panic!()
   }
 
   match doctree.shared_child(1).shared_data() {
     TreeNodeType::IndirectHyperlinkTarget { target, indirect_target, .. } => {
-      if target != "[[-ANON-LABEL-2-]]" || indirect_target != "[[-ANON-LABEL-1-]]" {
-        eprintln!("Target: {:#?}\nIndirect target: {:#?}\n", target, indirect_target);
-        panic!()
-      }
+      assert_eq!(target, "[[-ANON-LABEL-2-]]");
+      assert_eq!(indirect_target, "[[-ANON-LABEL-1-]]");
     }
     _ => panic!()
   }

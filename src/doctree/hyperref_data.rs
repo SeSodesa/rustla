@@ -158,7 +158,7 @@ impl HyperrefData {
   /// Performs an overflow check
   pub fn increment_symbolic_footnote_counter_by(&mut self, amount: u32) {
     if let Some(val) = self.n_of_sym_footnotes.checked_add(amount) {
-      self.n_of_sym_footnotes += val;
+      self.n_of_sym_footnotes = val;
     } else {
       panic!("Tried incrementing symbolic footnote counter {} by {} but overflew. Computer says no...", self.n_of_sym_footnotes, amount)
     }
@@ -169,7 +169,7 @@ impl HyperrefData {
   /// Performs an overflow check
   pub fn increment_symbolic_footnote_ref_counter_by(&mut self, amount: u32) {
     if let Some(val) = self.n_of_sym_footnotes.checked_add(amount) {
-      self.n_of_sym_footnotes += val;
+      self.n_of_sym_footnotes = val;
     } else {
       panic!("Tried incrementing symbolic footnote referemce counter {} by {} but overflew. Computer says no...", self.n_of_sym_footnote_refs, amount)
     }
@@ -180,7 +180,7 @@ impl HyperrefData {
   /// Performs an overflow check
   pub fn increment_anonymous_target_counter_by(&mut self, amount: u32) {
     if let Some(val) = self.n_of_anon_targets.checked_add(amount) {
-      self.n_of_anon_targets += val;
+      self.n_of_anon_targets = val;
     } else {
       panic!("Tried incrementing the number of anonymous reference target counter {} by {} but overflew. Computer says no...", self.n_of_anon_targets, amount)
     }
@@ -191,7 +191,7 @@ impl HyperrefData {
   /// Performs an overflow check
   pub fn increment_anonymous_target_ref_counter_by(&mut self, amount: u32) {
     if let Some(val) = self.n_of_anon_references.checked_add(amount) {
-      self.n_of_anon_references += val;
+      self.n_of_anon_references = val;
     } else {
       panic!("Tried incrementing anonymous target reference counter {} by {} but overflew. Computer says no...", self.n_of_anon_references, amount)
     }
