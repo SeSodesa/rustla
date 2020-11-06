@@ -431,9 +431,9 @@ impl Parser {
     loop {
 
       match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
-        Some((node_data, offset)) => {
+        Some((mut node_data, offset)) => {
 
-          nodes_data.push(node_data);
+          nodes_data.append(&mut node_data);
 
           // Move iterator to start of next possible match
           for _ in 0..offset {
@@ -469,7 +469,7 @@ impl Parser {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (opt_doctree_ref: Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(TreeNodeType, usize)> {
+  fn match_inline_str <'chars> (opt_doctree_ref: Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(Vec<TreeNodeType>, usize)> {
 
     let src_str = chars_iter.as_str();
 
