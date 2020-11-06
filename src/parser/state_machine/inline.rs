@@ -133,10 +133,20 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let back_role = if let Some(role) = captures.name("back_role") { role.as_str() } else { "" };
   let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
 
-  if !front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
+  let whole_match_len = whole_match.chars().count();
+  let lookbehind_len = lookbehind_str.chars().count();
+  let front_role_marker_len = front_role_marker.chars().count();
+  let front_role_len = front_role.chars().count();
+  let markup_start_len = markup_start_str.chars().count();
+  let content_len = content.chars().count();
+  let markup_end_len = markup_end_str.chars().count();
+  let back_role_marker_len = back_role_marker.chars().count();
+  let back_role_len = back_role.chars().count();
+  let lookahead_len = lookahead_str.chars().count();
 
-    let lookbehind_char_count = lookbehind_str.chars().count();
-    let quoted_start_char_count = 2 * lookbehind_char_count + ":".chars().count();
+  if ! front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
+
+    let quoted_start_char_count = 2 * lookbehind_len + ":".chars().count();
 
     let quoted_start_string: String = captures
       .get(0)
@@ -148,10 +158,9 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
     return (vec![TreeNodeType::Text { text: quoted_start_string }], quoted_start_char_count)
 
-  } else if quotation_matches(lookbehind_str, content) {
+  } else if front_role_marker.is_empty() && quotation_matches(lookbehind_str, content) {
 
-    let lookbehind_char_count = lookbehind_str.chars().count();
-    let quoted_start_char_count = 2 * lookbehind_char_count + markup_start_str.chars().count();
+    let quoted_start_char_count = lookbehind_len + markup_start_len;
 
     let quoted_start_string: String = captures
       .get(0)
@@ -225,7 +234,6 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     }
     "pep-reference" | "PEP" => {
       // PEP reference strings are 4 digits long
-      let content_len = content.chars().count();
       let zeroes = "0".repeat(4 - content_len);
       let pep_ref = format!("https://www.python.org/peps/pep-{pep_num}.html", pep_num = zeroes + content);
       let displayed_text = "PEP ".to_string() + content;
@@ -259,9 +267,9 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
     _ => { // Unknown role into literal
       let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
       let match_string: String = whole_match
-      .chars()
-      .take(match_len)
-      .collect();
+        .chars()
+        .take(match_len)
+        .collect();
       return (vec![TreeNodeType::Literal { text: match_string }], match_len)
     }
   }
