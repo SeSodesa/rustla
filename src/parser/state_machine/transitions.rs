@@ -645,7 +645,7 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
   (?P<content>
     [\S&&[^\\]]|\S.*?[\S&&[^\\]]
   )
-  (?: # Optional embedded URI
+  (?P<embeded_uri_container>
     \ +#space character one or more times
     <
     (?P<embedded_uri>
