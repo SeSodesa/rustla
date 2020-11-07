@@ -238,54 +238,43 @@ maybe a -simple-reference__- as well.
   }
 
   if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(10).shared_data() {
-    assert_eq!(text, "\"");
+    assert_eq!(text, "\",");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(11).shared_data() {
-    assert_eq!(text, ",");
-  } else {
-    panic!()
-  }
-
-  if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(12).shared_data() {
+  if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(11).shared_data() {
     assert_eq!(text, "\n");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(13).shared_data() {
+  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(12).shared_data() {
     assert_eq!(text, "<");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Emphasis { text } = doctree.shared_child(0).shared_child(14).shared_data() {
+  if let TreeNodeType::Emphasis { text } = doctree.shared_child(0).shared_child(13).shared_data() {
     assert_eq!(text, "text in italics");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(15).shared_data() {
-    assert_eq!(text, ">");
+  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(14).shared_data() {
+    assert_eq!(text, ">,");
   } else {
     panic!()
   }
+
 
   if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(16).shared_data() {
-    assert_eq!(text, ",");
-  } else {
-    panic!()
-  }
-
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(18).shared_data() {
     assert_eq!(text, "(");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(19).shared_data() {
+  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(17).shared_data() {
     assert_eq!(displayed_text, "a phrase reference with automatic labeling");
     assert_eq!(target_label, "[[-ANON-LABEL-1-]]");
     assert_eq!(*has_embedded_uri, false);
@@ -293,19 +282,19 @@ maybe a -simple-reference__- as well.
     panic!()
   }
 
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(20).shared_data() {
+  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(18).shared_data() {
     assert_eq!(text, "),");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(26).shared_data() {
+  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(24).shared_data() {
     assert_eq!(text, "-");
   } else {
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(27).shared_data() {
+  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(25).shared_data() {
     assert_eq!(displayed_text, "simple-reference");
     assert_eq!(target_label, "[[-ANON-LABEL-2-]]");
     assert_eq!(*has_embedded_uri, false);
@@ -313,7 +302,7 @@ maybe a -simple-reference__- as well.
     panic!()
   }
   
-  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(28).shared_data() {
+  if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(26).shared_data() {
     assert_eq!(text, "-");
   } else {
     panic!()
