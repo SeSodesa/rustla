@@ -52,10 +52,15 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   let content_string = unicode_text_to_latex(content);
 
+  let mut node_vec = Vec::<TreeNodeType>::new();
+  let mut char_count: usize = 0;
+
   if quotation_matches(lookbehind_str, content) {
 
-    let quoted_start_char_count = lookbehind_str.chars().count() + markup_start.chars().count()
-      + content.chars().count() + markup_end.chars().count();
+    let quoted_start_char_count = lookbehind_str.chars().count()
+      + markup_start.chars().count()
+      + content.chars().count()
+      + markup_end.chars().count();
 
     let quoted_start_string: String = captures
       .get(0)
@@ -66,25 +71,28 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
       .collect::<String>();
 
     return (vec![TreeNodeType::Text { text: unicode_text_to_latex(quoted_start_string.as_str())}], quoted_start_char_count)
-
-  } else if ! lookbehind_str.is_empty() {
-
-    return (vec![TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}], lookbehind_str.chars().count())
-
-  } else {
-
-    let node_data = match pattern_name {
-      PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: content_string},
-      PatternName::Emphasis => TreeNodeType::Emphasis{text: content_string},
-      PatternName::Literal => TreeNodeType::Literal{text: content_string},
-      PatternName::InlineTarget => TreeNodeType::InlineTarget{target_label: content_string},
-      _ => panic!("No such paired delimiter type!")
-    };
-  
-    let match_len = (lookbehind_str.to_string() + markup_start + content + markup_end).chars().count();
-  
-    (vec![node_data], match_len)
   }
+
+  if ! lookbehind_str.is_empty() {
+
+    char_count += lookbehind_str.chars().count();
+    node_vec.push(TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)});
+
+  }
+
+  char_count += markup_start.chars().count()
+    + content.chars().count()
+    + markup_end.chars().count();
+  let markup_data = match pattern_name {
+    PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis{text: content_string},
+    PatternName::Emphasis => TreeNodeType::Emphasis{text: content_string},
+    PatternName::Literal => TreeNodeType::Literal{text: content_string},
+    _ => panic!("No such simple paired delimiter type!")
+  };
+
+  node_vec.push(markup_data);
+
+  (node_vec, char_count)
 }
 
 
@@ -125,6 +133,16 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
   let back_role_len = back_role.chars().count();
   let lookahead_len = lookahead_str.chars().count();
 
+  if ! front_role_marker.is_empty() && ! back_role_marker.is_empty() {
+    println!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
+    let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
+    let match_string: String = whole_match
+    .chars()
+    .take(match_len)
+    .collect();
+    return (vec![TreeNodeType::Literal { text: match_string }], match_len)
+  }
+
   if ! front_role_marker.is_empty() && quotation_matches(lookbehind_str, front_role) {
 
     let quoted_start_char_count = 2 * lookbehind_len + ":".chars().count();
@@ -155,16 +173,6 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 
   } else if ! lookbehind_str.is_empty() {
     return (vec![TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}], lookbehind_str.chars().count())
-  }
-
-  if ! front_role_marker.is_empty() && ! back_role_marker.is_empty() {
-    println!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
-    let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
-    let match_string: String = whole_match
-    .chars()
-    .take(match_len)
-    .collect();
-    return (vec![TreeNodeType::Literal { text: match_string }], match_len)
   }
 
   let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
