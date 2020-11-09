@@ -280,7 +280,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
           doctree: tree
         }
       };
-  
+
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Footnote, section_level, false) {
         Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
           (doctree, offset, state_stack)
@@ -293,7 +293,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         },
         _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
       };
-  
+
       return TransitionResult::Success {
         doctree: doctree,
         next_states: Some(state_stack),
@@ -370,7 +370,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
           doctree: tree
         }
       };
-  
+
       let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Citation, section_level,false) {
         Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
           (doctree, offset, state_stack)
@@ -383,9 +383,9 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
         },
         _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
       };
-  
+
       tree_wrapper = doctree;
-  
+
       return TransitionResult::Success {
         doctree: tree_wrapper,
         next_states: Some(state_stack),
@@ -488,11 +488,9 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
         }
       }
 
-      let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(doctree), line_cursor) {
+      let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(&mut doctree), line_cursor) {
         
-        InlineParsingResult::DoctreeAndNodes(altered_doctree, nodes_data) => {
-
-          doctree = altered_doctree;
+        InlineParsingResult::Nodes(nodes_data) => {
 
           if nodes_data.len() != 1 {
             return TransitionResult::Failure {
@@ -605,177 +603,177 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
       match detected_directive_label.as_str() {
 
         "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
-  
+
           Parser::parse_standard_admonition(src_lines, base_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
         }
-  
+
         "admonition" => {
-  
+
           Parser::parse_generic_admonition(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_first_indent))
         }
-  
+
         "image" => {
-  
+
           Parser::parse_image(src_lines, doctree, line_cursor, empty_after_marker, Some(detected_first_indent))
         }
-  
+
         "figure" => {
-  
+
           Parser::parse_figure(src_lines, doctree, line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
-  
+
         "topic" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "sidebar" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "line-block" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "parsed-literal" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
-  
+
+
         "code" => {
-  
+
           Parser::parse_code(src_lines, doctree, line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
         }
-  
-  
+
+
         "math" => {
           Parser::parse_math_block(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, *section_level)
         }
-  
+
         "rubric" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "epigraph" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "highlights" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "pull-quote" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "compound" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "container" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "table" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "csv-table" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "list-table" => {
 
           Parser::parse_list_table(src_lines, doctree,  line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), body_indent, *section_level)
         }
-  
+
         // DOCUMENT PARTS
-  
+
         "contents" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "sectnum" | "section-numbering" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "header" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "footer" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "target-notes" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "footnotes" => {
-  
+
           unimplemented!("Footnotes (plural) directive is mentioned in the rST specification but is not implemented yet.")
         }
-  
+
         "citations" => {
-  
+
           unimplemented!("Citations (plural) directive is mentioned in the rST specification but is not implemented yet.")
         }
-  
+
         "meta" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         // MISCELLANEOUS
-  
+
         "include" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "raw" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "class" => {
-  
+
           Parser::parse_class(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker, *section_level)
         }
-  
+
         "role" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "default-role" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "title" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "restructuredtext-test-directive" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
 
@@ -849,96 +847,96 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
 
-  
+
         // A+-SPECIFIC DIRECTIVES
-  
+
         "questionnaire" => {
-  
+
           Parser::parse_aplus_questionnaire(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent)
         }
-  
+
         "submit" => {
-  
+
           Parser::parse_aplus_submit(src_lines, doctree, line_cursor, detected_first_indent, body_indent, empty_after_marker)
         }
-  
+
         "ae-input" => {
-  
+
           Parser::parse_aplus_active_element_input(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent)
         }
-  
+
         "ae-output" => {
-  
+
           Parser::parse_aplus_active_element_output(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent)
         }
-  
+
         "hidden_block" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "point-of-interest" => {
-  
+
           Parser::parse_aplus_point_of_interest(src_lines, doctree, line_cursor, base_indent, empty_after_marker, detected_first_indent, body_indent, *section_level)
         }
-  
+
         "annotated" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "lineref-code-block" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "repl-res-count-reset" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "acos-submit" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "div" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "styled-topic" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         // A+ MEDIA DIRECTIVES
-  
+
         "story" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "jsvee" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "youtube" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "local-video" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         "embedded-page" => {
-  
+
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
-  
+
         _ => Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
       }
     }
@@ -1094,7 +1092,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
   let next_line = src_lines.get(line_cursor.relative_offset() + 1);
-  
+
   if next_line.is_some() {
 
     let next_line_str = next_line.unwrap();
@@ -1391,7 +1389,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
   let detected_line = captures.get(1).unwrap().as_str();
   let detected_line_char = detected_line.chars().next().unwrap();
   let detected_line_length = detected_line.trim_end().chars().count();
-  
+
   let current_line = line_cursor.relative_offset();
 
   let previous_line = if let Some(num) = usize::checked_sub(current_line, 1) {
@@ -1428,38 +1426,38 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             doctree: tree
           }
         };
-  
+
         return TransitionResult::Success {
           doctree: doctree,
           next_states: None,
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
         }
-  
+
       } else if TEXT_RE.is_match(n_line) {
         // A possible section title.
         // Check next line for line pattern and its length.
-  
+
         if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
-  
+
           if let Some(capts) = LINE_RE.captures(next_next_line) {
-  
+
             let next_line_len = n_line.trim_end().chars().count(); // title text line
             let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
             let next_next_line_len = next_next_line.trim_end().chars().count();
-  
+
             if detected_line_char == next_next_line_char && detected_line_length == next_next_line_len && next_line_len <= detected_line_length {
               // generate a section.
-  
+
               let section_line_style = SectionLineStyle::OverAndUnder(detected_line_char);
               let section_data = doctree.new_section_data(n_line.trim(), section_line_style);
-  
+
               if let TreeNodeType::Section { level, .. } = section_data {
-  
+
                 let detected_level = level;
-  
+
                 match doctree.shared_data() {
-  
+
                   TreeNodeType::Document { .. } => {
                     doctree = match doctree.push_data_and_focus(section_data) {
                       Ok(tree) => tree,
@@ -1470,9 +1468,9 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                     };
                     *section_level = detected_level;
                   }
-  
+
                   TreeNodeType::Section { level, .. } => {
-  
+
                     if detected_level <= *level {
                       *section_level = *level;
                       doctree = doctree.focus_on_parent();
@@ -1493,14 +1491,14 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       };
                     }
                   }
-  
+
                   _ => {
                     doctree = doctree.focus_on_parent();
-  
+
                     if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
                       *section_level = *level;
                     }
-  
+
                     return TransitionResult::Success {
                       doctree: doctree,
                       next_states: None,
@@ -1521,28 +1519,28 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                   doctree: doctree
                 }
               }
-  
+
             } else {
               return TransitionResult::Failure {
                 message: format!("Found a section with unmatching over- and underline lengths or characters on line {}. Computer says no...", line_cursor.sum_total()),
                 doctree: doctree
               }
             }
-  
+
           } else {
             return TransitionResult::Failure {
               message: format!("Found section-like construct without underline on line {}. Computer says no...", line_cursor.sum_total()),
               doctree: doctree
             }
           }
-  
+
         } else {
           return TransitionResult::Failure {
             message: format!("Found something akin to an section title but no underline at the end of input on line {}. Computer says no...", line_cursor.sum_total()),
             doctree: doctree
           }
         }
-  
+
       } else if captures.get(0).unwrap().as_str().trim() == "::" {
           // Empty paragraph
           return parse_paragraph(src_lines, base_indent, line_cursor, doctree, 0)
@@ -1784,7 +1782,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
 
       let relative_indent = detected_indent - base_indent;
-    
+
       let mut block = match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, true, Some(relative_indent)) {
         Ok((lines, line_offset)) => {
           lines.join("\n").trim_end().to_string()
@@ -1796,7 +1794,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
           }
         }
       };
-  
+
       lazy_static! {
         /// There are two kinds of literal block indicators:
         /// 1. preceded by whitespace
@@ -1805,16 +1803,16 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
         static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::$").unwrap();
       }
-  
+
       let literal_block_next: bool = if let Some(capts) = LITERAL_BLOCK_INDICATOR.captures(block.as_str()) {
-  
+
         // Remove literal block indicator from paragraph
         let indicator_len = if capts.get(1).unwrap().as_str().trim().is_empty() {
           "::".chars().count()
         } else {
           ":".chars().count()
         };
-  
+
         for _ in 0..indicator_len {
           if let None = block.pop() {
             return TransitionResult::Failure { // This should not ever be triggered
@@ -1825,37 +1823,37 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         }
         true
       } else { false };
-    
+
       // Pass text to inline parser as a string
-      doctree = if let InlineParsingResult::DoctreeAndNodes(mut returned_doctree, nodes_data) = Parser::inline_parse(block, Some(doctree), line_cursor) {
-  
-        if !nodes_data.is_empty() {
+      doctree = match Parser::inline_parse(block, Some(&mut doctree), line_cursor) {
 
-          returned_doctree = match returned_doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
-            Ok(tree) => tree,
-            Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree
-            }
-          };
+        InlineParsingResult::Nodes(nodes_data) => {
+          if !nodes_data.is_empty() {
 
-          for data in nodes_data {
-            returned_doctree = match returned_doctree.push_data(data) {
+            doctree = match doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree
+            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: tree
               }
             };
+
+            for data in nodes_data {
+              doctree = match doctree.push_data(data) {
+                Ok(tree) => tree,
+                Err(tree) => return TransitionResult::Failure {
+            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: tree
+                }
+              };
+            }
           }
+
+          doctree.focus_on_parent()
         }
-  
-        returned_doctree.focus_on_parent()
-  
-      } else {
-        panic!("Doctree was lost inside inline parsing method when parsing a paragraph starting on line {}. Computer says no...", line_cursor.sum_total())
+        InlineParsingResult::NoNodes => doctree
       };
-  
+
       if literal_block_next {
         return TransitionResult::Success {
           doctree: doctree,

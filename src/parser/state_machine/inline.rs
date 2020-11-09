@@ -40,7 +40,7 @@ use crate::common::normalize_refname;
 /// 
 /// Parses inline text elements that have identical opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
-pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn paired_delimiter (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
   
   // Destructuring the regex parts...
 
@@ -99,7 +99,7 @@ pub fn paired_delimiter (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 /// ### whitespace
 /// 
 /// Parses inline whitespace
-pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn whitespace(opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let content = captures.get(0).unwrap();
   let node_data = TreeNodeType::WhiteSpace{text: String::from(content.as_str())};
@@ -109,7 +109,7 @@ pub fn whitespace(opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternNa
 }
 
 
-pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -258,7 +258,7 @@ pub fn interpreted_text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 /// ### simple_ref
 /// 
 /// Parses simple hyperlink references.
-pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn simple_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let content = captures.name("content").unwrap().as_str();
@@ -305,7 +305,7 @@ pub fn simple_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 /// ### phrase_ref
 /// 
 /// Parses phrase references.
-pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -375,7 +375,7 @@ pub fn phrase_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternN
 /// ### footnote_ref
 /// 
 /// Parses footnote references.
-pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn footnote_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
@@ -408,7 +408,7 @@ pub fn footnote_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
 /// ### citation_ref
 /// 
 /// Parses citation references.
-pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn citation_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
@@ -442,7 +442,7 @@ pub fn citation_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Patter
 /// 
 /// Parses inline subsitution references. Also adds hyperlink information to the reference,
 /// if the matched string ended with a `__?`.
-pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn substitution_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let markup_start_str = captures.name("markup_start").unwrap().as_str();
@@ -507,7 +507,7 @@ pub fn substitution_ref (opt_doctree_ref: Option<&mut DocTree>, pattern_name: Pa
 /// Parses inline URIs. These are split into general URIs and standalone email addresses.
 /// These two are differentiate by whether the URI starts with a protocol scheme,
 /// such as `https://`.
-pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn uri (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let whole_match = captures.get(0).unwrap().as_str();
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -574,7 +574,7 @@ pub fn uri (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, ca
 /// This function is invoked when no other inline pattern matched.
 /// Eats up any consequent non-whitespace characters as a single
 /// word of "text".
-pub fn text (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+pub fn text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
   let content = captures.get(0).unwrap().as_str();
   let match_len = content.chars().count();

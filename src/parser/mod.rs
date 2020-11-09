@@ -138,8 +138,15 @@ impl Parser {
       // eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
 
       if !line_changed && line_not_changed_count >= 10 {
-        eprintln!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total());
-        break
+        eprintln!();
+        return ParsingResult::Failure {
+          message: format!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total()),
+          doctree: if let Some(doctree) = self.doctree.take() {
+            doctree
+          } else {
+            panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
+          }
+        }
       }
 
       line_changed = false;
@@ -187,7 +194,16 @@ impl Parser {
             }
           }
         }
-      } else { break };
+      } else {
+        return ParsingResult::EmptyStateStack {
+          state_stack: Vec::new(),
+          doctree: if let Some(doctree) = self.doctree.take() {
+            doctree
+          } else {
+            panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
+          }
+        };
+      };
 
       // Iterating over a clone of the transitions
       for (pattern_name, regex, method) in latest_state_transitions.iter() {
@@ -289,6 +305,9 @@ impl Parser {
             }
 
             TransitionResult::Failure {message, doctree} => {
+
+              eprintln!("{:#?}", message);
+
               return ParsingResult::Failure {
                 message: message,
                 doctree: doctree
@@ -327,8 +346,6 @@ impl Parser {
         self.state_stack.push(State::EOF);
       }
     };
-
-    ParsingResult::EOF { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
   }
 
 
@@ -420,7 +437,7 @@ impl Parser {
   /// ### inline_parse
   /// A function that parses inline text. Returns the nodes generated,
   /// if there are any.
-  fn inline_parse (inline_src_block: String, mut doctree: Option<DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
+  fn inline_parse (inline_src_block: String, mut doctree: Option<&mut DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
 
     let mut nodes_data: Vec<TreeNodeType> = Vec::new();
 
@@ -430,7 +447,7 @@ impl Parser {
 
     loop {
 
-      match Parser::match_inline_str(doctree.as_mut(), &src_chars) {
+      match Parser::match_inline_str(&mut doctree, &src_chars) {
         Some((mut node_data, offset)) => {
 
           nodes_data.append(&mut node_data);
@@ -453,14 +470,10 @@ impl Parser {
       }
     }
 
-    if let Some(doctree) = doctree {
-      return InlineParsingResult::DoctreeAndNodes(doctree, nodes_data)
+    if nodes_data.is_empty() {
+      return InlineParsingResult::NoNodes
     } else {
-      if nodes_data.is_empty() {
-        return InlineParsingResult::NoNodes
-      } else {
-        return InlineParsingResult::Nodes(nodes_data)
-      }
+      return InlineParsingResult::Nodes(nodes_data)
     }
   }
 
@@ -469,7 +482,7 @@ impl Parser {
   /// a given `Chars` iterator for a regex match and executing
   /// the corresponding parsing method. Returns the `Option`al
   /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (opt_doctree_ref: Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(Vec<TreeNodeType>, usize)> {
+  fn match_inline_str <'chars> (opt_doctree_ref: &mut Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(Vec<TreeNodeType>, usize)> {
 
     let src_str = chars_iter.as_str();
 

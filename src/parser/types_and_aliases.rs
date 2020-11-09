@@ -37,7 +37,7 @@ pub type UncompiledTransition  = (PatternName, &'static str, TransitionMethod);
 /// Returns a node a length of the match, so that the inline parser
 /// could determine how many characters to eat off the start of the
 /// source string.
-pub type InlineParsingMethod = fn (opt_doctree_ref: Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize);
+pub type InlineParsingMethod = fn (opt_doctree_ref: &mut Option<&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize);
 
 
 /// ### InlineTransition
@@ -99,11 +99,6 @@ pub enum LineAdvance {
 /// An enumeration of the different ways an inline parsing function might succeed or fail.
 pub enum InlineParsingResult {
 
-  /// #### DoctreeAndNodes
-  /// Returned when a document tree was handed over to the inline parsing function for modification purposes
-  /// and no errors occurred.
-  DoctreeAndNodes (DocTree, Vec<TreeNodeType>),
-  
   /// #### Nodes
   /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
   /// the data of the generated nodes is given to the caller stored in a vector.
