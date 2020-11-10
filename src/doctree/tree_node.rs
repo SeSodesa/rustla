@@ -92,6 +92,22 @@ impl TreeNode {
   }
 
 
+  /// Removes the last child from own children and returns it in a `Result`, if successful.
+  /// If no whilc is found, returns `Err(())`.
+  pub fn pop_child (&mut self) -> Option<Self> {
+
+    if let Some(children) = self.mut_children() {
+      if let Some(child) = children.pop() {
+        Some(child)
+      } else {
+        None
+      }
+    } else {
+      None
+    }
+  }
+
+
   /// ### append_children
   /// Appends multiple children to `self.children`.
   pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {

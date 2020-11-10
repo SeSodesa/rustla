@@ -265,6 +265,16 @@ impl DocTree {
   }
 
 
+  /// Removes the last child of the  current node and returns in an `Option`.
+  pub fn pop_child (&mut self) -> Option<TreeNode> {
+
+    match self.tree.pop_child() {
+      Some(node) => Some(node),
+      None => None
+    }
+  }
+
+
   /// ### node_specific_actions
   /// Performs any node specific actions to the doctree based on given node data.
   /// Returns an optional internal target label

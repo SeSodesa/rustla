@@ -96,6 +96,46 @@ pub fn paired_delimiter (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 }
 
 
+/// Parses inline reference targets. These do not actually create new nodes,
+/// but push new labels into the doctree's inline target stack.
+pub fn inline_target (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
+  
+  let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
+  let markup_start = captures.name("markup_start").unwrap().as_str();
+  let content = captures.name("content").unwrap().as_str();
+  let markup_end = captures.name("markup_end").unwrap().as_str();
+  let lookahead_str = if let Some(lookahead) = captures.name("lookahead") { lookahead.as_str() } else { "" };
+
+  let lookbehind_len = lookbehind_str.chars().count();
+  let markup_start_len = markup_start.chars().count();
+  let content_len = content.chars().count();
+  let markup_end_len = markup_end.chars().count();
+  let lookahead_len = lookbehind_str.chars().count();
+
+  let mut node_vec = Vec::<TreeNodeType>::new();
+  let mut char_count = 0usize;
+
+  if ! lookbehind_str.is_empty() {
+    let lookbehind_node = TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str) };
+    node_vec.push(lookbehind_node);
+    char_count += lookbehind_len;
+  }
+
+  if let Some(doctree) = opt_doctree_ref {
+
+    let normalized_label = normalize_refname(content);
+    doctree.push_to_internal_target_stack(normalized_label);
+
+  } else {
+    eprintln!("No doctree given so cannot process a new internal target \"{}{}{}\"...", markup_start, content, markup_end);
+  }
+
+  char_count += markup_start_len + content_len + markup_end_len;
+  
+  (node_vec, char_count)
+}
+
+
 /// ### whitespace
 /// 
 /// Parses inline whitespace

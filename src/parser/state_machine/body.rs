@@ -489,7 +489,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
       }
 
       let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(&mut doctree), line_cursor) {
-        
+
         InlineParsingResult::Nodes(nodes_data) => {
 
           if nodes_data.len() != 1 {
@@ -989,7 +989,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
           doctree: doctree
         }
       };
-    
+
       let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
       let empty_after_marker = line_after_marker.as_str().trim().is_empty();
 
@@ -998,7 +998,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       } else {
         if !empty_after_marker { false } else { true }
       };
-    
+
       if is_empty_comment {
         doctree = match doctree.push_data(TreeNodeType::Comment { text: None }) {
           Ok(tree) => tree,
@@ -1153,7 +1153,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
           _ => {
             doctree = doctree.focus_on_parent();
-            
+
             if let TreeNodeType::Section{level, .. } = doctree.shared_data() {
               *section_level = *level;
             }
@@ -1824,34 +1824,41 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         true
       } else { false };
 
+      doctree = match doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
+        Ok(tree) => tree,
+        Err(tree) => return TransitionResult::Failure {
+          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+          doctree: tree
+        }
+      };
+
       // Pass text to inline parser as a string
       doctree = match Parser::inline_parse(block, Some(&mut doctree), line_cursor) {
 
         InlineParsingResult::Nodes(nodes_data) => {
-          if !nodes_data.is_empty() {
 
-            doctree = match doctree.push_data_and_focus(TreeNodeType::Paragraph { indent: detected_indent }) {
+          for data in nodes_data {
+            doctree = match doctree.push_data(data) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
-            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-            doctree: tree
+                message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: tree
               }
             };
-
-            for data in nodes_data {
-              doctree = match doctree.push_data(data) {
-                Ok(tree) => tree,
-                Err(tree) => return TransitionResult::Failure {
-            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-            doctree: tree
-                }
-              };
-            }
           }
 
           doctree.focus_on_parent()
         }
-        InlineParsingResult::NoNodes => doctree
+        InlineParsingResult::NoNodes => {
+          doctree = doctree.focus_on_parent();
+          match doctree.pop_child() {
+            Some(child) => {
+              eprintln!("Removing an empty paragraph from the tree on line {}...", line_cursor.sum_total());
+            },
+            None => {}
+          };
+          doctree
+        }
       };
 
       if literal_block_next {

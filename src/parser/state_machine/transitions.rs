@@ -352,7 +352,7 @@ impl State {
     (PatternName::StrongEmphasis, STRONG_EMPH_PATTERN, inline::paired_delimiter),
     (PatternName::Emphasis, EMPH_PATTERN, inline::paired_delimiter),
     (PatternName::Literal, LITERAL_PATTERN, inline::paired_delimiter),
-    (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::paired_delimiter),
+    (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::inline_target),
     (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::phrase_ref),
     (PatternName::Interpreted , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
     (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::footnote_ref),

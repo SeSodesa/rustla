@@ -44,6 +44,15 @@ impl TreeZipper {
   }
 
 
+  /// Removes the last child node from the contained node and returns it in an `Option`.
+  pub fn pop_child (&mut self) -> Option<TreeNode> {
+    match self.node.pop_child() {
+      Some(child) => Some(child),
+      None => None
+    }
+  }
+
+
   /// ### append_children
   /// Adds a sequence of children to `self.node.children`.
   pub fn append_children (&mut self, children: &mut Vec<TreeNode>) {
