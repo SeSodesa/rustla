@@ -249,7 +249,7 @@ impl TreeNodeType {
         format!("\\item ")
       },
       Self::Caption { indent } => {
-        format!(r"\caption{{")
+        format!(r"\captionof{{figure}}{{")
       },
       Self::Citation { body_indent, label } => {
         todo!()
