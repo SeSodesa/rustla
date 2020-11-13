@@ -273,16 +273,8 @@ impl Parser {
   }
 
 
-  pub fn parse_figure (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+  pub fn parse_figure (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, content_indent: usize, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
 
-    // Fetch content indentation and option|content offset from directive marker line
-    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => return TransitionResult::Failure {
-        message: format!("Figure on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
     let argument = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       arg
     } else {
@@ -377,32 +369,32 @@ impl Parser {
     // interpret it as a missing caption and move on to
     // parsing figure legend contents.
 
-    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
-      (lines, offset)
-    } else {
-      return TransitionResult::Failure {
-        message: format!("Could not read legend contents of a figure on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+    // let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
+    //   (lines, offset)
+    // } else {
+    //   return TransitionResult::Failure {
+    //     message: format!("Could not read legend contents of a figure on line {}. Computer says no...", line_cursor.sum_total()),
+    //     doctree: doctree
+    //   }
+    // };
 
-    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(State::Figure), section_level).parse() {
-      ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
-      ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
-      ParsingResult::Failure { message, doctree } => {
-        eprintln!("Error when parsing a figure on line {}: {}", line_cursor.sum_total(), message);
-        return TransitionResult::Failure {
-          message: message,
-          doctree: doctree
-        }
-      }
-    };
+    // let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(State::Figure), section_level).parse() {
+    //   ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
+    //   ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
+    //   ParsingResult::Failure { message, doctree } => {
+    //     eprintln!("Error when parsing a figure on line {}: {}", line_cursor.sum_total(), message);
+    //     return TransitionResult::Failure {
+    //       message: message,
+    //       doctree: doctree
+    //     }
+    //   }
+    // };
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(nested_state_stack),
+      next_states: Some(vec![State::Figure]),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(offset),
+      line_advance: LineAdvance::None,
     }
   }
 

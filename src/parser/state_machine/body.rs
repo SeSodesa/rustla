@@ -619,7 +619,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "figure" => {
 
-          Parser::parse_figure(src_lines, doctree, line_cursor, base_indent, empty_after_marker, Some(detected_first_indent), *section_level)
+          Parser::parse_figure(src_lines, doctree, line_cursor, base_indent, empty_after_marker, body_indent,Some(detected_first_indent), *section_level)
         }
 
         "topic" => {

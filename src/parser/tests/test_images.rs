@@ -90,6 +90,7 @@ fn figure_01 () {
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
   doctree = parser.parse().unwrap_tree();
+  doctree = doctree.perform_restructuredtext_transforms();
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
@@ -105,7 +106,7 @@ fn figure_01 () {
 
   // This node is transformed into a caption during the transdormation phase of the doctree.
   match doctree.shared_child(0).shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
+    TreeNodeType::Caption { .. } => {}
     _ => panic!()
   }
 
