@@ -495,6 +495,7 @@ lazy_static! {
     map.insert('~', r#"\textasciitilde "#);
     // map.insert('@', r#"\@ "#);
     map.insert('#', r#"\#"#);
+    map.insert('&', r#"\&"#);
 
     map
   };

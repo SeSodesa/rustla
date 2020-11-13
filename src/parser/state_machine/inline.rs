@@ -598,7 +598,7 @@ pub fn uri (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternNa
 
     // If URI is valid, return it as URI, else as text
     if is_valid {
-      TreeNodeType::AbsoluteURI{text: String::from(content)}
+      TreeNodeType::AbsoluteURI{text: unicode_text_to_latex(content)}
     } else {
       TreeNodeType::Text{text: String::from(content)}
     }

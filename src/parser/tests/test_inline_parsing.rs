@@ -176,7 +176,7 @@ fn inline_parse_05 () {
     if let TreeNodeType::AbsoluteURI{text} = &nodes[10] {
       text.as_str()
     } else {panic!("Absolute URI not found!")},
-    "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top"
+    "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking\\&order=newest\\#top"
   );
 
 }
