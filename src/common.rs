@@ -152,6 +152,14 @@ pub enum PatternName {
 }
 
 
+/// An enumeration fo the different A+ questionnaire types. This is used the differentiate
+/// between questionnaire hint output formats, among other things.
+#[derive(Debug)]
+pub enum AplusQuestionnaireType {
+  PickOne, PickAny, FreeText
+}
+
+
 /// ### SectionLineStyle
 /// A section can be underlined, or over- and underlined with a certain character.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]

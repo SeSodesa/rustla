@@ -991,6 +991,7 @@ pub enum TreeNodeType {
   AplusQuestionnaireHint {
     label: String,
     show_when_not_selected: bool,
+    question_type: crate::common::AplusQuestionnaireType
   },
 
   /// #### AplusSubmit

@@ -1497,7 +1497,8 @@ impl Parser {
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
         label: label,
-        show_when_not_selected: show_not_answered.is_some()
+        show_when_not_selected: show_not_answered.is_some(),
+        question_type: crate::common::AplusQuestionnaireType::PickOne
       };
 
       doctree = match doctree.push_data_and_focus(hint_node) {
@@ -1823,7 +1824,8 @@ impl Parser {
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
         label: label,
-        show_when_not_selected: show_not_answered.is_some()
+        show_when_not_selected: show_not_answered.is_some(),
+        question_type: crate::common::AplusQuestionnaireType::PickAny
       };
 
       doctree = match doctree.push_data_and_focus(hint_node) {
@@ -2088,7 +2090,8 @@ impl Parser {
 
       let hint_node = TreeNodeType::AplusQuestionnaireHint {
         label: label,
-        show_when_not_selected: show_not_answered.is_some()
+        show_when_not_selected: show_not_answered.is_some(),
+        question_type: crate::common::AplusQuestionnaireType::FreeText
       };
 
       doctree = match doctree.push_data_and_focus(hint_node) {

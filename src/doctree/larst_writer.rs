@@ -536,9 +536,18 @@ impl TreeNodeType {
         format!("{} ", is_correct)
       },
       Self::AplusQuestionnaireHints { .. } => "".to_string(),
-      Self::AplusQuestionnaireHint { label, show_when_not_selected } => {
+      Self::AplusQuestionnaireHint { label, show_when_not_selected, question_type } => {
+
         let show_when_not_selected = if *show_when_not_selected { "" } else { "!" };
-        format!("\\feedback{{{}\\ref{{{}}}}}{{", show_when_not_selected, label)
+
+        use crate::common::AplusQuestionnaireType;
+
+        let reference = match question_type {
+          AplusQuestionnaireType::PickOne | AplusQuestionnaireType::PickAny => format!("\\ref{{{}}}", label),
+          AplusQuestionnaireType::FreeText => String::new()
+        };
+
+        format!("\\feedback{{{}{}}}{{", show_when_not_selected, reference)
       },
       Self::AplusSubmit { body_indent, key, difficulty, max_points, config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post } => {
 
