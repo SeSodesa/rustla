@@ -503,7 +503,6 @@ impl TreeNodeType {
       Self::AplusPickOne { points, class, required, key, dropdown, .. } => {
 
         let mut options = String::new();
-        const LATEX_OPTION_DELIM: &str = ", ";
         if let Some(option) = class { options = options + "id=" +option + LATEX_OPTION_DELIM };
         if *required { options = options + "required" + LATEX_OPTION_DELIM };
         if let Some(option) = key { options = options + "key=" + option + LATEX_OPTION_DELIM };
