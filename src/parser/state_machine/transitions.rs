@@ -355,7 +355,7 @@ impl State {
     (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::inline_target),
     (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::phrase_ref),
     (PatternName::Interpreted , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
-    (PatternName::FootNoteRef, r#"(^|\s|['"<(\[{])\[(\S|\S.*?\S)\](__?)"#, inline::footnote_ref),
+    (PatternName::FootNoteRef, FOOTNOTE_REF_PATTERN, inline::footnote_ref),
     (PatternName::SimpleRef, SIMPLE_REF_PATTERN, inline::simple_ref),
     (PatternName::SubstitutionRef, SUBSTITUTION_REF_PATTERN, inline::substitution_ref),
 
@@ -542,7 +542,7 @@ const STRONG_EMPH_PATTERN: &str = r#"(?x)^
     \*\*
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     \*\*
@@ -560,7 +560,7 @@ const EMPH_PATTERN: &str = r#"(?x)^
     \*
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     \*
@@ -578,7 +578,7 @@ const LITERAL_PATTERN: &str = r#"(?x)^
     ``
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     ``
@@ -596,7 +596,7 @@ const INLINE_TARGET_PATTERN: &str = r#"(?x)^
     _`
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     `
@@ -620,7 +620,7 @@ const INTERPRETED_TEXT_PATTERN: &str = r#"(?x)^
     `
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     `
@@ -643,7 +643,7 @@ const PHRASE_REF_PATTERN: &str = r#"(?x)^
     `
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<embeded_uri_container>
     \ +#space character one or more times
@@ -745,7 +745,7 @@ const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
     \|
   )
   (?P<content>
-    [\S&&[^\\]]|\S.*?[\S&&[^\\]]
+    [\S&&[^\\]]|\S[\S\s]*?[\S&&[^\\]]
   )
   (?P<markup_end>
     \|
