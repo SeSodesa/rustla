@@ -237,8 +237,8 @@ impl TreeNodeType {
         use crate::doctree::directives::AdmonitionType;
 
         match variant {
-          AdmonitionType::Admonition { title } => format!("\\begin{{admonition}}{{{}}}", title),
-          _ => format!("\\begin{{{}}}", variant.to_string())
+          AdmonitionType::Admonition { title } => format!("\\begin{{admonition}}{{{}}}\n", title),
+          _ => format!("\\begin{{{}}}\n", variant.to_string())
         }
       },
       Self::Attribution { raw_text,  }  => {
@@ -719,8 +719,8 @@ impl TreeNodeType {
         
         use crate::doctree::directives::AdmonitionType;
         match variant {
-          AdmonitionType::Admonition{title} => format!("\\end{{admonition}}"),
-          _ => format!("\\end{{{}}}", variant.to_string())
+          AdmonitionType::Admonition{title} => format!("\\end{{admonition}}\n\n"),
+          _ => format!("\\end{{{}}}\n\n", variant.to_string())
         }
       },
       Self::Attribution { .. }              => "\n".to_string(),
