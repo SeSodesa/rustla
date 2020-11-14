@@ -697,12 +697,6 @@ pub enum TreeNodeType {
   /// #### Status
   Status,
 
-  /// #### StandaloneEmail
-  /// A reference to an email address.
-  StandaloneEmail{
-    text: String
-  },
-
   /// #### StrongEmphasis
   /// Strongly emphasised text, usually rendered in bold.
   StrongEmphasis {
@@ -1142,7 +1136,6 @@ impl TreeNodeType {
       Self::Section { .. }    => Some(0),
       Self::Sidebar { body_indent, .. } => Some(*body_indent),
       Self::Status { .. } => None,
-      Self::StandaloneEmail { .. } => None,
       Self::StrongEmphasis { .. } => None,
       Self::Subscript { .. } => None,
       Self::SubstitutionDefinition { .. } => None,
@@ -1280,7 +1273,6 @@ impl TreeNodeType {
       Self::Section { .. }    => &SECTION_CATEGORIES,
       Self::Sidebar { .. } => &SIDEBAR_CATEGORIES,
       Self::Status { .. } => &STATUS_CATEGORIES,
-      Self::StandaloneEmail { .. } => &STANDALONE_EMAIL_CATEGORIES,
       Self::StrongEmphasis { .. } => &STRONG_EMPHASIS_CATEGORIES,
       Self::Subscript { .. } => &SUBSCRIPT_CATEGORIES,
       Self::SubstitutionDefinition { .. } => &SUBSTITUTION_DEF_CATEGORIES,
@@ -1419,7 +1411,6 @@ impl fmt::Display for TreeNodeType {
       Self::Section { .. }    => "section",
       Self::Sidebar { .. } => "sidebar",
       Self::Status { .. } => "status",
-      Self::StandaloneEmail { .. } => "standalone email",
       Self::StrongEmphasis { .. } => "strong emphasis",
       Self::Subscript { .. } => "subscript",
       Self::SubstitutionDefinition { .. } => "substitution definition",

@@ -198,7 +198,6 @@ impl TreeNode {
       TreeNodeType::Section { .. }    =>  {},
       TreeNodeType::Sidebar { .. } =>  {},
       TreeNodeType::Status { .. } =>  {},
-      TreeNodeType::StandaloneEmail { .. } =>  {},
       TreeNodeType::StrongEmphasis { .. } =>  {},
       TreeNodeType::Subscript { .. } =>  {},
       TreeNodeType::SubstitutionDefinition { .. } =>  {},

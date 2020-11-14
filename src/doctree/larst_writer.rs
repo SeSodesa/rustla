@@ -438,9 +438,6 @@ impl TreeNodeType {
       },
       Self::Sidebar { .. }                  => todo!(),
       Self::Status { .. }                   => todo!(),
-      Self::StandaloneEmail { text } => {
-        format!("\\href{{mailto:{}}}{{{}}}", text, text)
-      },
       Self::StrongEmphasis { text }  => {
         format!("\\textbf{{{}}}", text)
       },
@@ -785,7 +782,6 @@ impl TreeNodeType {
       Self::Section { .. }                  => "".to_string(),
       Self::Sidebar { .. }                  => "\n".to_string(),
       Self::Status { .. }                   => todo!(),
-      Self::StandaloneEmail { .. }          => "".to_string(),
       Self::StrongEmphasis { .. }           => "".to_string(),
       Self::Subscript { .. }                => "".to_string(),
       Self::SubstitutionDefinition { .. }   => "\n".to_string(),

@@ -248,7 +248,6 @@ impl TreeNode {
       TreeNodeType::Section { .. }    => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if match node_data { TreeNodeType:: Transition | TreeNodeType::Section { .. } | TreeNodeType::Topic { .. } | TreeNodeType::Sidebar { .. } => true, _ => false } { true } else { false },
       TreeNodeType::Sidebar { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else if let TreeNodeType::Topic { .. } = node_data { true } else { false },
       TreeNodeType::Status { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
-      TreeNodeType::StandaloneEmail { .. } => false,
       TreeNodeType::StrongEmphasis { .. } => false,
       TreeNodeType::Subscript { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::SubstitutionDefinition { .. } => false,
