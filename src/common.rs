@@ -201,7 +201,6 @@ pub enum FootnoteKind {
 }
 
 
-/// ### HyperlinkTargetKind
 /// A hyperlink target may be one of 3 types:
 ///
 /// 1. internal,
@@ -224,11 +223,11 @@ pub enum FootnoteKind {
 /// begin on the same line as the explicit markup start or the next line.
 /// It may also be split over multiple lines, in which case the lines are
 /// joined with whitespace before being normalized.
-#[derive(Debug, Clone, Copy)]
-pub enum HyperlinkTargetKind {
-  Internal,
-  External,
-  Indirect
+#[derive(Debug, Clone)]
+pub enum LinkTarget {
+  Internal(String),
+  External(String),
+  Indirect(String),
 }
 
 
