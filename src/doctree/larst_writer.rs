@@ -232,7 +232,15 @@ impl TreeNodeType {
       },
       Self::Acronym { .. }      => todo!(),
       Self::Address             => todo!(),
-      Self::Admonition { .. }   => todo!(),
+      Self::Admonition { content_indent, classes, name, variant }   => {
+
+        use crate::doctree::directives::AdmonitionType;
+
+        match variant {
+          AdmonitionType::Admonition { title } => format!("\\begin{{admonition}}{{{}}}", title),
+          _ => format!("\\begin{{{}}}", variant.to_string())
+        }
+      },
       Self::Attribution { raw_text,  }  => {
         format!("-- {}", raw_text)
       },
@@ -706,7 +714,15 @@ impl TreeNodeType {
       Self::AbsoluteURI { .. }              => "".to_string(),
       Self::Acronym { .. }                  => todo!(),
       Self::Address                         => todo!(),
-      Self::Admonition { .. }               => "\n".to_string(),
+      Self::Admonition { variant, .. } => {
+        
+        
+        use crate::doctree::directives::AdmonitionType;
+        match variant {
+          AdmonitionType::Admonition{title} => format!("\\end{{admonition}}"),
+          _ => format!("\\end{{{}}}", variant.to_string())
+        }
+      },
       Self::Attribution { .. }              => "\n".to_string(),
       Self::Author { .. }                   => todo!(),
       Self::Authors { .. }                  => todo!(),

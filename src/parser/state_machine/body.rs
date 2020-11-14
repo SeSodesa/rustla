@@ -83,18 +83,27 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 /// of the `EnumeratedList` state.
 pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
-  let mut tree_wrapper = doctree.unwrap();
+  let mut doctree = doctree.unwrap();
 
   let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
   let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_enum_str = captures.get(2).unwrap().as_str();
+
+  if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+
+    let line_indent = line.chars().take_while(|c| c.is_whitespace()).count();
+
+    if ! line.is_empty() || line_indent <= detected_enumerator_indent {
+      return text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name)
+    }
+  }
 
   let (detected_delims, detected_kind) = if let PatternName::Enumerator ( delims, kind) = pattern_name {
     (*delims, *kind)
   } else {
     return TransitionResult::Failure {
       message: format!("No enumerator inside enumerator transition method on line {}. Computer says no...", line_cursor.sum_total()),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -102,7 +111,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     Some((int, kind)) => (int, kind),
     None => return TransitionResult::Failure {
       message: format!("Unknown enumerator type detected on line {}. Computer says no...", line_cursor.sum_total()),
-      doctree: tree_wrapper
+      doctree: doctree
     }
   };
 
@@ -114,10 +123,10 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     enumerator_indent: detected_enumerator_indent,
   };
 
-  match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_enumerator_indent) {
+  match Parser::parent_indent_matches(doctree.shared_node_data(), detected_enumerator_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
-      tree_wrapper = match tree_wrapper.push_data_and_focus(list_node_data) {
+      doctree = match doctree.push_data_and_focus(list_node_data) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -125,14 +134,14 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
         }
       };
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: Some(vec![State::EnumeratedList]),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::None,
       }
     }
     IndentationMatch::TooMuch => {
-      tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_enumerator_indent }) {
+      doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote { body_indent: detected_enumerator_indent }) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
           message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -140,16 +149,16 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
         }
       };
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: Some(vec![State::BlockQuote]),
         push_or_pop: PushOrPop::Push,
         line_advance: LineAdvance::None,
       }
     }
     _ => {
-      tree_wrapper = tree_wrapper.focus_on_parent();
+      doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
-        doctree: tree_wrapper,
+        doctree: doctree,
         next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
@@ -592,7 +601,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
   let mut doctree = doctree.unwrap();
 
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
-  let detected_directive_label = captures.get(2).unwrap().as_str().split_whitespace().collect::<String>().to_lowercase();
+  let detected_directive_label = captures.get(2).unwrap().as_str().to_lowercase().split_whitespace().collect::<String>().to_lowercase();
   let detected_first_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
   let empty_after_marker: bool = {

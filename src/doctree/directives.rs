@@ -58,6 +58,25 @@ pub enum AdmonitionType {
   },
 }
 
+use std::fmt;
+impl std::fmt::Display for AdmonitionType {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    let admonition_str = match self {
+      Self::Attention => "attention".to_string(),
+      Self::Caution   => "caution".to_string(),
+      Self::Danger    => "danger".to_string(),
+      Self::Error     => "error".to_string(),
+      Self::Hint      => "hint".to_string(),
+      Self::Important => "important".to_string(),
+      Self::Note      => "note".to_string(),
+      Self::Tip       => "tip".to_string(),
+      Self::Warning   => "warning".to_string(),
+      Self::Admonition { title }  => format!("admonition: {}", title)
+    };
+    write!(f, "{}", admonition_str)
+  }
+}
+
 
 
 
