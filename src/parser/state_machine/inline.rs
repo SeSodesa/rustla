@@ -409,8 +409,6 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
       }
       "_" => { // Manual reference label
 
-        eprintln!("{:#?}", embedded_uri);
-
         if ! embedded_uri.is_empty() {
           Reference::URI(normalize_refname(embedded_uri))
         } else {
