@@ -770,7 +770,7 @@ impl TreeNodeType {
       Self::OptionListItem { .. }           => "\n".to_string(),
       Self::OptionString { .. }             => todo!(),
       Self::Organization { .. }             => todo!(),
-      Self::Paragraph { .. }                => "\n".to_string(),
+      Self::Paragraph { .. }                => "\n\n".to_string(),
       Self::ParsedLiteralBlock { .. }       => "\n\n".to_string(),
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
