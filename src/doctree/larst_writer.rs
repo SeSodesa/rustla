@@ -326,6 +326,7 @@ impl TreeNodeType {
       Self::Image { uri, alt, height, width, scale, align, target, name, class } => {
 
         let mut options = String::new();
+
         if let Some(val) = alt { options = options + LATEX_OPTION_DELIM + val };
         if let Some(h) = height {
           let width = rst_length_to_string(h);
@@ -338,13 +339,15 @@ impl TreeNodeType {
         if let Some(val) = scale  {
           let percentage_val = val.to_string();
           options = options + "scale=" + percentage_val.as_str() +  LATEX_OPTION_DELIM
-        };
+        }
         if let Some(val) = align {
           let alignment = html_alignment_to_string(val);
           options = options + LATEX_OPTION_DELIM + &alignment
-        };
+        }
 
-        format!("\\includegraphics[{}]{{{}}}\n", options, uri)
+        let options = if options.is_empty() { options } else { format!("[{}]", options) };
+
+        format!("\\includegraphics{}{{{}}}\n", options, uri)
       },
       Self::IndirectHyperlinkTarget { .. }  => todo!(),
       Self::Inline { .. }                   => todo!(),
