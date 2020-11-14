@@ -34,6 +34,7 @@
 use super::*;
 use utf8_to_latex::unicode_text_to_latex;
 use crate::common::normalize_refname;
+use crate::common::Reference;
 
 
 /// ### paired_delimiter
@@ -396,8 +397,6 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
     return (vec![TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}], lookbehind_str.chars().count())
   }
 
-  use crate::common::Reference;
-
   let reference = match ref_type {
       "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
   
@@ -601,8 +600,10 @@ pub fn uri (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternNa
 
       return (vec![data], email_str.chars().count())
     }
-    TreeNodeType::StandaloneEmail{text: String::from(content)}
-
+    TreeNodeType::Reference {
+      displayed_text: None,
+      reference: Reference::EMail(String::from(content))
+    }
   } else {
 
     // Validity checks
@@ -622,7 +623,10 @@ pub fn uri (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternNa
 
     // If URI is valid, return it as URI, else as text
     if is_valid {
-      TreeNodeType::AbsoluteURI{text: unicode_text_to_latex(content)}
+      TreeNodeType::Reference {
+        displayed_text: None,
+        reference: Reference::URI(content.to_string())
+      }
     } else {
       TreeNodeType::Text{text: String::from(content)}
     }

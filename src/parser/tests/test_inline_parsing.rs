@@ -189,12 +189,15 @@ fn inline_parse_05 () {
 
   eprintln!("{:#?}", nodes);
 
-  assert_eq!(
-    if let TreeNodeType::AbsoluteURI{text} = &nodes[10] {
-      text.as_str()
-    } else {panic!("Absolute URI not found!")},
-    "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking\\&order=newest\\#top"
-  );
+  if let TreeNodeType::Reference{displayed_text, reference} = &nodes[10] {
+    if let Reference::URI (ref_str) = reference {
+      assert_eq!(ref_str, "https://john.harry.doe@www.example.com:123/forum/questions/?tag=networking&order=newest#top")
+    } else {
+      panic!()
+    }
+  } else {
+    panic!("Absolute URI not found!")
+  }
 
 }
 
@@ -212,12 +215,15 @@ fn inline_parse_06 () {
 
   eprintln!("{:#?}", nodes);
 
-  assert_eq!(
-    if let TreeNodeType::StandaloneEmail{text} = &nodes[10] {
-      text.as_str()
-    } else {panic!()},
-    "john.harry.doe@www.example.com"
-  );
+  if let TreeNodeType::Reference{displayed_text, reference} = &nodes[10] {
+    if let Reference::EMail (ref_str) = reference {
+      assert_eq!(ref_str, "john.harry.doe@www.example.com")
+    } else {
+      panic!()
+    }
+  } else {
+    panic!("Absolute URI not found!")
+  }
 
 }
 
@@ -391,8 +397,13 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
     panic!()
   }
 
-  if let TreeNodeType::AbsoluteURI { text } = doctree.shared_child(0).shared_child(11).shared_data() {
-    assert_eq!(text, "https://www.absolute.uri.fi"); // <- Plain text is LaTeX-escaped
+  if let TreeNodeType::Reference { displayed_text, reference } = doctree.shared_child(0).shared_child(11).shared_data() {
+    if let Reference::URI (ref_str) = reference {
+      assert_eq!(ref_str, "https://www.absolute.uri.fi"); // <- Plain text is LaTeX-escaped
+    } else {
+      panic!()
+    }
+    
   } else {
     panic!()
   }
@@ -691,8 +702,12 @@ fn uri_01 () {
     panic!()
   }
 
-  if let TreeNodeType::AbsoluteURI { text } = doctree.shared_child(0).shared_child(1).shared_data() {
-    assert_eq!(text, "https://quoted.uri.fi");
+  if let TreeNodeType::Reference{reference, ..} = doctree.shared_child(0).shared_child(1).shared_data() {
+    if let Reference::URI (ref_str) = reference {
+      assert_eq!(ref_str, "https://quoted.uri.fi");
+    } else {
+      panic!()
+    }
   } else {
     panic!()
   }
@@ -709,8 +724,12 @@ fn uri_01 () {
     panic!()
   }
 
-  if let TreeNodeType::StandaloneEmail { text } = doctree.shared_child(1).shared_child(1).shared_data() {
-    assert_eq!(text, "quoted@email.com");
+  if let TreeNodeType::Reference{reference, ..} = doctree.shared_child(1).shared_child(1).shared_data() {
+    if let Reference::EMail (ref_str) = reference {
+      assert_eq!(ref_str, "quoted@email.com");
+    } else {
+      panic!()
+    }
   } else {
     panic!()
   }
