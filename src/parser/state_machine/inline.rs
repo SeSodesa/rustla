@@ -293,17 +293,17 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
     }
 
     // Sphinx-specific roles
-    "ref" => {
-      // TODO: Parse the content string with Parser::inline parse and handle the output accordingly.
-      (
-        vec![
-          TreeNodeType::Reference {
-            displayed_text: Some(content.to_string()),
-            reference: crate::common::Reference::Internal(normalize_refname(content))
-          }
-        ], match_len
-      )
-    }
+    // "ref" => {
+    //   // TODO: Parse the content string with Parser::inline parse and handle the output accordingly.
+    //   (
+    //     vec![
+    //       TreeNodeType::Reference {
+    //         displayed_text: Some(content.to_string()),
+    //         reference: crate::common::Reference::Internal(normalize_refname(content))
+    //       }
+    //     ], match_len
+    //   )
+    // }
 
     _ => { // Unknown role into literal
       let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
