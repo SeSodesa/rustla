@@ -231,6 +231,15 @@ pub enum LinkTarget {
 }
 
 
+/// An enumeration of the different types of references that a reference node might contain.
+#[derive(Debug)]
+pub enum Reference {
+  Internal(String),
+  URI(String),
+  EMail(String)
+}
+
+
 /// ### IterpretedTextKind
 /// There are 3 types of interpreted inline text, such as math:
 /// 1. where the given role precedes the interpreted content and
