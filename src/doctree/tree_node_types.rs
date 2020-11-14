@@ -651,9 +651,8 @@ pub enum TreeNodeType {
   /// #### Reference
   /// A general reference to a reference target.
   Reference {
-    displayed_text: String,
-    target_label: String,
-    has_embedded_uri: bool,
+    displayed_text: Option<String>,
+    reference: crate::common::Reference
   },
 
   /// #### Revision

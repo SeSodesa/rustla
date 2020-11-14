@@ -5,6 +5,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use super::*;
+use crate::common::Reference;
 
 #[cfg(test)]
 
@@ -53,19 +54,24 @@ fn references_01 () {
 
   eprintln!("{:#?}", nodes);
 
-  assert_eq!(
-    if let TreeNodeType::Reference{target_label, ..} = &nodes[12] {
-      target_label.as_str()
-    } else {panic!()},
-    "simple-reference+with:punctuation"
-  );
-
-  assert_eq!(
-    if let TreeNodeType::Reference{target_label, ..} = &nodes[18] {
-      target_label.as_str()
-    } else {panic!()},
-    "phrase reference"
-  );
+  if let TreeNodeType::Reference{reference, ..} = &nodes[12] {
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(ref_str, "simple-reference+with:punctuation");
+    } else {
+      panic!()
+    }
+  } else {
+    panic!()
+  }
+  if let TreeNodeType::Reference{reference, ..} = &nodes[18] {
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(ref_str, "phrase reference");
+    } else {
+      panic!()
+    }
+  } else {
+    panic!()
+  }
 
 }
 
@@ -84,18 +90,25 @@ fn references_02 () {
 
   eprintln!("{:#?}", nodes);
 
-  assert_eq!(
-    if let TreeNodeType::Reference{target_label, ..} = &nodes[6] {
-      target_label.as_str()
-    } else {panic!()},
-    "simple-reference"
-  );
+  if let TreeNodeType::Reference{reference, ..} = &nodes[6] {
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(ref_str, "simple-reference");
+    } else {
+      panic!()
+    }
+  } else {
+    panic!()
+  }
 
-  if let TreeNodeType::Reference{target_label, displayed_text, has_embedded_uri} = &nodes[12] {
-    assert_eq!(displayed_text.as_str(), "not so simple refereNce");
-    assert_eq!(target_label.as_str(), "not so simple reference");
-    assert_eq!(*has_embedded_uri, false);
-  } else {panic!()}
+  if let TreeNodeType::Reference{reference, displayed_text} = &nodes[12] {
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(ref_str, "not so simple reference");
+    } else {
+      panic!()
+    }
+  } else {
+    panic!()
+  }
 }
 
 
@@ -115,10 +128,14 @@ fn embedded_uri_01 () {
   doctree = doctree.walk_to_root();
   doctree.print_tree();
 
-  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(0).shared_data() {
-    assert_eq!(displayed_text, "embedded uri");
-    assert_eq!(target_label, "https://docs.rs/regex/1.3.9/regex/");
-    assert_eq!(*has_embedded_uri, true)
+  if let TreeNodeType::Reference { displayed_text, reference } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let Reference::URI (ref_str) = reference {
+      assert_eq!(ref_str, "https://docs.rs/regex/1.3.9/regex/");
+    } else {
+      panic!()
+    }
+  } else {
+    panic!()
   }
 }
 
@@ -274,10 +291,13 @@ maybe a -simple-reference__- as well.
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(17).shared_data() {
-    assert_eq!(displayed_text, "a phrase reference with automatic labeling");
-    assert_eq!(target_label, "[[-ANON-LABEL-1-]]");
-    assert_eq!(*has_embedded_uri, false);
+  if let TreeNodeType::Reference { displayed_text, reference } = doctree.shared_child(0).shared_child(17).shared_data() {
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(displayed_text.as_ref(), Some(&"a phrase reference with automatic labeling".to_string()));
+      assert_eq!(ref_str, "[[-ANON-LABEL-1-]]");
+    } else {
+      panic!()
+    }
   } else {
     panic!()
   }
@@ -294,10 +314,13 @@ maybe a -simple-reference__- as well.
     panic!()
   }
 
-  if let TreeNodeType::Reference { displayed_text, target_label, has_embedded_uri } = doctree.shared_child(0).shared_child(25).shared_data() {
-    assert_eq!(displayed_text, "simple-reference");
-    assert_eq!(target_label, "[[-ANON-LABEL-2-]]");
-    assert_eq!(*has_embedded_uri, false);
+  if let TreeNodeType::Reference { displayed_text, reference } = doctree.shared_child(0).shared_child(25).shared_data() {
+    assert_eq!(displayed_text, &None);
+    if let Reference::Internal (ref_str) = reference {
+      assert_eq!(ref_str, "[[-ANON-LABEL-2-]]");
+    } else {
+      panic!()
+    }
   } else {
     panic!()
   }

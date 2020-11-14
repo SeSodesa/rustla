@@ -501,6 +501,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
           match nodes_data.get(0) {
 
+            // External target
             Some(TreeNodeType::AbsoluteURI { text })  |  Some(TreeNodeType::StandaloneEmail { text })  =>  {
 
               TreeNodeType::ExternalHyperlinkTarget {
@@ -510,11 +511,20 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
               }
             }
 
-            Some(TreeNodeType::Reference { target_label, displayed_text, has_embedded_uri }) =>  {
+            // Indirect target
+            Some(TreeNodeType::Reference { reference, displayed_text }) =>  {
+
+              use crate::common::Reference;
 
               TreeNodeType::IndirectHyperlinkTarget {
                 target: label_as_string,
-                indirect_target: target_label.clone(),
+                indirect_target: match reference {
+                  Reference::Internal(ref_str) => ref_str.to_string(),
+                  Reference::URI(ref_str) | Reference::EMail(ref_str) => return TransitionResult::Failure {
+                    message: format!("Wrong type of inline node when parsing an indirect target {} on line {}. Computer says no...", ref_str, line_cursor.sum_total()),
+                    doctree: doctree
+                  },
+                },
                 marker_indent: detected_marker_indent
               }
             }

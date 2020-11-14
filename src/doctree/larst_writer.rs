@@ -402,10 +402,30 @@ impl TreeNodeType {
       Self::Pending { .. }                  => todo!(),
       Self::Problematic { .. }              => todo!(),
       Self::Raw { .. }                      => "\\begin{codeblock}\n".to_string(),
-      Self::Reference { displayed_text, target_label, has_embedded_uri } => {
-        let command = if *has_embedded_uri { "href" } else { "hyperref" };
-        let parens = if *has_embedded_uri { ("{", "}") } else { ("[", "]") };
-        format!("\\{}{}{}{}{{{}}}", command, parens.0, target_label, parens.1, displayed_text)
+      Self::Reference { displayed_text, reference } => {
+        // let command = if *has_embedded_uri { "href" } else { "hyperref" };
+        // let parens = if *has_embedded_uri { ("{", "}") } else { ("[", "]") };
+        // format!("\\{}{}{}{}{{{}}}", command, parens.0, target_label, parens.1, displayed_text)
+
+        use crate::common::Reference;
+
+        match &reference {
+          Reference::Internal (ref_str) => if let Some(text) = displayed_text {
+            format!("\\hyperref[{}]{{{}}}", ref_str, text)
+          } else {
+            format!("\\ref{{{}}}", ref_str)
+          }
+          Reference::URI (ref_str) => if let Some(text) = displayed_text {
+            format!("\\href{{{}}}{{{}}}", ref_str, text)
+          } else {
+            format!("\\url{{{}}}", ref_str)
+          }
+          Reference::EMail (ref_str) => if let Some(text) = displayed_text {
+            format!("\\href{{{}}}{{{}}}", ref_str, text)
+          } else {
+            format!("\\href{{{}}}{{{}}}", ref_str, ref_str)
+          }
+        }
       },
       Self::Revision { .. }                 => todo!(),
       Self::Row { .. }                      => todo!(),

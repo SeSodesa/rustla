@@ -256,12 +256,26 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
       let zeroes = "0".repeat(4 - content_len);
       let pep_ref = format!("https://www.python.org/peps/pep-{pep_num}.html", pep_num = zeroes + content);
       let displayed_text = "PEP ".to_string() + content;
-      (vec![TreeNodeType::Reference { displayed_text: displayed_text, target_label: pep_ref, has_embedded_uri: false}], match_len)
+      (
+        vec![
+          TreeNodeType::Reference {
+            displayed_text: Some(displayed_text),
+            reference: crate::common::Reference::URI (pep_ref)
+          }
+        ], match_len
+      )
     }
     "rfc-reference" | "RFC" => {
       let rfc_ref = format!("https://www.faqs.org/rfcs/rfc{rfc_num}.html", rfc_num = content);
       let displayed_text = "RFC ".to_string() + content;
-      (vec![TreeNodeType::Reference { displayed_text: displayed_text, target_label: rfc_ref, has_embedded_uri: false}], match_len)
+      (
+        vec![
+          TreeNodeType::Reference {
+            displayed_text: Some(displayed_text),
+            reference: crate::common::Reference::URI (rfc_ref)
+          }
+        ], match_len
+      )
     }
     "strong" => {
       (vec![TreeNodeType::StrongEmphasis { text: content.to_string() }], match_len)
@@ -279,8 +293,15 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 
     // Sphinx-specific roles
     "ref" => {
-
-      (vec![TreeNodeType::Reference { displayed_text: content.to_string(), target_label: normalize_refname(content), has_embedded_uri: false }], match_len)
+      // TODO: Parse the content string with Parser::inline parse and handle the output accordingly.
+      (
+        vec![
+          TreeNodeType::Reference {
+            displayed_text: Some(content.to_string()),
+            reference: crate::common::Reference::Internal(normalize_refname(content))
+          }
+        ], match_len
+      )
     }
 
     _ => { // Unknown role into literal
@@ -330,9 +351,8 @@ pub fn simple_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
     };
 
     let ref_node = TreeNodeType::Reference {
-      displayed_text: content.to_string(),
-      target_label: target_label,
-      has_embedded_uri: false
+      displayed_text: None,
+      reference: crate::common::Reference::Internal(target_label),
     };
   
     let match_len = (lookbehind_str.to_string() + content + ref_type).chars().count();
@@ -376,30 +396,34 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
     return (vec![TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}], lookbehind_str.chars().count())
   }
 
-  let target_label: String = if ! embedded_uri.is_empty() {
-    normalize_refname(embedded_uri)
-  } else {
-    match ref_type {
+  use crate::common::Reference;
+
+  let reference = match ref_type {
       "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
   
         if let Some(doctree) = opt_doctree_ref {
-          doctree.next_anon_reference_label()
+          Reference::Internal(doctree.next_anon_reference_label())
         } else {
           eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
-          normalize_refname(content)
+          Reference::Internal(normalize_refname(content))
         }
       }
       "_" => { // Manual reference label
-        normalize_refname(content)
+
+        eprintln!("{:#?}", embedded_uri);
+
+        if ! embedded_uri.is_empty() {
+          Reference::URI(normalize_refname(embedded_uri))
+        } else {
+          Reference::Internal(normalize_refname(content))
+        }
       }
       _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
-    }
-  }; 
+    }; 
 
   let ref_node = TreeNodeType::Reference {
-    displayed_text: content.to_string(),
-    target_label: target_label,
-    has_embedded_uri: ! embedded_uri.is_empty(),
+    displayed_text: Some(content.to_string()),
+    reference: reference
   };
 
   let match_len = if embedded_uri.is_empty() {
