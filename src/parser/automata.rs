@@ -36,7 +36,7 @@ lazy_static! {
   static ref ENUMERATOR_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::ATTRIBUTION_PATTERN) {
     automaton
   } else {
-    panic!("Could not initialize ATTRIBUTION automaton. Computer says no...")
+    panic!("Could not initialize ENUMERATOR automaton. Computer says no...")
   };
 
   /// A DFA for recognising arabic numerals.
