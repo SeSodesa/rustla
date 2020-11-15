@@ -18,6 +18,76 @@
   /// A pattern for matching bullet list bullets.
   pub const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
+  pub const ENUMERATOR_PATTERN: &'static str = r#"^(?x)
+    (?P<indent>
+      \s*
+    )
+    (?:
+      (?P<arabic_parens>
+        \([0-9]+\)
+      )
+      |
+      (?P<arabic_rparen>
+        [0-9]+\)
+      )
+      |
+      (?P<arabic_period>
+        [0-9]+\.
+      )
+      |
+      (?P<lower_roman_parens>
+        \([ivxlcdm]+\)
+      )
+      |
+      (?P<lower_roman_rparen>
+        [ivxlcdm]+\)
+      )
+      |
+      (?P<lower_roman_period>
+        [ivxlcdm]+\.
+      )
+      |
+      (?P<upper_roman_parens>
+        \([IVXLCDM]+\)
+      )
+      |
+      (?P<upper_roman_rparen>
+        [IVXLCDM]+\)
+      )
+      |
+      (?P<upper_roman_period>
+        [IVXLCDM]+\.
+      )
+      |
+      (?P<lower_alpha_parens>
+        \([a-z]\)
+      )
+      |
+      (?P<lower_alpha_rparen>
+        [a-z]\)
+      )
+      |
+      (?P<lower_alpha_period>
+        [a-z]\.
+      )
+      |
+      (?P<upper_alpha_parens>
+        \([A-Z]\)
+      )
+      |
+      (?P<upper_alpha_rparen>
+        [A-Z]\)
+      )
+      |
+      (?P<upper_alpha_period>
+        [A-Z]\.
+      )
+    )
+    (?P<after_marker>
+      [ ]+|$
+    )
+  "#;
+
   /// A pattern for Arabic numerals with closing parentheses
   pub const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
   /// A pattern for Arabic numerals with a closing right parenthesis
