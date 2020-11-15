@@ -40,3 +40,4 @@ mod test_literal_blocks;
 mod test_sections_and_transitions;
 mod test_sphinx_only;
 mod test_unknown_directives;
+mod test_regexes;

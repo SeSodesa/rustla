@@ -33,7 +33,7 @@ lazy_static! {
   };
 
   /// A DFA for recognising enumerators.
-  pub static ref ENUMERATOR_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::ATTRIBUTION_PATTERN) {
+  pub static ref ENUMERATOR_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::ENUMERATOR_PATTERN) {
     automaton
   } else {
     panic!("Could not initialize ENUMERATOR automaton. Computer says no...")

@@ -23,68 +23,78 @@
       \s*
     )
     (?:
-      (?P<arabic_parens>
-        \([0-9]+\)
-      )
+      \(
+        (?:
+          (?P<arabic_parens>
+            [0-9]+
+          )
+          |
+          (?P<lower_roman_parens>
+            [ivxlcdm]+
+          )
+          |
+          (?P<upper_roman_parens>
+            [IVXLCDM]+
+          )
+          |
+          (?P<lower_alpha_parens>
+            [a-z]
+          )
+          |
+          (?P<upper_alpha_parens>
+            [A-Z]
+          )
+        )
+      \)
       |
-      (?P<arabic_rparen>
-        [0-9]+\)
-      )
+        (?:
+          (?P<arabic_rparen>
+            [0-9]+
+          )
+          |
+          (?P<lower_roman_rparen>
+            [ivxlcdm]+
+          )
+          |
+          (?P<upper_roman_rparen>
+            [IVXLCDM]+
+          )
+          |
+          (?P<lower_alpha_rparen>
+            [a-z]
+          )
+          |
+          (?P<upper_alpha_rparen>
+            [A-Z]
+          )
+        )
+      \)
       |
-      (?P<arabic_period>
-        [0-9]+\.
-      )
-      |
-      (?P<lower_roman_parens>
-        \([ivxlcdm]+\)
-      )
-      |
-      (?P<lower_roman_rparen>
-        [ivxlcdm]+\)
-      )
-      |
-      (?P<lower_roman_period>
-        [ivxlcdm]+\.
-      )
-      |
-      (?P<upper_roman_parens>
-        \([IVXLCDM]+\)
-      )
-      |
-      (?P<upper_roman_rparen>
-        [IVXLCDM]+\)
-      )
-      |
-      (?P<upper_roman_period>
-        [IVXLCDM]+\.
-      )
-      |
-      (?P<lower_alpha_parens>
-        \([a-z]\)
-      )
-      |
-      (?P<lower_alpha_rparen>
-        [a-z]\)
-      )
-      |
-      (?P<lower_alpha_period>
-        [a-z]\.
-      )
-      |
-      (?P<upper_alpha_parens>
-        \([A-Z]\)
-      )
-      |
-      (?P<upper_alpha_rparen>
-        [A-Z]\)
-      )
-      |
-      (?P<upper_alpha_period>
-        [A-Z]\.
-      )
+        (?:
+          (?P<arabic_period>
+            [0-9]+
+          )
+          |
+          (?P<lower_roman_period>
+            [ivxlcdm]+
+          )
+          |
+          (?P<upper_roman_period>
+            [IVXLCDM]+
+          )
+          |
+          (?P<lower_alpha_period>
+            [a-z]
+          )
+          |
+          (?P<upper_alpha_period>
+            [A-Z]
+          )
+        )
+        \.
     )
     (?P<after_marker>
-      [ ]+|$
+      \ +|$
     )
   "#;
 
