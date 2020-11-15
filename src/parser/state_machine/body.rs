@@ -1275,8 +1275,6 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
-  let n_of_children = doctree.n_of_children();
-
   let body_indent = if let Some(indent) = doctree.shared_data().body_indent() {
     indent
   } else {
