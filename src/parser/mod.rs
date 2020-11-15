@@ -26,6 +26,9 @@ use regex::Regex;
 
 use super::*;
 
+mod automata;
+mod regex_patterns;
+
 mod converters;
 
 mod types_and_aliases;
