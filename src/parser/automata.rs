@@ -32,7 +32,7 @@ lazy_static! {
     panic!("Could not initialize BULLET automaton. Computer says no...")
   };
 
-  /// A DFA for recognising block quote attributions.
+  /// A DFA for recognising enumerators.
   static ref ENUMERATOR_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::ATTRIBUTION_PATTERN) {
     automaton
   } else {
