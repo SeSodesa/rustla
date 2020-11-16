@@ -85,7 +85,7 @@ impl Parser {
   /// Transforms a given `regex::Captures` instance into an `Option`-wrapped integer--EnumKind--EnumDelims triple,
   /// assuming the captures are of the form found in `crate::parser::regex_patterns::ENUMERATOR_PATTERN`.
   /// If the conversion is not succssful, returns `None`.
-  pub fn enum_captures_to_int_kind_and_delims (captures: regex::Captures, list_kind: &EnumKind, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>) -> Option<(usize, EnumKind, EnumDelims)> {
+  pub fn enum_captures_to_int_kind_and_delims (captures: &regex::Captures, list_kind: Option<&EnumKind>, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>) -> Option<(usize, EnumKind, EnumDelims)> {
 
     let list_item_number = list_item_number.unwrap_or(0);
     let list_start_index = list_start_index.unwrap_or(1);
@@ -127,8 +127,10 @@ impl Parser {
       let number = list_item_number.checked_add(list_start_index);
       let kind = if list_item_number == 0 && ! in_list_item {
         EnumKind::Arabic
+      } else if let Some(kind) = list_kind {
+        *kind
       } else {
-        *list_kind
+        EnumKind::Arabic
       };
       (number, kind, EnumDelims::Parens)
 
@@ -168,8 +170,10 @@ impl Parser {
       let number = list_item_number.checked_add(list_start_index);
       let kind = if list_item_number == 0 && ! in_list_item {
         EnumKind::Arabic
+      } else if let Some(kind) = list_kind {
+        *kind
       } else {
-        *list_kind
+        EnumKind::Arabic
       };
       (number, kind, EnumDelims::RParen)
 
@@ -209,8 +213,10 @@ impl Parser {
       let number = list_item_number.checked_add(list_start_index);
       let kind = if list_item_number == 0 && ! in_list_item {
         EnumKind::Arabic
+      } else if let Some(kind) = list_kind {
+        *kind
       } else {
-        *list_kind
+        EnumKind::Arabic
       };
       (number, kind, EnumDelims::Period)
 
