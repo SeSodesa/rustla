@@ -365,8 +365,6 @@ impl Parser {
 
       if ! next_line.is_empty() && line_indent <= detected_enumerator_indent {
 
-        eprintln!("Next line not empty or not indented...");
-
         return Err(crate::parser::state_machine::body::text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name))
 
       } else if let Some(next_captures) = crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line) {
