@@ -30,7 +30,7 @@ use regex;
 use lazy_static::lazy_static;
 
 use super::*;
-use crate::common::{EnumDelims, EnumKind, EnumAsInt};
+use crate::common::EnumAsInt;
 
 
 /// ### StateMachine
