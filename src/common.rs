@@ -169,7 +169,7 @@ pub enum SectionLineStyle {
 }
 
 
-/// ### EnumFormat
+/// ### EnumDelims
 /// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
 /// A third option is to enclose them in matching parentheses `(` and `)`.
 #[derive(Debug, Clone, Copy, PartialEq)]

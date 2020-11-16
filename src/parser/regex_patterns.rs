@@ -44,6 +44,10 @@
           (?P<upper_alpha_parens>
             [A-Z]
           )
+          |
+          (?P<auto_enumerator_parens>
+            \#
+          )
         )
       \)
       |
@@ -67,6 +71,10 @@
           (?P<upper_alpha_rparen>
             [A-Z]
           )
+          |
+          (?P<auto_enumerator_rparen>
+            \#
+          )
         )
       \)
       |
@@ -89,6 +97,10 @@
           |
           (?P<upper_alpha_period>
             [A-Z]
+          )
+          |
+          (?P<auto_enumerator_period>
+            \#
           )
         )
         \.

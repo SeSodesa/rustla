@@ -6,7 +6,7 @@
 /// email:  santtu.soderholm@tuni.fi
 
 use crate::parser::Parser;
-use crate::common::{Length, LengthNum, HTMLAlignment, HorizontalAlignment, EnumKind};
+use crate::common::{Length, LengthNum, HTMLAlignment, HorizontalAlignment, EnumKind, EnumDelims};
 
 impl Parser {
 
@@ -25,7 +25,7 @@ impl Parser {
       // UpperRoman list at our hands
       return Some((1, EnumKind::UpperRoman))
     }
-    
+
     let mut detected_kind = *detected_kind;
     let list_kind = *list_kind;
 
@@ -79,7 +79,148 @@ impl Parser {
     Some(
       (detected_enum_as_usize, detected_kind)
     )
+  }
 
+
+  /// Transforms a given `regex::Captures` instance into an `Option`-wrapped integer--EnumKind--EnumDelims triple,
+  /// assuming the captures are of the form found in `crate::parser::regex_patterns::ENUMERATOR_PATTERN`.
+  /// If the conversion is not succssful, returns `None`.
+  pub fn enum_captures_to_int_kind_and_delims (captures: regex::Captures, list_kind: &EnumKind, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>) -> Option<(usize, EnumKind, EnumDelims)> {
+
+    let list_item_number = list_item_number.unwrap_or(0);
+    let list_start_index = list_start_index.unwrap_or(1);
+
+    let (opt_number, enum_kind, enum_delims) =
+    if let Some(number_str) = captures.name("arabic_parens") {
+
+      let number = match number_str.as_str().parse::<usize>() {
+        Ok(int) => Some(int),
+        Err(e) => None
+      };
+
+      (number, EnumKind::Arabic, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("lower_roman_parens") {
+
+      if number_str.as_str() == "i" && list_item_number == 0 { return Some((1, EnumKind::LowerRoman, EnumDelims::Parens)) }
+      let number = Parser::lower_roman_to_usize(number_str.as_str());
+      (number, EnumKind::LowerRoman, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("upper_roman_parens") {
+
+      if number_str.as_str() == "I" && list_item_number == 0 { return Some((1, EnumKind::UpperRoman, EnumDelims::Parens)) }
+      let number = Parser::upper_roman_to_usize(number_str.as_str());
+      (number, EnumKind::UpperRoman, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("lower_alpha_parens") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::LowerAlpha, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("upper_alpha_parens") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::UpperAlpha, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("auto_enumerator_parens") {
+
+      let number = list_item_number.checked_add(list_start_index);
+      let kind = if list_item_number == 0 && ! in_list_item {
+        EnumKind::Arabic
+      } else {
+        *list_kind
+      };
+      (number, kind, EnumDelims::Parens)
+
+    } else if let Some(number_str) = captures.name("arabic_rparen") {
+
+      let number = match number_str.as_str().parse::<usize>() {
+        Ok(int) => Some(int),
+        Err(e) => None
+      };
+
+      (number, EnumKind::Arabic, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("lower_roman_rparen") {
+
+      if number_str.as_str() == "i" && list_item_number == 0 { return Some((1, EnumKind::LowerRoman, EnumDelims::RParen)) }
+      let number = Parser::lower_roman_to_usize(number_str.as_str());
+      (number, EnumKind::LowerRoman, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("upper_roman_rparen") {
+
+      if number_str.as_str() == "i" && list_item_number == 0 { return Some((1, EnumKind::UpperRoman, EnumDelims::RParen)) }
+      let number = Parser::upper_roman_to_usize(number_str.as_str());
+      (number, EnumKind::UpperRoman, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("lower_alpha_rparen") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::LowerAlpha, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("upper_alpha_rparen") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::UpperAlpha, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("auto_enumerator_rparen") {
+
+      let number = list_item_number.checked_add(list_start_index);
+      let kind = if list_item_number == 0 && ! in_list_item {
+        EnumKind::Arabic
+      } else {
+        *list_kind
+      };
+      (number, kind, EnumDelims::RParen)
+
+    } else if let Some(number_str) = captures.name("arabic_period") {
+
+      let number = match number_str.as_str().parse::<usize>() {
+        Ok(int) => Some(int),
+        Err(e) => None
+      };
+
+      (number, EnumKind::Arabic, EnumDelims::Period)
+
+    } else if let Some(number_str) = captures.name("lower_roman_period") {
+
+      if number_str.as_str() == "i" && list_item_number == 0 { return Some((1, EnumKind::LowerRoman, EnumDelims::Period)) }
+      let number = Parser::lower_roman_to_usize(number_str.as_str());
+      (number, EnumKind::LowerRoman, EnumDelims::Period)
+
+    } else if let Some(number_str) = captures.name("upper_roman_period") {
+
+      if number_str.as_str() == "i" && list_item_number == 0 { return Some((1, EnumKind::UpperRoman, EnumDelims::Period)) }
+      let number = Parser::upper_roman_to_usize(number_str.as_str());
+      (number, EnumKind::UpperRoman, EnumDelims::Period)
+
+    } else if let Some(number_str) = captures.name("lower_alpha_period") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::LowerAlpha, EnumDelims::Period)
+
+    } else if let Some(number_str) = captures.name("upper_alpha_period") {
+
+      let number = Parser::alpha_to_usize(number_str.as_str());
+      (number, EnumKind::UpperAlpha, EnumDelims::Period)
+
+    } else if let Some(number_str) = captures.name("auto_enumerator_period") {
+
+      let number = list_item_number.checked_add(list_start_index);
+      let kind = if list_item_number == 0 && ! in_list_item {
+        EnumKind::Arabic
+      } else {
+        *list_kind
+      };
+      (number, kind, EnumDelims::Period)
+
+    } else {
+      panic!("Tried converting a set of regex captures \"{}\" into a list enumerator, but captured string was not of the form specified by enumerator pattern. Computer says no...", captures.get(0).unwrap().as_str());
+    };
+
+    if opt_number.is_none() { return None }
+
+    Some((opt_number.unwrap(), enum_kind, enum_delims))
   }
 
 
