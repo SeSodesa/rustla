@@ -117,7 +117,6 @@ pub enum PatternName {
   Citation,
   Comment,
   Enumerator,
-  // Enumerator (EnumDelims, EnumKind),
   ExplicitMarkup,
   Directive,
   DocTest,

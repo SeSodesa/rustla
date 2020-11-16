@@ -20,29 +20,6 @@ impl State {
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Arabic), ARABIC_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Arabic), ARABIC_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Arabic), ARABIC_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerAlpha), LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerAlpha), LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerAlpha), LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperAlpha), UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperAlpha), UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperAlpha), UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerRoman), LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerRoman), LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerRoman), LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperRoman), UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperRoman), UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperRoman), UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Automatic), AUTO_ENUM_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Automatic), AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Automatic), AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
 
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
 
@@ -72,30 +49,6 @@ impl State {
     (PatternName::Attribution, ATTRIBUTION_PATTERN, block_quote::attribution),
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Arabic), ARABIC_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Arabic), ARABIC_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Arabic), ARABIC_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerAlpha), LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerAlpha), LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerAlpha), LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperAlpha), UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperAlpha), UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperAlpha), UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerRoman), LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerRoman), LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerRoman), LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperRoman), UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperRoman), UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperRoman), UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Automatic), AUTO_ENUM_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Automatic), AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Automatic), AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
-
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
 
     (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, body::footnote),
@@ -130,30 +83,6 @@ impl State {
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
     (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::back_up),
     (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Arabic), ARABIC_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Arabic), ARABIC_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Arabic), ARABIC_PERIOD_PATTERN, unknown_transitions::back_up),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerAlpha), LOWER_ALPHA_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerAlpha), LOWER_ALPHA_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerAlpha), LOWER_ALPHA_PERIOD_PATTERN, unknown_transitions::back_up),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperAlpha), UPPER_ALPHA_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperAlpha), UPPER_ALPHA_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperAlpha), UPPER_ALPHA_PERIOD_PATTERN, unknown_transitions::back_up),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerRoman), LOWER_ROMAN_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerRoman), LOWER_ROMAN_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerRoman), LOWER_ROMAN_PERIOD_PATTERN, unknown_transitions::back_up),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperRoman), UPPER_ROMAN_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperRoman), UPPER_ROMAN_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperRoman), UPPER_ROMAN_PERIOD_PATTERN, unknown_transitions::back_up),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Automatic), AUTO_ENUM_PARENS_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Automatic), AUTO_ENUM_RPAREN_PATTERN, unknown_transitions::back_up),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Automatic), AUTO_ENUM_PERIOD_PATTERN, unknown_transitions::back_up),
-
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, unknown_transitions::back_up),
 
     (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, unknown_transitions::back_up),
@@ -178,31 +107,7 @@ impl State {
   /// An array of transitions related to `State::EnumeratedList`.
   pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-
     (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Arabic), ARABIC_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Arabic), ARABIC_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Arabic), ARABIC_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerAlpha), LOWER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerAlpha), LOWER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerAlpha), LOWER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperAlpha), UPPER_ALPHA_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperAlpha), UPPER_ALPHA_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperAlpha), UPPER_ALPHA_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerRoman), LOWER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerRoman), LOWER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerRoman), LOWER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperRoman), UPPER_ROMAN_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperRoman), UPPER_ROMAN_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperRoman), UPPER_ROMAN_PERIOD_PATTERN, enumerated_list::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Automatic), AUTO_ENUM_PARENS_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Automatic), AUTO_ENUM_RPAREN_PATTERN, enumerated_list::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Automatic), AUTO_ENUM_PERIOD_PATTERN, enumerated_list::enumerator),
   ];
 
 
@@ -298,32 +203,7 @@ impl State {
 
     (PatternName::Bullet, BULLET_PATTERN, body::bullet),
     (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Arabic), ARABIC_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Arabic), ARABIC_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Arabic), ARABIC_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerAlpha), LOWER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerAlpha), LOWER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerAlpha), LOWER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperAlpha), UPPER_ALPHA_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperAlpha), UPPER_ALPHA_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperAlpha), UPPER_ALPHA_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::LowerRoman), LOWER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::LowerRoman), LOWER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::LowerRoman), LOWER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::UpperRoman), UPPER_ROMAN_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::UpperRoman), UPPER_ROMAN_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::UpperRoman), UPPER_ROMAN_PERIOD_PATTERN, body::enumerator),
-
-    // (PatternName::Enumerator(EnumDelims::Parens, EnumKind::Automatic), AUTO_ENUM_PARENS_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::RParen, EnumKind::Automatic), AUTO_ENUM_RPAREN_PATTERN, body::enumerator),
-    // (PatternName::Enumerator(EnumDelims::Period, EnumKind::Automatic), AUTO_ENUM_PERIOD_PATTERN, body::enumerator),
-
     (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
-
     (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, body::footnote),
     (PatternName::Footnote ( FootnoteKind::AutoNumbered ), AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
     (PatternName::Footnote ( FootnoteKind::SimpleRefName ), SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
