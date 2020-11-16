@@ -12,7 +12,7 @@ use super::*;
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
-pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -81,7 +81,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
-pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -97,58 +97,11 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
     }
   };
 
-  eprintln!("(number, kind, delims) = ({:#?}, {:#?}, {:#?})", detected_number, detected_kind, detected_delims);
-
-  // Check validity of enumerated list item
-  if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
-
-    let line_indent = next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-
-    if ! next_line.is_empty() && line_indent <= detected_enumerator_indent {
-
-      eprintln!("Next line not empty or not indented...");
-
-      return text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name)
-
-    } else if let Some(next_captures) = crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line) {
-
-      let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, None, false, None, None) {
-        Some((number, kind, delims)) => (number, kind, delims),
-        None => return TransitionResult::Failure {
-          message: format!("Line following line {} conformed to enumerator pattern but no valid enumerator found? Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
-      if ! (next_number == detected_number + 1 && next_kind == detected_kind && next_delims == detected_delims) {
-        eprintln!("Non-matching enumerator n next line...");
-        return text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name)
-      } else {
-        //
-      }
-
-    } else {
-      // This is an anumerated list item
-    }
-  } else {
-    // No next line so proceed as usual
-  }
-
-  // let (detected_delims, detected_kind) = if let PatternName::Enumerator ( delims, kind) = pattern_name {
-  //   (*delims, *kind)
-  // } else {
-  //   return TransitionResult::Failure {
-  //     message: format!("No enumerator inside enumerator transition method on line {}. Computer says no...", line_cursor.sum_total()),
-  //     doctree: doctree
-  //   }
-  // };
-
-  // let (detected_enum_as_usize, detected_kind) = match Parser::enum_str_to_int_and_kind(detected_enum_str, &detected_kind, &detected_kind, false, None, None) {
-  //   Some((int, kind)) => (int, kind),
-  //   None => return TransitionResult::Failure {
-  //     message: format!("Unknown enumerator type detected on line {}. Computer says no...", line_cursor.sum_total()),
-  //     doctree: doctree
-  //   }
-  // };
+  // Ceck validity of list item
+  doctree = match Parser::is_enumerated_list_item(doctree, src_lines, line_cursor, captures, section_level, base_indent, detected_enumerator_indent, detected_number, detected_kind, detected_delims, pattern_name, None, false, None, None) {
+    Ok(doctree) => doctree,
+    Err(transition_result) => return transition_result
+  };
 
   let list_node_data = TreeNodeType::EnumeratedList {
     delims: detected_delims,
@@ -205,7 +158,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
 /// ### field_marker
 /// A transitioin function for handling detected field markers in a state that generates body type nodes.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -264,7 +217,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
 
 /// ### footnote
 /// A transition function for generating footnotes
-pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -375,7 +328,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
 
 /// ### citation
 /// A transition function for generating citations
-pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut tree_wrapper = doctree.unwrap();
 
@@ -467,7 +420,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
 
 /// ### hyperlink_target
 /// Parses a hyperlink target into a node.
-pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   use crate::common::normalize_refname;
 
@@ -631,7 +584,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
 /// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
-pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -1026,7 +979,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
 /// ### comment
 /// A function for parsing reST comments.
-pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
@@ -1142,7 +1095,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 /// A function that handles the parsing of blocks that start with text.
 /// This includes paragraphs, but also underlined titles.
 /// These are detected via line lookahead.
-pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
   let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -1304,7 +1257,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
 /// ### literal_block
 /// A function for parsing indented literal block nodes.
-pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let doctree = doctree.unwrap();
 
@@ -1320,7 +1273,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
   };
 
   /// Generates a literal block node from a "quoted" block of text.
-  fn parse_indented_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: regex::Captures, body_indent: usize, detected_indent: usize) -> TransitionResult {
+  fn parse_indented_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: &regex::Captures, body_indent: usize, detected_indent: usize) -> TransitionResult {
     // Read in a block with minimal indentation as-is with Parser::read_indented_block
     // and feed it to a LiteralBlock node.
 
@@ -1351,7 +1304,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
     }
   }
   /// Generates a literal block node from a "quoted" block of text.
-  fn parse_quoted_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: regex::Captures, body_indent: usize, detected_indent: usize) -> TransitionResult {
+  fn parse_quoted_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: &regex::Captures, body_indent: usize, detected_indent: usize) -> TransitionResult {
     // Read in an aligned contiguous block of text and check that all its lines start with one of the symbols in
     // `common::SECTION_AND_QUOTING_CHARS`, such as a '>'.
 
@@ -1434,7 +1387,7 @@ pub fn literal_block (src_lines: &Vec<String>, base_indent: usize, section_level
 
 
 /// ### line
-pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 

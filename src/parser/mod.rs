@@ -225,20 +225,18 @@ impl Parser {
         };
 
         // Running the current line of text through a DFA compiled from a regex
-        if regex.is_match(src_line) {
+        if let Some(captures) = regex.captures(src_line) {
 
           // eprintln!("Found match for {:?}...\n", pattern_name);
 
           match_found = true;
-
-          let captures = regex.captures(src_line).unwrap();
 
           // eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
           // eprintln!("Executing transition method...\n");
 
           let line_before_transition = self.line_cursor.sum_total();
 
-          self.doctree = match method(&self.src_lines, self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), captures, pattern_name) {
+          self.doctree = match method(&self.src_lines, self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), &captures, pattern_name) {
 
             TransitionResult::Success{doctree, next_states, push_or_pop, line_advance} => {
 

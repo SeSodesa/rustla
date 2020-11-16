@@ -9,7 +9,7 @@ use super::*;
 
 /// ### field_marker
 /// Creates FieldListItems, if parameters such as detected indentation and such match with the parent node ones.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 

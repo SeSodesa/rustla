@@ -351,7 +351,13 @@ lazy_static! {
 impl Parser {
   /// Checks whether the line following the current one allows for the construction of an enumerate list item.
   /// If successful, returns `Ok(DocTree)`, else returns
-  fn is_enumerated_list_item (doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: regex::Captures, section_level: &mut usize, base_indent: usize, detected_enumerator_indent: usize, detected_number: usize, detected_kind: EnumKind, detected_delims: EnumDelims, pattern_name: &PatternName) -> Result<DocTree, TransitionResult> {
+  fn is_enumerated_list_item (
+
+    doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: &regex::Captures,
+    section_level: &mut usize, base_indent: usize, detected_enumerator_indent: usize, detected_number: usize,
+    detected_kind: EnumKind, detected_delims: EnumDelims, pattern_name: &PatternName,
+    list_kind: Option<&EnumKind>, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>
+  ) -> Result<DocTree, TransitionResult> {
 
     if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
 
@@ -365,7 +371,7 @@ impl Parser {
 
       } else if let Some(next_captures) = crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line) {
 
-        let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, None, false, None, None) {
+        let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
           Some((number, kind, delims)) => (number, kind, delims),
           None => return Err(
             TransitionResult::Failure {

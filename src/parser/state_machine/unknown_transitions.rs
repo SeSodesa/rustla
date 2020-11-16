@@ -18,7 +18,7 @@ use super::*;
 /// Useful in situations, where a pattern should be recognized but not allowed inside the current state.
 /// One such case is the definition list state, where only normal text should be allowed,
 /// but other possibilities such as bullet lists beed to be eliminated first.
-pub fn back_up (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn back_up (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let doctree = doctree.unwrap().focus_on_parent();
 

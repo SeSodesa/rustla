@@ -11,7 +11,7 @@ use super::*;
 /// ### aplus_questionnaire_text
 ///
 /// A function for reading in blocks of intermediate text (rST paragraphs) between questionnaire questions.
-pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
+pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult  {
 
   let mut doctree = doctree.unwrap();
 
@@ -73,7 +73,7 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
 }
 
 
-pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 

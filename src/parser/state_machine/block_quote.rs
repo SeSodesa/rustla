@@ -6,7 +6,7 @@ use super::*;
 /// ### attribution
 /// A function that generates attribution nodes inside a block quote.
 /// An attribution ends block quotes, so encoutnering one makes the parser focus on its parent.
-pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
 
   let mut doctree = doctree.unwrap();
 
