@@ -10,7 +10,9 @@ use std::io::Write;
 
 use super::*;
 use crate::common::AplusExerciseStatus;
-use crate::common::OutputStream;
+// use crate::common::OutputStream;
+use crate::rustla_options::ruSTLaOptions;
+use crate::rustla_options::OutputStream;
 
 const LATEX_OPTION_DELIM: &str = ",";
 
@@ -24,15 +26,14 @@ impl DocTree {
   /// 
   /// Add a return type such as a `Result<String, ()>` that contains the generated object code in a single string.
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
-  pub fn write_to_larst (self, output: OutputStream) {
+  pub fn write_to_larst (self, rustla_options: &ruSTLaOptions) {
 
-    match output {
+    match rustla_options.shared_out_stream() {
       OutputStream::StdOut => {
         // Windows users beware. Only valid UTF-8 accepted.
         let mut stdout = std::io::stdout();
         self.tree.write_to_larst_stdout(&mut stdout);
       }
-      OutputStream::StdErr => {}
       OutputStream::File => {
         use std::fs::{File, OpenOptions};
 

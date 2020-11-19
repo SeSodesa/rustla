@@ -9,15 +9,13 @@
 /// email:  santtu.soderholm@tuni.fi
 
 
+mod rustla_options;
 mod parser;
 use parser::Parser;
 mod doctree;
 use doctree::DocTree;
 mod common;
 mod utf8_to_latex;
-
-use std::collections::HashMap;
-use std::{env};
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
@@ -30,8 +28,10 @@ fn main() -> Result<(),MainError> {
     
   copyright();
   
-  let args: Vec<String> = env::args().collect();
+  let args: Vec<String> = std::env::args().collect();
   let args_len = args.len();
+
+  let rustla_options = crate::rustla_options::ruSTLaOptions::new(&args);
 
   if args_len < 2 { usage(); return Err(MainError::ArgumentError(String::from("ruSTLa needs at least one argument..."))) }
 
@@ -53,8 +53,6 @@ fn main() -> Result<(),MainError> {
       }
     }
   }
-
-  let option_map = read_known_options(&args);
 
   let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&input) {
     Ok(meta) => meta,
@@ -97,74 +95,10 @@ fn main() -> Result<(),MainError> {
     };
 
     doctree = doctree.perform_restructuredtext_transforms();
-
-    use crate::common::OutputStream;
-    let out_stream = if let Some(stream) = option_map.get("output-stream") {
-      match stream.as_str() {
-        "stdout" => OutputStream::StdOut,
-        "stderr" => OutputStream::StdOut,
-        "file" => OutputStream::File,
-        _ => OutputStream::StdOut,
-      }
-    } else { OutputStream::StdOut };
-    doctree.write_to_larst(out_stream);
+    doctree.write_to_larst(&rustla_options);
   }
 
   return Ok(())
-}
-
-
-/// Scans a vector of the command line arguments of ruSTLa for known options and their values.
-/// Unknown options and/or values are simply ignored.
-/// Any recognized options and their values are stored in a HashMap.
-fn read_known_options (args: &Vec<String>) -> HashMap<String, String> {
-
-  const KNOWN_OPTIONS: [(&str, &[&str]); 1] = [
-    ("--output-stream", &["stdout", "stderr", "file"]),
-  ];
-
-  let mut arg_index = 0usize;
-  let args_len = args.len();
-
-  let mut option_map: HashMap<String, String> = HashMap::new();
-
-  loop {
-
-    let arg = if let Some(arg) = args.get(arg_index) { arg } else { break };
-
-    // Check for known options and act accordingly
-    match arg.as_str() {
-
-      "output-stream" => {
-
-        let option_name = "output-stream";
-
-        let option_value = if let Some(val) = args.get(arg_index + 1) { val } else {
-          eprintln!("The option \"{}\" has no value. Ignoring the option...", option_name);
-          break
-        };
-        match option_value.as_str() {
-          "stdout" | "stderr" | "file" => if let Some(val) = option_map.insert(option_name.to_string(), option_value.to_string()) {
-            eprintln!("Option \"{}\" given more than once. Overriding last value \"{}\" with a new one, \"{}\"...", option_name, val, option_value);
-            arg_index += 2;
-          } else {
-            arg_index += 2;
-          },
-          _ => {
-            eprintln!("Unknown value for the option \"{}\". Trying to interpret it as a different option...", option_name);
-            arg_index += 1;
-            continue
-          }
-        }
-      }
-
-      _ => { arg_index += 1; }
-    }
-
-    if arg_index >= args_len { break }
-  };
-
-  option_map
 }
 
 
