@@ -26,21 +26,21 @@ const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
 
 /// Program starting point
-fn main() -> Result<(), ()> {
+fn main() -> Result<(),MainError> {
     
   copyright();
   
   let args: Vec<String> = env::args().collect();
   let args_len = args.len();
 
-  if args_len < 2 { usage(); return Err(()) }
+  if args_len < 2 { usage(); return Err(MainError::ArgumentError(String::from("ruSTLa needs at least one argument..."))) }
 
   let src_file_path: std::path::PathBuf = if let Some(path) = args.last() {
     match std::fs::canonicalize(path) {
       Ok(path) => path,
       Err(e) => {
         eprintln!("Could not canonicalize source file path: {}", e);
-        return Err(())
+        return Err(MainError::PathError(String::from("Could not canonicalize input path...")))
       }
     }
   } else {
@@ -50,8 +50,7 @@ fn main() -> Result<(), ()> {
   if let Some(extension) = src_file_path.extension() {
     if let Some(extension_str) = extension.to_str() {
       if extension_str != "rst" {
-        eprintln!("As a precaution, the source file name should have the suffix \".rst\".");
-        return Err(())
+        return Err(MainError::PathError(String::from("As a precaution, the source file name should have the suffix \".rst\".")))
       }
     }
   }
@@ -61,15 +60,13 @@ fn main() -> Result<(), ()> {
   let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&src_file_path) {
     Ok(meta) => meta,
     Err(e) => {
-      eprintln!("Cannot determine the type of input:\n{}", e);
-      return Err(())
+      return Err(MainError::InputError(format!("Cannot determine the type of input: {}", e)))
     }
   };
 
   if src_file_metadata.is_dir() {
-    println!("At this stage, ruSTLa is designed to work with files only.");
-    println!("Please enter a valid rST file.");
-    return Err(());
+
+    return Err(MainError::InputError(format!("{}\n{}", "At this stage, ruSTLa is designed to work with files only.", "Please enter a valid rST file.")));
 
   } else if src_file_metadata.is_file() {
 
@@ -190,4 +187,14 @@ fn usage() {
   println!("\n  $ rustla path/to/file.rst\n");
   println!("Capabilities to transpile an entire");
   println!("toctree will be added later.");
+}
+
+#[derive(Debug)]
+enum MainError {
+  Ok,
+  PathError(String),
+  InputError(String),
+  ParseError(String),
+  PrintError(String),
+  ArgumentError(String)
 }
