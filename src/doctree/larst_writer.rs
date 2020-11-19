@@ -37,6 +37,11 @@ impl DocTree {
       OutputStream::File => {
         use std::fs::{File, OpenOptions};
 
+        // Cannot write to file without knowing the
+        if self.file_folder.is_empty() || self.filename_stem.is_empty() {
+          panic!("Cannot write to file without knowing the location. Computer says no...")
+        }
+
         const TEX_FILE_SUFFIX: &str = ".tex";
         const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";
 
@@ -57,7 +62,7 @@ impl DocTree {
         // If object file generation was successful, generate A+ class file
         let mut aplus_class_file: File = match OpenOptions::new().write(true).truncate(true).create(true).open(aplus_class_file_path) {
           Ok(file) => file,
-          Err(e) => panic!("Could not open LarST file for writing purposes: {}", e)
+          Err(e) => panic!("Could not open A+ class file for writing purposes: {}", e)
         };
 
         match aplus_class_file.write(aplus_cls_contents().as_bytes()){

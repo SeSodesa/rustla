@@ -29,7 +29,8 @@ impl ruSTLaOptions {
       is_full_document: false,
     };
 
-    loop {
+    while arg_index < args_len {
+
       let arg = if let Some(arg) = args.get(arg_index) { arg } else { break };
 
       match arg.as_str() {
@@ -38,8 +39,10 @@ impl ruSTLaOptions {
         "--to-file" => options.output_stream = OutputStream::File,
         "--full-doc" => options.is_full_document = true,
 
-        _ => { arg_index += 1; continue }
+        _ => {}
       }
+
+      arg_index += 1;
     }
 
     options

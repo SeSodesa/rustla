@@ -101,7 +101,8 @@ impl DocTree {
         panic!("Invalid unicode in file path. Computer says no...")
       }
     } else {
-      panic!("No recognizable source file name to be found. Computer says no...")
+      // eprintln!("No recognizable source file name to be found. Computer says no...");
+      String::new()
     };
 
     let file_folder = if let Some(parent) = doc_name.parent() {
@@ -111,7 +112,8 @@ impl DocTree {
         panic!("Source folder path could not be converted to a string. Computer says no...")
       }
     } else {
-      panic!("Source is not in any folder (even root). Computer says no...")
+      // eprintln!("Source is not in any folder (even root). Computer says no...");
+      String::new()
     };
 
     DocTree {

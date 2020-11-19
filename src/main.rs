@@ -17,6 +17,8 @@ use doctree::DocTree;
 mod common;
 mod utf8_to_latex;
 
+use std::io::BufRead;
+
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
 const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
@@ -25,80 +27,81 @@ const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
 /// Program starting point
 fn main() -> Result<(),MainError> {
-    
+
   copyright();
-  
+
   let args: Vec<String> = std::env::args().collect();
   let args_len = args.len();
 
   let rustla_options = crate::rustla_options::ruSTLaOptions::new(&args);
 
-  if args_len < 2 { usage(); return Err(MainError::ArgumentError(String::from("ruSTLa needs at least one argument..."))) }
+  let (src_lines, path): (Vec<String>, std::path::PathBuf) = if let Some(path) = args.last() {
 
-  let input: std::path::PathBuf = if let Some(path) = args.last() {
-    match std::fs::canonicalize(path) {
-      Ok(path) => path,
-      Err(e) => {
-        return Err(MainError::PathError(format!("Could not canonicalize input path: {}", e)))
+    if args_len == 1 { // Handle no arguments first
+
+      let mut src_lines = Vec::new();
+      let stdin = std::io::stdin();
+      for line in stdin.lock().lines() {
+        match line {
+          Ok(line) => src_lines.push(line),
+          Err(e) => return Err(MainError::InputError(format!("Error when reading stdin: {}", e)))
+        }
       }
+
+      (src_lines, std::path::PathBuf::new())
+
+    } else if let Ok(pathbuf) = std::fs::canonicalize(path) {
+
+      let line_iter = match crate::common::read_path_lines(&pathbuf) {
+        Ok(lines) => lines,
+        Err(e) => return Err(MainError::PathError(format!("Could not split file into lines: {}", e)))
+      };
+
+      let mut src_lines: Vec<String> = Vec::new();
+      for line in line_iter {
+        match line {
+          Ok(line) => src_lines.push(line),
+          Err(e) => return Err(MainError::InputError(String::from("Could not construct a line vector from input...")))
+        }
+      }
+
+      (src_lines, pathbuf)
+
+    } else {
+
+      let mut src_lines = Vec::new();
+      let stdin = std::io::stdin();
+      for line in stdin.lock().lines() {
+        match line {
+          Ok(line) => src_lines.push(line),
+          Err(e) => return Err(MainError::InputError(format!("Error when reading stdin: {}", e)))
+        }
+      }
+      (src_lines, std::path::PathBuf::new())
     }
   } else {
     unreachable!("No arguments, not even the program itself? Computer says no...")
   };
 
-  if let Some(extension) = input.extension() {
-    if let Some(extension_str) = extension.to_str() {
-      if extension_str != "rst" {
-        return Err(MainError::PathError(String::from("As a precaution, the source file name should have the suffix \".rst\".")))
-      }
-    }
-  }
+  // Enter parser here...
 
-  let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&input) {
-    Ok(meta) => meta,
-    Err(e) => {
-      return Err(MainError::InputError(format!("Cannot determine the type of input: {}", e)))
+  let mut doctree = DocTree::new(path);
+  let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
+  
+  use common::ParsingResult;
+
+  doctree = match parser.parse() {
+    ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => doctree,
+    ParsingResult::Failure { message, doctree } => {
+      eprintln!("Parsing error: {}", message);
+      doctree
     }
   };
 
-  if src_file_metadata.is_dir() {
+  doctree = doctree.perform_restructuredtext_transforms();
+  doctree.write_to_larst(&rustla_options);
 
-    return Err(MainError::InputError(format!("{}\n{}", "At this stage, ruSTLa is designed to work with files only.", "Please enter a valid rST file.")));
-
-  } else if src_file_metadata.is_file() {
-
-    let src_lines = match common::read_path_lines(&input) {
-      Ok(lines) => {
-        lines.map(|s|
-          match s {
-            Ok(string) => string,
-            Err(e) => panic!("Ran into an error when reading source file into buffer.")
-          }
-        ).collect::<Vec<String>>()
-      },
-      Err(_e) => panic!("File could not be opened")
-    };
-
-    // Enter parser here...
-
-    let mut doctree = DocTree::new(input);
-    let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
-    
-    use common::ParsingResult;
-
-    doctree = match parser.parse() {
-      ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => doctree,
-      ParsingResult::Failure { message, doctree } => {
-        eprintln!("Parsing error: {}", message);
-        doctree
-      }
-    };
-
-    doctree = doctree.perform_restructuredtext_transforms();
-    doctree.write_to_larst(&rustla_options);
-  }
-
-  return Ok(())
+  Ok(())
 }
 
 
