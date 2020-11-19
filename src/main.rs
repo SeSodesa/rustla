@@ -35,19 +35,18 @@ fn main() -> Result<(),MainError> {
 
   if args_len < 2 { usage(); return Err(MainError::ArgumentError(String::from("ruSTLa needs at least one argument..."))) }
 
-  let src_file_path: std::path::PathBuf = if let Some(path) = args.last() {
+  let input: std::path::PathBuf = if let Some(path) = args.last() {
     match std::fs::canonicalize(path) {
       Ok(path) => path,
       Err(e) => {
-        eprintln!("Could not canonicalize source file path: {}", e);
-        return Err(MainError::PathError(String::from("Could not canonicalize input path...")))
+        return Err(MainError::PathError(format!("Could not canonicalize input path: {}", e)))
       }
     }
   } else {
     unreachable!("No arguments, not even the program itself? Computer says no...")
   };
 
-  if let Some(extension) = src_file_path.extension() {
+  if let Some(extension) = input.extension() {
     if let Some(extension_str) = extension.to_str() {
       if extension_str != "rst" {
         return Err(MainError::PathError(String::from("As a precaution, the source file name should have the suffix \".rst\".")))
@@ -57,7 +56,7 @@ fn main() -> Result<(),MainError> {
 
   let option_map = read_known_options(&args);
 
-  let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&src_file_path) {
+  let src_file_metadata: std::fs::Metadata = match std::fs::metadata(&input) {
     Ok(meta) => meta,
     Err(e) => {
       return Err(MainError::InputError(format!("Cannot determine the type of input: {}", e)))
@@ -70,7 +69,7 @@ fn main() -> Result<(),MainError> {
 
   } else if src_file_metadata.is_file() {
 
-    let src_lines = match common::read_path_lines(&src_file_path) {
+    let src_lines = match common::read_path_lines(&input) {
       Ok(lines) => {
         lines.map(|s|
           match s {
@@ -84,7 +83,7 @@ fn main() -> Result<(),MainError> {
 
     // Enter parser here...
 
-    let mut doctree = DocTree::new(src_file_path);
+    let mut doctree = DocTree::new(input);
     let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
     
     use common::ParsingResult;
