@@ -109,7 +109,7 @@ fn main() -> Result<(),MainError> {
 /// Prints out copyright information of ruSTLa
 fn copyright() {
   eprintln!("\nThis is ruSTLa, version {}", VERSION);
-  eprintln!("© {} {},\n{}\n", AUTHOR_NAME, AUTHOR_YEAR, AUTHOR_EMAIL);
+  eprintln!("©{} {} <{}>\n", AUTHOR_YEAR, AUTHOR_NAME, AUTHOR_EMAIL);
 }
 
 /// # Usage
