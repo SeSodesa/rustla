@@ -279,7 +279,7 @@ impl TreeNodeType {
         format!("\\begin{{codeblock}}{}\n", lang)
       },
       Self::ColSpec { .. }            => todo!(),
-      Self::Comment { .. }            => todo!(),
+      Self::Comment { .. }            => "".to_string(),
       Self::CompoundParagraph { .. }  => todo!(),
       Self::Contact { .. }            => todo!(),
       Self::Container { .. }          => todo!(),
@@ -743,7 +743,7 @@ impl TreeNodeType {
       Self::Classifier { .. }               => todo!(),
       Self::Code { .. }                     => "\\end{codeblock}\n\n".to_string(),
       Self::ColSpec { .. }                  => todo!(),
-      Self::Comment { .. }                  => "\n".to_string(),
+      Self::Comment { .. }                  => "".to_string(),
       Self::CompoundParagraph { .. }        => "\n".to_string(),
       Self::Contact { .. }                  => todo!(),
       Self::Container { .. }                => todo!(),
