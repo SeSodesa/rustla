@@ -283,7 +283,7 @@ impl TreeNodeType {
         if let Some(comment) = text {
           comment
             .lines()
-            .fold(String::new(), |a, b| a + "% " + b + "\n")
+            .fold(String::new(), |a, b| a + "% " + b + "\n") + "\n"
         } else {
           String::new()
         }
