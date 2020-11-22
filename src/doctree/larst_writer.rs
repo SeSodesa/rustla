@@ -279,7 +279,15 @@ impl TreeNodeType {
         format!("\\begin{{codeblock}}{}\n", lang)
       },
       Self::ColSpec { .. }            => todo!(),
-      Self::Comment { .. }            => "".to_string(),
+      Self::Comment { text }            => {
+        if let Some(comment) = text {
+          comment
+            .lines()
+            .fold(String::new(), |a, b| a + "% " + b + "\n")
+        } else {
+          String::new()
+        }
+      },
       Self::CompoundParagraph { .. }  => todo!(),
       Self::Contact { .. }            => todo!(),
       Self::Container { .. }          => todo!(),
