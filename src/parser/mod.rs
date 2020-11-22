@@ -244,12 +244,11 @@ impl Parser {
 
                 (PushOrPop::Push, next_states) if next_states.is_some() => {
                   let mut next_states = next_states.unwrap();
-                  // eprintln!("Appending {:#?} to stack...\n", next_states);
                   self.state_stack.append(&mut next_states);
                 },
 
                 (PushOrPop::Pop, _) => {
-                  // eprintln!("Received POP instruction...\n");
+
                   match self.state_stack.pop() {
                     Some(machine) => (),
                     None => {
@@ -280,7 +279,7 @@ impl Parser {
                 (PushOrPop::Neither, None) => {} // No need to do anything to the stack...
 
                 (push_or_pop, next_states) => {
-                  // eprintln!("No action for received (PushOrPop, Vec<Statemachine>) = ({:#?}, {:#?}) pair...\n", push_or_pop, next_states);
+
                   return ParsingResult::Failure {
                     message: format!("Transition performed, but conflicting result on line {}. Aborting...", self.line_cursor.sum_total()),
                     doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
@@ -306,8 +305,6 @@ impl Parser {
             }
 
             TransitionResult::Failure {message, doctree} => {
-
-              eprintln!("{:#?}", message);
 
               return ParsingResult::Failure {
                 message: message,

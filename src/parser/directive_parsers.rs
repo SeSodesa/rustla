@@ -2193,7 +2193,6 @@ impl Parser {
         "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
         "maintenance" => AplusExerciseStatus::Maintenance,
         _ => {
-          // eprintln!("No such exercise status for A+ submit exercise before line {}. Setting as unlisted...", line_cursor.sum_total());
           AplusExerciseStatus::Unlisted
         }
       }
@@ -2664,7 +2663,6 @@ impl Parser {
 
     let (unknown_directive_as_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(false), Some(body_indent), Some(first_line_indent), false) {
       Ok((lines, _, offset, _)) => {
-        eprintln!("{:#?}\n", lines);
         (lines.join("\n"), offset)
       },
       Err(message) => return TransitionResult::Failure {
