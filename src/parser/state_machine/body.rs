@@ -985,82 +985,44 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 
   let match_len = captures.get(0).unwrap().as_str().chars().count() + base_indent;
   let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+  let next_line_indent =  if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
+    if line.trim().is_empty() {
+      match_len
+    } else {
+      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+      if indent < detected_marker_indent + 1 { match_len } else { indent }
+    }
+  } else { match_len };
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
 
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        return TransitionResult::Failure {
-          message: format!("Found a comment marker on line {} but the line doesn't exist? Computer says no...", line_cursor.sum_total()),
+      let (comment_string, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(next_line_indent-base_indent), Some(match_len - base_indent), false) {
+        Ok((lines, _, offset, d)) => (lines.join("\n").trim().to_string(), offset),
+        Err(e) => return TransitionResult::Failure {
+          message: format!("Could not read comment on line {}: {}", line_cursor.sum_total(), e),
           doctree: doctree
-        }
+        },
       };
 
-      let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
-      let empty_after_marker = line_after_marker.as_str().trim().is_empty();
-
-      let is_empty_comment = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
-        if line.trim().is_empty() && empty_after_marker { true } else { false }
+      let comment_data = if comment_string.is_empty() {
+        TreeNodeType::Comment { text: None }
       } else {
-        if !empty_after_marker { false } else { true }
+        TreeNodeType::Comment { text: Some(comment_string) }
       };
 
-      if is_empty_comment {
-        doctree = match doctree.push_data(TreeNodeType::Comment { text: None }) {
-          Ok(tree) => tree,
-          Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree
-          }
-        };
-        return TransitionResult::Success {
-          doctree: doctree,
-          next_states: None,
-          push_or_pop: PushOrPop::Neither,
-          line_advance: LineAdvance::Some(1)
-        }
-      }
-
-      // Scan the next "blob" of text with the same level of indentation.
-      let (next_indent, first_indent) = if let Some((indent, offset)) = Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-
-        let next_indent = if offset == 0 { Some(indent) } else {
-          return TransitionResult::Failure {
-            message: format!("The line following the discovered comment marker on line {} was not supposed to be empty. Computer says no...", line_cursor.sum_total()),
+      return TransitionResult::Success {
+        doctree: match doctree.push_data(comment_data) {
+          Ok(doctree) => doctree,
+          Err(doctree) => return TransitionResult::Failure {
+            message: format!("Error when reading comment on line {}. Computer says no...", line_cursor.sum_total()),
             doctree: doctree
           }
-        };
-        let first_indent = if empty_after_marker { None } else {Some(match_len)};
-        (next_indent, first_indent)
-      } else {
-        let first_indent = if empty_after_marker { None } else {Some(match_len)};
-        (None, first_indent)
-      };
-
-      let (comment_block_string, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), next_indent, first_indent, false) {
-        (lines.join("\n").trim().to_string(), offset)
-      } else {
-        return TransitionResult::Failure {
-          message: format!("Could not read comment block on line {}...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
-
-      doctree = match doctree.push_data(TreeNodeType::Comment { text: Some(comment_block_string) }) {
-        Ok(tree) => tree,
-        Err(tree) => return TransitionResult::Failure {
-          message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: tree
-        }
-      };
-      return TransitionResult::Success {
-        doctree: doctree,
+        },
         next_states: None,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(offset) // -1 because of read_until_blank of Parser::read_indented_block being false
+        line_advance: LineAdvance::Some(offset)
       }
     }
     IndentationMatch::TooMuch => {
