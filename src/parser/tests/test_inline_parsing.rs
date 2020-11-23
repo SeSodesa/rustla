@@ -409,7 +409,7 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
   }
 
   if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(12).shared_data() {
-    assert_eq!(text, ">`\\textunderscore \\textunderscore ."); // <- Plain text is LaTeX-escaped
+    assert_eq!(text, ">`\\textunderscore\\textunderscore."); // <- Plain text is LaTeX-escaped
   } else {
     panic!()
   }
