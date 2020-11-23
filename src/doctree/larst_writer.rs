@@ -243,7 +243,7 @@ impl TreeNodeType {
         use crate::doctree::directives::AdmonitionType;
 
         match variant {
-          AdmonitionType::Admonition { title } => format!("\\begin{{admonition}}\\textbf{{{}}}\n", title),
+          AdmonitionType::Admonition { title } => format!("\\begin{{admonition}}\n"),
           _ => format!("\\begin{{{}}}\n", variant.to_string())
         }
       },

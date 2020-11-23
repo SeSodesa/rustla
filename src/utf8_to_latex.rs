@@ -61,8 +61,18 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
       c1
     };
 
+    let space = if let Some(c) = char_iter.peek() {
+      if (*c).is_whitespace() || *c == '\\' {
+        " "
+      } else {
+        ""
+      }
+    } else {
+      ""
+    };
+
     if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c1) {
-      latex_string += latex_str;
+      latex_string = latex_string + latex_str + space;
     } else {
       latex_string.push(c1);
     }
@@ -501,10 +511,10 @@ lazy_static! {
 
     let mut map = HashMap::new();
 
-    map.insert('\\', r#"\textbackslash "#);
-    map.insert('^', r#"\textasciicircum "#);
-    map.insert('_', r#"\textunderscore "#);
-    map.insert('~', r#"\textasciitilde "#);
+    map.insert('\\', r#"\textbackslash"#);
+    map.insert('^', r#"\textasciicircum"#);
+    map.insert('_', r#"\textunderscore"#);
+    map.insert('~', r#"\textasciitilde"#);
     // map.insert('@', r#"\@ "#);
     map.insert('#', r#"\#"#);
     map.insert('&', r#"\&"#);
