@@ -47,12 +47,24 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
 
   let source_char_count = utf_str.chars().count();
   let mut latex_string = String::with_capacity(source_char_count);
+  let mut char_iter = utf_str.chars().peekable();
 
-  for c in utf_str.chars() {
-    if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c) {
+  while let Some(c1) = char_iter.next() {
+
+    let c1 = if c1 == '\\' {
+      if let Some(c2) = char_iter.peek() {
+        char_iter.next().unwrap()
+      } else {
+        c1
+      }
+    } else {
+      c1
+    };
+
+    if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c1) {
       latex_string += latex_str;
     } else {
-      latex_string.push(c);
+      latex_string.push(c1);
     }
   }
 

@@ -1043,7 +1043,7 @@ impl Parser {
     let formal_language = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
       arg
     } else {
-      String::from("python3") // the Sphinx "highlight_language" setting default
+      String::from("python") // the Sphinx "highlight_language" setting default
     };
 
     // Read the settings...
