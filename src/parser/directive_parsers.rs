@@ -1055,7 +1055,7 @@ impl Parser {
         false
       };
       let lineno_start = if let Some(start_line) = settings.remove("lineno-start") {
-        if let Ok(number) = start_line.parse::<u32>() {
+        if let Ok(number) = start_line.parse::<usize>() {
           linenos = true;
           Some(number)
         } else {
@@ -1106,7 +1106,40 @@ impl Parser {
 
     // Construct node from settings and read content...
 
-    todo!()
+    let (code_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), None, false) {
+      Ok((lines, _, offset, _)) => (lines.join("\n"), offset),
+      Err(e) => return TransitionResult::Failure {
+        message: format!("Error when parsing a Sphinx code block on line {}: {}", line_cursor.sum_total(), e),
+        doctree: doctree
+      }
+    };
+
+    let code_block_data = TreeNodeType::SphinxCodeBlock {
+      language: formal_language,
+      linenos: linenos,
+      lineno_start: lineno_start,
+      emphasize_lines: emphasize_lines,
+      caption: caption,
+      name: name,
+      dedent: dedent,
+      force: force,
+      code_text: code_text
+    };
+
+    doctree = match doctree.push_data(code_block_data) {
+      Ok(tree) => tree,
+      Err(tree) => return TransitionResult::Failure {
+        message: format!("Erro when parsing Sphinx code block on line {}. Computer says no...", line_cursor.sum_total()),
+        doctree: tree
+      }
+    };
+
+    TransitionResult::Success {
+      doctree: doctree,
+      next_states: None,
+      push_or_pop: PushOrPop::Neither,
+      line_advance: LineAdvance::Some(offset)
+    }
   }
 
   pub fn parse_sphinx_literalinclude () {
