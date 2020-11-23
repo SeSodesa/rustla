@@ -1034,7 +1034,78 @@ impl Parser {
     todo!()
   }
 
-  pub fn parse_sphinx_code_block () {
+  /// A parser for the Sphinx-specific `code-block` directive. See https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block
+  /// for explanations of different settings and arguments.
+  pub fn parse_sphinx_code_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, body_indent: usize, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+
+
+    // Read directive argument: the formal language (should be recognized by Pygments)
+    let formal_language = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
+      arg
+    } else {
+      String::from("python3") // the Sphinx "highlight_language" setting default
+    };
+
+    // Read the settings...
+    let (linenos, lineno_start, emphasize_lines, caption, name, dedent, force) =  if let Some(mut settings) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
+
+      let mut linenos = if let Some(linenos) = settings.remove("linenos") {
+        true
+      } else {
+        false
+      };
+      let lineno_start = if let Some(start_line) = settings.remove("lineno-start") {
+        if let Ok(number) = start_line.parse::<u32>() {
+          linenos = true;
+          Some(number)
+        } else {
+          None
+        }
+      } else {
+        None
+      };
+      let emphasize_lines = if let Some(line_numbers) = settings.remove("emphasize-lines") {
+        let emph_lines = line_numbers
+          .split(",")
+          .filter(|s| ! s.trim().is_empty())
+          .map(|s| s.trim())
+          .filter_map(|s| s.parse::<usize>().ok())
+          .collect::<Vec<usize>>();
+
+        Some(emph_lines)
+
+      } else {
+        None
+      };
+      let caption = settings.remove("caption");
+      let name = if let Some(refname) = settings.remove("name") {
+        Some(crate::common::normalize_refname(&refname))
+      } else {
+        None
+      };
+      let dedent = if let Some(dedent) = settings.remove("dedent") {
+        if let Ok(dedent) = dedent.parse::<usize>() {
+          Some(dedent)
+        } else {
+          None
+        }
+      } else {
+        None
+      };
+      let force = if let Some(force) = settings.remove("force") {
+        true
+      } else {
+        false
+      };
+
+      (linenos, lineno_start, emphasize_lines, caption, name, dedent, force)
+
+    } else {
+      (false, None, None, None, None, None, false)
+    };
+
+    // Construct node from settings and read content...
+
     todo!()
   }
 
@@ -2742,7 +2813,7 @@ impl Parser {
       line_cursor.increment_by(1);
     };
 
-    if argument_lines.is_empty() { None } else { Some(argument_lines.join(" ")) }
+    if argument_lines.is_empty() { None } else { Some( argument_lines.join(" ").trim().to_string() ) }
   }
 
 

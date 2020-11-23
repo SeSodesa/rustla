@@ -820,7 +820,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
 
-        "code-block" => {
+        "code-block" | "sourcecode" => {
           Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
         }
 
