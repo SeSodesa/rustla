@@ -20,6 +20,7 @@ mod definition_list;
 mod enumerated_list;
 mod field_list;
 mod inline;
+mod literal_block;
 pub mod transitions;
 mod unknown_transitions;
 use transitions::{LINE_PATTERN, TEXT_PATTERN, FIELD_MARKER_PATTERN};

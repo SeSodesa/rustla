@@ -141,8 +141,8 @@ impl State {
   /// An array of transitions related to `State::Line`.
   pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
     (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::QuotedLiteralBlock, QUOTED_LITERAL_BLOCK_PATTERN, body::literal_block),
-    (PatternName::IndentedLiteralBlock, INDENTED_LITERAL_BLOCK_PATTERN, body::literal_block),
+    (PatternName::QuotedLiteralBlock, QUOTED_LITERAL_BLOCK_PATTERN, literal_block::literal_block),
+    (PatternName::IndentedLiteralBlock, INDENTED_LITERAL_BLOCK_PATTERN, literal_block::literal_block),
   ];
 
 
