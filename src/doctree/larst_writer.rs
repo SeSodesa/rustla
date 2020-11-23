@@ -509,6 +509,42 @@ impl TreeNodeType {
         format!("\\begin{{only}}[{}]\n", expression)
       },
 
+      Self::SphinxCodeBlock { language, linenos, lineno_start, emphasize_lines, caption, name, dedent, force, code_text } => {
+
+        let mut options = Vec::<String>::new();
+
+        if *linenos { options.push(String::from("linenos")) }
+        if let Some(start_line) = lineno_start { options.push(format!("lineno-start={}", start_line.to_string() ) ) }
+        if let Some(line_numbers) = emphasize_lines {
+          let line_number_strings = line_numbers
+            .iter()
+            .map(|line| line.to_string())
+            .collect::<Vec<String>>()
+            .join(",");
+          options.push(format!("emphasize_lines={}",line_number_strings))
+        }
+        if let Some(caption) = caption {
+          let latex_caption = crate::utf8_to_latex::unicode_text_to_latex(caption);
+          options.push(format!("caption={}", latex_caption))
+        }
+        if let Some(name) = name {
+          let normalized_refname = crate::common::normalize_refname(name);
+          options.push(format!("name"))
+        }
+        if let Some(dedent) = dedent {
+          // Remove indentation from code_text here?
+        }
+
+        if *force {
+          options.push(format!("force"))
+        }
+
+        let option_string = options.join(",");
+
+        // LarST does not support many of the given options yet, so they are not written to the resulting file...
+        format!("\\begin{{codeblock}}[{}]\n{}", language, code_text)
+      }
+
       // ========================
       //  A+ specific directives
       // ========================
@@ -843,6 +879,7 @@ impl TreeNodeType {
       // ============================
 
       Self::SphinxOnly { expression, body_indent } => "\\end{only}\n\n".to_string(),
+      Self::SphinxCodeBlock { .. } => String::from("\\end{codeblock}\n"),
 
       // ========================
       //  A+ specific directives

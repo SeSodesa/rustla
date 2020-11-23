@@ -228,6 +228,7 @@ impl TreeNode {
       // ============================
 
       TreeNodeType::SphinxOnly { .. } =>  {},
+      TreeNodeType::SphinxCodeBlock { .. } => {},
 
       // ========================
       //  A+ specific directives

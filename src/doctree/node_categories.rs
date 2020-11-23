@@ -515,6 +515,11 @@ pub const SPHINX_ONLY_CATEGORIES: &[NodeCategory] = &[
   NodeCategory::CompoundBody,
 ];
 
+pub const SPHINX_CODE_BLOCK_CATEGORIES: &[NodeCategory] = &[
+  NodeCategory::Body,
+  NodeCategory::SimpleBody,
+];
+
 // ========================
 //  A+ specific directives
 // ========================

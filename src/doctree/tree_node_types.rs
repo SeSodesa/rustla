@@ -828,6 +828,20 @@ pub enum TreeNodeType {
     body_indent: usize,
   },
 
+  /// A Sphinx-specific code block. See https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block
+  /// for details.
+  SphinxCodeBlock {
+    language: String,
+    linenos: bool,
+    lineno_start: Option<usize>,
+    emphasize_lines: Option<Vec<usize>>,
+    caption: Option<String>,
+    name: Option<String>,
+    dedent: Option<usize>,
+    force: bool,
+    code_text: String,
+  },
+
   // ========================
   //  A+ specific directives
   // ========================
@@ -1164,7 +1178,7 @@ impl TreeNodeType {
       // ========================
 
       Self::SphinxOnly { body_indent, .. } => Some(*body_indent),
-
+      Self::SphinxCodeBlock { .. } => None,
 
       // ========================
       //  A+ specific directives
@@ -1301,6 +1315,7 @@ impl TreeNodeType {
       // ============================
 
       Self::SphinxOnly { body_indent, .. } => &SPHINX_ONLY_CATEGORIES,
+      Self::SphinxCodeBlock { .. } => &SPHINX_CODE_BLOCK_CATEGORIES,
       
       // ========================
       //  A+ specific directives
@@ -1439,6 +1454,7 @@ impl fmt::Display for TreeNodeType {
       // ============================
 
       Self::SphinxOnly { body_indent, .. } => "sphinx only",
+      Self::SphinxCodeBlock { .. } => "sphinx code block",
 
       // ========================
       //  A+ specific directives

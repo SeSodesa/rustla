@@ -275,6 +275,7 @@ impl TreeNode {
       // ============================
 
       TreeNodeType::SphinxOnly { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
+      TreeNodeType::SphinxCodeBlock { .. } => false,
 
       // ========================
       //  A+ specific directives
