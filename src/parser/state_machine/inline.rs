@@ -175,7 +175,7 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
   let lookahead_len = lookahead_str.chars().count();
 
   if ! front_role_marker.is_empty() && ! back_role_marker.is_empty() {
-    println!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
+    eprintln!("Warning: found both pre- and suffix roles for interpreted text. Returning whole match as inline literal...");
     let match_len = (lookbehind_str.to_string() + front_role_marker + markup_start_str + content + markup_end_str + back_role_marker).chars().count();
     let match_string: String = whole_match
     .chars()
@@ -230,7 +230,7 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
     /// [reStructuredText Markup Specification](https://docutils.sourceforge.io/docs/ref/rst/roles.html).
     const DEFAULT_DEFAULT_ROLE: &str = "title-reference";
 
-    println!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
+    eprintln!("Warning: no role found for interpreted text. Using {}...", DEFAULT_DEFAULT_ROLE);
     return (vec![TreeNodeType::TitleReference { displayed_text: content.to_string(), target_label: normalize_refname(content) }], match_len)
   };
 
