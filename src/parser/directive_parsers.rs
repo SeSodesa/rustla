@@ -1036,7 +1036,7 @@ impl Parser {
 
   /// A parser for the Sphinx-specific `code-block` directive. See https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block
   /// for explanations of different settings and arguments.
-  pub fn parse_sphinx_code_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, body_indent: usize, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
+  pub fn parse_sphinx_code_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, body_indent: usize, first_indent: Option<usize>) -> TransitionResult {
 
 
     // Read directive argument: the formal language (should be recognized by Pygments)
@@ -1107,7 +1107,18 @@ impl Parser {
     // Construct node from settings and read content...
 
     let (code_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), None, false) {
-      Ok((lines, _, offset, _)) => (lines.join("\n"), offset),
+      Ok((mut lines, _, offset, _)) => {
+
+        // Remove empty lines from front
+        lines = lines.iter().skip_while(|line| line.is_empty()).map(|s| s.to_string()).collect();
+
+        // Remove empty lines from back
+        while let Some(line) = lines.last_mut() {
+          if line.is_empty() { lines.pop(); } else { break }
+        }
+
+        (lines.join("\n") + "\n", offset)
+      }
       Err(e) => return TransitionResult::Failure {
         message: format!("Error when parsing a Sphinx code block on line {}: {}", line_cursor.sum_total(), e),
         doctree: doctree

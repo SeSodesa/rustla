@@ -879,7 +879,7 @@ impl TreeNodeType {
       // ============================
 
       Self::SphinxOnly { expression, body_indent } => "\\end{only}\n\n".to_string(),
-      Self::SphinxCodeBlock { .. } => String::from("\\end{codeblock}\n"),
+      Self::SphinxCodeBlock { .. } => String::from("\\end{codeblock}\n\n"),
 
       // ========================
       //  A+ specific directives

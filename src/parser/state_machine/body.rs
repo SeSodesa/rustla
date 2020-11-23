@@ -821,7 +821,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
         }
 
         "code-block" | "sourcecode" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_sphinx_code_block(src_lines, doctree, line_cursor, base_indent, empty_after_marker, body_indent, Some(detected_first_indent))
         }
 
         "literalinclude" => {
