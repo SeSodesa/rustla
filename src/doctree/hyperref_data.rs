@@ -1,6 +1,6 @@
 /// ## footnote_data
 /// A submodule that contains the FoonoteData type and its methods.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

@@ -1,6 +1,6 @@
 /// ## body
 /// This module contains the transition functions related to `StateMachine::Body`.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -77,7 +77,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 /// Attempts to create a new enumerated list node and focus on it,
 /// while at the same time pushing a new `EnumeratedList` state on
 /// top of the parser machine stack.
-/// 
+///
 /// This does not yet parse the first detected list item.
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
@@ -1048,7 +1048,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
-    } 
+    }
   }
 }
 
@@ -1639,7 +1639,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
         /// There are two kinds of literal block indicators:
         /// 1. preceded by whitespace
         /// 2. not preceded by whitespace
-        /// 
+        ///
         /// In the first case, both `::`s will be removed. In the second case, only the first one will disappear.
         static ref LITERAL_BLOCK_INDICATOR: Regex = Regex::new(r"(\s{0,1}|\S)::$").unwrap();
       }

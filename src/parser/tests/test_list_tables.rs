@@ -1,7 +1,7 @@
 /// ## test_list_tables
-/// 
+///
 /// A submodule for testing reStructuredText list tables.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -25,7 +25,7 @@ fn list_table_01 () {
 
    * - This is the first column of another row
      - This is the second column.
-   
+
 
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 

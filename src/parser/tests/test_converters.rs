@@ -1,5 +1,5 @@
 /// ## test_converters
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

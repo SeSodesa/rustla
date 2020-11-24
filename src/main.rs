@@ -4,7 +4,7 @@
 /// ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
 /// It is intended to function as the counterpart to the LarST, or LaTeX to reStructuredText
 /// parser, written by Tomi Janhunen.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -87,7 +87,7 @@ fn main() -> Result<(),MainError> {
 
   let mut doctree = DocTree::new(path);
   let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
-  
+
   use common::ParsingResult;
 
   doctree = match parser.parse() {

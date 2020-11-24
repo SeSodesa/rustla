@@ -1,6 +1,6 @@
 /// A zipper module for accessing `TreeNode`s.
 /// Inspired by https://stackoverflow.com/a/36168919/6449910
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -61,7 +61,7 @@ impl TreeZipper {
 
 
   /// ### shared_children
-  /// 
+  ///
   /// Optionally returns a shared reference to the children of the focused-on node.
   pub fn shared_children (&self) -> &Option<Vec<TreeNode>> {
     self.node.shared_children()
@@ -69,7 +69,7 @@ impl TreeZipper {
 
 
   /// ### mut_children
-  /// 
+  ///
   /// Optionally returns a mutable reference to the children of the focused-on node.
   pub fn mut_children (&mut self) -> &mut Option<Vec<TreeNode>> {
     self.node.mut_children()
@@ -225,7 +225,7 @@ impl TreeZipper {
     let with_focus_on_latest_child = match self.focus_on_child(children_len - 1) {
       Ok(tree_zipper) => tree_zipper,
       Err(parent) => {
-        
+
         return Err(parent)
       }
     };

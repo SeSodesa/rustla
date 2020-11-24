@@ -1,6 +1,6 @@
 /// ## line_cursor
 /// A submodule that contains the line cursor type and its associated function definitions.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

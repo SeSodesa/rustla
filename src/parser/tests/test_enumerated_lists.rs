@@ -1,6 +1,6 @@
 /// ## test_enumerated_lists
 /// A submodule for tests related to enumerated lists.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -17,7 +17,7 @@ fn enumerated_list_01 () {
     with a valid second line
 
 Some unindented text.
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -58,7 +58,7 @@ fn enumerated_list_02 () {
 
 (i) List item 1
     of a second list
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -103,7 +103,7 @@ fn enumerated_list_03 () {
 
 (i) List item 1
     of a second list
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -173,7 +173,7 @@ fn enumerated_list_04 () {
 (3) Third item that has to match with the internal counter of the list
 
 (#) Fourth item of the same list, with automatic numbering, again.
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -235,7 +235,7 @@ fn enumerated_list_05 () {
 (#) List item ii
 
 (iii) List item iii
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));

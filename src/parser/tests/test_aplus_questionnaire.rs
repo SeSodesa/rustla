@@ -77,7 +77,7 @@ fn aplus_questionnaire_01 () {
 
     This question accepts either "red" or "blue" as the correct answer.
     The model solution is a regular expression.
-  
+
     red|blue
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
 

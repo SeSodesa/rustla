@@ -1,6 +1,6 @@
 /// ## doctree
 /// This module defines the document tree and its nodes
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -129,7 +129,7 @@ impl DocTree {
 
 
   /// ### n_of_nodes
-  /// 
+  ///
   /// Returns the value of the contnained node counter.
   pub fn n_of_nodes (&self) -> NodeId {
     self.node_count
@@ -138,7 +138,7 @@ impl DocTree {
 
   /// ### print_tree
   /// Mainly for debugging purposes.
-  /// 
+  ///
   /// Prints the contaiend tree, focused on the current node.
   pub fn print_tree (&self) {
     eprintln!("The Document Tree\n=================");
@@ -147,7 +147,7 @@ impl DocTree {
 
 
   /// ### print_node
-  /// 
+  ///
   /// Prints the currently focused on node.
   fn print_node (&self) {
     eprintln!("{:#?}", self.tree.shared_node())
@@ -155,7 +155,7 @@ impl DocTree {
 
 
   /// ### print_node_id
-  /// 
+  ///
   /// Prints the id of the currently focused on node.
   fn print_node_id (&self) {
     eprintln!("{:#?}", self.tree.node_id())
@@ -170,13 +170,13 @@ impl DocTree {
 
   /// ### print_internal_labels
   /// mainly for debugging purposes
-  /// 
+  ///
   /// Prints out the internal targe labels stored in `self.hyperref_data` currently being worked on.
   pub fn print_internal_labels (&self) {
     eprintln!("{:#?}", self.hyperref_data.shared_accumulated_internal_target_label());
   }
-  
-  
+
+
   /// ### focus_on_parent
   /// Focuses `self.tree` on its parent node if there is one.
   pub fn focus_on_parent (mut self) -> Self {
@@ -663,7 +663,7 @@ impl DocTree {
   /// and corresponding levels via `self.section_levels`. If a section of such style already exists, the level of the section
   /// is simply set to the level matching it. If not, the maximum known level is plus 1
   /// is assigned to the section data.
-  /// 
+  ///
   /// Note that this function does not yet modify known section data or hyperref targets.
   /// This is donw only if pushing the node data to the tree succeeds, and is handled
   /// by the related methods.

@@ -1,13 +1,13 @@
 /// ## node_categories
-/// 
+///
 /// A submodule that contains the different categories each node type might belong to.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
 
 /// ### NodeCategory
-/// 
+///
 /// An enumeration of the different kinds of categories a node might belong to.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum NodeCategory {
@@ -43,12 +43,12 @@ pub enum NodeCategory {
   Structural,
 
   /// #### CompoundStructural
-  /// 
+  ///
   /// Structural nodes that may have children.
   CompoundStructural,
 
   /// #### SimpleStructural
-  /// 
+  ///
   /// Structural nodes that may not have children.
   SimpleStructural,
 
@@ -530,7 +530,7 @@ pub const APLUS_POI_CATEGORIES: [NodeCategory; 2] = [
 ];
 
 pub const APLUS_COL_BREAK_CATEGORIES: &[NodeCategory] = &[
-  
+
 ];
 
 pub const APLUS_QUESTIONNAIRE_CATEGORIES: &[NodeCategory] = &[

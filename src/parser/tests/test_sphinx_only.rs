@@ -1,7 +1,7 @@
 /// ## test_sphinx_only
-/// 
+///
 /// A unit test module for Sphinx "only" dirctives.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -21,9 +21,9 @@ fn sphinx_only_01 () {
 
   * As is this bullet list...
   * ... with a second item
-  
+
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
-  
+
   let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);

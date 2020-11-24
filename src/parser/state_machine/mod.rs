@@ -1,8 +1,8 @@
 /// ## state_machine
-/// 
+///
 /// This module contains specifications
 /// of state machines used by the parser.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -41,7 +41,7 @@ use crate::common::EnumAsInt;
 /// as enums are only as large as their largest variant.
 /// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
 /// article.
-/// 
+///
 /// The variants are used as keys to the static `TRANSITION_MAP`, which stores vectors of
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -100,7 +100,7 @@ pub enum State {
   /// Citation nodes may contain arbitrary body elements.
   /// This state is therefore reserved for recognizing them when focused on a citation node.
   Citation,
-  
+
   /// ### DefinitionList
   /// Definition lists may only contain empty lines and definition list items.
   DefinitionList,
@@ -109,14 +109,14 @@ pub enum State {
   /// When in this state, the parser only recognizes empty lines and enumerated list items.
   EnumeratedList,
 
-  
+
   HyperlinkTarget,
 
   /// #### ListItem
   /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
   /// This state is reserved for recognizing them when focused on one of the list item type nodes.
   ListItem,
-  
+
   /// #### FieldList
   /// When focused on a field list node, the parser only recognizes empty lines and field list items.
   FieldList,
@@ -127,14 +127,14 @@ pub enum State {
   /// Footnotes can contain arbitrary body elements.
   /// This state is reserved for recognizing them when focused on a footnote node.
   Footnote,
-  
+
   /// #### HyperlinkTarget
   /// There are 3 different types of hyperlink targets:
-  /// 
+  ///
   /// 1. *internal*, which link to body elements that directly follow them,
   /// 2. *external*, that reference external URIs and
   /// 3. *indirect*, which reference other hyperlink targets inside the same document.
-  /// 
+  ///
   /// ??? Normally, an external or indirect hyperlink target would simply be a node on its own, that simply contains a reference label
   /// of some kind. However, chained *internal* hyperlinks all reference the same target node,
   /// so a state of its own (this one) is reserved for parsing them until a node of a different kind (including other types
@@ -232,7 +232,7 @@ impl State {
   /// Takes in a reference/slice to an associated array of uncompiled transitions
   /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
   /// in palce of the regex patterns.
-  /// 
+  ///
   /// Error handling needs to be added.
   fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
 
@@ -260,7 +260,7 @@ lazy_static! {
   /// ### TRANSITION_MAP
   /// A static map of transititions for each state of
   /// the `Parser` `StateMachine`.
-  /// 
+  ///
   /// With this regexes are only compiled into automata once.
   pub static ref TRANSITION_MAP: HashMap<State, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
 

@@ -1,6 +1,6 @@
 /// ## test_images
 /// A submodule for unit tests related to images.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

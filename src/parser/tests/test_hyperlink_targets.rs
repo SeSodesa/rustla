@@ -1,7 +1,7 @@
 /// ## test_hyperlink_targets
-/// 
+///
 /// A submodule for tests related to parsing hyperlink targets.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -374,7 +374,7 @@ fn citation_02 () {
 
 #[test]
 fn hyperlink_target_01 () {
-  
+
   let src = String::from("
 .. _target1:
 .. _target2:
@@ -402,7 +402,7 @@ Paragraph here. Please give me the labels \"target1\" and \"target2\".
 
 #[test]
 fn hyperlink_target_02 () {
-  
+
   let src = String::from("
 * This here is a bulleted list
 
@@ -552,7 +552,7 @@ A Section title
     TreeNodeType::Footnote { .. } => {}
     _ => panic!()
   }
-  
+
   // Target tests
   match doctree.shared_child(0).shared_target_labels() {
     None => panic!(),

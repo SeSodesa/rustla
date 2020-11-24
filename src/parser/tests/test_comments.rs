@@ -1,7 +1,7 @@
 /// ## test_comments
-/// 
+///
 /// A unit test module for reST comments.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

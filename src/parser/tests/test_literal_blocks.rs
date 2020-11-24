@@ -1,6 +1,6 @@
 /// ## test_literal_block
 /// A submodule for testing the parsing of literal blocks of text|code.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -12,7 +12,7 @@ use super::*;
 fn literal_block_01 () {
 
   let src = String::from("
-::  
+::
 
 > This is a literal block of text,
 > indicated by the \"::\" at the end of last paragraph.
@@ -40,7 +40,7 @@ fn literal_block_01 () {
 fn literal_block_02 () {
 
   let src = String::from(r#"
-::  
+::
 
   An indented literal block with
   multiple lines

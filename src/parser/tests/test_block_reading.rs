@@ -1,6 +1,6 @@
 /// ## test_block_reading
 /// A submodule for tests related to reading blocks of text.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -35,7 +35,7 @@ asdfsdafasdfasdfa
       panic!();
     }
   };
-  
+
   eprintln!("{:#?}", block);
 
   let block_str = block.join("\n");
@@ -52,7 +52,7 @@ asdfsdafasdfsdafadsfsdf", block_str);
 fn read_text_block_02 () {
 
   let src = "
-  
+
 asdsafasfgasf  fwsdaf
 asfsdafasdfffasfsdfsaf
   asfdfasdfasdfafasdfasdf
@@ -61,7 +61,7 @@ asdfsdafasdfsdafadsfsdf
 asdfdsfsdafsadfaf
 asfsffdsfasfasdf
 asdfsdafasdfasdfa
-    
+
 ";
 
   let lines = crate::common::str_to_lines(src);
@@ -88,7 +88,7 @@ asdfsdafasdfasdfa
 fn read_text_block_03 () {
 
   let src = "
-  
+
   asdsafasfgasf  fwsdaf
   asfsdafasdfffasfsdfsaf
   asfdfasdfasdfafasdfasdf
@@ -97,7 +97,7 @@ fn read_text_block_03 () {
 asdfdsfsdafsadfaf
 asfsffdsfasfasdf
 asdfsdafasdfasdfa
-    
+
 ";
 
   let lines = crate::common::str_to_lines(src);
@@ -114,7 +114,7 @@ asdfsdafasdfasdfa
 "  asdsafasfgasf  fwsdaf
   asfsdafasdfffasfsdfsaf
   asfdfasdfasdfafasdfasdf
-  asdfsdafasdfsdafadsfsdf"        
+  asdfsdafasdfsdafadsfsdf"
       );
     },
     Err(e) => {
@@ -131,7 +131,7 @@ asdfsdafasdfasdfa
 fn read_indented_block_01 () {
 
   let src = "
-  
+
   asdsafasfgasf  fwsdaf
       asfsdafasdfffas  fsdfsaf
     asfdfasd  fasdfafasdfasdf
@@ -140,7 +140,7 @@ fn read_indented_block_01 () {
 asdfdsfsdafsadfaf
 asfsffdsfasfasdf
 asdfsdafasdfasdfa
-    
+
 ";
 
   let lines = crate::common::str_to_lines(src);
@@ -211,7 +211,7 @@ asdfsdafasdfsda  fadsfsdf
 #[test]
 fn read_indented_block_03 () {
 
-  let src = "    
+  let src = "
 
  asdsafasfgasf  fwsdaf
       asfsdafasdfffas  fsdfsaf
@@ -250,7 +250,7 @@ asdfsdafasdfasdfa
 #[test]
 fn read_indented_block_04 () {
 
-  let src = "    
+  let src = "
 
 * asdsafasfgasf  fwsdaf
   asfsdafasdfffas  fsdfsaf
@@ -295,7 +295,7 @@ asfsffdsfasfasdf
 #[test]
 fn read_indented_block_05 () {
 
-  let src = "    
+  let src = "
 
 * asdsafasfgasf  fwsdaf
   asfsdafasdfffas  fsdfsaf

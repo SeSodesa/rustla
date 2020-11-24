@@ -1,8 +1,8 @@
 /// ## transitions
-/// 
+///
 /// Module contains lists of transition tuples related to different states
 /// and common patterns as &str constants.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -120,7 +120,7 @@ impl State {
 
 
   const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 0] = [
-    
+
   ];
 
   /// ### OPTION_LIST_TRANSITIONS
@@ -401,7 +401,7 @@ impl State {
   const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
   /// #### COMMENT_PATTERN
-  /// 
+  ///
   /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
   const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
 
@@ -412,7 +412,7 @@ impl State {
   /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
   /// This pattern should generally be tested against only after all other
-  /// possibilities have been eliminated. 
+  /// possibilities have been eliminated.
   pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
 
 // =================

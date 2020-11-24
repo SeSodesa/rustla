@@ -1,7 +1,7 @@
 /// ## Converters
 /// A submodule for converters functions related to the parser.
 /// These include Roman numeral -> integer transofrmations and the like.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -34,7 +34,7 @@ impl Parser {
       EnumKind::Arabic => {
         detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
       }
-  
+
       EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
         if let Some(num) = Parser::alpha_to_usize(detected_enum_str) {
           num
@@ -43,7 +43,7 @@ impl Parser {
           return None
         }
       }
-  
+
       EnumKind::LowerRoman => {
         if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
           num
@@ -52,7 +52,7 @@ impl Parser {
           return None
         }
       }
-  
+
       EnumKind::UpperRoman => {
         if let Some(num) = Parser::lower_roman_to_usize(detected_enum_str) {
           num
@@ -70,7 +70,7 @@ impl Parser {
         } else {
           detected_kind = list_kind;
         }
-        
+
         list_item_number + list_start_index
       }
 

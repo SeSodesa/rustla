@@ -1,8 +1,8 @@
 /// ## directive_parsers
-/// 
+///
 /// A submodule that contains functions dedicated to
 /// parsing *directives*, reStructuredText extensions.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email: santtu.soderholm@tuni.fi
 
@@ -114,7 +114,7 @@ impl Parser {
       },
       _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
     };
-   
+
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(state_stack),
@@ -125,7 +125,7 @@ impl Parser {
 
 
   /// ### parse_generic admonition
-  /// 
+  ///
   /// Much like `parse_standard_admonition`, except
   /// 1. first checks that the admonition contains an argument,
   /// 2. then checks for possible options and
@@ -178,7 +178,7 @@ impl Parser {
         doctree: tree
       }
     };
-    
+
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(vec![State::Admonition]),
@@ -420,7 +420,7 @@ impl Parser {
 
 
   /// ### parse_code
-  /// 
+  ///
   /// The "code" directive parser.
   pub fn parse_code (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: Option<usize>, section_level: usize) -> TransitionResult {
 
@@ -488,7 +488,7 @@ impl Parser {
 
 
   /// ### parse_math_block
-  /// 
+  ///
   /// The display math parser. Content blocks separated by a blank lines are put in adjacent math blocks.
   pub fn parse_math_block (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, section_level: usize) -> TransitionResult {
 
@@ -586,7 +586,7 @@ impl Parser {
         }
       };
     }
-    
+
     TransitionResult::Success {
       doctree: doctree,
       next_states: None,
@@ -1238,7 +1238,7 @@ impl Parser {
 // ========================
 
   pub fn parse_aplus_questionnaire (src_lines: &Vec<String>, mut doctree: DocTree, line_cursor: &mut LineCursor, base_indent: usize, empty_after_marker: bool, first_indent: usize, body_indent: usize) -> TransitionResult {
-    
+
     let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
       Parser::aplus_key_difficulty_and_max_points (arg.as_str(), line_cursor)
@@ -1274,7 +1274,7 @@ impl Parser {
     } else {
       (None, None, None, None, None, None, None, None, None, None, None, None, None)
     };
-    
+
     use crate::common::QuizPoints;
 
     let questionnaire_node = TreeNodeType::AplusQuestionnaire {
@@ -1323,7 +1323,7 @@ impl Parser {
     // Constants related to this parser
 
     const RECOGNIZED_OPTIONS: &[&str] = &[
-      "class", "required", "key", "dropdown", 
+      "class", "required", "key", "dropdown",
     ];
 
     /// ### APLUS_PICK_ONE_CHOICE_PATTERN
@@ -1421,7 +1421,7 @@ impl Parser {
           doctree: doctree
         }
       };
-      
+
       line_cursor.increment_by(1);
 
       inline_nodes
@@ -1695,7 +1695,7 @@ impl Parser {
       let randomized = options.remove("randomized");
       let correct_count = options.remove("correct-count");
       let preserve_questions_between_attempts = options.remove("preserve-questions-between-attempts");
-      
+
       (class, required, key, partial_points, randomized, correct_count, preserve_questions_between_attempts)
 
     } else {
@@ -1722,7 +1722,7 @@ impl Parser {
       } else { None },
       preserve_questions_between_attempts: if preserve_questions_between_attempts.is_some() { true }  else { false }
     };
-    
+
     doctree = match doctree.push_data_and_focus(pick_any_node) {
       Ok(tree) => tree,
       Err(tree) => return TransitionResult::Failure {
@@ -1749,7 +1749,7 @@ impl Parser {
           doctree: doctree
         }
       };
-      
+
       line_cursor.increment_by(1);
 
       inline_nodes
@@ -2026,7 +2026,7 @@ impl Parser {
       let key = options.remove("key");
       let length = options.remove("length");
       let height = options.remove("height");
-      
+
       (class, required, key, length, height)
 
     } else {
@@ -2069,7 +2069,7 @@ impl Parser {
           doctree: doctree
         }
       };
-      
+
       line_cursor.increment_by(1);
 
       inline_nodes
@@ -2276,7 +2276,7 @@ impl Parser {
       let lti_resource_link_id = options.remove("lti_resource_link_id");
       let lti_open_in_iframe = options.remove("lti_open_in_iframe");
       let lti_aplus_get_and_post = options.remove("lti_aplus_get_and_post");
-      
+
       (config, submissions, points_to_pass, class, title, category, status, ajax, allow_assistant_viewing, allow_assistant_grading, quiz, url, radar_tokenizer, radar_minimum_match_tokens, lti, lti_resource_link_id, lti_open_in_iframe, lti_aplus_get_and_post)
 
     } else {
@@ -2423,7 +2423,7 @@ impl Parser {
       let file = options.remove("file");
 
       (title, default, class, width, height, clear, input_type, file)
-      
+
     } else {
       (None, None, None, None, None, None, None, None)
     };
@@ -2538,7 +2538,7 @@ impl Parser {
       let status = options.remove("status");
 
       (config, inputs, title, class, width, height, clear, output_type, submissions, scale_size, status)
-      
+
     } else {
       (None, None, None, None, None, None, None, None, None, None, None)
     };
@@ -2618,7 +2618,7 @@ impl Parser {
           "maintenance" => AplusExerciseStatus::Maintenance,
           _ => {
             // eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
-            AplusExerciseStatus::Unlisted    
+            AplusExerciseStatus::Unlisted
           }
         }
       } else {
@@ -2772,7 +2772,7 @@ impl Parser {
 
 
   /// ### parse_unknown_directive
-  /// 
+  ///
   /// Parses unknown directive blocks as literal text.
   pub fn parse_unknown_directive (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &LineCursor, first_line_indent: usize, body_indent: usize) -> TransitionResult {
 
@@ -2810,13 +2810,13 @@ impl Parser {
   // ---------
 
   /// ### scan_directive_arguments
-  /// 
+  ///
   /// Reads the first block of text of a directive,
   /// until an empty line or something like a list of options
   /// (recognized by the automaton `FIELD_MAKRER_RE`) is encountered.
   /// Combines the lines into a single string and `Option`ally returns it.
   /// If no arguments are found, returns `None`.
-  /// 
+  ///
   /// In case the directive starts on the same line as the directive marker,
   /// allows specifying first and block indents separately.
   /// `first_indent` (on the first line) or `block_indent` are ignored on each line.
@@ -2866,7 +2866,7 @@ impl Parser {
   /// and attempts to scan the contents of the list into an `Option`al `HashMap` of directive
   /// option names and values. The calling directive parser will handle their validation,
   /// as different directives have different options available to them.
-  /// 
+  ///
   /// An empty line separates directive options from the directive content, so encountering one
   /// will terminate the scan. This means that the options have to start of the line following
   /// the directive marker.
@@ -2911,7 +2911,7 @@ impl Parser {
 
 
   /// ### all_options_recognized
-  /// 
+  ///
   /// Checks that a given hashmap only contains recognized option keys,
   /// based on a given `&str` array slice.
   fn all_options_recognized (option_map: &HashMap<String, String>, recognized_keys: &[&str]) -> bool {

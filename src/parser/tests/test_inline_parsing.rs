@@ -1,6 +1,6 @@
 /// ## test_inline_parsing
 /// Unit tests related to parsing inline text.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -164,13 +164,13 @@ refer to the "substitution and hyperlink reference" target.
   if let TreeNodeType::SubstitutionReference{substitution_label, target_label} = &nodes[9] {
     assert_eq!(substitution_label.as_str(), "substitution reference");
     assert_eq!(target_label.as_deref(), None);
-    
+
   } else { panic!() };
 
   if let TreeNodeType::SubstitutionReference{substitution_label, target_label} = &nodes[36] {
     assert_eq!(substitution_label.as_str(), "substitution and hyperlink reference");
     assert_eq!(target_label.as_deref(), Some("substitution and hyperlink reference"));
-    
+
   } else { panic!() };
 
 }
@@ -330,7 +330,7 @@ maybe a -simple-reference__- as well.
   } else {
     panic!()
   }
-  
+
   if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(26).shared_data() {
     assert_eq!(text, "-");
   } else {
@@ -403,7 +403,7 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
     } else {
       panic!()
     }
-    
+
   } else {
     panic!()
   }
@@ -685,9 +685,9 @@ fn uri_01 () {
 <https://quoted.uri.fi>.
 
 <quoted@email.com>
-  
+
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
-  
+
   let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);
@@ -746,9 +746,9 @@ fn uri_01 () {
 fn inline_target_01 () {
 
   let src = String::from(r#"
-_`inline target` **This emphasis is a reference target**.  
+_`inline target` **This emphasis is a reference target**.
   "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
-  
+
   let mut doctree = DocTree::new(PathBuf::from("test"));
 
   let mut parser = Parser::new(src, doctree, None, 0, None, 0);

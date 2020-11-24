@@ -1,7 +1,7 @@
 /// ## type_aliases
-/// 
+///
 /// A submodule that contains Parser-related type aliases.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -112,7 +112,7 @@ pub enum InlineParsingResult {
 
 
 /// ### IndentationMatch
-/// 
+///
 /// A enumeration of the different ways a node's child indentation might
 /// interact with the indentation of the parent.
 pub enum IndentationMatch {

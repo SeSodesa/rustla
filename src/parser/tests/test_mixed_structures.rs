@@ -1,7 +1,7 @@
 /// ## test_mixed_structures
-/// 
+///
 /// A submodule for tests related to mixed document structures.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -74,5 +74,5 @@ fn mixed_nested_lists_01 () {
   match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::EnumeratedListItem { .. } => (),
     _ => panic!()
-  } 
+  }
 }

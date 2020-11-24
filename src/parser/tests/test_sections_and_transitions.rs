@@ -1,6 +1,6 @@
 /// ## test_sections_and_transitions
 /// A submodule for testing document transitions and section titles.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -13,7 +13,7 @@ use super::*;
 fn transition_01 () {
 
   let src = String::from("
-  
+
 Below is a transition.
 
 =======
@@ -42,7 +42,7 @@ The line is at least 4 symbols long.
 fn over_under_section_01 () {
 
   let src = String::from("
-  
+
 Below is an over- and underlined section title.
 
 =======================================

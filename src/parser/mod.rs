@@ -1,6 +1,6 @@
 /// ## parser
 /// This is the `parser` module of ruSTLa
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -551,7 +551,7 @@ impl Parser {
 
 
   /// ### skip_to_next_block
-  /// 
+  ///
   /// Skips empty lines until a non-empty one is found.
   /// Panics (for now) if it runs over the end of input.
   fn skip_to_next_block (src_lines: &Vec<String>, line_cursor: &mut LineCursor) {
@@ -562,7 +562,7 @@ impl Parser {
           line_cursor.increment_by(1);
         } else {
           break
-        }        
+        }
       } else {
         panic!("Encountered end of input while skipping lines...")
       }
@@ -736,7 +736,7 @@ impl Parser {
 
 
   /// ### parent_indent_matches
-  /// 
+  ///
   /// Checks how a given indentation matches with the indentation of a given parent node type.
   fn parent_indent_matches (parent: &TreeNodeType, relevant_child_indent: usize) -> IndentationMatch {
 
@@ -829,7 +829,7 @@ impl Parser {
   /// Returns the number of lines skipped.
   fn skip_empty_lines (src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> usize {
 
-    let mut lines_skipped = 0 as usize; 
+    let mut lines_skipped = 0 as usize;
 
     while let Some(line)= src_lines.get(line_cursor.relative_offset()) {
       if line.trim().is_empty() {

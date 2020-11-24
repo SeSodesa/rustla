@@ -1,10 +1,10 @@
 /// ## inline
 /// A submodule related to parsing blocks of text for inline elements.
-/// 
+///
 /// ### Inline markup recognition rules
-/// 
+///
 /// Inline markup start-strings and end-strings are only recognized if the following conditions are met:
-/// 
+///
 /// 1. Inline markup start-strings must be immediately followed by non-whitespace.
 /// 2. Inline markup end-strings must be immediately preceded by non-whitespace.
 /// 3. The inline markup end-string must be separated by at least one character from the start-string.
@@ -13,21 +13,21 @@
 /// 5. If an inline markup start-string is immediately preceded by one of the ASCII characters ' " < ( [ { or a similar non-ASCII character,
 ///    it must not be followed by the corresponding closing character from ' " ) ] } > or a similar non-ASCII character.
 ///    (For quotes, matching characters can be any of the quotation marks in international usage.)
-/// 
+///
 /// If the configuration setting simple-inline-markup is False (default),
 /// additional conditions apply to the characters "around" the inline markup:
-/// 
+///
 /// 6. Inline markup start-strings must start a text block or be immediately preceded by
 ///   * whitespace,
 ///   * one of the ASCII characters - : / ' " < ( [ {
 ///   * or a similar non-ASCII punctuation character.
-/// 
+///
 /// 7. Inline markup end-strings must end a text block or be immediately followed by
 ///   * whitespace,
 ///   * one of the ASCII characters - . , : ; ! ? \ / ' " ) ] } >
 ///   * or a similar non-ASCII punctuation character.
 ///
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -38,11 +38,11 @@ use crate::common::Reference;
 
 
 /// ### paired_delimiter
-/// 
+///
 /// Parses inline text elements that have identical opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
-  
+
   // Destructuring the regex parts...
 
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
@@ -100,7 +100,7 @@ pub fn paired_delimiter (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 /// Parses inline reference targets. These do not actually create new nodes,
 /// but push new labels into the doctree's inline target stack.
 pub fn inline_target (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
-  
+
   let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") { lookbehind.as_str() } else { "" };
   let markup_start = captures.name("markup_start").unwrap().as_str();
   let content = captures.name("content").unwrap().as_str();
@@ -132,13 +132,13 @@ pub fn inline_target (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name:
   }
 
   char_count += markup_start_len + content_len + markup_end_len;
-  
+
   (node_vec, char_count)
 }
 
 
 /// ### whitespace
-/// 
+///
 /// Parses inline whitespace
 pub fn whitespace(opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
@@ -224,7 +224,7 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
   } else {
 
     /// ### DEFAULT_DEFAULT_ROLE
-    /// 
+    ///
     /// This is used as the interpreted text role, if no role was specified.
     /// This is in accordance with the
     /// [reStructuredText Markup Specification](https://docutils.sourceforge.io/docs/ref/rst/roles.html).
@@ -318,7 +318,7 @@ pub fn interpreted_text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 
 
 /// ### simple_ref
-/// 
+///
 /// Parses simple hyperlink references.
 pub fn simple_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
@@ -335,11 +335,11 @@ pub fn simple_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
 
     let target_label: String = match ref_type {
       "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
-  
+
         if let Some(doctree) = opt_doctree_ref {
-  
+
           doctree.next_anon_reference_label()
-  
+
         } else {
           eprintln!("Warning: detected an automatic reference name but no doctree available to generate one...");
           normalize_refname(content)
@@ -355,16 +355,16 @@ pub fn simple_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
       displayed_text: None,
       reference: crate::common::Reference::Internal(target_label),
     };
-  
+
     let match_len = (lookbehind_str.to_string() + content + ref_type).chars().count();
-    
+
     (vec![ref_node], match_len)
   }
 }
 
 
 /// ### phrase_ref
-/// 
+///
 /// Parses phrase references.
 pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
@@ -393,13 +393,13 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
 
     return (vec![TreeNodeType::Text { text: quoted_start_string}], quoted_start_char_count)
 
-  } else if ! lookbehind_str.is_empty() {    
+  } else if ! lookbehind_str.is_empty() {
     return (vec![TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str)}], lookbehind_str.chars().count())
   }
 
   let reference = match ref_type {
       "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
-  
+
         if let Some(doctree) = opt_doctree_ref {
           Reference::Internal(doctree.next_anon_reference_label())
         } else {
@@ -416,7 +416,7 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
         }
       }
       _ => unreachable!("Only automatic or manual reference types are recognized. Computer says no...")
-    }; 
+    };
 
   let ref_node = TreeNodeType::Reference {
     displayed_text: Some(content.to_string()),
@@ -434,7 +434,7 @@ pub fn phrase_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: Pa
 
 
 /// ### footnote_ref
-/// 
+///
 /// Parses footnote references.
 pub fn footnote_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
@@ -467,7 +467,7 @@ pub fn footnote_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: 
 
 
 /// ### citation_ref
-/// 
+///
 /// Parses citation references.
 pub fn citation_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
 
@@ -500,7 +500,7 @@ pub fn citation_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: 
 
 
 /// ### substitution_ref
-/// 
+///
 /// Parses inline subsitution references. Also adds hyperlink information to the reference,
 /// if the matched string ended with a `__?`.
 pub fn substitution_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternName, captures: &regex::Captures) -> (Vec<TreeNodeType>, usize) {
@@ -534,7 +534,7 @@ pub fn substitution_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 
     let target_label: String = match ref_type {
       "__" => { // Automatic reference label => ask doctree for label, if present. Else use the manual label
-  
+
         if let Some(doctree) = opt_doctree_ref {
           doctree.next_anon_reference_label()
         } else {
@@ -564,7 +564,7 @@ pub fn substitution_ref (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_na
 
 
 /// ### uri
-/// 
+///
 /// Parses inline URIs. These are split into general URIs and standalone email addresses.
 /// These two are differentiate by whether the URI starts with a protocol scheme,
 /// such as `https://`.
@@ -636,7 +636,7 @@ pub fn uri (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternNa
 
 
 /// ### text
-/// 
+///
 /// This function is invoked when no other inline pattern matched.
 /// Eats up any consequent non-whitespace characters as a single
 /// word of "text".
@@ -658,7 +658,7 @@ pub fn text (opt_doctree_ref: &mut Option <&mut DocTree>, pattern_name: PatternN
 // =======================
 
 /// ### quotation matches
-/// 
+///
 /// Checks the two given string slices for matching reStructuredText quotation characters.
 fn quotation_matches (start: &str, end: &str) -> bool {
 
@@ -675,9 +675,9 @@ fn quotation_matches (start: &str, end: &str) -> bool {
 
 
 /// ### OPENERS
-/// 
+///
 /// A long string of "quotation openers".
-/// 
+///
 /// source: https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/utils/punctuation_chars.py#l46
 const OPENERS: &[char] = &[
   '"', '\'', '(', '<', '\\', '[', '{', '\u{0f3a}', '\u{0f3c}', '\u{169b}', '\u{2045}', '\u{207d}', '\u{208d}', '\u{2329}', '\u{2768}',
@@ -690,7 +690,7 @@ const OPENERS: &[char] = &[
   '\u{00ab}', '\u{2018}', '\u{201c}', '\u{2039}', '\u{2e02}', '\u{2e04}', '\u{2e09}', '\u{2e0c}', '\u{2e1c}', '\u{2e20}',
   '\u{201a}', '\u{201e}', '\u{00bb}', '\u{2019}', '\u{201d}', '\u{203a}', '\u{2e03}', '\u{2e05}', '\u{2e0a}', '\u{2e0d}',
   '\u{2e1d}', '\u{2e21}', '\u{201b}', '\u{201f}',
-  
+
   // Additional (weird like the Swedish quotes that the Swedish don't even use) quotes
 
   '\u{00bb}', '\u{2018}', '\u{2019}', '\u{201a}', '\u{201a}',
@@ -699,9 +699,9 @@ const OPENERS: &[char] = &[
 ];
 
 /// ### CLOSERS
-/// 
+///
 /// A long list of "quotation" closers.
-/// 
+///
 /// source: https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/utils/punctuation_chars.py#l56
 const CLOSERS: &[char] = &[
   '"', '\'', ')', '>', '\\', ']', '}', '\u{0f3b}', '\u{0f3d}', '\u{169c}', '\u{2046}', '\u{207e}', '\u{208e}', '\u{232a}', '\u{2769}',
@@ -723,11 +723,11 @@ const CLOSERS: &[char] = &[
 
 
 /// ### DELIMITERS
-/// 
+///
 /// A long string of general delimiters in the unicode range smaller than `\u{FFFFFF}`.
 /// Wider code points have been exluded because of Rust limitations on unicode digits,
 /// for now. The docutils parser supports even those, so a solution might have to be invented.
-/// 
+///
 /// source: https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/utils/punctuation_chars.py#l66
 const DELIMITERS: &[char] = &[
   '"', '\\', '-', '/', ':', '}', '\u{058a}', '\u{00a1}', '\u{00b7}', '\u{00bf}', '\u{037e}', '\u{0387}', '\u{055a}', '-', '\u{055f}', '\u{0589}',

@@ -22,7 +22,7 @@ fn class_01 () {
   * bullet list
 
 This paragraph is no longer of classes 1, 2 and 3.
-      
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));

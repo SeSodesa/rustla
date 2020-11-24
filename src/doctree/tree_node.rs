@@ -1,6 +1,6 @@
 /// ## tree_node
 /// A submodule for the TreeNode type.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -71,8 +71,8 @@ impl TreeNode {
   pub fn shared_target_label (&self) -> &Option<Vec<String>> {
     &self.refnames
   }
-  
-  
+
+
   /// ### push_child
   /// Pushes a given child node the the end of `self.children`.
   pub fn push_child (&mut self, node : TreeNode) -> Result<(), TreeNode> {
@@ -143,7 +143,7 @@ impl TreeNode {
 
 
   /// ### shared_children
-  /// 
+  ///
   /// Optionally returns a shared reference to vector containing child nodes.
   pub fn shared_children (&self) -> &Option<Children> {
     &self.children
@@ -151,7 +151,7 @@ impl TreeNode {
 
 
   /// ### mut_children
-  /// 
+  ///
   /// Optionally returns a mutable reference to vector containing child nodes.
   pub fn mut_children (&mut self) -> &mut Option<Children> {
     &mut self.children
@@ -332,7 +332,7 @@ impl TreeNode {
       }
     } else {
       panic!("Current node cannot have children. Computer says no...")
-    }    
+    }
   }
 
 

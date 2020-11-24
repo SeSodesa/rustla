@@ -1,6 +1,6 @@
 /// ## section_data
 /// A submodule containing the section data container of the doctree.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

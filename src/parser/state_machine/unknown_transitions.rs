@@ -1,14 +1,14 @@
 /// ## unknown_transitions
-/// 
+///
 /// A submodule whose transition functions for all patterns all make the document tree
 /// focus on its parent and the parser pop from its state stack.
 /// This is useful in making the transitions from each state *complete*,
 /// as in defined for each possible input, where it is needed.
-/// 
+///
 /// Parsing definition lists is one of these cases, as other than
 /// purely textual inputs need to be checked for first before interpreting
 /// a definition term line as simple text.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

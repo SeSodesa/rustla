@@ -1,9 +1,9 @@
 /// ## reStructuredText transforms
-/// 
+///
 /// A submodule that defines the transforms performed for each node type,
 /// before the tree is printed. These include things like transforming the
 /// second child of a `Figure` node to a `Caption`, if it is a `Paragraph`.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

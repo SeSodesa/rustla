@@ -1,7 +1,7 @@
 /// ## utf8_to_latex
-/// 
+///
 /// This file contains a mapping between a subset of UTF-8 to LaTeX commands.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -11,12 +11,12 @@ use lazy_static::lazy_static;
 
 
 /// str_to_latex
-/// 
+///
 /// A function for converting a given `&str` (which is valid UTF-8)
 /// into a valid LaTeX string. Some more exotic symbols might require
 /// a specific LaTeX package fo the resulting object code to parse without errors,
 /// which is *not* taken into account by this function.
-/// 
+///
 /// If not conversion exists, adds the unicode scalar into the string unchanged.
 pub fn unicode_math_to_latex (utf_str: &str) -> String {
 
@@ -40,7 +40,7 @@ pub fn unicode_math_to_latex (utf_str: &str) -> String {
 /// Escapes any non-text category LaTeX characters in a given `&str`,
 /// so as to allow the generated `.tex` document to compile if it has
 /// control characters such as underscores in a text node.
-/// 
+///
 /// For example, `'_' ↦ "\_"` and `'@' ↦ "\@"`. If a character is not recognized as a control character,
 /// it is added to the generated `String` as is.
 pub fn unicode_text_to_latex (utf_str: &str) -> String {
@@ -85,9 +85,9 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
 lazy_static! {
 
   /// ### UTF8_MATH_TO_LATEX_MAP
-  /// 
+  ///
   /// A mapping of certain utf8 scalars to LaTeX strings.
-  /// 
+  ///
   /// source: http://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.html, 2020-09-15
   static ref UTF8_MATH_TO_LATEX_MAP: HashMap<char, &'static str> = {
     let mut map = HashMap::new();
@@ -241,7 +241,7 @@ lazy_static! {
     map.insert('\u{2047}', r#"??"#);
     //
     map.insert('\u{2052}', r#"\:"#);
-    
+
 
     // Super- and subscripts
     map.insert('\u{207a}', r#"^{+}"#);

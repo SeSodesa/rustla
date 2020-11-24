@@ -1,7 +1,7 @@
 /// ## test_unknown_directives
-/// 
+///
 /// A submodule for unit testing unknown directives
-/// 
+///
 /// author: Santtu Söderholm
 /// email: santtu.soderholm@tuni.fi
 
@@ -30,7 +30,7 @@ A paragraph.
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
   doctree.print_tree();
-  
+
   match doctree.shared_child(0).shared_data() {
     TreeNodeType::LiteralBlock { text } => {}
     _ => panic!()
@@ -55,8 +55,8 @@ Below is an unknown directive. It will be parsed as a literal block.
     :option3: of options
     :option3: here
     :option5: a
-    
-    Paragraph inside unknown directive  
+
+    Paragraph inside unknown directive
 
     - And a bullet list with just one item
 
@@ -73,7 +73,7 @@ This paragraph ends the block quote.
   doctree = parser.parse().unwrap_tree();
   doctree = doctree.walk_to_root();
   doctree.print_tree();
-  
+
   match doctree.shared_child(0).shared_data() {
     TreeNodeType::Paragraph { .. } => {}
     _ => panic!()

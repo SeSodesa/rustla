@@ -1,6 +1,6 @@
 /// ## bullet_list
 /// A submodule that contains `StateMachine::BulletList` related transition functions.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

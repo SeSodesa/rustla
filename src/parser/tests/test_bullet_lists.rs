@@ -1,6 +1,6 @@
 /// ## test_bullet_lists
 /// A submodule for tests related to bullet lists.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -38,9 +38,9 @@ fn bullet_list_02 () {
 - List item 1
 
   Second paragraph of the list item.
-  
+
   Third paragraph of this list item...
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -72,7 +72,7 @@ fn bullet_list_03 () {
   Second paragraph of the list item.
 
 - List item 2
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -118,7 +118,7 @@ fn bullet_list_04 () {
 - List item 2
 
 asfasdfdsfasfasdfasfd
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -174,7 +174,7 @@ fn bullet_list_05 () {
 - List item 2
 
 asfasdfdsfasfasdfasfd
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -225,7 +225,7 @@ fn bullet_list_06 () {
 + List item 2
 
 asfasdfdsfasfasdfasfd
-    
+
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -265,7 +265,7 @@ asfasdfdsfasfasdfasfd
     TreeNodeType::BulletList{..} => (),
     _ => panic!("No BulletListItem!\n")
   }
-  
+
   match doctree.shared_child(0).shared_child(1).shared_data() {
     TreeNodeType::BulletListItem{..} => (),
     _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n")

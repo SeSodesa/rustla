@@ -1,8 +1,8 @@
 /// ## Regex patterns
-/// 
+///
 /// This submodule contains different regex patterns that can be compiled into finite automata.
 /// This is done in the module `crate::parser::automata`.
-/// 
+///
 /// (c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 
 /// #### ATTRIBUTION_PATTERN
@@ -216,7 +216,7 @@
   pub const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
   /// #### COMMENT_PATTERN
-  /// 
+  ///
   /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
   pub const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
 
@@ -227,7 +227,7 @@
   /// #### TEXT_PATTERN
   /// A pattern for detecting any text, possibly beginning with whitespace.
   /// This pattern should generally be tested against only after all other
-  /// possibilities have been eliminated. 
+  /// possibilities have been eliminated.
   pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
 
 // =================

@@ -1,7 +1,7 @@
 /// ## test_block_quotes
-/// 
+///
 /// A submodule for unit testing block quotes.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 

@@ -1,7 +1,7 @@
 /// ## class_data
 ///
 /// A submodule that defines a HTML class container `ClassData`, that a `DocTree` holds on to.
-/// 
+///
 /// Copyright (c) 2020, Santtu Söderholm <santtu.soderholm@tuni.fi>
 
 
