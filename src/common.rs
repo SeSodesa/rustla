@@ -1,8 +1,8 @@
 /// ## common
-/// 
+///
 /// This submoddule contains useful functions and other constructs that don't
 /// sensibly belong to any specific entity in the program.
-/// 
+///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -40,12 +40,12 @@ where P: AsRef<path::Path> {
 /// Normalizes the given `&str` according to the reStructuredText specification.
 /// In this context, normalization means converting any contiguous whitespace into
 /// a single ASCII space character and converting letters to their lower-case variants.
-/// 
+///
 /// #### Note
 /// This might return something nonsensical, as converting a single multi-scalar grapheme
-/// into lower-case will return the multiple constituent "characters" as their lower-case variants. 
+/// into lower-case will return the multiple constituent "characters" as their lower-case variants.
 pub fn normalize_refname (name: &str) -> String {
-  name.split_whitespace() 
+  name.split_whitespace()
     .collect::<Vec<&str>>() // Collects the SplitWhiteSpace iterator into a vector of &strs
     .join("-")            // Joins the vector of &strs into an allocated String
     .to_lowercase()                   // Performs a UTF8-compliant transformation of unicode scalars in the String
@@ -189,7 +189,7 @@ pub enum EnumKind {
 /// ### FootnoteKind
 /// There are 4 different kinds of footnote markers:
 /// 1. Manually numbered: .. [1] , .. [2], ...
-/// 2. automatically numbered: .. [#] 
+/// 2. automatically numbered: .. [#]
 /// 3. automatically nubered with a simple reference name: .. [#simple_ref-name]
 /// 4. Automatically generated symbolic markers: .. [*]
 #[derive(Debug, Clone, Copy)]
@@ -215,7 +215,7 @@ pub enum FootnoteKind {
 /// An external hyperlink's URI may begin on the same line as the explicit markup start and target name, or it may begin in an indented text block immediately following, with no intervening blank lines.
 /// If there are multiple lines in the link block, they are concatenated.
 /// Any unescaped whitespace is removed.
-/// 
+///
 /// **Indirect** hyperlink targets have a hyperlink reference in their link blocks.
 /// Just as with hyperlink references anywhere else in a document,
 /// if a phrase-reference is used in the link block it must be enclosed in backquotes.
@@ -290,7 +290,7 @@ pub enum Length {
 
   /// #### Px
   /// Pixels. 1px == 1/96 in
-  /// 
+  ///
   /// ##### Note!
   /// In LaTeX, 1 px == 1/72 in.
   Px(LengthNum),
@@ -302,6 +302,22 @@ pub enum Length {
   /// #### Pc
   /// Picas. 1 pc == 1/6 in == 12 pt
   Pc(LengthNum),
+}
+
+impl std::fmt::Display for Length {
+  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+    let fmt_str = match self {
+      Self::Em(num) => format!("{}em", num),
+      Self::Ex(num) => format!("{}ex", num),
+      Self::Mm(num) => format!("{}mm", num),
+      Self::Cm(num) => format!("{}cm", num),
+      Self::In(num) => format!("{}in", num),
+      Self::Px(num) => format!("{}px", num),
+      Self::Pt(num) => format!("{}pt", num),
+      Self::Pc(num) => format!("{}pc", num),
+    };
+    write!(f, "{}", fmt_str)
+  }
 }
 
 
@@ -320,6 +336,17 @@ pub enum TableColWidths {
 #[derive(Debug)]
 pub enum HorizontalAlignment {
   Left, Center, Right
+}
+
+impl std::fmt::Display for HorizontalAlignment {
+  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+    let fmt_str = match self {
+      Self::Left => "left",
+      Self::Center => "center",
+      Self::Right => "right"
+    };
+    write!(f, "align={}", fmt_str)
+  }
 }
 
 
@@ -343,7 +370,7 @@ pub enum HTMLAlignment {
 
 
 /// ### TraversalType
-/// 
+///
 /// Enumerated the types of tree traversals that one of the `DocTree` walk methods might perform.
 pub enum TraversalType {
 
@@ -407,9 +434,9 @@ impl ParsingResult {
 
 
 /// ### AplusExerciseStatus
-/// 
+///
 /// There are 6 possible statuses for A+ exercises:
-/// 
+///
 /// * ready: Visible exercise listed in table of contents.
 /// * unlisted (default): Unlisted in table of contents, otherwise same as ready.
 /// * hidden: Hidden from non course staff.
@@ -430,7 +457,7 @@ pub enum AplusExerciseStatus {
 /// ### AplusRadarTokenizer
 ///
 /// An enumeration of the different tokenizers offered by the A+ Radar tokenizer.
-/// 
+///
 /// See [the docs](https://github.com/Aalto-LeTech/radar/tree/master/tokenizer#tokenizers)  for more details.
 #[derive(Clone, Copy, Debug)]
 pub enum AplusRadarTokenizer {
@@ -514,7 +541,7 @@ pub enum OutputStream {
 /// The standard Docutils system uses these symbols as footnote marks
 /// when a FootnoteKind::AutoSymbol is detected.
 /// They are, from first to last:
-/// 
+///
 /// 1.  asterisk/star (`*`)
 /// 2.  dagger (`†`|`U+02020`)
 /// 3.  double dagger (`‡`|`U+02021`)
@@ -525,7 +552,7 @@ pub enum OutputStream {
 /// 8.  heart suit (`♥`|`U+02665`)
 /// 9.  diamond suit (`♦`|`U+02666`)
 /// 10. club suit (`♣`|`U+02663`)
-/// 
+///
 /// As the next autosymbol is detected the next unused item
 /// from this list will be used as the footnote label character.
 /// If `n` is the number of times this list has been iterated over
@@ -539,7 +566,7 @@ pub const FOOTNOTE_SYMBOLS: [char; 10] = [
 
 
 /// #### SECTION_AND_QUOTING_CHARS
-/// 
+///
 /// These are the characters that can be used in underlining section titles,
 ///  marking the lines of literal text blocks and creating transitions.
 pub const SECTION_AND_QUOTING_CHARS: [char; 32] = [

@@ -339,7 +339,28 @@ impl TreeNodeType {
       Self::FieldListItem { raw_marker_name, marker_name_as_inline_nodes, .. } => {
         format!("\\item \\textbf{{{}}}\n\n", raw_marker_name)
       },
-      Self::Figure { .. }                   => format!("\\begin{{center}}\n"),
+      Self::Figure { body_indent, align, figwidth, figclass } => {
+
+        let mut options = Vec::<String>::new();
+        if let Some(alignment) = align {
+          options.push(alignment.to_string())
+        }
+        if let Some(width) = figwidth {
+          options.push(format!("figwidth={}", width.to_string()))
+        }
+        if let Some(class) = figclass {
+          options.push(format!("figclass={}", class.to_string()))
+        }
+
+        let options_string = if ! options.is_empty() {
+          format!("[{}]", options.join(","))
+        } else {
+          String::new()
+        };
+
+
+        format!("\\begin{{figure}}{}\n", options_string)
+      }
       Self::Footer { .. }                   => todo!(),
       Self::Footnote { .. }                 => todo!(),
       Self::FootnoteReference { .. }        => todo!(),
@@ -815,7 +836,7 @@ impl TreeNodeType {
       Self::FieldBody { .. }                => todo!(),
       Self::FieldList { .. }                => "\\end{itemize}\n\n".to_string(),
       Self::FieldListItem { .. }            => "\n".to_string(),
-      Self::Figure { .. }                   => "\\end{center}\n\n".to_string(),
+      Self::Figure { .. }                   => "\\end{figure}\n\n".to_string(),
       Self::Footer { .. }                   => todo!(),
       Self::Footnote { .. }                 => todo!(),
       Self::FootnoteReference { .. }        => todo!(),
