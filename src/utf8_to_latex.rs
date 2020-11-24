@@ -65,7 +65,9 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
       if (*c).is_whitespace() || *c == '\\'
       || TeXCategory::Other.symbol_table().iter().any(|sym| c == sym)
       || TeXCategory::SuperScript.symbol_table().iter().any(|sym| c == sym)
-      || TeXCategory::SubScript.symbol_table().iter().any(|sym| c == sym) {
+      || TeXCategory::SubScript.symbol_table().iter().any(|sym| c == sym)
+      || TeXCategory::StartGroup.symbol_table().iter().any(|sym| c == sym)
+      || TeXCategory::EndGroup.symbol_table().iter().any(|sym| c == sym) {
         ""
       } else {
         " "
