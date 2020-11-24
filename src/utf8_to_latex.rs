@@ -62,10 +62,13 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
     };
 
     let space = if let Some(c) = char_iter.peek() {
-      if (*c).is_whitespace() || *c == '\\' {
-        " "
-      } else {
+      if (*c).is_whitespace() || *c == '\\'
+      || TeXCategory::Other.symbol_table().iter().any(|sym| c == sym)
+      || TeXCategory::SuperScript.symbol_table().iter().any(|sym| c == sym)
+      || TeXCategory::SubScript.symbol_table().iter().any(|sym| c == sym) {
         ""
+      } else {
+        " "
       }
     } else {
       ""
@@ -80,6 +83,57 @@ pub fn unicode_text_to_latex (utf_str: &str) -> String {
 
   latex_string
 }
+
+
+/// An enumeration of the different TeX character categories.
+enum TeXCategory {
+  Escape,
+  StartGroup,
+  EndGroup,
+  MathShift,
+  AlignmentTab,
+  EndOfLine,
+  MacroParameter,
+  SuperScript,
+  SubScript,
+  Ignored,
+  Spacer,
+  Letter,
+  Other,
+  Active,
+  Comment,
+  Invalid,
+}
+
+impl TeXCategory {
+
+  /// Returns an array slice of the unicode scalars known to belong to the given category.
+  fn symbol_table (&self) -> &[char] {
+    match self {
+      Self::Escape => &['\\'],
+      Self::StartGroup => &['{'],
+      Self::EndGroup => &['}'],
+      Self::MathShift => &['$'],
+      Self::AlignmentTab => &['&'],
+      Self::EndOfLine => &['\r'],
+      Self::MacroParameter => &['#'],
+      Self::SuperScript => &['^'],
+      Self::SubScript => &['_'],
+      Self::Ignored => &['\u{0}'],
+      Self::Spacer => &[' ', '\t'],
+      Self::Letter => &[],
+      Self::Other => &['0','1','2','3','4','5','6','7','8', '9',',', '.', ';', '?', '"'],
+      Self::Active => &[],
+      Self::Comment => &['%'],
+      Self::Invalid => &['\u{127}']
+    }
+  }
+}
+
+
+
+
+
 
 
 lazy_static! {
@@ -513,9 +567,11 @@ lazy_static! {
 
     map.insert('\\', r#"\textbackslash"#);
     map.insert('^', r#"\textasciicircum"#);
-    map.insert('_', r#"\textunderscore"#);
-    map.insert('~', r#"\textasciitilde"#);
-    // map.insert('@', r#"\@ "#);
+    map.insert('_', r#"\_"#);
+    map.insert('~', r#"\~"#);
+    map.insert('$', r#"\$"#);
+    map.insert('{', r#"\{"#);
+    map.insert('}', r#"\}"#);
     map.insert('#', r#"\#"#);
     map.insert('&', r#"\&"#);
 
