@@ -1,8 +1,8 @@
 /// ## larst_writer
-/// 
+///
 /// A submodule that contains the larst writer method of the doctree,
 /// and the patterns related to it.
-/// 
+///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
 
@@ -19,11 +19,11 @@ const LATEX_OPTION_DELIM: &str = ",";
 impl DocTree {
 
   /// ### write_to_larst
-  /// 
+  ///
   /// A function that writes a rusTLa doctree into a LarST file.
-  /// 
+  ///
   /// #### TODO
-  /// 
+  ///
   /// Add a return type such as a `Result<String, ()>` that contains the generated object code in a single string.
   /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
   pub fn write_to_larst (self, rustla_options: &ruSTLaOptions) {
@@ -227,7 +227,7 @@ impl TreeNode {
 impl TreeNodeType {
 
   /// ### larst_pre_order_string
-  /// 
+  ///
   /// Defines the text pattern each `TreeNodeType` variant starts with.
   fn larst_pre_order_string (&self, ref_names: String) -> String {
 
@@ -358,7 +358,6 @@ impl TreeNodeType {
           String::new()
         };
 
-
         format!("\\begin{{figure}}{}\n", options_string)
       }
       Self::Footer { .. }                   => todo!(),
@@ -368,27 +367,23 @@ impl TreeNodeType {
       Self::Generated                       => todo!(),
       Self::Image { uri, alt, height, width, scale, align, target, name, class } => {
 
-        let mut options = String::new();
+        let mut options = Vec::<String>::new();
 
-        if let Some(val) = alt { options = options + LATEX_OPTION_DELIM + val };
+        if let Some(val) = alt { options.push(format!("{}", val))};
         if let Some(h) = height {
-          let width = rst_length_to_string(h);
-          options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
+          options.push(format!("height={}", h.to_string()))
         }
         if let Some(w) = width {
-          let width = rst_length_to_string(w);
-          options = options + "width=" + width.as_str() + LATEX_OPTION_DELIM;
+          options.push(format!("width={}", w.to_string()))
         }
         if let Some(val) = scale  {
-          let percentage_val = val.to_string();
-          options = options + "scale=" + percentage_val.as_str() +  LATEX_OPTION_DELIM
+          options.push(format!("scale={0:.2}", val))
         }
         if let Some(val) = align {
-          let alignment = html_alignment_to_string(val);
-          options = options + LATEX_OPTION_DELIM + &alignment
+          options.push(format!("align={}", val.to_string()))
         }
 
-        let options = if options.is_empty() { options } else { format!("[{}]", options) };
+        let options = if options.is_empty() { String::new() } else { format!("[{}]", options.join(LATEX_OPTION_DELIM)) };
 
         format!("\\includegraphics{}{{{}}}\n", options, uri)
       },
@@ -776,7 +771,7 @@ impl TreeNodeType {
   }
 
   /// ### larst_post_order_string
-  /// 
+  ///
   /// Defines the text pattern each `TreeNodeType` variant ends with.
   fn larst_post_order_string (&self, ref_names: String) -> String {
 
@@ -786,8 +781,8 @@ impl TreeNodeType {
       Self::Acronym { .. }                  => todo!(),
       Self::Address                         => todo!(),
       Self::Admonition { variant, .. } => {
-        
-        
+
+
         use crate::doctree::directives::AdmonitionType;
         match variant {
           AdmonitionType::Admonition{title} => format!("\\end{{admonition}}\n\n"),
@@ -941,7 +936,7 @@ impl TreeNodeType {
 /// Returns the contents of the LaTeX class file required by Larst projects
 /// being compiled by `pdflatex` or `lualatex` as a `&'static str`.
 /// The string was authored by Tomi Janhunen.
-/// 
+///
 /// source: https://course-gitlab.tuni.fi/ITC/CS/larst/larstprod/-/raw/master/LarST-example/aplus.cls
 /// url-date: 2020-09-17
 fn aplus_cls_contents () -> &'static str {
@@ -990,7 +985,7 @@ r#"%
 
 % Remove (sub)section numbering
 % \makeatletter
-% \renewcommand{\@seccntformat}[1]{} 
+% \renewcommand{\@seccntformat}[1]{}
 % \makeatother
 
 % Unification of labels

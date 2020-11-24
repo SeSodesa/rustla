@@ -368,6 +368,20 @@ pub enum HTMLAlignment {
   Top, Middle, Bottom, Left, Center, Right
 }
 
+impl std::fmt::Display for HTMLAlignment {
+  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+    let fmt_str = match self {
+      Self::Top => "top",
+      Self::Middle => "middle",
+      Self::Bottom => "bottom",
+      Self::Left => "left",
+      Self::Center => "center",
+      Self::Right => "right"
+    };
+    write!(f, "{}", fmt_str)
+  }
+}
+
 
 /// ### TraversalType
 ///
