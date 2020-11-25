@@ -377,7 +377,7 @@ impl TreeNodeType {
           options.push(format!("width={}", w.to_string()))
         }
         if let Some(val) = scale  {
-          options.push(format!("scale={0:.2}", val))
+          options.push(format!("scale={0:.2}%", val))
         }
         if let Some(val) = align {
           options.push(format!("align={}", val.to_string()))
