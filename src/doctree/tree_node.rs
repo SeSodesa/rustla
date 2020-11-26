@@ -82,11 +82,11 @@ impl TreeNode {
         children.push(node);
         Ok(())
       } else {
-        eprintln!("Node of type {} is not allowed to have children. Computer says no...", self.data);
+        eprintln!("Node of type {} is not allowed to have children.", self.data);
         Err(node)
       }
     } else {
-      eprintln!("Child of type {} not allowed inside a {}. Computer says no...", node.data, self.data);
+      eprintln!("Child of type {} not allowed inside {}.", node.data, self.data);
       Err(node)
     }
   }

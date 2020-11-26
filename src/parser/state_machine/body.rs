@@ -1259,11 +1259,15 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
     (Some(p_line), Some(n_line)) => {
       if p_line.trim().is_empty() && n_line.trim().is_empty() && detected_line_length >= TRANSITION_LINE_LENGTH {
 
+        // A transition can only exist as a child of a document or a section, so a TransitionResult::Success is returned on insertion failure.
+        // TODO: add more TransitionResult variants to allow for detection of incompatible parents and children?
         doctree = match doctree.push_data(TreeNodeType::Transition) {
           Ok(tree) => tree,
-          Err(tree) => return TransitionResult::Failure {
-            message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-            doctree: tree
+          Err(tree) => return TransitionResult::Success {
+            doctree: tree.focus_on_parent(),
+            next_states: None,
+            push_or_pop: PushOrPop::Pop,
+            line_advance: LineAdvance::None
           }
         };
 
