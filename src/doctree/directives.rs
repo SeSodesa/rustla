@@ -32,7 +32,6 @@ pub enum DirectiveNode {
 }
 
 
-/// ### AdmonitionDirective
 /// An enumeration of the different admonition types.
 /// Admonitions are specially marked "topics" that can
 /// appear anywhere an ordinary body element can.
@@ -42,7 +41,7 @@ pub enum DirectiveNode {
 /// the admonition type.
 ///
 /// For details, see https://docutils.sourceforge.io/docs/ref/rst/directives.html#admonitions
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum AdmonitionType {
   Attention,
   Caution,

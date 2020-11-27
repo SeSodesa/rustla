@@ -23,7 +23,7 @@ impl Parser {
   const COMMON_OPTIONS: &'static [&'static str] = &["name", "class"];
 
 
-  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize, mut section_level: usize, directive_marker_line_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
+  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize, body_indent: usize, section_level: usize, first_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, content_after_marker: bool) -> TransitionResult {
 
     use crate::doctree::directives::AdmonitionType;
 
@@ -41,54 +41,35 @@ impl Parser {
       _           => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
     };
 
-    // Fetch content indentation and option|content offset from directive marker line
-    let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => (directive_marker_line_indent, 0)
-    };
+    // // Read in admonition options?
+    // let (classes, name) = if content_after_marker {
+    //   (None, None)
+    // } else {
+    //   if let Some(mut options) = Self::scan_directive_options(src_lines, line_cursor, body_indent) {
+    //     let classes = options.remove("class");
+    //     let name = options.remove("name");
+    //     (classes, name)
+    //   } else {
+    //     (None, None)
+    //   }
+    // };
 
-    *line_cursor.relative_offset_mut_ref() += 1; // jump to next line
-
-    let (first_block_lines, first_line_indent) = if empty_after_marker {
-
-      // Jump to next contiguous block of text and read it
-
-      match Parser::read_text_block(src_lines, line_cursor.relative_offset(), true, false, Some(content_indent)) {
-        Ok((lines, _)) => (lines, content_indent),
-        Err(e) => return TransitionResult::Failure {
-          message: e,
-          doctree: doctree
-        }
-      }
-    } else {
-
-      // Read the indented block of text starting on the same line as the directive marker
-
-      match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(false), Some(content_indent), Some(directive_marker_line_indent), false) {
-        Ok((lines, _, offset, _)) => (lines, directive_marker_line_indent),
-        Err(e) => return TransitionResult::Failure {
-          message: e,
-          doctree: doctree
-        }
+    let (lines, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(first_indent), false) {
+      Ok((lines, _, offset, _)) => (lines, offset),
+      Err(e) => return TransitionResult::Failure {
+        message: format!("Error when reading in the contents of \"{}\" around line {}. Computer says no...", variant.to_string(), line_cursor.sum_total()),
+        doctree: doctree
       }
     };
 
-    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
+    eprintln!("{:#?}", lines);
 
-    let (classes, name) = if let Some(mut options) = directive_options {
-
-      let classes = options.remove("class");
-      let name = options.remove("name");
-
-      (classes, name)
-    } else {
-      (None, None)
-    };
+    let variant_clone = variant.clone();
 
     let admonition_data = TreeNodeType::Admonition {
-      content_indent: content_indent,
-      classes: classes,
-      name: name,
+      content_indent: body_indent,
+      classes: None,
+      name: None,
       variant: variant
     };
 
@@ -100,24 +81,36 @@ impl Parser {
       }
     };
 
-
-
-    let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, content_indent, Some(first_line_indent), State::Admonition, &mut section_level, false) {
-      Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-        (doctree, offset, state_stack)
-      } else {
-        unreachable!("Returned from a nested parsing session without necessary information. Computer says no...")
-      },
-      Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-        message: format!("Looks like {} admonition on line {} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total()),
-        doctree: doctree
-      },
-      _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
+    // Start nested parse inside admonition...
+    let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(body_indent), line_cursor.sum_total(), Some(State::Admonition), section_level).parse() {
+      ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
+      ParsingResult::Failure { message, doctree } => {
+        eprintln!("Error when parsing a \"{}\" on line {}: {}", variant_clone, line_cursor.sum_total(), message);
+        return TransitionResult::Failure {
+          message: message,
+          doctree: doctree
+        }
+      }
     };
+
+
+    // let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, body_indent, Some(first_indent), State::Admonition, &mut section_level, false) {
+    //   Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+    //     (doctree, offset, state_stack)
+    //   } else {
+    //     unreachable!("Returned from a nested parsing session without necessary information. Computer says no...")
+    //   },
+    //   Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+    //     message: format!("Looks like {} admonition on line {} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total()),
+    //     doctree: doctree
+    //   },
+    //   _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
+    // };
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(state_stack),
+      next_states: Some(nested_state_stack),
       push_or_pop: PushOrPop::Push,
       line_advance: LineAdvance::Some(offset) // Jump over empty line separating options from contents
     }
