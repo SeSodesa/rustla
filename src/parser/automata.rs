@@ -165,6 +165,28 @@ lazy_static! {
     panic!("Could not initialize QUOTED_LITERAL_BLOCK automaton. Computer says no...")
   };
 
+  /// A DFA for recognising the tops and bottoms of grid tables.
+  pub static ref GRID_TABLE_TOP_AND_BOT_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+    automaton
+  } else {
+    panic!("Could not initialize GRID_TABLE_TOP_AND_BOT_AUTOMATON automaton. Computer says no...")
+  };
+
+  /// A DFA for recognising the tops of simple tables.
+  pub static ref SIMPLE_TABLE_TOP_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+    automaton
+  } else {
+    panic!("Could not initialize SIMPLE_TABLE_TOP_AUTOMATON automaton. Computer says no...")
+  };
+
+  /// A DFA for recognising the tops of simple tables.
+  pub static ref SIMPLE_TABLE_BOTTOM_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+    automaton
+  } else {
+    panic!("Could not initialize SIMPLE_TABLE_TOP_AUTOMATON automaton. Computer says no...")
+  };
+
+
   /// A DFA for recognising manually numbered footnotes.
   pub static ref MANUAL_FOOTNOTE_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::MANUAL_FOOTNOTE_PATTERN) {
     automaton
