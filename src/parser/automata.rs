@@ -179,11 +179,11 @@ lazy_static! {
     panic!("Could not initialize SIMPLE_TABLE_TOP_AUTOMATON automaton. Computer says no...")
   };
 
-  /// A DFA for recognising the tops of simple tables.
+  /// A DFA for recognising the bottoms of simple tables.
   pub static ref SIMPLE_TABLE_BOTTOM_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
     automaton
   } else {
-    panic!("Could not initialize SIMPLE_TABLE_TOP_AUTOMATON automaton. Computer says no...")
+    panic!("Could not initialize SIMPLE_TABLE_BOTTOM_AUTOMATON automaton. Computer says no...")
   };
 
 
