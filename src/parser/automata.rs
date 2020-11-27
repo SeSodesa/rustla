@@ -166,21 +166,21 @@ lazy_static! {
   };
 
   /// A DFA for recognising the tops and bottoms of grid tables.
-  pub static ref GRID_TABLE_TOP_AND_BOT_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+  pub static ref GRID_TABLE_TOP_AND_BOT_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::GRID_TABLE_TOP_AND_BOT_PATTERN) {
     automaton
   } else {
     panic!("Could not initialize GRID_TABLE_TOP_AND_BOT_AUTOMATON automaton. Computer says no...")
   };
 
   /// A DFA for recognising the tops of simple tables.
-  pub static ref SIMPLE_TABLE_TOP_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+  pub static ref SIMPLE_TABLE_TOP_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::SIMPLE_TABLE_TOP_PATTERN) {
     automaton
   } else {
     panic!("Could not initialize SIMPLE_TABLE_TOP_AUTOMATON automaton. Computer says no...")
   };
 
   /// A DFA for recognising the bottoms of simple tables.
-  pub static ref SIMPLE_TABLE_BOTTOM_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN) {
+  pub static ref SIMPLE_TABLE_BOTTOM_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::SIMPLE_TABLE_BOTTOM_PATTERN) {
     automaton
   } else {
     panic!("Could not initialize SIMPLE_TABLE_BOTTOM_AUTOMATON automaton. Computer says no...")
