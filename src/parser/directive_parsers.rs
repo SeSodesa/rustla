@@ -23,7 +23,7 @@ impl Parser {
   const COMMON_OPTIONS: &'static [&'static str] = &["name", "class"];
 
 
-  pub fn parse_standard_admonition (src_lines: &Vec<String>, base_indent: usize, body_indent: usize, section_level: usize, first_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, content_after_marker: bool) -> TransitionResult {
+  pub fn parse_standard_admonition (src_lines: &Vec<String>, body_indent: usize, section_level: usize, first_indent: usize, mut doctree: DocTree, line_cursor: &mut LineCursor, admonition_type: &str, empty_after_marker: bool) -> TransitionResult {
 
     use crate::doctree::directives::AdmonitionType;
 
@@ -41,38 +41,42 @@ impl Parser {
       _           => unreachable!("No standard admonition type \"{}\" on line {}. Computer says no...", admonition_type, line_cursor.sum_total())
     };
 
-    // // Read in admonition options?
-    // let (classes, name) = if content_after_marker {
-    //   (None, None)
-    // } else {
-    //   if let Some(mut options) = Self::scan_directive_options(src_lines, line_cursor, body_indent) {
-    //     let classes = options.remove("class");
-    //     let name = options.remove("name");
-    //     (classes, name)
-    //   } else {
-    //     (None, None)
-    //   }
-    // };
+    let mut lines = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+      arg
+    } else {
+      Vec::new()
+    };
 
-    let (lines, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(first_indent), false) {
-      Ok((lines, _, offset, _)) => (lines, offset),
+    // Try scanning for options, if first block was empty
+    let (classes, name) = if let Some(mut options) = Self::scan_directive_options(src_lines, line_cursor, body_indent) {
+      let classes = options.remove("class");
+      let name = options.remove("name");
+      (classes, name)
+    } else {
+      (None, None)
+    };
+
+    // Read in the rest of the admonition contents...
+    let offset = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(body_indent), false) {
+      Ok((mut body_lines, _, offset, _)) => {
+        lines.append(&mut body_lines);
+        offset
+      },
       Err(e) => return TransitionResult::Failure {
         message: format!("Error when reading in the contents of \"{}\" around line {}. Computer says no...", variant.to_string(), line_cursor.sum_total()),
         doctree: doctree
       }
     };
 
-    eprintln!("{:#?}", lines);
-
-    let variant_clone = variant.clone();
-
+    // Create admonition node...
     let admonition_data = TreeNodeType::Admonition {
       content_indent: body_indent,
-      classes: None,
-      name: None,
-      variant: variant
+      classes: classes,
+      name: name,
+      variant: variant.clone()
     };
 
+    // Focus on the created node...
     doctree = match doctree.push_data_and_focus(admonition_data) {
       Ok(tree) => tree,
       Err(tree) => return TransitionResult::Failure {
@@ -86,33 +90,18 @@ impl Parser {
       ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
       ParsingResult::Failure { message, doctree } => {
-        eprintln!("Error when parsing a \"{}\" on line {}: {}", variant_clone, line_cursor.sum_total(), message);
         return TransitionResult::Failure {
-          message: message,
+          message: format!("Error when parsing a \"{}\" on line {}: {}", variant, line_cursor.sum_total(), message),
           doctree: doctree
         }
       }
     };
 
-
-    // let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, body_indent, Some(first_indent), State::Admonition, &mut section_level, false) {
-    //   Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-    //     (doctree, offset, state_stack)
-    //   } else {
-    //     unreachable!("Returned from a nested parsing session without necessary information. Computer says no...")
-    //   },
-    //   Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-    //     message: format!("Looks like {} admonition on line {} has no content.\nComputer says no...\n", admonition_type, line_cursor.sum_total()),
-    //     doctree: doctree
-    //   },
-    //   _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
-    // };
-
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(nested_state_stack),
       push_or_pop: PushOrPop::Push,
-      line_advance: LineAdvance::Some(offset) // Jump over empty line separating options from contents
+      line_advance: LineAdvance::Some(offset)
     }
   }
 
@@ -160,7 +149,7 @@ impl Parser {
       classes: classes,
       name: name,
       variant: crate::doctree::directives::AdmonitionType::Admonition {
-        title: argument
+        title: argument.join(" ")
       }
     };
 
@@ -222,7 +211,7 @@ impl Parser {
     };
 
     let image_data = TreeNodeType::Image {
-      uri: argument,
+      uri: argument.join(""),
       alt:    alt,
       height: if let Some(h) = &height {
         Parser::str_to_length(h)
@@ -299,7 +288,7 @@ impl Parser {
 
     // Construct the contained image
     let image = TreeNodeType::Image {
-      uri: argument,
+      uri: argument.join(""),
 
       alt: alt,
       height: if let Some(h) = height {
@@ -399,7 +388,7 @@ impl Parser {
       }
     };
     let language = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
-      Some(arg)
+      Some(arg.join(""))
     } else {
       None
     };
@@ -609,7 +598,7 @@ impl Parser {
     ];
 
     let table_title = if let Some(title) = Parser::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
-      title
+      title.join(" ")
     } else {
       String::new()
     };
@@ -891,7 +880,7 @@ impl Parser {
 
     let classes = if let Some(classes) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
       classes
-        .split(" ")
+        .iter()
         .filter(|s| ! s.is_empty())
         .map(|s| s.to_string())
         .collect::<Vec<String>>()
@@ -1007,7 +996,7 @@ impl Parser {
 
     // Read directive argument: the formal language (should be recognized by Pygments)
     let formal_language = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker) {
-      arg
+      arg.join("")
     } else {
       String::from("python") // the Sphinx "highlight_language" setting default
     };
@@ -1207,7 +1196,7 @@ impl Parser {
 
     let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
-      Parser::aplus_key_difficulty_and_max_points (arg.as_str(), line_cursor)
+      Parser::aplus_key_difficulty_and_max_points (arg.join(" ").as_str(), line_cursor)
     } else {
       return TransitionResult::Failure {
         message: format!("A+ questionnaire on line {} was not given arguments. Computer says no...", line_cursor.sum_total()),
@@ -1314,7 +1303,7 @@ impl Parser {
     use crate::common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      if let Ok(points) = arg.as_str().parse() { points } else {
+      if let Ok(points) = arg.join(" ").as_str().parse() { points } else {
         return TransitionResult::Failure {
           message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
           doctree: doctree
@@ -1633,7 +1622,7 @@ impl Parser {
     use crate::common::QuizPoints;
 
     let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      if let Ok(points) = arg.as_str().parse() { points } else {
+      if let Ok(points) = arg.join(" ").as_str().parse() { points } else {
         return TransitionResult::Failure {
           message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
           doctree: doctree
@@ -1951,7 +1940,9 @@ impl Parser {
 
     let (points, method_string) = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
-      let mut arg_iter = arg.split_whitespace();
+      let arg_string = arg.join(" ");
+
+      let mut arg_iter = arg_string.split_whitespace();
       let points_string: Option<&str> = arg_iter.next();
       let method_str = arg_iter.next();
 
@@ -2210,7 +2201,7 @@ impl Parser {
 
     let (key, difficulty, max_points): (String, String, String) = if let Some(arg) = Self::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
 
-      Parser::aplus_key_difficulty_and_max_points(arg.as_str(), line_cursor)
+      Parser::aplus_key_difficulty_and_max_points(arg.join(" ").as_str(), line_cursor)
     } else {
       return TransitionResult::Failure {
         message: format!("A+ submit exercise on line {} was not given arguments. Computer says no...", line_cursor.sum_total()),
@@ -2367,7 +2358,7 @@ impl Parser {
     ];
 
     let key_for_input = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      args
+      args.join(" ")
     } else {
       return TransitionResult::Failure {
         message: format!("A+ active element input before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
@@ -2478,7 +2469,7 @@ impl Parser {
     ];
 
     let key_for_output = if let Some(args) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
-      args
+      args.join(" ")
     } else {
       return TransitionResult::Failure {
         message: format!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
@@ -2645,7 +2636,7 @@ impl Parser {
     };
 
     let poi_node = TreeNodeType::AplusPOI {
-      title: if let Some(title) = title { title } else { "".to_string() },
+      title: if let Some(title) = title { title.join(" ") } else { "".to_string() },
       body_indent: body_indent,
 
       id: id,
@@ -2786,7 +2777,7 @@ impl Parser {
   /// In case the directive starts on the same line as the directive marker,
   /// allows specifying first and block indents separately.
   /// `first_indent` (on the first line) or `block_indent` are ignored on each line.
-  fn scan_directive_arguments (src_lines: &Vec<String>, line_cursor: &mut LineCursor, first_indent: Option<usize>, empty_after_marker: bool) -> Option<String> {
+  fn scan_directive_arguments (src_lines: &Vec<String>, line_cursor: &mut LineCursor, first_indent: Option<usize>, empty_after_marker: bool) -> Option<Vec<String>> {
 
     use crate::parser::state_machine::FIELD_MARKER_RE;
 
@@ -2823,7 +2814,7 @@ impl Parser {
       line_cursor.increment_by(1);
     };
 
-    if argument_lines.is_empty() { None } else { Some( argument_lines.join(" ").trim().to_string() ) }
+    if argument_lines.is_empty() { None } else { Some( argument_lines ) }
   }
 
 

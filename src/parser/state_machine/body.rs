@@ -613,7 +613,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
 
-          Parser::parse_standard_admonition(src_lines, base_indent, body_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
+          Parser::parse_standard_admonition(src_lines, body_indent, *section_level, detected_first_indent, doctree, line_cursor, detected_directive_label.as_str(), empty_after_marker)
         }
 
         "admonition" => {
