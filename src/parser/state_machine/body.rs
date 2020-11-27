@@ -998,7 +998,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 
     IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
 
-      let (comment_string, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(next_line_indent-base_indent), Some(match_len - base_indent), false) {
+      let (comment_string, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(next_line_indent-base_indent), Some(match_len - base_indent), false) {
         Ok((lines, _, offset, d)) => (lines.join("\n").trim().to_string(), offset),
         Err(e) => return TransitionResult::Failure {
           message: format!("Could not read comment on line {}: {}", line_cursor.sum_total(), e),
