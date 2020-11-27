@@ -356,33 +356,6 @@ impl Parser {
       }
     };
 
-
-    // Transition to figure state to scan for a possible caption
-    // (a simple paragraph). If an empty comment is encountered,
-    // interpret it as a missing caption and move on to
-    // parsing figure legend contents.
-
-    // let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(content_indent), None, false) {
-    //   (lines, offset)
-    // } else {
-    //   return TransitionResult::Failure {
-    //     message: format!("Could not read legend contents of a figure on line {}. Computer says no...", line_cursor.sum_total()),
-    //     doctree: doctree
-    //   }
-    // };
-
-    // let (doctree, nested_state_stack) = match Parser::new(lines, doctree, Some(content_indent), line_cursor.sum_total(), Some(State::Figure), section_level).parse() {
-    //   ParsingResult::EOF { doctree, state_stack } => (doctree, state_stack),
-    //   ParsingResult::EmptyStateStack { doctree, state_stack } => (doctree, state_stack),
-    //   ParsingResult::Failure { message, doctree } => {
-    //     eprintln!("Error when parsing a figure on line {}: {}", line_cursor.sum_total(), message);
-    //     return TransitionResult::Failure {
-    //       message: message,
-    //       doctree: doctree
-    //     }
-    //   }
-    // };
-
     TransitionResult::Success {
       doctree: doctree,
       next_states: Some(vec![State::Figure]),
