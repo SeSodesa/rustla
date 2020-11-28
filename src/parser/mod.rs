@@ -41,6 +41,7 @@ pub mod state_machine;
 use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
 
 mod directive_parsers;
+mod table_parsers;
 
 use crate::doctree::DocTree;
 use crate::doctree::tree_node::TreeNode;
