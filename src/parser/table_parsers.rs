@@ -77,7 +77,7 @@ impl Parser {
             return TableIsolationResult::EndOfInput
         };
 
-        let (lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(src_lines, start_line, indent_allowed, remove_indent, Some(alignment)) {
+        let (mut lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(src_lines, start_line, indent_allowed, remove_indent, Some(alignment)) {
             (lines, offset)
         } else {
             return TableIsolationResult::EndOfInput
@@ -85,12 +85,20 @@ impl Parser {
 
         // Check if the last line of lines matches the table bottom pattern and if not,
         // pop lines until it is found.
+        while let Some(line) = lines.last_mut() {
+            if let Some(capts) = crate::parser::automata::GRID_TABLE_TOP_AND_BOT_AUTOMATON.captures(line) {
+                break
+            } else {
+                if let None = lines.pop() {
+                    return TableIsolationResult::EmptyTable
+                }
+            }
+        }
 
-        // Hand the trimmed vector of lines to grid table parser.
+        // Kept popping and met the table top line...
+        if lines.len() == 1 { return TableIsolationResult::EmptyTable }
 
-        // Return with TableIsolationResult::Table
-        todo!()
-
+        TableIsolationResult::Table(lines)
     }
 
 
@@ -103,4 +111,5 @@ impl Parser {
 pub enum TableIsolationResult {
     Table(Vec<String>),
     EndOfInput,
+    EmptyTable
 }
