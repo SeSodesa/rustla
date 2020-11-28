@@ -6,6 +6,7 @@
 /// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
 
 use crate::parser::Parser;
+use crate::parser::line_cursor::LineCursor;
 
 
 #[derive(Debug)]
@@ -64,9 +65,32 @@ impl Parser {
         todo!()
     }
 
-    /// Retrieves the lines containing a gradi table table from the source line vector.
-    pub fn isolate_grid_table (src_lines: &Vec<String>) {
+    /// Retrieves the lines containing a grid table from the source line vector.
+    pub fn isolate_grid_table (src_lines: &Vec<String>, line_cursor: &LineCursor) -> TableIsolationResult {
+
+        let start_line = line_cursor.relative_offset();
+        let indent_allowed = true;
+        let remove_indent = true;
+        let alignment = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+            line.chars().take_while(|c| c.is_whitespace()).count()
+        } else {
+            return TableIsolationResult::EndOfInput
+        };
+
+        let (lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(src_lines, start_line, indent_allowed, remove_indent, Some(alignment)) {
+            (lines, offset)
+        } else {
+            return TableIsolationResult::EndOfInput
+        };
+
+        // Check if the last line of lines matches the table bottom pattern and if not,
+        // pop lines until it is found.
+
+        // Hand the trimmed vector of lines to grid table parser.
+
+        // Return with TableIsolationResult::Table
         todo!()
+
     }
 
 
@@ -74,4 +98,9 @@ impl Parser {
     pub fn isolate_simple_table (src_lines: &Vec<String>) {
         todo!()
     }
+}
+
+pub enum TableIsolationResult {
+    Table(Vec<String>),
+    EndOfInput,
 }
