@@ -22,7 +22,7 @@ pub enum TableResult {
         head_rows: Vec<Row>,
         body_rows: Vec<Row>
     },
-    MalformedTableError
+    MalformedTableError(String)
 }
 
 impl TableResult {}
@@ -55,7 +55,51 @@ type Row = Vec<Cell>;
 impl Parser {
 
     /// Parses a grid table, returning a `TableResult`.
-    pub fn parse_grid_table (table_lines: Vec<String>) -> TableResult {
+    pub fn parse_grid_table (src_lines: &Vec<String>, line_cursor: &LineCursor) -> TableResult {
+
+        let table_lines = match Self::isolate_grid_table(src_lines, line_cursor) {
+            TableIsolationResult::Table(lines) => lines,
+            TableIsolationResult::EmptyTable => return TableResult::MalformedTableError (
+                format!("Table starting on line {} was empty.", line_cursor.sum_total())
+            ),
+            TableIsolationResult::EndOfInput => return TableResult::MalformedTableError (
+                format!("Ran off the end of input when scanning a table starting on line {}.", line_cursor.sum_total())
+            ),
+        };
+        
+        let table_height = if let Some(line_len) = table_lines.len().checked_sub(1) {
+            line_len
+        } else {
+            return TableResult::MalformedTableError(
+                format!("Table on line {} only had a top border?", line_cursor.sum_total())
+            )
+        };
+        let table_width = {
+            match table_lines.get(0) {
+                Some(line) => match line.chars().count().checked_sub(1) {
+                    Some(num) => num,
+                    None => return TableResult::MalformedTableError(
+                        format!("The first row of grid table on line {} was only a single character long?", line_cursor.sum_total())
+                    )
+                }
+                None => return TableResult::MalformedTableError(
+                    format!("Table on line {} didn't even have a top border?", line_cursor.sum_total())
+                )
+            }
+        };
+
+        let mut cell_corner_coordinates = Vec::<(usize, usize)>::from([(0, 0)]);
+
+        let done_cells = [usize::MAX].repeat(table_width);
+
+
+        while let Some((top_pos, left_pos)) = cell_corner_coordinates.pop() {
+            if top_pos == table_height || left_pos == table_width || top_pos <= done_cells[left_pos] {
+                continue
+            }
+
+            // Scan cell next...
+        }
         todo!()
     }
 
