@@ -169,13 +169,13 @@
   pub const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
 
   /// A pattern that matches the tops of bottoms of grid tables.
-  pub const GRID_TABLE_TOP_AND_BOT_PATTERN: &'static str = r#"\+-[-+]+-\+ *$"#;
+  pub const GRID_TABLE_TOP_AND_BOT_PATTERN: &'static str = r#"^(\s*)\+-[-+]+-\+ *$"#;
 
   /// A pattern that matches the tops and bottoms of simple tables.
-  pub const SIMPLE_TABLE_TOP_PATTERN: &'static str = r#"'=+( +=+)+ *$'"#;
+  pub const SIMPLE_TABLE_TOP_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
 
   /// A pattern for matching against the bottoms of entire simple tables and their header rows.
-  pub const SIMPLE_TABLE_BOTTOM_PATTERN: &'static str = r#"'=+( +=+)+ *$'"#;
+  pub const SIMPLE_TABLE_BOTTOM_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
 
   // ========================
   // Explicit markup patterns
