@@ -1322,9 +1322,7 @@ impl Parser {
 
     // Parsing directive options
 
-    let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
-    let (class, required, key, dropdown) = if let Some(mut options) = options {
+    let (class, required, key, dropdown) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
 
       let class = options.remove("class");
       let required = options.remove("required");
@@ -1337,7 +1335,7 @@ impl Parser {
       (None, None, None, None)
     };
 
-    //Parser::skip_empty_lines(src_lines, line_cursor);
+    Parser::skip_empty_lines(src_lines, line_cursor);
 
     // Generating and focusing on node
 
@@ -1359,6 +1357,8 @@ impl Parser {
     };
 
     // Check for assignment
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
 
     let start_line = src_lines.get(line_cursor.relative_offset()).expect(
       format!("Input overflow on line {} when parsing pick-one assignment. Computer says no...", line_cursor.sum_total()).as_str()
@@ -1384,6 +1384,8 @@ impl Parser {
     } else { Vec::new() };
 
     // Add assignment node (paragraph) to tree
+
+    Parser::skip_empty_lines(src_lines, line_cursor);
 
     if ! assignment_inline_nodes.is_empty() {
       let assignment_node = TreeNodeType::Paragraph { indent: body_indent };
@@ -1418,16 +1420,7 @@ impl Parser {
       }
     };
 
-    loop {
-
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        return TransitionResult::Failure {
-          message: format!("Tried scanning pick-one question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+    while let Some(current_line) = src_lines.get(line_cursor.relative_offset()) {
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
 
@@ -1504,17 +1497,13 @@ impl Parser {
       }
     };
 
-    loop {
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        return TransitionResult::Failure {
-          message: format!("Tried scanning pick-one question hints on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+    while let Some(current_line) = src_lines.get(line_cursor.relative_offset()) {
 
-      let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
+      let indent = if ! current_line.is_empty() {
+        current_line.chars().take_while(|c| c.is_whitespace()).count()
+      } else {
+        body_indent
+      };
 
       if indent != body_indent { break }
 
@@ -1688,6 +1677,8 @@ impl Parser {
 
     // Check for assignment
 
+    Parser::skip_empty_lines(src_lines, line_cursor);
+
     let start_line = src_lines.get(line_cursor.relative_offset()).expect(
       format!("Input overflow on line {} when parsing pick-any assignment. Computer says no...", line_cursor.sum_total()).as_str()
     );
@@ -1746,16 +1737,7 @@ impl Parser {
       }
     };
 
-    loop {
-
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        return TransitionResult::Failure {
-          message: format!("Tried scanning pick-any question choices on line {} but ran off the end of input. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+    while let Some(current_line) = src_lines.get(line_cursor.relative_offset()) {
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
 
@@ -1834,12 +1816,7 @@ impl Parser {
       }
     };
 
-    loop {
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        break
-      };
+    while let Some(current_line) = src_lines.get(line_cursor.relative_offset()) {
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
 
@@ -2102,12 +2079,7 @@ impl Parser {
       }
     };
 
-    loop {
-      let current_line = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        line
-      } else {
-        break
-      };
+    while let Some(current_line) = src_lines.get(line_cursor.relative_offset()) {
 
       let indent = current_line.chars().take_while(|c| c.is_whitespace()).count();
 

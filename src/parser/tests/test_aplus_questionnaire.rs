@@ -98,3 +98,54 @@ fn aplus_questionnaire_01 () {
   if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(5).shared_data() {  } else { panic!() }
   if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(6).shared_data() {  } else { panic!() }
 }
+
+
+#[test]
+fn aplus_questionnaire_02 () {
+
+  let src = String::from(r#"
+(K) Suostumus anonyymin kurssidatan tutkimuskäyttöön
+====================================================
+
+Kurssin aikana kurssin tietojärjestelmiin (Plussa, GitLab) syntyy
+opiskelijoiden tuottamaa dataa.
+Yliopiston yksi tehtävistä on tutkimus, ja siten tätä dataa halutaan
+hyödyntää opetuksen ja ohjelmistokehityksen tutkimustyössä.
+Tämä parantaa opetuksen laatua ja luo uutta tietoa.
+Kaikki data käsitellään tutkimuksissa anonyymisti, eikä yksittäistä
+opiskelijaa voi tunnistaa.
+
+Kurssi pyytää siten jokaiselta opiskelijalta suostumuksen datan käyttöön.
+
+.. questionnaire:: gdpr 10
+  :category: N
+  :submissions: 2
+  :points-to-pass: 0
+
+
+  .. pick-one:: 10
+
+    Annan luvan käyttää kurssidataa anonymisoituna tutkimustarkoituksiin
+
+    *a. Kyllä
+    *b. En
+
+
+
+"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_child(2).shared_data() {} else { panic!() }
+  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_data() {} else { panic!() }
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(0).shared_data() {} else { panic!() }
+  if let TreeNodeType::AplusPickChoices { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_data() {} else { panic!() }
+  if let TreeNodeType::AplusPickChoice { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_child(0).shared_data() {} else { panic!() }
+  if let TreeNodeType::AplusPickChoice { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_child(1).shared_data() {} else { panic!() }
+}

@@ -142,7 +142,7 @@ impl Parser {
       // eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
 
       if !line_changed && line_not_changed_count >= 10 {
-        eprintln!();
+
         return ParsingResult::Failure {
           message: format!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total()),
           doctree: if let Some(doctree) = self.doctree.take() {
@@ -307,7 +307,7 @@ impl Parser {
 
             TransitionResult::Failure {message, doctree} => {
 
-              println!("Transition failure: {}", message);
+              eprintln!("Transition failure: {}", message);
 
               return ParsingResult::Failure {
                 message: message,
