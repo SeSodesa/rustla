@@ -473,8 +473,13 @@ impl TreeNodeType {
       Self::Rubric { .. }                   => todo!(),
       Self::Section { title_text, level, line_style } => {
 
-        let (command, subs) = if *level == 1 { ("chapter", "".to_string()) } else { ("section", "sub".repeat(*level - 2)) };
-        let subs = "sub".repeat(*level - 1);
+        let (command, subs) = if *level == 1 {
+            ("chapter", "")
+        } else if *level == 2 {
+            ("section", "")
+        } else {
+            ("section", "sub")
+        };
         format!("\\{}{}{{{}}}\n\n", subs, command, title_text)
       },
       Self::Sidebar { .. }                  => todo!(),
