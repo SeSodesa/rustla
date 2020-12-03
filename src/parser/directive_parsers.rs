@@ -2703,34 +2703,69 @@ impl Parser {
   /// ### parse_unknown_directive
   ///
   /// Parses unknown directive blocks as literal text.
-  pub fn parse_unknown_directive (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &LineCursor, first_line_indent: usize, body_indent: usize) -> TransitionResult {
+  pub fn parse_unknown_directive (mut doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, directive_name: &str, first_line_indent: usize, body_indent: usize, empty_after_marker: bool) -> TransitionResult {
 
-    let (unknown_directive_as_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(false), Some(body_indent), Some(first_line_indent), false) {
-      Ok((lines, _, offset, _)) => {
-        (lines.join("\n"), offset)
-      },
-      Err(message) => return TransitionResult::Failure {
-        message: format!("Error when reading an unknown directive as literal text: {}", message),
-        doctree: doctree
-      }
+    let argument = if let Some(arg) = Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_line_indent), empty_after_marker) {
+      arg.join(" ")
+    } else {
+      String::new()
     };
 
-    let literal_node = TreeNodeType::LiteralBlock { text: unknown_directive_as_text };
+    let options = if let Some(options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
+      options
+    } else {
+      HashMap::new()
+    };
 
-    doctree = match doctree.push_data(literal_node) {
+    let unknown_directive_data = TreeNodeType::UnknownDirective {
+      directive_name: String::from(directive_name),
+      argument: argument,
+      options: options,
+      body_indent: body_indent
+    };
+
+    doctree = match doctree.push_data_and_focus(unknown_directive_data) {
       Ok(tree) => tree,
       Err(tree) => return TransitionResult::Failure {
-        message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: tree
+        message: format!("Could not add unknown directive data to doctree on line {}", line_cursor.sum_total()),
+        doctree: tree,
       }
     };
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
-      push_or_pop: PushOrPop::Neither,
-      line_advance: LineAdvance::Some(offset)
+      next_states: Some(vec![State::Body]),
+      push_or_pop: PushOrPop::Push,
+      line_advance: LineAdvance::None
     }
+
+
+    // let (unknown_directive_as_text, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(false), Some(body_indent), Some(first_line_indent), false) {
+    //   Ok((lines, _, offset, _)) => {
+    //     (lines.join("\n"), offset)
+    //   },
+    //   Err(message) => return TransitionResult::Failure {
+    //     message: format!("Error when reading an unknown directive as literal text: {}", message),
+    //     doctree: doctree
+    //   }
+    // };
+
+    // let literal_node = TreeNodeType::LiteralBlock { text: unknown_directive_as_text };
+
+    // doctree = match doctree.push_data(literal_node) {
+    //   Ok(tree) => tree,
+    //   Err(tree) => return TransitionResult::Failure {
+    //     message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
+    //     doctree: tree
+    //   }
+    // };
+
+    // TransitionResult::Success {
+    //   doctree: doctree,
+    //   next_states: None,
+    //   push_or_pop: PushOrPop::Neither,
+    //   line_advance: LineAdvance::Some(offset)
+    // }
   }
 
 

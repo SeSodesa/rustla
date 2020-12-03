@@ -14,7 +14,7 @@ use super::*;
 fn unknown_directive_01 () {
 
   let src = String::from("
-.. some-directive-without-options:: some argument here...
+.. some-unknown-dirctive:: some argument here...
   :option1: something
   :option2: something else
 
@@ -32,7 +32,12 @@ A paragraph.
   doctree.print_tree();
 
   match doctree.shared_child(0).shared_data() {
-    TreeNodeType::LiteralBlock { text } => {}
+    TreeNodeType::UnknownDirective { directive_name, argument, options, body_indent } => {
+      assert_eq!(directive_name, "some-unknown-dirctive");
+      assert_eq!(argument, "some argument here...");
+      assert_eq!(options.get("option1").unwrap(), "something");
+      assert_eq!(options.get("option2").unwrap(), "something else");
+    }
     _ => panic!()
   }
 
@@ -47,23 +52,21 @@ A paragraph.
 fn unknown_directive_02 () {
 
   let src = String::from("
-Below is an unknown directive. It will be parsed as a literal block.
+Below is an unknown directive. It will be parsed as an unknown directive.
 
-  .. unknown:: argument
-    :option1: a
-    :option2: bunch
-    :option3: of options
-    :option3: here
-    :option5: a
+.. unknown:: argument with
+  multiple lines
+  :option1: a
+  :option2: bunch
+  :option3: the next option will override this one
+  :option3: here
+  :option5: something else entirely
 
-    Paragraph inside unknown directive
+  Paragraph inside unknown directive
 
-    - And a bullet list with just one item
+  - And a bullet list with just one item
 
-  This is no longer a part of the above literal block inside a block quote.
-
-This paragraph ends the block quote.
-
+This is no longer a part of the above literal block inside a block quote.
   ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
   let mut doctree = DocTree::new(PathBuf::from("test"));
@@ -80,17 +83,25 @@ This paragraph ends the block quote.
   }
 
   match doctree.shared_child(1).shared_data() {
-    TreeNodeType::BlockQuote { .. } => {}
+    TreeNodeType::UnknownDirective { directive_name, argument, options, .. } => {
+      assert_eq!(directive_name, "unknown");
+      assert_eq!(argument, "argument with multiple lines");
+      assert_eq!(options.get("option1").unwrap(), "a");
+      assert_eq!(options.get("option2").unwrap(), "bunch");
+      assert_eq!(options.get("option3").unwrap(), "here");
+      assert!(options.get("option4").is_none(), true);
+      assert_eq!(options.get("option5").unwrap(), "something else entirely");
+    }
     _ => panic!()
   }
 
   match doctree.shared_child(1).shared_child(0).shared_data() {
-    TreeNodeType::LiteralBlock { text } => {}
+    TreeNodeType::Paragraph { .. } => {}
     _ => panic!()
   }
 
   match doctree.shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
+    TreeNodeType::BulletList { .. } => {}
     _ => panic!()
   }
 

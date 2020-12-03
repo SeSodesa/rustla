@@ -633,22 +633,22 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "topic" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "sidebar" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "line-block" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "parsed-literal" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
 
@@ -664,42 +664,42 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "rubric" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "epigraph" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "highlights" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "pull-quote" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "compound" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "container" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "table" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "csv-table" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "list-table" => {
@@ -711,27 +711,27 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "contents" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "sectnum" | "section-numbering" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "header" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "footer" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "target-notes" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "footnotes" => {
@@ -746,19 +746,19 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "meta" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         // MISCELLANEOUS
 
         "include" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "raw" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "class" => {
@@ -768,56 +768,56 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "role" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "default-role" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "title" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "restructuredtext-test-directive" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         // SPHINX-SPECIFIC DIRECTIVES
 
         "toctree" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "versionadded" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "versionchanged" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "deprecated" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "seealso" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "centered" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "hlist" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "highlight" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "code-block" | "sourcecode" => {
@@ -825,23 +825,23 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
         }
 
         "literalinclude" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "glossary" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "sectionauthor" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "codeauthor" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "index" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "only" => {
@@ -849,11 +849,11 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
         }
 
         "tabularcolumns" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "productionlist" => {
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
 
@@ -881,7 +881,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "hidden_block" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "point-of-interest" => {
@@ -891,62 +891,62 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
         "annotated" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "lineref-code-block" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "repl-res-count-reset" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "acos-submit" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "div" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "styled-topic" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         // A+ MEDIA DIRECTIVES
 
         "story" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "jsvee" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "youtube" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "local-video" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
         "embedded-page" => {
 
-          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+          Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
         }
 
-        _ => Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_marker_indent, body_indent)
+        _ => Parser::parse_unknown_directive(doctree, src_lines, line_cursor, detected_directive_label.as_str(), detected_first_indent, body_indent, empty_after_marker)
       }
     }
     IndentationMatch::TooMuch => {
