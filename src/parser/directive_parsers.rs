@@ -266,9 +266,7 @@ impl Parser {
       }
     };
 
-    let directive_options = Self::scan_directive_options(src_lines, line_cursor, content_indent);
-
-    let (alt, height, width, scale, align, target, classes, name, figwidth, figclass) = if let Some(mut options) = directive_options {
+    let (alt, height, width, scale, align, target, classes, name, figwidth, figclass) = if let Some(mut options) = Self::scan_directive_options(src_lines, line_cursor, content_indent) {
 
       let alt = options.remove("alt");
       let height = options.remove("height");
