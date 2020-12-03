@@ -498,6 +498,10 @@ pub const TOPIC_CATEGORIES: [NodeCategory; 1] = [
 pub const TRANSITION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Structural,
 ];
+pub const UNKNOWN_DIRECTIVE_CATEGORIES: [NodeCategory; 2] = [
+  NodeCategory::Body,
+  NodeCategory::CompoundBody,
+];
 pub const VERSION_CATEGORIES: [NodeCategory; 1] = [
   NodeCategory::Bibliographic
 ];

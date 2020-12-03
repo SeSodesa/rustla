@@ -809,6 +809,13 @@ pub enum TreeNodeType {
   /// A node corresponding to LaTeX's `\hrulefill` command.
   Transition,
 
+  UnknownDirective {
+    directive_name: String,
+    argument: String,
+    options: std::collections::HashMap<String, String>,
+    body_indent: usize
+  },
+
   /// #### Version
   Version,
 
@@ -1169,6 +1176,7 @@ impl TreeNodeType {
       Self::TitleReference { .. } => None,
       Self::Topic { .. } => None,
       Self::Transition   => None,
+      Self::UnknownDirective { body_indent, .. } => Some(*body_indent),
       Self::Version { .. } => None,
       Self::WhiteSpace { .. } => None,
 
@@ -1306,6 +1314,7 @@ impl TreeNodeType {
       Self::TitleReference { .. } => &TITLE_REF_CATEGORIES,
       Self::Topic { .. } => &TOPIC_CATEGORIES,
       Self::Transition {}     => &TRANSITION_CATEGORIES,
+      Self::UnknownDirective { .. } => &UNKNOWN_DIRECTIVE_CATEGORIES,
       Self::Version { .. } => &VERSION_CATEGORIES,
       Self::WhiteSpace { .. } => &WHITESPACE_CATEGORIES,
 
@@ -1445,6 +1454,7 @@ impl fmt::Display for TreeNodeType {
       Self::TitleReference { .. } => "title reference",
       Self::Topic { .. } => "topic",
       Self::Transition {}     => "transition",
+      Self::UnknownDirective { .. } => "unknown directive",
       Self::Version { .. } => "version",
       Self::WhiteSpace { .. } => "whitespace",
 

@@ -267,6 +267,7 @@ impl TreeNode {
       TreeNodeType::TitleReference { .. } => false,
       TreeNodeType::Topic { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Inline = cat { true } else { false }) { true } else { false },
       TreeNodeType::Transition {} => todo!(),
+      TreeNodeType::UnknownDirective { .. } => if node_data.node_categories().any(|cat| if let NodeCategory::Body = cat { true } else { false }) { true } else { false },
       TreeNodeType::Version { .. } => false,
       TreeNodeType::WhiteSpace { .. } => false,
 

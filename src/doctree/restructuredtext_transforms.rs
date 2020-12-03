@@ -219,6 +219,7 @@ impl TreeNode {
       TreeNodeType::TitleReference { .. } =>  {},
       TreeNodeType::Topic { .. } =>  {},
       TreeNodeType::Transition {}     =>  {},
+      TreeNodeType::UnknownDirective {..}     =>  {},
       TreeNodeType::Version { .. } =>  {},
       TreeNodeType::WhiteSpace { .. } =>  {},
 

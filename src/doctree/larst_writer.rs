@@ -519,6 +519,25 @@ impl TreeNodeType {
       Self::Transition {}                   =>  {
         format!("\\hrulefill\n")
       },
+      Self::UnknownDirective { directive_name, argument, options, .. } => {
+
+        let arg_str: String = if argument.trim().is_empty() {
+          String::new()
+        } else {
+          format!("{{{}}}", argument)
+        };
+        let mut option_vec = Vec::new();
+        for (key, val) in options.keys().zip(options.values()) {
+          option_vec.push(format!("{}={}", key, val))
+        }
+        let option_str = if option_vec.is_empty() {
+            String::new()
+        } else {
+          format!("[{}]", option_vec.join(LATEX_OPTION_DELIM))
+        };
+
+        format!("\\begin{{{}}}{}{}\n", directive_name.to_lowercase(), option_str, arg_str)
+      }
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { text } => {
         format!("{}", text)
@@ -893,6 +912,7 @@ impl TreeNodeType {
       Self::TitleReference { .. }           => "".to_string(),
       Self::Topic { .. }                    => todo!(),
       Self::Transition { .. }               => "\n".to_string(),
+      Self::UnknownDirective { directive_name, .. } => format!("\\end{{{}}}", directive_name.to_lowercase()),
       Self::Version { .. }                  => todo!(),
       Self::WhiteSpace { .. }               => "".to_string(),
 
