@@ -111,3 +111,111 @@ This is no longer a part of the above literal block inside a block quote.
   }
 
 }
+
+
+#[test]
+fn unknown_directive_no_argument_nor_options () {
+
+  let src = String::from("
+.. unknown::
+
+  A paragraph.
+
+").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::UnknownDirective { directive_name, argument, options, .. } = doctree.shared_child(0).shared_data() {
+    assert_eq!(directive_name, "unknown");
+    assert_eq!(argument, "");
+    assert!(options.is_empty());
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+
+  } else {
+    panic!()
+  }
+}
+
+
+#[test]
+fn unknown_directive_no_argument_but_options () {
+
+  let src = String::from("
+.. unknown::
+  :option: 1
+  :or: 2
+  :three: 3
+
+  A paragraph.
+
+").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::UnknownDirective { directive_name, argument, options, .. } = doctree.shared_child(0).shared_data() {
+    assert_eq!(directive_name, "unknown");
+    assert_eq!(argument, "");
+    assert_eq!(options.get("option").unwrap(), "1");
+    assert_eq!(options.get("or").unwrap(), "2");
+    assert_eq!(options.get("three").unwrap(), "3");
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+
+  } else {
+    panic!()
+  }
+}
+
+
+#[test]
+fn unknown_directive_no_options_but_argument () {
+
+  let src = String::from("
+.. unknown:: argument
+  on multiple lines
+
+  Content paragraph.
+
+").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+
+  let mut doctree = DocTree::new(PathBuf::from("test"));
+
+  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+  doctree = parser.parse().unwrap_tree();
+  doctree = doctree.walk_to_root();
+  doctree.print_tree();
+
+  if let TreeNodeType::UnknownDirective { directive_name, argument, options, .. } = doctree.shared_child(0).shared_data() {
+    assert_eq!(directive_name, "unknown");
+    assert_eq!(argument, "argument on multiple lines");
+    assert!(options.is_empty());
+  } else {
+    panic!()
+  }
+
+  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+
+  } else {
+    panic!()
+  }
+}
