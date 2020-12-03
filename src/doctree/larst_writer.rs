@@ -477,8 +477,10 @@ impl TreeNodeType {
             ("chapter", "")
         } else if *level == 2 {
             ("section", "")
-        } else {
+        } else if *level == 3 {
             ("section", "sub")
+        } else {
+          ("section", "subsub")
         };
         format!("\\{}{}{{{}}}\n\n", subs, command, title_text)
       },
