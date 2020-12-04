@@ -17,7 +17,7 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       doctree = match doctree.push_data(TreeNodeType::AplusColBreak) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {

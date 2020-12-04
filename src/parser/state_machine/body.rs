@@ -28,7 +28,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       tree_wrapper = match tree_wrapper.push_data_and_focus(sublist_data) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
@@ -113,7 +113,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_enumerator_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       doctree = match doctree.push_data_and_focus(list_node_data) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
@@ -172,7 +172,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       tree_wrapper = match tree_wrapper.push_data_and_focus(list_node_data) {
         Ok(tree) => tree,
         Err(tree) => return TransitionResult::Failure {
@@ -263,7 +263,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       let footnote_data = TreeNodeType::Footnote {
         body_indent: detected_body_indent,
         kind: *detected_kind,
@@ -354,7 +354,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
   // inside any other container it makes a difference.
   match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
 
       let citation_data = TreeNodeType::Citation {
         body_indent: detected_body_indent,
@@ -451,7 +451,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       // Read in the following block of text here and parse it to find out the type of hyperref target in question
 
       let (block_string, offset): (String, usize) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(true), Some(true), Some(detected_body_indent), Some(detected_text_indent), false) {
@@ -608,7 +608,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
       match detected_directive_label.as_str() {
 
         "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note" | "tip" | "warning" => {
@@ -996,7 +996,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
 
       let (comment_string, offset) = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(next_line_indent-base_indent), Some(match_len - base_indent), false) {
         Ok((lines, _, offset, d)) => (lines.join("\n").trim().to_string(), offset),
@@ -1160,7 +1160,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
         match Parser::parent_indent_matches(doctree.shared_data(), detected_indent) {
 
-          IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+          IndentationMatch::JustRight => {
             doctree = match doctree.push_data_and_focus(TreeNodeType::DefinitionList { term_indent: detected_indent }) {
               Ok(tree) => tree,
               Err(tree) => return TransitionResult::Failure {
@@ -1623,7 +1623,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
 
   match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
 
-    IndentationMatch::JustRight | IndentationMatch::DoesNotMatter => {
+    IndentationMatch::JustRight => {
 
       let relative_indent = detected_indent - base_indent;
 

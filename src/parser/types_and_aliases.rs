@@ -129,8 +129,4 @@ pub enum IndentationMatch {
   /// #### TooMuch
   /// This node is most likely a block quote.
   TooMuch,
-
-  /// #### DoesNotMatter
-  /// Inline nodes do not care about indentation, for example.
-  DoesNotMatter,
 }
