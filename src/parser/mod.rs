@@ -753,8 +753,7 @@ impl Parser {
         IndentationMatch::TooMuch
       }
     } else {
-      // IndentationMatch::DoesNotMatter
-      panic!("Asked for parent indentation inside a node that is not a container. Computer says no...")
+      panic!("Asked for parent indentation inside a \"{}\" that is not a container. Computer says no...", parent)
     }
   }
 
