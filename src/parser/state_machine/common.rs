@@ -15,7 +15,6 @@ pub fn empty_line (src_lines: &Vec<String>, base_indent: usize, section_level: &
 
   TransitionResult::Success {
     doctree: doctree,
-    next_states: None,
     push_or_pop: PushOrPop::Neither,
     line_advance: LineAdvance::Some(1),
   }

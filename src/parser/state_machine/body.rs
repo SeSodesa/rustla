@@ -38,8 +38,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
       };
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(vec![State::BulletList]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BulletList]),
         line_advance: LineAdvance::None,
       }
     }
@@ -54,8 +53,7 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
       };
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -63,7 +61,6 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -123,8 +120,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::EnumeratedList]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::EnumeratedList]),
         line_advance: LineAdvance::None,
       }
     }
@@ -138,8 +134,7 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -147,7 +142,6 @@ pub fn enumerator (src_lines: &Vec<String>, base_indent: usize, section_level: &
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -182,8 +176,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
       };
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(vec![State::FieldList]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::FieldList]),
         line_advance: LineAdvance::None,
       }
     }
@@ -197,8 +190,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
       };
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -206,7 +198,6 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -293,8 +284,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
 
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(state_stack),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(state_stack),
         line_advance: LineAdvance::Some(offset),
       }
     }
@@ -308,8 +298,7 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -317,7 +306,6 @@ pub fn footnote (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -385,8 +373,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
 
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(state_stack),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(state_stack),
         line_advance: LineAdvance::Some(offset),
       }
     }
@@ -400,8 +387,7 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       };
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -409,7 +395,6 @@ pub fn citation (src_lines: &Vec<String>, base_indent: usize, section_level: &mu
       tree_wrapper = tree_wrapper.focus_on_parent();
       return TransitionResult::Success {
         doctree: tree_wrapper,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -479,7 +464,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: None,
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(1), // Jump to the next line so we don't just keep trying to parse the same internal target.
         }
@@ -549,7 +533,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
 
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::Some(1)
       }
@@ -564,8 +547,7 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -573,7 +555,6 @@ pub fn hyperlink_target (src_lines: &Vec<String>, base_indent: usize, section_le
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -959,8 +940,7 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -968,7 +948,6 @@ pub fn directive (src_lines: &Vec<String>, base_indent: usize, section_level: &m
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -1020,7 +999,6 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
             doctree: doctree
           }
         },
-        next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::Some(offset)
       }
@@ -1035,8 +1013,7 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -1044,7 +1021,6 @@ pub fn comment (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -1106,7 +1082,6 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
               doctree = doctree.focus_on_parent();
               return TransitionResult::Success {
                 doctree: doctree,
-                next_states: None,
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None
               }
@@ -1131,7 +1106,6 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
             return TransitionResult::Success {
               doctree: doctree,
-              next_states: None,
               push_or_pop: PushOrPop::Pop,
               line_advance: LineAdvance::None
             }
@@ -1139,8 +1113,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
         }
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: Some(vec![State::Section]),
-          push_or_pop: PushOrPop::Push,
+          push_or_pop: PushOrPop::Push(vec![State::Section]),
           line_advance: LineAdvance::Some(2) // Jump over the section underline
         };
       }
@@ -1171,8 +1144,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
             return TransitionResult::Success {
               doctree: doctree,
-              next_states: Some(vec![State::DefinitionList]),
-              push_or_pop: PushOrPop::Push,
+              push_or_pop: PushOrPop::Push(vec![State::DefinitionList]),
               line_advance: LineAdvance::None
             }
           }
@@ -1186,8 +1158,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
             };
             return TransitionResult::Success {
               doctree: doctree,
-              next_states: Some(vec![State::BlockQuote]),
-              push_or_pop: PushOrPop::Push,
+              push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
               line_advance: LineAdvance::None,
             }
           }
@@ -1196,7 +1167,6 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
             return TransitionResult::Success {
               doctree: doctree,
-              next_states: None,
               push_or_pop: PushOrPop::Pop,
               line_advance: LineAdvance::None
             }
@@ -1265,7 +1235,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
           Ok(tree) => tree,
           Err(tree) => return TransitionResult::Success {
             doctree: tree.focus_on_parent(),
-            next_states: None,
             push_or_pop: PushOrPop::Pop,
             line_advance: LineAdvance::None
           }
@@ -1273,7 +1242,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: None,
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
         }
@@ -1320,7 +1288,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       doctree = doctree.focus_on_parent();
                       return TransitionResult::Success {
                         doctree: doctree,
-                        next_states: None,
                         push_or_pop: PushOrPop::Pop,
                         line_advance: LineAdvance::None
                       }
@@ -1345,7 +1312,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
                     return TransitionResult::Success {
                       doctree: doctree,
-                      next_states: None,
                       push_or_pop: PushOrPop::Pop,
                       line_advance: LineAdvance::None
                     }
@@ -1353,8 +1319,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                 }
                 return TransitionResult::Success {
                   doctree: doctree,
-                  next_states: Some(vec![State::Section]),
-                  push_or_pop: PushOrPop::Push,
+                  push_or_pop: PushOrPop::Push(vec![State::Section]),
                   line_advance: LineAdvance::Some(3) // Jump over the section underline
                 }
               } else {
@@ -1439,7 +1404,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                       doctree = doctree.focus_on_parent();
                       return TransitionResult::Success {
                         doctree: doctree,
-                        next_states: None,
                         push_or_pop: PushOrPop::Pop,
                         line_advance: LineAdvance::None
                       }
@@ -1464,7 +1428,6 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
                     return TransitionResult::Success {
                       doctree: doctree,
-                      next_states: None,
                       push_or_pop: PushOrPop::Pop,
                       line_advance: LineAdvance::None
                     }
@@ -1472,8 +1435,7 @@ pub fn line (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
                 }
                 return TransitionResult::Success {
                   doctree: doctree,
-                  next_states: Some(vec![State::Section]),
-                  push_or_pop: PushOrPop::Push,
+                  push_or_pop: PushOrPop::Push(vec![State::Section]),
                   line_advance: LineAdvance::Some(3) // Jump over the section underline
                 }
               } else {
@@ -1708,14 +1670,12 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
       if literal_block_next {
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: Some(vec![State::LiteralBlock]),
-          push_or_pop: PushOrPop::Push,
+          push_or_pop: PushOrPop::Push(vec![State::LiteralBlock]),
           line_advance: LineAdvance::Some(1),
         }
       } else {
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: None,
           push_or_pop: PushOrPop::Neither,
           line_advance: LineAdvance::Some(1),
         }
@@ -1732,8 +1692,7 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -1742,7 +1701,6 @@ fn parse_paragraph (src_lines: &Vec<String>, base_indent: usize, line_cursor: &m
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }

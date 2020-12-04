@@ -239,16 +239,15 @@ impl Parser {
 
           self.doctree = match method(&self.src_lines, self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), &captures, pattern_name) {
 
-            TransitionResult::Success{doctree, next_states, push_or_pop, line_advance} => {
+            TransitionResult::Success{doctree, push_or_pop, line_advance} => {
 
-              match (push_or_pop, next_states) {
+              match push_or_pop {
 
-                (PushOrPop::Push, next_states) if next_states.is_some() => {
-                  let mut next_states = next_states.unwrap();
-                  self.state_stack.append(&mut next_states);
+                PushOrPop::Push(mut states) => {
+                  self.state_stack.append(&mut states);
                 },
 
-                (PushOrPop::Pop, _) => {
+                PushOrPop::Pop => {
 
                   match self.state_stack.pop() {
                     Some(machine) => (),
@@ -263,31 +262,7 @@ impl Parser {
                   };
                 }
 
-                (PushOrPop::Neither, next_states) if next_states.is_some() => {
-
-                  if let Some(state) = self.state_stack.pop() {
-                    self.state_stack.append(&mut next_states.unwrap());
-                  } else {
-                    return ParsingResult::Failure {
-                      message: format!("Attempted to POP from an empty stack on line {}...", self.line_cursor.sum_total()),
-                      doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                        panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                      }
-                    }
-                  }
-                }
-
-                (PushOrPop::Neither, None) => {} // No need to do anything to the stack...
-
-                (push_or_pop, next_states) => {
-
-                  return ParsingResult::Failure {
-                    message: format!("Transition performed, but conflicting result on line {}. Aborting...", self.line_cursor.sum_total()),
-                    doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                      panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                    }
-                  }
-                }
+                PushOrPop::Neither => {} // No need to do anything to the stack...
               };
 
               if let LineAdvance::Some(offset) = line_advance {

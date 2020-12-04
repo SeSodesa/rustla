@@ -99,8 +99,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(nested_state_stack),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(nested_state_stack),
       line_advance: LineAdvance::Some(offset)
     }
   }
@@ -163,8 +162,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::Admonition]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::Admonition]),
       line_advance: LineAdvance::None
     }
   }
@@ -248,7 +246,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None
     }
@@ -345,8 +342,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::Figure]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::Figure]),
       line_advance: LineAdvance::None,
     }
   }
@@ -433,7 +429,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::Some(offset)
     }
@@ -488,7 +483,6 @@ impl Parser {
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::None
       }
@@ -542,7 +536,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::Some(offset)
     }
@@ -822,8 +815,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::ListTable]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::ListTable]),
       line_advance: LineAdvance::Some(offset)
     }
   }
@@ -924,8 +916,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(nested_state_stack),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(nested_state_stack),
       line_advance: LineAdvance::None
     }
   }
@@ -1100,7 +1091,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::Some(offset)
     }
@@ -1167,8 +1157,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::Body]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::Body]),
       line_advance: LineAdvance::Some(1)
     }
   }
@@ -1261,8 +1250,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::AplusQuestionnaire]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::AplusQuestionnaire]),
       line_advance: LineAdvance::None,
     }
   }
@@ -1580,7 +1568,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None
     }
@@ -1895,7 +1882,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None
     }
@@ -2156,7 +2142,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None
     }
@@ -2308,8 +2293,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::Body]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::Body]),
       line_advance: LineAdvance::None,
     }
   }
@@ -2424,7 +2408,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None,
     }
@@ -2563,7 +2546,6 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Neither,
       line_advance: LineAdvance::None
     }
@@ -2636,8 +2618,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::AplusMultiCol]), // PoI contains body nodes and A+ specific column breaks
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::AplusMultiCol]), // PoI contains body nodes and A+ specific column breaks
       line_advance: LineAdvance::None
     }
   }
@@ -2732,8 +2713,7 @@ impl Parser {
 
     TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::Body]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::Body]),
       line_advance: LineAdvance::None
     }
 

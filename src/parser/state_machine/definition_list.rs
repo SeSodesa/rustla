@@ -26,7 +26,6 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None
       }
@@ -67,8 +66,7 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
     return TransitionResult::Success {
       doctree: doctree,
-      next_states: Some(vec![State::ListItem]),
-      push_or_pop: PushOrPop::Push,
+      push_or_pop: PushOrPop::Push(vec![State::ListItem]),
       line_advance: LineAdvance::Some(1)
     }
   } else {
@@ -77,7 +75,6 @@ pub fn text (src_lines: &Vec<String>, base_indent: usize, section_level: &mut us
 
     return TransitionResult::Success {
       doctree: doctree,
-      next_states: None,
       push_or_pop: PushOrPop::Pop,
       line_advance: LineAdvance::None
     }

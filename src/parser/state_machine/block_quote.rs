@@ -55,7 +55,6 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
 
       TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::Some(offset)
       }
@@ -72,8 +71,7 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
 
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }
@@ -81,7 +79,6 @@ pub fn attribution (src_lines: &Vec<String>, base_indent: usize, section_level: 
       doctree = doctree.focus_on_parent();
       TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None
       }

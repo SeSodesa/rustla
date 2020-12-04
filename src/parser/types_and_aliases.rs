@@ -61,7 +61,6 @@ pub enum TransitionResult {
   /// its line cursor.
   Success {
     doctree: DocTree,
-    next_states: Option<Vec<State>>,
     push_or_pop: PushOrPop,
     line_advance: LineAdvance,
   },
@@ -83,7 +82,7 @@ pub enum TransitionResult {
 /// and `Neither` initiates a transition of the current state into another one.
 #[derive(Debug)]
 pub enum PushOrPop {
-  Push, Pop, Neither
+  Push(Vec<State>), Pop, Neither
 }
 
 /// ### LineAdvance

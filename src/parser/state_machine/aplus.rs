@@ -27,7 +27,6 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
       };
       TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::Some(1)
       }
@@ -37,7 +36,6 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
       doctree = doctree.focus_on_parent();
       TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None
       }
@@ -52,8 +50,7 @@ pub fn aplus_col_break (src_lines: &Vec<String>, base_indent: usize, section_lev
       };
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: Some(vec![State::BlockQuote]),
-        push_or_pop: PushOrPop::Push,
+        push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
         line_advance: LineAdvance::None,
       }
     }

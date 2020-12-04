@@ -69,7 +69,6 @@ fn parse_indented_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_c
 
   return TransitionResult::Success {
     doctree: doctree,
-    next_states: None,
     push_or_pop: PushOrPop::Pop,
     line_advance: LineAdvance::Some(offset)
   }
@@ -140,7 +139,6 @@ fn parse_quoted_literal (mut doctree: DocTree, src_lines: &Vec<String>, line_cur
 
   return TransitionResult::Success {
     doctree: doctree,
-    next_states: None,
     push_or_pop: PushOrPop::Pop,
     line_advance: LineAdvance::Some(block_length)
   }

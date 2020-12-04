@@ -72,8 +72,7 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
 
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: Some(state_stack),
-          push_or_pop: PushOrPop::Push,
+          push_or_pop: PushOrPop::Push(state_stack),
           line_advance: LineAdvance::Some(offset),
         }
 
@@ -82,7 +81,6 @@ pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level:
         doctree = doctree.focus_on_parent();
         return TransitionResult::Success {
           doctree: doctree,
-          next_states: None,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
         }

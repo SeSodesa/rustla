@@ -60,15 +60,13 @@ pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut 
 
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_states: Some(state_stack),
-          push_or_pop: PushOrPop::Push,
+          push_or_pop: PushOrPop::Push(state_stack),
           line_advance: LineAdvance::Some(offset),
         }
       } else {
         tree_wrapper = tree_wrapper.focus_on_parent();
         return TransitionResult::Success {
           doctree: tree_wrapper,
-          next_states: None,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
         }

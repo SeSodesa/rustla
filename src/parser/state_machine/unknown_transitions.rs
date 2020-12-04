@@ -24,7 +24,6 @@ pub fn back_up (src_lines: &Vec<String>, base_indent: usize, section_level: &mut
 
   TransitionResult::Success {
     doctree: doctree,
-    next_states: None,
     push_or_pop: PushOrPop::Pop,
     line_advance: LineAdvance::None
   }

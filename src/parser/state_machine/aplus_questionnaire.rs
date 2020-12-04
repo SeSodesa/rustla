@@ -55,7 +55,6 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Neither,
         line_advance: LineAdvance::Some(1)
       };
@@ -64,7 +63,6 @@ pub fn parse_aplus_questionnaire_text (src_lines: &Vec<String>, base_indent: usi
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
@@ -107,7 +105,6 @@ pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent
           doctree = doctree.focus_on_parent();
           return TransitionResult::Success {
             doctree: doctree,
-            next_states: None,
             push_or_pop: PushOrPop::Pop,
             line_advance: LineAdvance::None,
           }
@@ -118,7 +115,6 @@ pub fn parse_aplus_questionnaire_directive (src_lines: &Vec<String>, base_indent
       doctree = doctree.focus_on_parent();
       return TransitionResult::Success {
         doctree: doctree,
-        next_states: None,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::None,
       }
