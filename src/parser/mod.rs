@@ -251,12 +251,10 @@ impl Parser {
 
                   match self.state_stack.pop() {
                     Some(machine) => (),
-                    None => {
-                      return ParsingResult::Failure {
-                        message: String::from("Can't pop from empty stack...\n"),
-                        doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                          panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                        }
+                    None => return ParsingResult::Failure {
+                      message: String::from("Can't pop from empty stack...\n"),
+                      doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                        panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
                       }
                     }
                   };
@@ -297,7 +295,7 @@ impl Parser {
 
       // No matches in current state so pop from state stack and attempt
       // parsing in the previous state down stack
-      if !match_found {
+      if ! match_found {
 
         // eprintln!("No match found.\nPopping from machine stack...\n");
 
