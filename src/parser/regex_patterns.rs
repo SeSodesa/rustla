@@ -6,19 +6,18 @@
 /// (c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 
 /// #### ATTRIBUTION_PATTERN
-  /// A pattern for matching attributions inside block quotes.
-  pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
+/// A pattern for matching attributions inside block quotes.
+pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
 
-  /// #### BLANK_LINE_PATTERN
-  /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
-  pub const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
+/// #### BLANK_LINE_PATTERN
+/// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
+pub const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
 
+/// #### BULLET_PATTERN
+/// A pattern for matching bullet list bullets.
+pub const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
-  /// #### BULLET_PATTERN
-  /// A pattern for matching bullet list bullets.
-  pub const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
-
-  pub const ENUMERATOR_PATTERN: &'static str = r#"^(?x)
+pub const ENUMERATOR_PATTERN: &'static str = r#"^(?x)
     (?P<indent>
       \s*
     )
@@ -110,133 +109,132 @@
     )
   "#;
 
-  /// A pattern for Arabic numerals with closing parentheses
-  pub const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
-  pub const ARABIC_RPAREN_PATTERN: &'static str = r"^(\s*)([0-9]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
-  pub const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
+/// A pattern for Arabic numerals with closing parentheses
+pub const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
+/// A pattern for Arabic numerals with a closing right parenthesis
+pub const ARABIC_RPAREN_PATTERN: &'static str = r"^(\s*)([0-9]+)\)(?: +|$)";
+/// A pattern for Arabic numerals with a closing period
+pub const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
 
-  /// A pattern for lower case alphabetic numerals with closing parentheses
-  pub const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
-  /// A pattern for lower case alphabetic numerals with a closing right parenthesis
-  pub const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
-  /// A pattern for lower case alphabetic numerals with a closing period
-  pub const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
+/// A pattern for lower case alphabetic numerals with closing parentheses
+pub const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
+/// A pattern for lower case alphabetic numerals with a closing right parenthesis
+pub const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
+/// A pattern for lower case alphabetic numerals with a closing period
+pub const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
 
-  /// A pattern for upper case alphabetic numerals with closing parentheses
-  pub const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
-  /// A pattern for upper case alphabetic numerals with a closing right parenthesis
-  pub const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
-  /// A pattern for upper case alphabetic numerals with a closing period
-  pub const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
+/// A pattern for upper case alphabetic numerals with closing parentheses
+pub const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
+/// A pattern for upper case alphabetic numerals with a closing right parenthesis
+pub const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
+/// A pattern for upper case alphabetic numerals with a closing period
+pub const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
 
-  /// A pattern for lower Roman numerals with closing parentheses
-  pub const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for lower Roman numerals with a closing right parenthesis
-  pub const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for lower Roman numerals with a closing period
-  pub const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
+/// A pattern for lower Roman numerals with closing parentheses
+pub const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
+/// A pattern for lower Roman numerals with a closing right parenthesis
+pub const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
+/// A pattern for lower Roman numerals with a closing period
+pub const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
 
-  /// A pattern for upper Roman numerals with closing parentheses
-  pub const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing right parenthesis
-  pub const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing period
-  pub const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
+/// A pattern for upper Roman numerals with closing parentheses
+pub const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing right parenthesis
+pub const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing period
+pub const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
 
-  /// A pattern for upper Roman numerals with closing parentheses
-  pub const AUTO_ENUM_PARENS_PATTERN: &'static str = r"^(\s*)\((\#)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing right parenthesis
-  pub const AUTO_ENUM_RPAREN_PATTERN: &'static str = r"^(\s*)(\#)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing period
-  pub const AUTO_ENUM_PERIOD_PATTERN: &'static str = r"^(\s*)(\#)\.(?: +|$)";
+/// A pattern for upper Roman numerals with closing parentheses
+pub const AUTO_ENUM_PARENS_PATTERN: &'static str = r"^(\s*)\((\#)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing right parenthesis
+pub const AUTO_ENUM_RPAREN_PATTERN: &'static str = r"^(\s*)(\#)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing period
+pub const AUTO_ENUM_PERIOD_PATTERN: &'static str = r"^(\s*)(\#)\.(?: +|$)";
 
-  /// #### FIELD_MARKER_PATTERN
-  /// A pattern that signifies the start of a field list, such as a bibliography.
-  /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
-  /// as ": " signifies the end of a list marker.
-  pub const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):([\S&&[^\\]]|\S.*?[\S&&[^\\]]):(?: +|$)";
+/// #### FIELD_MARKER_PATTERN
+/// A pattern that signifies the start of a field list, such as a bibliography.
+/// Colons inside field names `:field name:` must be escaped if followed by whitespace,
+/// as ": " signifies the end of a list marker.
+pub const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):([\S&&[^\\]]|\S.*?[\S&&[^\\]]):(?: +|$)";
 
+/// #### INDENTED_LITERAL_BLOCK_PATTERN
+/// A pattern for matching against an indented block of text when in `State::LiteralBlock`.
+pub const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
 
-  /// #### INDENTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an indented block of text when in `State::LiteralBlock`.
-  pub const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
+/// #### QUOTED_LITERAL_BLOCK_PATTERN
+/// A pattern for matching against an "quoted" block of text when in `State::LiteralBlock`.
+pub const QUOTED_LITERAL_BLOCK_PATTERN: &'static str =
+    r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
 
+/// A pattern that matches the tops of bottoms of grid tables.
+pub const GRID_TABLE_TOP_AND_BOT_PATTERN: &'static str = r#"^(\s*)\+-[-+]+-\+ *$"#;
 
-  /// #### QUOTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an "quoted" block of text when in `State::LiteralBlock`.
-  pub const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
+/// A pattern that matches the tops and bottoms of simple tables.
+pub const SIMPLE_TABLE_TOP_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
 
-  /// A pattern that matches the tops of bottoms of grid tables.
-  pub const GRID_TABLE_TOP_AND_BOT_PATTERN: &'static str = r#"^(\s*)\+-[-+]+-\+ *$"#;
+/// A pattern for matching against the bottoms of entire simple tables and their header rows.
+pub const SIMPLE_TABLE_BOTTOM_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
 
-  /// A pattern that matches the tops and bottoms of simple tables.
-  pub const SIMPLE_TABLE_TOP_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
+// ========================
+// Explicit markup patterns
+// ========================
 
-  /// A pattern for matching against the bottoms of entire simple tables and their header rows.
-  pub const SIMPLE_TABLE_BOTTOM_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
+/// #### MANUAL_FOOTNOTE_PATTERN
+/// A pattern for matching against manually numbered footnotes.
+pub const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
 
-  // ========================
-  // Explicit markup patterns
-  // ========================
+/// #### AUTO_NUM_FOOTNOTE_PATTERN
+/// A footnote pattern with the symbol '#' for a label.
+/// This triggers automatic numbering for the footnote to be generated.
+pub const AUTO_NUM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#)\](?:[ ]+|$)";
 
-  /// #### MANUAL_FOOTNOTE_PATTERN
-  /// A pattern for matching against manually numbered footnotes.
-  pub const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
+/// #### SIMPLE_NAME_FOOTNOTE_PATTERN
+/// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
+/// multiple times, as there is a simple reference name pointing to the footnote.
+pub const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+\[\#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
-  /// #### AUTO_NUM_FOOTNOTE_PATTERN
-  /// A footnote pattern with the symbol '#' for a label.
-  /// This triggers automatic numbering for the footnote to be generated.
-  pub const AUTO_NUM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#)\](?:[ ]+|$)";
+/// #### AUTO_SYM_FOOTNOTE_PATTERN
+/// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
+pub const AUTO_SYM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\*)\](?:[ ]+|$)";
 
-  /// #### SIMPLE_NAME_FOOTNOTE_PATTERN
-  /// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
-  /// multiple times, as there is a simple reference name pointing to the footnote.
-  pub const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[\#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+/// #### CITATION_PATTERN
+/// A pattern for matching against citations.
+/// Similar to `FOOTNOTE_PATTERN`, but only
+/// recognizes simple reference names in labels.
+pub const CITATION_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]*(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
-  /// #### AUTO_SYM_FOOTNOTE_PATTERN
-  /// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
-  pub const AUTO_SYM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\*)\](?:[ ]+|$)";
+/// #### HYPERLINK_TARGET_PATTERN
+/// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
+/// with and underscore `_`, the latter of which signifies an anonymous link.
+pub const HYPERLINK_TARGET_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+_([a-zA-Z0-9][a-zA-Z0-9 ]*(?:[-+._:][a-zA-Z0-9 ]+)*[a-zA-Z0-9]+|_):(?:[ ]+|$)";
 
+/// #### SUBSTITUTION_DEF_PATTERN
+/// A pattern for matching substitution definitions, a.k.a. macros.
+pub const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
 
-  /// #### CITATION_PATTERN
-  /// A pattern for matching against citations.
-  /// Similar to `FOOTNOTE_PATTERN`, but only
-  /// recognizes simple reference names in labels.
-  pub const CITATION_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]*(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+/// #### DIRECTIVE_PATTERN
+/// A pattern for matching directives. The directive label is used to determine the type of directive
+/// inside a transition function. The label itself is a simple reference name (an identifier).
+pub const DIRECTIVE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
+/// #### COMMENT_PATTERN
+///
+/// A pattern for recognizing comments, after no other explicit markup pattern has matched.
+pub const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
 
-  /// #### HYPERLINK_TARGET_PATTERN
-  /// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
-  /// with and underscore `_`, the latter of which signifies an anonymous link.
-  pub const HYPERLINK_TARGET_PATTERN: &'static str = r"^(\s*)\.\.[ ]+_([a-zA-Z0-9][a-zA-Z0-9 ]*(?:[-+._:][a-zA-Z0-9 ]+)*[a-zA-Z0-9]+|_):(?:[ ]+|$)";
+/// #### LINE_PATTERN
+/// A pattern for recognizing lines related to section titles and transitions.
+pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
 
-
-  /// #### SUBSTITUTION_DEF_PATTERN
-  /// A pattern for matching substitution definitions, a.k.a. macros.
-  pub const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
-
-
-  /// #### DIRECTIVE_PATTERN
-  /// A pattern for matching directives. The directive label is used to determine the type of directive
-  /// inside a transition function. The label itself is a simple reference name (an identifier).
-  pub const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
-
-  /// #### COMMENT_PATTERN
-  ///
-  /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
-  pub const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
-
-  /// #### LINE_PATTERN
-  /// A pattern for recognizing lines related to section titles and transitions.
-  pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
-
-  /// #### TEXT_PATTERN
-  /// A pattern for detecting any text, possibly beginning with whitespace.
-  /// This pattern should generally be tested against only after all other
-  /// possibilities have been eliminated.
-  pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
+/// #### TEXT_PATTERN
+/// A pattern for detecting any text, possibly beginning with whitespace.
+/// This pattern should generally be tested against only after all other
+/// possibilities have been eliminated.
+pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
 
 // =================
 //  Inline patterns
@@ -444,7 +442,6 @@ pub const CITATION_REF_PATTERN: &str = r#"(?x)^"
   )
 "#;
 
-
 pub const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
@@ -529,7 +526,6 @@ pub const URI_PATTERN: &str = r#"(?x)^
 )
 "#;
 
-
 // ======================
 //  A+ specific patterns
 // ======================
@@ -539,9 +535,9 @@ pub const URI_PATTERN: &str = r#"(?x)^
 /// A+ directives, such as points of interest.
 pub const APLUS_COL_BREAK_PATTERN: &str = r#"^(\s+)::newcol"#;
 
-
 /// ### APLUS_PICK_ONE_PATTERN
-pub const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+(pick-one|pick-any|freetext)::(?:[ ]+|$)";
+pub const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+(pick-one|pick-any|freetext)::(?:[ ]+|$)";
 
 // /// ### APLUS_PICK_ANY_PATTERN
 // pub const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$)";
@@ -553,7 +549,8 @@ pub const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+
 /// Initially selected options may be set with `+`.
 /// The initially selected options are pre-selected when the exercise is loaded.
 /// The `+` character is written before `*` or `?` if they are combined.
-pub const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
+pub const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str =
+    r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
 
 /// ### APLUS_PICK_ANY_CHOICE_PATTERN
 /// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.

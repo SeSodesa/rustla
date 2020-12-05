@@ -3,15 +3,13 @@
 ///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
 
 #[cfg(test)]
-
-
 #[test]
-fn image_01 () {
-  let src = String::from("
+fn image_01() {
+    let src = String::from(
+        "
 .. image:: this/is/an/image/uri.png
   :class: html class attributes
   :name: here is a reference name
@@ -26,44 +24,63 @@ fn image_01 () {
 - This bullet list
 - is not a part of the above image.
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  use crate::common::HTMLAlignment;
+    use crate::common::HTMLAlignment;
 
-  match doctree.shared_child(0).shared_data() {
-
-    TreeNodeType::Image { uri, alt, height, width, scale, align, target, name, class } => {
-          assert_eq!(uri.as_str(), "this/is/an/image/uri.png");
-          assert_eq!(alt.as_ref().unwrap().as_str(), "This is alternate text for the visually impaired");
-          assert_eq!(height.is_none(), true);
-          assert_eq!(width.is_none(), true);
-          assert_eq!(scale.as_ref().unwrap().to_string(), "50");
-          if let HTMLAlignment::Left = align.as_ref().unwrap() {} else { panic!() }
-          assert_eq!(target.as_ref().unwrap().as_str(), "turns image into link");
-          assert_eq!(name.as_ref().unwrap().as_str(), "here is a reference name");
-          assert_eq!(class.as_ref().unwrap().as_str(), "html class attributes");
+    match doctree.shared_child(0).shared_data() {
+        TreeNodeType::Image {
+            uri,
+            alt,
+            height,
+            width,
+            scale,
+            align,
+            target,
+            name,
+            class,
+        } => {
+            assert_eq!(uri.as_str(), "this/is/an/image/uri.png");
+            assert_eq!(
+                alt.as_ref().unwrap().as_str(),
+                "This is alternate text for the visually impaired"
+            );
+            assert_eq!(height.is_none(), true);
+            assert_eq!(width.is_none(), true);
+            assert_eq!(scale.as_ref().unwrap().to_string(), "50");
+            if let HTMLAlignment::Left = align.as_ref().unwrap() {
+            } else {
+                panic!()
+            }
+            assert_eq!(target.as_ref().unwrap().as_str(), "turns image into link");
+            assert_eq!(name.as_ref().unwrap().as_str(), "here is a reference name");
+            assert_eq!(class.as_ref().unwrap().as_str(), "html class attributes");
         }
-    _ => panic!("Not a simple image...")
-  }
+        _ => panic!("Not a simple image..."),
+    }
 
-  match doctree.shared_child(1).shared_data() {
-    TreeNodeType::BulletList { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_data() {
+        TreeNodeType::BulletList { .. } => {}
+        _ => panic!(),
+    }
 }
 
-
 #[test]
-fn figure_01 () {
-  let src = String::from("
+fn figure_01() {
+    let src = String::from(
+        "
 .. figure:: this/is/an/image/uri.png
   :class: html class attributes
   :name: here is a reference name
@@ -83,48 +100,52 @@ fn figure_01 () {
   - As is
   - This bullet list
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.perform_restructuredtext_transforms();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.perform_restructuredtext_transforms();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  match doctree.shared_child(0).shared_data() {
-    TreeNodeType::Figure { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_data() {
+        TreeNodeType::Figure { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::Image { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(0).shared_data() {
+        TreeNodeType::Image { .. } => {}
+        _ => panic!(),
+    }
 
-  // This node is transformed into a caption during the transdormation phase of the doctree.
-  match doctree.shared_child(0).shared_child(1).shared_data() {
-    TreeNodeType::Caption { .. } => {}
-    _ => panic!()
-  }
+    // This node is transformed into a caption during the transdormation phase of the doctree.
+    match doctree.shared_child(0).shared_child(1).shared_data() {
+        TreeNodeType::Caption { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(2).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(2).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(3).shared_data() {
-    TreeNodeType::BulletList { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(3).shared_data() {
+        TreeNodeType::BulletList { .. } => {}
+        _ => panic!(),
+    }
 }
 
-
 #[test]
-fn figure_02 () {
-  let src = String::from("
+fn figure_02() {
+    let src = String::from(
+        "
 * This bullet list item contains a figure.
 
   .. figure:: this/is/an/image/uri.png
@@ -140,76 +161,128 @@ fn figure_02 () {
 
 Back to no indentation.
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  match doctree.shared_child(0).shared_data() {
-    TreeNodeType::BulletList { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_data() {
+        TreeNodeType::BulletList { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::BulletListItem { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(0).shared_data() {
+        TreeNodeType::BulletListItem { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(0)
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_data() {
-    TreeNodeType::Figure { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_data()
+    {
+        TreeNodeType::Figure { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(0).shared_data() {
-    TreeNodeType::Image { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(0)
+        .shared_data()
+    {
+        TreeNodeType::Image { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::Comment { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(1)
+        .shared_data()
+    {
+        TreeNodeType::Comment { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(2).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(2)
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(3).shared_data() {
-    TreeNodeType::BulletList { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(3)
+        .shared_data()
+    {
+        TreeNodeType::BulletList { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(3).shared_child(0).shared_data() {
-    TreeNodeType::BulletListItem { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(3)
+        .shared_child(0)
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_child(1).shared_child(3).shared_child(1).shared_data() {
-    TreeNodeType::BulletListItem { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(3)
+        .shared_child(1)
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 }
 
-
 #[test]
-fn figure_03 () {
-  let src = String::from("
+fn figure_03() {
+    let src = String::from(
+        "
 .. figure:: this/is/an/image/uri.png
 
   .. figure:: this/is/another/image/uri.png
@@ -218,33 +291,42 @@ fn figure_03 () {
 
 Back to no indentation.
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  match doctree.shared_child(0).shared_data() {
-    TreeNodeType::Figure { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_data() {
+        TreeNodeType::Figure { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(1).shared_data() {
-    TreeNodeType::Figure { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(1).shared_data() {
+        TreeNodeType::Figure { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(1)
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 }

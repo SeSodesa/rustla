@@ -1,3 +1,4 @@
+use std::io::BufRead;
 /// ## common
 ///
 /// This submoddule contains useful functions and other constructs that don't
@@ -5,9 +6,7 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
-use std::{str, path, fs, io};
-use std::io::BufRead;
+use std::{fs, io, path, str};
 
 // =======================
 // Text handling utilities
@@ -17,24 +16,23 @@ use std::io::BufRead;
 /// Returns a `Vec<String>` from a given `&str`,
 /// split at new lines `\n` or `\r\n`.
 pub fn str_to_lines(string: &str) -> Vec<String> {
+    let line_vec = string
+        .lines()
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
 
-  let line_vec = string
-    .lines()
-    .map(|s| s.to_string())
-    .collect::<Vec<String>>();
-
-  line_vec
+    line_vec
 }
-
 
 /// ### read_path_lines
 /// Read the lines of a given file into a buffer.
 pub fn read_path_lines<P>(file_path: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
-where P: AsRef<path::Path> {
-  let file:fs::File = fs::File::open(file_path)?;
-  Ok(io::BufReader::new(file).lines())
+where
+    P: AsRef<path::Path>,
+{
+    let file: fs::File = fs::File::open(file_path)?;
+    Ok(io::BufReader::new(file).lines())
 }
-
 
 /// ### normalize_refname
 /// Normalizes the given `&str` according to the reStructuredText specification.
@@ -44,14 +42,13 @@ where P: AsRef<path::Path> {
 /// #### Note
 /// This might return something nonsensical, as converting a single multi-scalar grapheme
 /// into lower-case will return the multiple constituent "characters" as their lower-case variants.
-pub fn normalize_refname (name: &str) -> String {
-  name.split_whitespace()
-    .collect::<Vec<&str>>() // Collects the SplitWhiteSpace iterator into a vector of &strs
-    .join(" ")            // Joins the vector of &strs into an allocated String
-    .to_lowercase()                   // Performs a UTF8-compliant transformation of unicode scalars in the String
-                                      // into their lower-case counterparts
+pub fn normalize_refname(name: &str) -> String {
+    name.split_whitespace()
+        .collect::<Vec<&str>>() // Collects the SplitWhiteSpace iterator into a vector of &strs
+        .join(" ") // Joins the vector of &strs into an allocated String
+        .to_lowercase() // Performs a UTF8-compliant transformation of unicode scalars in the String
+                        // into their lower-case counterparts
 }
-
 
 /// ### strip_indent
 /// A whitespace-aware function for stripping indentation
@@ -60,24 +57,21 @@ pub fn normalize_refname (name: &str) -> String {
 /// the notified `amount` has been stripped, an `Err(message)`
 /// is returned instead.
 pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str> {
-
-  if line.is_empty() {
-    return Ok(line)
-  }
-
-  let mut chars = line.chars();
-
-  for i in 0..amount {
-
-    let c = chars.next().unwrap();
-
-    if !c.is_whitespace() && i < amount {
-      return Err("\nNon-whitespace character encountered before supposed indentation level reached.\n");
+    if line.is_empty() {
+        return Ok(line);
     }
 
-  }
+    let mut chars = line.chars();
 
-  Ok(chars.as_str().to_string())
+    for i in 0..amount {
+        let c = chars.next().unwrap();
+
+        if !c.is_whitespace() && i < amount {
+            return Err("\nNon-whitespace character encountered before supposed indentation level reached.\n");
+        }
+    }
+
+    Ok(chars.as_str().to_string())
 }
 
 // ============
@@ -100,7 +94,6 @@ pub type QuizPoints = u32;
 /// A type alias for the number type used in the `Length` enum.
 pub type LengthNum = f64;
 
-
 // ==========================
 // Enumerators and converters
 // ==========================
@@ -109,72 +102,72 @@ pub type LengthNum = f64;
 /// ### PatternName
 /// An enum of transition regex pattern names, both for body and inline level elements.
 pub enum PatternName {
+    // Body elements, possibly nested
+    Attribution,
+    EmptyLine,
+    Bullet,
+    Citation,
+    Comment,
+    Enumerator,
+    ExplicitMarkup,
+    Directive,
+    DocTest,
+    FieldMarker,
+    Footnote(FootnoteKind),
+    HyperlinkTarget,
+    IndentedLiteralBlock,
+    Line,
+    LineBlock,
+    OptionMarker,
+    Paragraph,
+    QuotedLiteralBlock,
+    Text,
 
-  // Body elements, possibly nested
-  Attribution,
-  EmptyLine,
-  Bullet,
-  Citation,
-  Comment,
-  Enumerator,
-  ExplicitMarkup,
-  Directive,
-  DocTest,
-  FieldMarker,
-  Footnote ( FootnoteKind ),
-  HyperlinkTarget,
-  IndentedLiteralBlock,
-  Line,
-  LineBlock,
-  OptionMarker,
-  Paragraph,
-  QuotedLiteralBlock,
-  Text,
+    // Inline Elements for parsing Strings
+    Escape,
+    StrongEmphasis, // **strongly emphasised text**
+    Emphasis,       // *emphasized text*
+    Interpreted,    // Plain interpreted text with the default role set by transpiler.
+    PhraseRef,      // A reference in the form `text with spaces`__?
+    SimpleRef,      // A reference that doesn't need backticks: reference__?
+    Literal,        // Code
+    FootNoteRef,
+    InlineTarget,    // Reference target in inline text: _`target label`
+    SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
+    ImplicitURL,
+    StandaloneHyperlink,
+    WhiteSpace,
 
-  // Inline Elements for parsing Strings
-  Escape,
-  StrongEmphasis, // **strongly emphasised text**
-  Emphasis, // *emphasized text*
-  Interpreted, // Plain interpreted text with the default role set by transpiler.
-  PhraseRef, // A reference in the form `text with spaces`__?
-  SimpleRef, // A reference that doesn't need backticks: reference__?
-  Literal, // Code
-  FootNoteRef,
-  InlineTarget, // Reference target in inline text: _`target label`
-  SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
-  ImplicitURL,
-  StandaloneHyperlink,
-  WhiteSpace,
-
-  // A+ specific
-  AplusColBreak,
-  AplusQuestionnaireDirective
+    // A+ specific
+    AplusColBreak,
+    AplusQuestionnaireDirective,
 }
-
 
 /// An enumeration fo the different A+ questionnaire types. This is used the differentiate
 /// between questionnaire hint output formats, among other things.
 #[derive(Debug)]
 pub enum AplusQuestionnaireType {
-  PickOne, PickAny, FreeText
+    PickOne,
+    PickAny,
+    FreeText,
 }
-
 
 /// ### SectionLineStyle
 /// A section can be underlined, or over- and underlined with a certain character.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum SectionLineStyle {
-  OverAndUnder(char),
-  Under(char)
+    OverAndUnder(char),
+    Under(char),
 }
-
 
 /// ### EnumDelims
 /// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
 /// A third option is to enclose them in matching parentheses `(` and `)`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum EnumDelims {
-  Period, Parens, RParen,
+    Period,
+    Parens,
+    RParen,
 }
 
 /// ### EnumKind
@@ -182,9 +175,13 @@ pub enum EnumDelims {
 /// or lower- or upper-case Roman numerals between `1--4999`.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum EnumKind {
-  Arabic, LowerAlpha, UpperAlpha, LowerRoman, UpperRoman, Automatic,
+    Arabic,
+    LowerAlpha,
+    UpperAlpha,
+    LowerRoman,
+    UpperRoman,
+    Automatic,
 }
-
 
 /// ### FootnoteKind
 /// There are 4 different kinds of footnote markers:
@@ -194,12 +191,11 @@ pub enum EnumKind {
 /// 4. Automatically generated symbolic markers: .. [*]
 #[derive(Debug, Clone, Copy)]
 pub enum FootnoteKind {
-  Manual,
-  AutoNumbered,
-  SimpleRefName,
-  AutoSymbol,
+    Manual,
+    AutoNumbered,
+    SimpleRefName,
+    AutoSymbol,
 }
-
 
 /// A hyperlink target may be one of 3 types:
 ///
@@ -225,20 +221,18 @@ pub enum FootnoteKind {
 /// joined with whitespace before being normalized.
 #[derive(Debug, Clone)]
 pub enum LinkTarget {
-  Internal(String),
-  External(String),
-  Indirect(String),
+    Internal(String),
+    External(String),
+    Indirect(String),
 }
-
 
 /// An enumeration of the different types of references that a reference node might contain.
 #[derive(Debug)]
 pub enum Reference {
-  Internal(String),
-  URI(String),
-  EMail(String)
+    Internal(String),
+    URI(String),
+    EMail(String),
 }
-
 
 /// ### IterpretedTextKind
 /// There are 3 types of interpreted inline text, such as math:
@@ -247,108 +241,104 @@ pub enum Reference {
 /// 3. where  the type is not specified and the default role is used.
 #[derive(Debug, Clone, Copy)]
 pub enum InterpretedTextKind {
-  Default,
-  RoleThenContent,
-  ContentThenRole
+    Default,
+    RoleThenContent,
+    ContentThenRole,
 }
-
 
 /// ### MetricType
 /// An enumeration of how lengths can be interpreted.
 /// This includes precentages of current context and absolute length
 #[derive(Debug)]
 pub enum MetricType {
-  Percentage(f64),
-  Lenght(Length),
+    Percentage(f64),
+    Lenght(Length),
 }
-
 
 /// ### Length
 /// Units of length recognized by reStructuredText.
 #[derive(Debug)]
 pub enum Length {
+    /// #### Em
+    /// em unit, the element's font size
+    Em(LengthNum),
 
-  /// #### Em
-  /// em unit, the element's font size
-  Em(LengthNum),
+    /// ### Ex
+    /// ex unit, x-height of the element's font size
+    Ex(LengthNum),
 
-  /// ### Ex
-  /// ex unit, x-height of the element's font size
-  Ex(LengthNum),
+    /// ### Mn
+    /// Millimeters
+    Mm(LengthNum),
 
-  /// ### Mn
-  /// Millimeters
-  Mm(LengthNum),
+    /// #### Cm
+    /// Centimeters.
+    Cm(LengthNum),
 
-  /// #### Cm
-  /// Centimeters.
-  Cm(LengthNum),
+    /// #### In
+    /// Inches. 1in == 2.54 cm == 96 px.
+    In(LengthNum),
 
-  /// #### In
-  /// Inches. 1in == 2.54 cm == 96 px.
-  In(LengthNum),
+    /// #### Px
+    /// Pixels. 1px == 1/96 in
+    ///
+    /// ##### Note!
+    /// In LaTeX, 1 px == 1/72 in.
+    Px(LengthNum),
 
-  /// #### Px
-  /// Pixels. 1px == 1/96 in
-  ///
-  /// ##### Note!
-  /// In LaTeX, 1 px == 1/72 in.
-  Px(LengthNum),
+    /// #### Pt
+    /// Points. 1pt == 1/72 in
+    Pt(LengthNum),
 
-  /// #### Pt
-  /// Points. 1pt == 1/72 in
-  Pt(LengthNum),
-
-  /// #### Pc
-  /// Picas. 1 pc == 1/6 in == 12 pt
-  Pc(LengthNum),
+    /// #### Pc
+    /// Picas. 1 pc == 1/6 in == 12 pt
+    Pc(LengthNum),
 }
 
 impl std::fmt::Display for Length {
-  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-    let fmt_str = match self {
-      Self::Em(num) => format!("{}em", num),
-      Self::Ex(num) => format!("{}ex", num),
-      Self::Mm(num) => format!("{}mm", num),
-      Self::Cm(num) => format!("{}cm", num),
-      Self::In(num) => format!("{}in", num),
-      Self::Px(num) => format!("{}px", num),
-      Self::Pt(num) => format!("{}pt", num),
-      Self::Pc(num) => format!("{}pc", num),
-    };
-    write!(f, "{}", fmt_str)
-  }
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        let fmt_str = match self {
+            Self::Em(num) => format!("{}em", num),
+            Self::Ex(num) => format!("{}ex", num),
+            Self::Mm(num) => format!("{}mm", num),
+            Self::Cm(num) => format!("{}cm", num),
+            Self::In(num) => format!("{}in", num),
+            Self::Px(num) => format!("{}px", num),
+            Self::Pt(num) => format!("{}pt", num),
+            Self::Pc(num) => format!("{}pc", num),
+        };
+        write!(f, "{}", fmt_str)
+    }
 }
-
 
 /// ### TableColWidths
 /// An enumeration of different horizontal alignment options.
 #[derive(Debug)]
 pub enum TableColWidths {
-  Columns(Vec<f64>),
-  Auto // Determined by writer
+    Columns(Vec<f64>),
+    Auto, // Determined by writer
 }
-
 
 /// ### HorizontalAlignment
 /// An enumeration of different horizontal alignment options:
 /// `Left`, `Middle` or `Right`.
 #[derive(Debug)]
 pub enum HorizontalAlignment {
-  Left, Center, Right
+    Left,
+    Center,
+    Right,
 }
 
 impl std::fmt::Display for HorizontalAlignment {
-  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-    let fmt_str = match self {
-      Self::Left => "left",
-      Self::Center => "center",
-      Self::Right => "right"
-    };
-    write!(f, "align={}", fmt_str)
-  }
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        let fmt_str = match self {
+            Self::Left => "left",
+            Self::Center => "center",
+            Self::Right => "right",
+        };
+        write!(f, "align={}", fmt_str)
+    }
 }
-
 
 /// ### ToCBacklinks
 /// An enumeration of different backlinking alternatives for a table of contents node.
@@ -356,47 +346,50 @@ impl std::fmt::Display for HorizontalAlignment {
 /// contents entries, the table of contents itself, or generate no backlinks.
 #[derive(Debug)]
 pub enum ToCBacklinks {
-  Entry, Top, None
+    Entry,
+    Top,
+    None,
 }
-
 
 /// #### HTMLAlignment
 /// An enumeration of the (deprecated) "align" attribute alternatives
 /// recognized by the HTML `<img>` tag.
 #[derive(Debug)]
 pub enum HTMLAlignment {
-  Top, Middle, Bottom, Left, Center, Right
+    Top,
+    Middle,
+    Bottom,
+    Left,
+    Center,
+    Right,
 }
 
 impl std::fmt::Display for HTMLAlignment {
-  fn fmt (&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
-    let fmt_str = match self {
-      Self::Top => "top",
-      Self::Middle => "middle",
-      Self::Bottom => "bottom",
-      Self::Left => "left",
-      Self::Center => "center",
-      Self::Right => "right"
-    };
-    write!(f, "{}", fmt_str)
-  }
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        let fmt_str = match self {
+            Self::Top => "top",
+            Self::Middle => "middle",
+            Self::Bottom => "bottom",
+            Self::Left => "left",
+            Self::Center => "center",
+            Self::Right => "right",
+        };
+        write!(f, "{}", fmt_str)
+    }
 }
-
 
 /// ### TraversalType
 ///
 /// Enumerated the types of tree traversals that one of the `DocTree` walk methods might perform.
 pub enum TraversalType {
-
-  /// #### ID
-  /// Traversal based on node ID. Causes the walker method to look for a specific node
-  /// with the given ID.
-  ID(NodeId)
+    /// #### ID
+    /// Traversal based on node ID. Causes the walker method to look for a specific node
+    /// with the given ID.
+    ID(NodeId),
 }
 
-
-use crate::parser::state_machine::State;
 use crate::doctree::DocTree;
+use crate::parser::state_machine::State;
 
 /// ### ParsingResult
 /// An enumeration of the different ways a (nested) parsing session might terminate.
@@ -404,48 +397,47 @@ use crate::doctree::DocTree;
 /// that are not outright failures will enclose the document tree fed to the parser
 /// when it was initialized.
 pub enum ParsingResult {
+    /// #### EOF
+    /// This will be returned, if the parser finished by passing over the last line of the source.
+    /// This generally indicates that the source file was parsed successfully.
+    EOF {
+        doctree: DocTree,
+        state_stack: Vec<State>,
+    },
 
-  /// #### EOF
-  /// This will be returned, if the parser finished by passing over the last line of the source.
-  /// This generally indicates that the source file was parsed successfully.
-  EOF {
-    doctree: DocTree,
-    state_stack: Vec<State>
-  },
+    /// #### EmptyStateStack
+    /// This will be returned if the parser was unable to parse any elements on some line of the source,
+    /// as patterns not matching will drain the parser state stack of states. This might be useful during
+    /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
+    /// that there were no expected nested structures on the same line.
+    EmptyStateStack {
+        doctree: DocTree,
+        state_stack: Vec<State>,
+    },
 
-  /// #### EmptyStateStack
-  /// This will be returned if the parser was unable to parse any elements on some line of the source,
-  /// as patterns not matching will drain the parser state stack of states. This might be useful during
-  /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
-  /// that there were no expected nested structures on the same line.
-  EmptyStateStack {
-    doctree: DocTree,
-    state_stack: Vec<State>
-  },
-
-  /// #### Failure
-  /// A simple failure type. This will be returned when there was clearly no way to recover.
-  Failure {
-    message: String,
-    doctree: DocTree
-  }
+    /// #### Failure
+    /// A simple failure type. This will be returned when there was clearly no way to recover.
+    Failure { message: String, doctree: DocTree },
 }
 
 impl ParsingResult {
-
-  /// ### unwrap_tree
-  /// Unwraps the contained doctree in one of the non-failure variants.
-  /// Simply panics if this is attempted for the `Failure` variant.
-  pub fn unwrap_tree(self) -> DocTree {
-
-    match self {
-      Self::EOF {doctree, state_stack} => doctree,
-      Self::EmptyStateStack {doctree, state_stack} => doctree,
-      Self::Failure { doctree, .. } => doctree
+    /// ### unwrap_tree
+    /// Unwraps the contained doctree in one of the non-failure variants.
+    /// Simply panics if this is attempted for the `Failure` variant.
+    pub fn unwrap_tree(self) -> DocTree {
+        match self {
+            Self::EOF {
+                doctree,
+                state_stack,
+            } => doctree,
+            Self::EmptyStateStack {
+                doctree,
+                state_stack,
+            } => doctree,
+            Self::Failure { doctree, .. } => doctree,
+        }
     }
-  }
 }
-
 
 /// ### AplusExerciseStatus
 ///
@@ -459,14 +451,13 @@ impl ParsingResult {
 /// * maintenance: Hides the exercise description and prevents submissions.
 #[derive(Debug)]
 pub enum AplusExerciseStatus {
-  Ready,
-  Unlisted,
-  Hidden,
-  Enrollment,
-  EnrollmentExt,
-  Maintenance
+    Ready,
+    Unlisted,
+    Hidden,
+    Enrollment,
+    EnrollmentExt,
+    Maintenance,
 }
-
 
 /// ### AplusRadarTokenizer
 ///
@@ -475,14 +466,13 @@ pub enum AplusExerciseStatus {
 /// See [the docs](https://github.com/Aalto-LeTech/radar/tree/master/tokenizer#tokenizers)  for more details.
 #[derive(Clone, Copy, Debug)]
 pub enum AplusRadarTokenizer {
-  Python3,
-  Scala,
-  JavaScript,
-  CSS,
-  HTML,
-  None
+    Python3,
+    Scala,
+    JavaScript,
+    CSS,
+    HTML,
+    None,
 }
-
 
 /// ### AplusActiveElementClear
 ///
@@ -490,16 +480,15 @@ pub enum AplusRadarTokenizer {
 /// no floating elements on the left (right)
 #[derive(Clone, Copy, Debug)]
 pub enum AplusActiveElementClear {
-  /// Forces the element to a new line
-  Both,
+    /// Forces the element to a new line
+    Both,
 
-  /// Allows no floating elements on the left.
-  Left,
+    /// Allows no floating elements on the left.
+    Left,
 
-  /// Allows no floating elements on the right.
-  Right
+    /// Allows no floating elements on the right.
+    Right,
 }
-
 
 /// ### AplusActiveElementInputType
 ///
@@ -509,43 +498,39 @@ pub enum AplusActiveElementClear {
 /// format: "dropdown:option1,option2,option3"
 #[derive(Debug)]
 pub enum AplusActiveElementInputType {
-  /// Use for file inputs
-  File,
+    /// Use for file inputs
+    File,
 
-  /// Use for clickable inputs
-  Clickable,
+    /// Use for clickable inputs
+    Clickable,
 
-  /// Use for dropdown menu. Comes with options in a String.
-  Dropdown(String),
+    /// Use for dropdown menu. Comes with options in a String.
+    Dropdown(String),
 }
-
 
 /// ### AplusActiveElementOutputType
 ///
 /// Default type is text; for image (png) outputs use "image"
 #[derive(Clone, Copy, Debug)]
 pub enum AplusActiveElementOutputType {
-  Text,
-  Image,
+    Text,
+    Image,
 }
-
 
 /// ### OutputStream
 ///
 /// An enumeration of the different writer output formats.
 /// Currently stdout and files are supported.
 pub enum OutputStream {
+    /// Directs the output to the stdout stream.
+    StdOut,
 
-  /// Directs the output to the stdout stream.
-  StdOut,
+    /// Directs the output to the stderr stream.
+    StdErr,
 
-  /// Directs the output to the stderr stream.
-  StdErr,
-
-  /// Directs to output to a file.
-  File
+    /// Directs to output to a file.
+    File,
 }
-
 
 // ===========
 //  Constants
@@ -574,19 +559,13 @@ pub enum OutputStream {
 /// of the footnote is `s^(n+1)`. For example, if a document has
 /// `12` automatically symboled footnotes and a new one is constructed,
 /// then its label will be `‡‡ = ‡² = ‡¹⁺¹`.
-pub const FOOTNOTE_SYMBOLS: [char; 10] = [
-  '*', '†','‡','§','¶','#','♠','♥','♦','♣'
-];
-
+pub const FOOTNOTE_SYMBOLS: [char; 10] = ['*', '†', '‡', '§', '¶', '#', '♠', '♥', '♦', '♣'];
 
 /// #### SECTION_AND_QUOTING_CHARS
 ///
 /// These are the characters that can be used in underlining section titles,
 ///  marking the lines of literal text blocks and creating transitions.
 pub const SECTION_AND_QUOTING_CHARS: [char; 32] = [
-  '!',  '"',  '#',  '$',  '%',  '&',  '\'', '(',  ')',  '*',
-  '+',  ',',  '-',  '.',  '/',  ':',  ';',  '<',  '=',  '>',
-  '?',  '@',  '[',  '\\', ']',  '^',  '_',  '`',  '{',  '|',
-  '}',  '~'
+    '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=',
+    '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~',
 ];
-

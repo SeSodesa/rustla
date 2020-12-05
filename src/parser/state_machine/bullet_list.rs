@@ -3,24 +3,29 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
-
 
 /// ### bullet
 /// A `BulletList` version of the bullet list related
 /// transition method. Differs from the `Body` state version
 /// in that this detects whether a list of a different type has started
 /// and acts accordingly.
-pub fn bullet (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn bullet(
+    src_lines: &Vec<String>,
+    base_indent: usize,
+    section_level: &mut usize,
+    line_cursor: &mut LineCursor,
+    doctree: Option<DocTree>,
+    captures: &regex::Captures,
+    pattern_name: &PatternName,
+) -> TransitionResult {
+    let mut tree_wrapper = doctree.unwrap();
 
-  let mut tree_wrapper = doctree.unwrap();
+    let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
+    let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+    let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
-  let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
-  let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
-  let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
-
-  match tree_wrapper.shared_node_data() {
+    match tree_wrapper.shared_node_data() {
 
     TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
 

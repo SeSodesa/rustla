@@ -1,13 +1,12 @@
+use crate::parser::regex_patterns;
 /// ## Automata
 ///
 /// IUn this submodule the patterns in `crate::parser::regex_patterns` are compiled into finite automata
 /// using the standard Rust regex crate.
 ///
 /// (c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
-
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::parser::regex_patterns;
 
 lazy_static! {
 

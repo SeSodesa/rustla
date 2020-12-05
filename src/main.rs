@@ -1,4 +1,5 @@
 #![allow(dead_code, unused_variables)]
+mod parser;
 /// # This is ruSTLa
 ///
 /// ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
@@ -7,10 +8,7 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
-
 mod rustla_options;
-mod parser;
 use parser::Parser;
 mod doctree;
 use doctree::DocTree;
@@ -24,113 +22,127 @@ const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
 const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
 const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
 
-
 /// Program starting point
-fn main() -> Result<(),MainError> {
+fn main() -> Result<(), MainError> {
+    copyright();
 
-  copyright();
+    let args: Vec<String> = std::env::args().collect();
+    let args_len = args.len();
 
-  let args: Vec<String> = std::env::args().collect();
-  let args_len = args.len();
+    let rustla_options = crate::rustla_options::ruSTLaOptions::new(&args);
 
-  let rustla_options = crate::rustla_options::ruSTLaOptions::new(&args);
+    let (src_lines, path): (Vec<String>, std::path::PathBuf) = if let Some(path) = args.last() {
+        if args_len == 1 {
+            // Handle no arguments first
 
-  let (src_lines, path): (Vec<String>, std::path::PathBuf) = if let Some(path) = args.last() {
+            let mut src_lines = Vec::new();
+            let stdin = std::io::stdin();
+            for line in stdin.lock().lines() {
+                match line {
+                    Ok(line) => src_lines.push(line),
+                    Err(e) => {
+                        return Err(MainError::InputError(format!(
+                            "Error when reading stdin: {}",
+                            e
+                        )))
+                    }
+                }
+            }
 
-    if args_len == 1 { // Handle no arguments first
+            (src_lines, std::path::PathBuf::new())
+        } else if let Ok(pathbuf) = std::fs::canonicalize(path) {
+            let line_iter = match crate::common::read_path_lines(&pathbuf) {
+                Ok(lines) => lines,
+                Err(e) => {
+                    return Err(MainError::PathError(format!(
+                        "Could not split file into lines: {}",
+                        e
+                    )))
+                }
+            };
 
-      let mut src_lines = Vec::new();
-      let stdin = std::io::stdin();
-      for line in stdin.lock().lines() {
-        match line {
-          Ok(line) => src_lines.push(line),
-          Err(e) => return Err(MainError::InputError(format!("Error when reading stdin: {}", e)))
+            let mut src_lines: Vec<String> = Vec::new();
+            for line in line_iter {
+                match line {
+                    Ok(line) => src_lines.push(line),
+                    Err(e) => {
+                        return Err(MainError::InputError(String::from(
+                            "Could not construct a line vector from input...",
+                        )))
+                    }
+                }
+            }
+
+            (src_lines, pathbuf)
+        } else {
+            let mut src_lines = Vec::new();
+            let stdin = std::io::stdin();
+            for line in stdin.lock().lines() {
+                match line {
+                    Ok(line) => src_lines.push(line),
+                    Err(e) => {
+                        return Err(MainError::InputError(format!(
+                            "Error when reading stdin: {}",
+                            e
+                        )))
+                    }
+                }
+            }
+            (src_lines, std::path::PathBuf::new())
         }
-      }
-
-      (src_lines, std::path::PathBuf::new())
-
-    } else if let Ok(pathbuf) = std::fs::canonicalize(path) {
-
-      let line_iter = match crate::common::read_path_lines(&pathbuf) {
-        Ok(lines) => lines,
-        Err(e) => return Err(MainError::PathError(format!("Could not split file into lines: {}", e)))
-      };
-
-      let mut src_lines: Vec<String> = Vec::new();
-      for line in line_iter {
-        match line {
-          Ok(line) => src_lines.push(line),
-          Err(e) => return Err(MainError::InputError(String::from("Could not construct a line vector from input...")))
-        }
-      }
-
-      (src_lines, pathbuf)
-
     } else {
+        unreachable!("No arguments, not even the program itself? Computer says no...")
+    };
 
-      let mut src_lines = Vec::new();
-      let stdin = std::io::stdin();
-      for line in stdin.lock().lines() {
-        match line {
-          Ok(line) => src_lines.push(line),
-          Err(e) => return Err(MainError::InputError(format!("Error when reading stdin: {}", e)))
+    // Enter parser here...
+
+    let mut doctree = DocTree::new(path);
+    let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
+
+    use common::ParsingResult;
+
+    doctree = match parser.parse() {
+        ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => {
+            doctree
         }
-      }
-      (src_lines, std::path::PathBuf::new())
-    }
-  } else {
-    unreachable!("No arguments, not even the program itself? Computer says no...")
-  };
+        ParsingResult::Failure { message, doctree } => {
+            eprintln!("Parsing error: {}", message);
+            doctree
+        }
+    };
 
-  // Enter parser here...
+    doctree = doctree.perform_restructuredtext_transforms();
+    doctree.write_to_larst(&rustla_options);
 
-  let mut doctree = DocTree::new(path);
-  let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
-
-  use common::ParsingResult;
-
-  doctree = match parser.parse() {
-    ParsingResult::EOF { doctree, .. } | ParsingResult::EmptyStateStack { doctree, .. } => doctree,
-    ParsingResult::Failure { message, doctree } => {
-      eprintln!("Parsing error: {}", message);
-      doctree
-    }
-  };
-
-  doctree = doctree.perform_restructuredtext_transforms();
-  doctree.write_to_larst(&rustla_options);
-
-  Ok(())
+    Ok(())
 }
-
 
 /// # Copyright
 /// Prints out copyright information of ruSTLa
 fn copyright() {
-  eprintln!("\nThis is ruSTLa, version {}", VERSION);
-  eprintln!("©{} {} <{}>\n", AUTHOR_YEAR, AUTHOR_NAME, AUTHOR_EMAIL);
+    eprintln!("\nThis is ruSTLa, version {}", VERSION);
+    eprintln!("©{} {} <{}>\n", AUTHOR_YEAR, AUTHOR_NAME, AUTHOR_EMAIL);
 }
 
 /// # Usage
 /// A function that prints the usage instructions
 /// for ruSTLa
 fn usage() {
-  println!("Instructions");
-  println!("============");
-  println!("In order to transpile a document,");
-  println!("point ruSTLa to an rST file with");
-  println!("\n  $ rustla path/to/file.rst\n");
-  println!("Capabilities to transpile an entire");
-  println!("toctree will be added later.");
+    println!("Instructions");
+    println!("============");
+    println!("In order to transpile a document,");
+    println!("point ruSTLa to an rST file with");
+    println!("\n  $ rustla path/to/file.rst\n");
+    println!("Capabilities to transpile an entire");
+    println!("toctree will be added later.");
 }
 
 #[derive(Debug)]
 enum MainError {
-  Ok,
-  PathError(String),
-  InputError(String),
-  ParseError(String),
-  PrintError(String),
-  ArgumentError(String)
+    Ok,
+    PathError(String),
+    InputError(String),
+    ParseError(String),
+    PrintError(String),
+    ArgumentError(String),
 }

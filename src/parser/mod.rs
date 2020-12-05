@@ -3,8 +3,6 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
-
 // =========
 //  Imports
 // =========
@@ -12,14 +10,12 @@
 // Standard library
 use std::cmp;
 
-use std::str;
 use std::collections;
-
+use std::str;
 
 // External crates
 // ---------------
 use regex::Regex;
-
 
 // Own modules
 // -----------
@@ -35,7 +31,7 @@ mod types_and_aliases;
 use types_and_aliases::*;
 
 mod line_cursor;
-use line_cursor::{LineCursor, Line};
+use line_cursor::{Line, LineCursor};
 
 pub mod state_machine;
 use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
@@ -43,15 +39,16 @@ use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
 mod directive_parsers;
 mod table_parsers;
 
-use crate::doctree::DocTree;
+use crate::common::{
+    EnumDelims, EnumKind, FootnoteKind, ParsingResult, PatternName, SectionLineStyle,
+};
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
-use crate::common::{ ParsingResult,  FootnoteKind, PatternName, SectionLineStyle, EnumKind, EnumDelims};
+use crate::doctree::DocTree;
 
 // Unit test modules
 // -----------------
 mod tests;
-
 
 // ==========================
 //  The Parser specification
@@ -65,155 +62,162 @@ mod tests;
 /// `std::option::Option::take`
 /// without invalidating the fields.
 pub struct Parser {
+    /// #### src_lines
+    /// The source `String` converted to a vector of owned `String`s.
+    src_lines: Vec<String>,
 
-  /// #### src_lines
-  /// The source `String` converted to a vector of owned `String`s.
-  src_lines: Vec<String>,
+    /// #### line_cursor
+    /// The absolute line index of src_lines.
+    line_cursor: LineCursor,
 
-  /// #### line_cursor
-  /// The absolute line index of src_lines.
-  line_cursor: LineCursor,
+    /// #### base_indent
+    /// The level of basic indentation that the parser is working with.
+    /// This is useful information during nested parsing sessions, where
+    /// the level of indentation of the incoming block of text to be parsed
+    /// needs to be passed to the nested parser for node comparison.
+    base_indent: usize,
 
-  /// #### base_indent
-  /// The level of basic indentation that the parser is working with.
-  /// This is useful information during nested parsing sessions, where
-  /// the level of indentation of the incoming block of text to be parsed
-  /// needs to be passed to the nested parser for node comparison.
-  base_indent: usize,
+    /// #### section_level
+    /// Keeps track of the section level the parser is currently focused on.
+    /// Level 0 indicates document root.
+    section_level: usize,
 
-  /// #### section_level
-  /// Keeps track of the section level the parser is currently focused on.
-  /// Level 0 indicates document root.
-  section_level: usize,
+    /// #### doctree
+    /// An `Option`al document tree. The optionality is necessary,
+    /// as this needs to be given to transition functions for modification
+    /// via `Option::take`.
+    doctree: Option<DocTree>,
 
-  /// #### doctree
-  /// An `Option`al document tree. The optionality is necessary,
-  /// as this needs to be given to transition functions for modification
-  /// via `Option::take`.
-  doctree: Option<DocTree>,
-
-  /// #### machine_stack
-  /// A stack of states that function as keys to vectors of state transitions.
-  /// The set of transitios is chosen based on the current state on top of the stack.
-  state_stack: Vec<State>,
+    /// #### machine_stack
+    /// A stack of states that function as keys to vectors of state transitions.
+    /// The set of transitios is chosen based on the current state on top of the stack.
+    state_stack: Vec<State>,
 }
-
 
 /// ==============
 /// Parser Methods
 /// ==============
 impl Parser {
-
-  /// ### new
-  /// The `Parser` constructor. Transforms a given source string
-  /// into a vector of lines and wraps this and a given `DocTree`
-  /// in `Option`s. This wrapping allows the passing of these to owned
-  /// state machnes via swapping the optional contents
-  /// to `None` before granting ownership of the original contents.
-  pub fn new(src: Vec<String>, doctree: DocTree, base_indent: Option<usize>, base_line: Line, initial_state: Option<State>, section_level: usize) -> Self {
-
-    Self {
-      src_lines: src, //.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
-      line_cursor: LineCursor::new(0, base_line),
-      base_indent: base_indent.unwrap_or(0),
-      section_level: section_level,
-      doctree: Some(doctree),
-      state_stack: vec!(initial_state.unwrap_or(State::Body))
+    /// ### new
+    /// The `Parser` constructor. Transforms a given source string
+    /// into a vector of lines and wraps this and a given `DocTree`
+    /// in `Option`s. This wrapping allows the passing of these to owned
+    /// state machnes via swapping the optional contents
+    /// to `None` before granting ownership of the original contents.
+    pub fn new(
+        src: Vec<String>,
+        doctree: DocTree,
+        base_indent: Option<usize>,
+        base_line: Line,
+        initial_state: Option<State>,
+        section_level: usize,
+    ) -> Self {
+        Self {
+            src_lines: src, //.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
+            line_cursor: LineCursor::new(0, base_line),
+            base_indent: base_indent.unwrap_or(0),
+            section_level: section_level,
+            doctree: Some(doctree),
+            state_stack: vec![initial_state.unwrap_or(State::Body)],
+        }
     }
-  }
 
-  /// ### parse
-  /// Starts the parsing process for a single file.
-  /// Returns the `DocTree` generated by the `StateMachine`s.
-  pub fn parse (&mut self) -> ParsingResult {
+    /// ### parse
+    /// Starts the parsing process for a single file.
+    /// Returns the `DocTree` generated by the `StateMachine`s.
+    pub fn parse(&mut self) -> ParsingResult {
+        // println!("=====================\n Initiating parse...\n=====================\n");
 
-    // println!("=====================\n Initiating parse...\n=====================\n");
+        // eprintln!("... with base indent {:#?} on line {:#?}\n", self.base_indent, self.line_cursor.sum_total());
 
-    // eprintln!("... with base indent {:#?} on line {:#?}\n", self.base_indent, self.line_cursor.sum_total());
+        let mut line_changed: bool = false;
+        let mut line_not_changed_count: u32 = 0;
 
-    let mut line_changed: bool = false;
-    let mut line_not_changed_count: u32 = 0;
+        // The parsing loop
+        loop {
+            // eprintln!("Section level: {:#?}", self.section_level);
+            // eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
+            // eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
 
-    // The parsing loop
-    loop {
-
-      // eprintln!("Section level: {:#?}", self.section_level);
-      // eprintln!("Line {:#?} state stack: {:#?}\n", self.line_cursor.sum_total(), self.state_stack);
-      // eprintln!("Focused on {:#?}\n", self.doctree.as_ref().unwrap().shared_node_data());
-
-      if !line_changed && line_not_changed_count >= 10 {
-
-        return ParsingResult::Failure {
+            if !line_changed && line_not_changed_count >= 10 {
+                return ParsingResult::Failure {
           message: format!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total()),
           doctree: if let Some(doctree) = self.doctree.take() {
             doctree
           } else {
             panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
           }
-        }
-      }
-
-      line_changed = false;
-
-      let mut match_found = false;
-
-      // Retrieving a clone of the transitions stored in the latest state
-      // A clone is needed because the below for loop takes
-      // ownership of a reference given to it, which would prevent us from
-      // modifying the machine stack.
-      let latest_state_transitions = if let Some(machine) = self.state_stack.last() {
-
-        match machine {
-
-          State::EOF => {
-            match self.doctree.take() {
-              Some(doctree) => {
-                return ParsingResult::EOF { doctree: doctree, state_stack: self.state_stack.drain(..self.state_stack.len() - 1).collect() }
-              }
-              None => {
-                panic!("Tree should not be in the possession of a transition method after moving past EOF...")
-              }
-            };
-          }
-
-          State::Failure{ .. } => {
-            return ParsingResult::Failure {
-              message: String::from("Parsing ended in Failure state...\n"),
-              doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-              }
-            }
-          }
-
-          _ => {
-            if let Ok(transitions_ref) = machine.get_transitions(&self.line_cursor) {
-              transitions_ref
-            } else {
-              return ParsingResult::Failure {
-                message: String::from("No transitions for this state...\n"),
-                doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                  panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                }
-              }
-            }
-          }
-        }
-      } else {
-        return ParsingResult::EmptyStateStack {
-          state_stack: Vec::new(),
-          doctree: if let Some(doctree) = self.doctree.take() {
-            doctree
-          } else {
-            panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
-          }
         };
-      };
+            }
 
-      // Iterating over a clone of the transitions
-      for (pattern_name, regex, method) in latest_state_transitions.iter() {
+            line_changed = false;
 
-        // Fetching a reference to current line
-        let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
+            let mut match_found = false;
+
+            // Retrieving a clone of the transitions stored in the latest state
+            // A clone is needed because the below for loop takes
+            // ownership of a reference given to it, which would prevent us from
+            // modifying the machine stack.
+            let latest_state_transitions = if let Some(machine) = self.state_stack.last() {
+                match machine {
+                    State::EOF => {
+                        match self.doctree.take() {
+                            Some(doctree) => {
+                                return ParsingResult::EOF {
+                                    doctree: doctree,
+                                    state_stack: self
+                                        .state_stack
+                                        .drain(..self.state_stack.len() - 1)
+                                        .collect(),
+                                }
+                            }
+                            None => {
+                                panic!("Tree should not be in the possession of a transition method after moving past EOF...")
+                            }
+                        };
+                    }
+
+                    State::Failure { .. } => {
+                        return ParsingResult::Failure {
+                            message: String::from("Parsing ended in Failure state...\n"),
+                            doctree: if let Some(doctree) = self.doctree.take() {
+                                doctree
+                            } else {
+                                panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                            },
+                        }
+                    }
+
+                    _ => {
+                        if let Ok(transitions_ref) = machine.get_transitions(&self.line_cursor) {
+                            transitions_ref
+                        } else {
+                            return ParsingResult::Failure {
+                                message: String::from("No transitions for this state...\n"),
+                                doctree: if let Some(doctree) = self.doctree.take() {
+                                    doctree
+                                } else {
+                                    panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                                },
+                            };
+                        }
+                    }
+                }
+            } else {
+                return ParsingResult::EmptyStateStack {
+                    state_stack: Vec::new(),
+                    doctree: if let Some(doctree) = self.doctree.take() {
+                        doctree
+                    } else {
+                        panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
+                    },
+                };
+            };
+
+            // Iterating over a clone of the transitions
+            for (pattern_name, regex, method) in latest_state_transitions.iter() {
+                // Fetching a reference to current line
+                let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
           Some(line) => line,
           None => {
             return ParsingResult::Failure {
@@ -225,596 +229,673 @@ impl Parser {
           }
         };
 
-        // Running the current line of text through a DFA compiled from a regex
-        if let Some(captures) = regex.captures(src_line) {
+                // Running the current line of text through a DFA compiled from a regex
+                if let Some(captures) = regex.captures(src_line) {
+                    // eprintln!("Found match for {:?}...\n", pattern_name);
 
-          // eprintln!("Found match for {:?}...\n", pattern_name);
+                    match_found = true;
 
-          match_found = true;
+                    // eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
+                    // eprintln!("Executing transition method...\n");
 
-          // eprintln!("Match: {:#?}", captures.get(0).unwrap().as_str());
-          // eprintln!("Executing transition method...\n");
+                    let line_before_transition = self.line_cursor.sum_total();
 
-          let line_before_transition = self.line_cursor.sum_total();
+                    self.doctree = match method(
+                        &self.src_lines,
+                        self.base_indent,
+                        &mut self.section_level,
+                        &mut self.line_cursor,
+                        self.doctree.take(),
+                        &captures,
+                        pattern_name,
+                    ) {
+                        TransitionResult::Success {
+                            doctree,
+                            push_or_pop,
+                            line_advance,
+                        } => {
+                            match push_or_pop {
+                                PushOrPop::Push(mut states) => {
+                                    self.state_stack.append(&mut states);
+                                }
 
-          self.doctree = match method(&self.src_lines, self.base_indent, &mut self.section_level, &mut self.line_cursor, self.doctree.take(), &captures, pattern_name) {
+                                PushOrPop::Pop => {
+                                    match self.state_stack.pop() {
+                                        Some(machine) => (),
+                                        None => {
+                                            return ParsingResult::Failure {
+                                                message: String::from(
+                                                    "Can't pop from empty stack...\n",
+                                                ),
+                                                doctree: if let Some(doctree) = self.doctree.take()
+                                                {
+                                                    doctree
+                                                } else {
+                                                    panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
+                                                },
+                                            }
+                                        }
+                                    };
+                                }
 
-            TransitionResult::Success{doctree, push_or_pop, line_advance} => {
+                                PushOrPop::Neither => {} // No need to do anything to the stack...
+                            };
 
-              match push_or_pop {
+                            if let LineAdvance::Some(offset) = line_advance {
+                                *self.line_cursor.relative_offset_mut_ref() += offset;
+                            }
 
-                PushOrPop::Push(mut states) => {
-                  self.state_stack.append(&mut states);
-                },
+                            // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
+                            if self.line_cursor.sum_total() == line_before_transition {
+                                line_not_changed_count += 1;
+                            } else {
+                                line_changed = true;
+                                line_not_changed_count = 0;
+                            }
 
-                PushOrPop::Pop => {
+                            Some(doctree)
+                        }
 
-                  match self.state_stack.pop() {
-                    Some(machine) => (),
-                    None => return ParsingResult::Failure {
-                      message: String::from("Can't pop from empty stack...\n"),
-                      doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                        panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-                      }
-                    }
-                  };
+                        TransitionResult::Failure { message, doctree } => {
+                            return ParsingResult::Failure {
+                                message: message,
+                                doctree: doctree,
+                            }
+                        }
+                    };
+
+                    break; // Match found so stop looking for matches
                 }
-
-                PushOrPop::Neither => {} // No need to do anything to the stack...
-              };
-
-              if let LineAdvance::Some(offset) = line_advance {
-                *self.line_cursor.relative_offset_mut_ref() += offset;
-              }
-
-              // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
-              if self.line_cursor.sum_total() == line_before_transition {
-                line_not_changed_count += 1;
-              } else {
-                line_changed = true;
-                line_not_changed_count = 0;
-              }
-
-              Some(doctree)
             }
 
-            TransitionResult::Failure {message, doctree} => {
+            // No matches in current state so pop from state stack and attempt
+            // parsing in the previous state down stack
+            if !match_found {
+                // eprintln!("No match found.\nPopping from machine stack...\n");
 
-              eprintln!("Transition failure: {}", message);
+                if let None = self.state_stack.pop() {
+                    // eprintln!("Cannot pop from an empty stack.\n");
+                    return ParsingResult::EmptyStateStack {
+                        doctree: self.doctree.take().unwrap(),
+                        state_stack: self.state_stack.drain(..self.state_stack.len()).collect(),
+                    };
+                };
 
-              return ParsingResult::Failure {
-                message: message,
-                doctree: doctree
-              }
-            }
-          };
-
-          break // Match found so stop looking for matches
-        }
-      }
-
-      // No matches in current state so pop from state stack and attempt
-      // parsing in the previous state down stack
-      if ! match_found {
-
-        // eprintln!("No match found.\nPopping from machine stack...\n");
-
-        if let None = self.state_stack.pop() {
-          // eprintln!("Cannot pop from an empty stack.\n");
-          return ParsingResult::EmptyStateStack { doctree: self.doctree.take().unwrap(), state_stack: self.state_stack.drain(..self.state_stack.len()).collect() }
-        };
-
-        if let Some(doctree) = self.doctree.take() {
-          self.doctree = Some(doctree.focus_on_parent());
-        } else {
-          return ParsingResult::Failure {
+                if let Some(doctree) = self.doctree.take() {
+                    self.doctree = Some(doctree.focus_on_parent());
+                } else {
+                    return ParsingResult::Failure {
             message: format!("Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total()),
             doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
               panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
             }
-          }
+          };
+                }
+            }
+
+            if self.line_cursor.relative_offset() >= self.src_lines.len() {
+                self.state_stack.push(State::EOF);
+            }
         }
-      }
-
-      if self.line_cursor.relative_offset() >= self.src_lines.len() {
-        self.state_stack.push(State::EOF);
-      }
-    };
-  }
-
-
-  /// ### jump_to_line
-  /// Attempts to move `self.current_line` to the given index.
-  /// Return an `Err` if not successful.
-  fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
-
-    if line < self.src_lines.len() {
-      *self.line_cursor.relative_offset_mut_ref() = line;
-    } else {
-      return Err("Attempted a move to a non-existent line.\nComputer says  no...\n")
     }
 
-    Ok(())
-  }
+    /// ### jump_to_line
+    /// Attempts to move `self.current_line` to the given index.
+    /// Return an `Err` if not successful.
+    fn jump_to_line(&mut self, line: usize) -> Result<(), &'static str> {
+        if line < self.src_lines.len() {
+            *self.line_cursor.relative_offset_mut_ref() = line;
+        } else {
+            return Err("Attempted a move to a non-existent line.\nComputer says  no...\n");
+        }
 
-
-  /// ### nth_next_line
-  /// Attempts to increment `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
-
-    *self.line_cursor.relative_offset_mut_ref() = match self.line_cursor.relative_offset().checked_add(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.line_cursor.relative_offset() > self.src_lines.len() {
-      return Err("No such line number.\nComputer says no...\n")
+        Ok(())
     }
 
-    Ok(())
-  }
+    /// ### nth_next_line
+    /// Attempts to increment `self.current_line` by `n`.
+    /// Returns nothing if successful, otherwise returns `Err(&str)`.
+    /// The called must handle the `Err` case.
+    fn nth_next_line(&mut self, n: usize) -> Result<(), &'static str> {
+        *self.line_cursor.relative_offset_mut_ref() =
+            match self.line_cursor.relative_offset().checked_add(n) {
+                Some(value) => value,
+                None => {
+                    return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+                }
+            };
 
+        if self.line_cursor.relative_offset() > self.src_lines.len() {
+            return Err("No such line number.\nComputer says no...\n");
+        }
 
-  /// ### nth_previous_line
-  /// Attempts to decrement `self.current_line` by `n`.
-  /// Returns nothing if successful, otherwise returns `Err(&str)`.
-  /// The called must handle the `Err` case.
-  fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
-
-    *self.line_cursor.relative_offset_mut_ref() = match self.line_cursor.relative_offset().checked_sub(n) {
-      Some(value) => value,
-      None =>
-        return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
-    };
-
-    if self.line_cursor.relative_offset() > self.src_lines.len() {
-      return Err("No such line number.\nComputer says no...\n")
+        Ok(())
     }
 
-    Ok(())
-  }
+    /// ### nth_previous_line
+    /// Attempts to decrement `self.current_line` by `n`.
+    /// Returns nothing if successful, otherwise returns `Err(&str)`.
+    /// The called must handle the `Err` case.
+    fn nth_previous_line(&mut self, n: usize) -> Result<(), &'static str> {
+        *self.line_cursor.relative_offset_mut_ref() =
+            match self.line_cursor.relative_offset().checked_sub(n) {
+                Some(value) => value,
+                None => {
+                    return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+                }
+            };
 
+        if self.line_cursor.relative_offset() > self.src_lines.len() {
+            return Err("No such line number.\nComputer says no...\n");
+        }
 
-  /// ### DEFAULT_LINE_STEP
-  /// The default step used by the functions
-  /// `nth_{previous|next}_line`.
-  const DEFAULT_LINE_STEP: usize = 1;
+        Ok(())
+    }
+
+    /// ### DEFAULT_LINE_STEP
+    /// The default step used by the functions
+    /// `nth_{previous|next}_line`.
+    const DEFAULT_LINE_STEP: usize = 1;
 }
-
 
 /// ===========================
 /// Parser associated functions
 /// ===========================
 impl Parser {
-
-  /// ### get_source_from_line
-  /// Attempts to retrieve the source from a given line number.
-  /// Returns an `Ok` clone of it if successful, else
-  /// returns and `Err` with a message.
-  fn get_source_from_line <'src_lines> (src_lines: &Vec<String>, line_num: usize) -> Option<&str> {
-
-    let src = match src_lines.get(line_num) {
-      Some(line) => line.as_str(),
-      None => {
-        eprintln!("No such line number ({} out of bounds). Computer says no...", line_num);
-        return None
-      }
-    };
-
-    Some(src)
-  }
-
-
-  /// ### inline_parse
-  /// A function that parses inline text. Returns the nodes generated,
-  /// if there are any.
-  fn inline_parse (inline_src_block: String, mut doctree: Option<&mut DocTree>, line_cursor: &mut LineCursor) -> InlineParsingResult {
-
-    let mut nodes_data: Vec<TreeNodeType> = Vec::new();
-
-    let mut col: usize = 0;
-
-    let src_chars = &mut inline_src_block.chars();
-
-    loop {
-
-      match Parser::match_inline_str(&mut doctree, &src_chars) {
-        Some((mut node_data, offset)) => {
-
-          nodes_data.append(&mut node_data);
-
-          // Move iterator to start of next possible match
-          for _ in 0..offset {
-            if let Some(c) = src_chars.next() {
-              col += 1;
-              if c == '\n' { line_cursor.increment_by(1); col = 0; }
-            } else {
-              break
+    /// ### get_source_from_line
+    /// Attempts to retrieve the source from a given line number.
+    /// Returns an `Ok` clone of it if successful, else
+    /// returns and `Err` with a message.
+    fn get_source_from_line<'src_lines>(src_lines: &Vec<String>, line_num: usize) -> Option<&str> {
+        let src = match src_lines.get(line_num) {
+            Some(line) => line.as_str(),
+            None => {
+                eprintln!(
+                    "No such line number ({} out of bounds). Computer says no...",
+                    line_num
+                );
+                return None;
             }
-          }
-        },
+        };
 
-        // No match.
-        // This should not happen, as plain text should always be usable as a last resort.
-        // Return with no nodes if this should occur.
-        None => { break }
-      }
+        Some(src)
     }
 
-    if nodes_data.is_empty() {
-      return InlineParsingResult::NoNodes
-    } else {
-      return InlineParsingResult::Nodes(nodes_data)
-    }
-  }
+    /// ### inline_parse
+    /// A function that parses inline text. Returns the nodes generated,
+    /// if there are any.
+    fn inline_parse(
+        inline_src_block: String,
+        mut doctree: Option<&mut DocTree>,
+        line_cursor: &mut LineCursor,
+    ) -> InlineParsingResult {
+        let mut nodes_data: Vec<TreeNodeType> = Vec::new();
 
-  /// ### match_inline_str
-  /// A function for checking the string representation of
-  /// a given `Chars` iterator for a regex match and executing
-  /// the corresponding parsing method. Returns the `Option`al
-  /// generated node if successful, otherwise returns with `None`.
-  fn match_inline_str <'chars> (opt_doctree_ref: &mut Option<&mut DocTree>, chars_iter: &'chars str::Chars) -> Option<(Vec<TreeNodeType>, usize)> {
+        let mut col: usize = 0;
 
-    let src_str = chars_iter.as_str();
+        let src_chars = &mut inline_src_block.chars();
 
-    if src_str.is_empty() { return None }
+        loop {
+            match Parser::match_inline_str(&mut doctree, &src_chars) {
+                Some((mut node_data, offset)) => {
+                    nodes_data.append(&mut node_data);
 
-    for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
+                    // Move iterator to start of next possible match
+                    for _ in 0..offset {
+                        if let Some(c) = src_chars.next() {
+                            col += 1;
+                            if c == '\n' {
+                                line_cursor.increment_by(1);
+                                col = 0;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
 
-      match regexp.captures(src_str) {
+                // No match.
+                // This should not happen, as plain text should always be usable as a last resort.
+                // Return with no nodes if this should occur.
+                None => break,
+            }
+        }
 
-        Some(capts) => {
-          let (node_type, offset) = parsing_function(opt_doctree_ref, *pattern_name, &capts);
-          return Some((node_type, offset));
-        },
-
-        None => { continue } // no match, do nothing
-      };
-    }
-
-    None
-  }
-
-
-  /// ### parse_first_node_block
-  /// Parses the first block of a node, in case it contains body level nodes
-  /// right after a marker such as an enumerator, on the same line.
-  fn parse_first_node_block (doctree: DocTree, src_lines: &Vec<String>, base_indent: usize, current_line: &mut LineCursor, text_indent: usize, first_indent: Option<usize>, start_state: State, section_level: &mut usize, force_alignment: bool) -> Result<(ParsingResult, usize), ParsingResult> {
-
-    let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
-    let relative_block_indent = text_indent - base_indent;
-
-    // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
-    let (block, line_offset) = match Parser::read_indented_block(src_lines, Some(current_line.relative_offset()), Some(true), None, Some(relative_block_indent), Some(relative_first_indent), force_alignment) {
-      Ok((lines, min_indent, line_offset, blank_finish)) => {
-        (lines, line_offset)
-      }
-      Err(e) => {
-        return Err(
-          ParsingResult::Failure {
-            message: format!("Error when reading in a block of text for nested parse: {}", e),
-            doctree: doctree
-          }
-        )
-      }
-    };
-
-    // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
-    match Parser::new(block, doctree, Some(text_indent), current_line.sum_total(), Some(start_state), *section_level).parse() {
-      ParsingResult::EOF {doctree, state_stack} => {
-        return Ok(
-          (ParsingResult::EOF { doctree: doctree, state_stack: state_stack }, line_offset)
-        )
-      }
-      ParsingResult::EmptyStateStack { doctree, state_stack } => {
-        return Ok(
-          (ParsingResult::EmptyStateStack { doctree: doctree, state_stack: state_stack }, line_offset)
-        )
-      }
-      ParsingResult::Failure {message, doctree} => {
-        return Err(
-          ParsingResult::Failure {
-            message: format!("Nested parse ended in failure: {}", message),
-            doctree: doctree
-          }
-        )
-      }
-    };
-  }
-
-
-  /// ### skip_to_next_block
-  ///
-  /// Skips empty lines until a non-empty one is found.
-  /// Panics (for now) if it runs over the end of input.
-  fn skip_to_next_block (src_lines: &Vec<String>, line_cursor: &mut LineCursor) {
-
-    loop {
-      if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-        if line.trim().is_empty() {
-          line_cursor.increment_by(1);
+        if nodes_data.is_empty() {
+            return InlineParsingResult::NoNodes;
         } else {
-          break
+            return InlineParsingResult::Nodes(nodes_data);
         }
-      } else {
-        panic!("Encountered end of input while skipping lines...")
-      }
     }
-  }
 
+    /// ### match_inline_str
+    /// A function for checking the string representation of
+    /// a given `Chars` iterator for a regex match and executing
+    /// the corresponding parsing method. Returns the `Option`al
+    /// generated node if successful, otherwise returns with `None`.
+    fn match_inline_str<'chars>(
+        opt_doctree_ref: &mut Option<&mut DocTree>,
+        chars_iter: &'chars str::Chars,
+    ) -> Option<(Vec<TreeNodeType>, usize)> {
+        let src_str = chars_iter.as_str();
 
-  /// ### read_text_block
-  /// Reads in an contiguous set of lines of text.
-  /// A text block in rST terms is a set of lines
-  /// separated from other elements by empty lines above and below.
-  /// Checks for indentation:
-  /// if indentation is not allowed but indentation is found,
-  /// returns an error message in an `Err`.
-  fn read_text_block(src_lines: &Vec<String>, start_line: usize, indent_allowed: bool, remove_indent: bool, alignment: Option<usize>) -> Result<(Vec<String>, usize), String> {
-
-    let mut line_num = start_line;
-    let last_line = src_lines.len();
-
-    let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
-
-    while line_num < last_line {
-
-      let mut line: String = match src_lines.get(line_num) {
-        Some(line) => line.clone(),
-        None => return Err(format!("Text block could not be read because of line {}...", line_num))
-      };
-
-      if line.trim().is_empty() {
-        break
-      }
-
-      let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
-
-      if !indent_allowed && line_indent > 0 {
-        break
-      }
-
-      if let Some(alignment) = alignment {
-        if alignment != line_indent {
-          break
+        if src_str.is_empty() {
+            return None;
         }
-      }
 
-      if remove_indent {
-        line = line.as_str().trim_start().to_string();
-      }
+        for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
+            match regexp.captures(src_str) {
+                Some(capts) => {
+                    let (node_type, offset) =
+                        parsing_function(opt_doctree_ref, *pattern_name, &capts);
+                    return Some((node_type, offset));
+                }
 
-      lines.push(line);
-      line_num += 1;
-    }
-
-    lines.shrink_to_fit();
-    let offset = lines.len();
-    Ok((lines, offset))
-  }
-
-
-  /// ### read_indented_block
-  /// Reads in a block of indented lines text.
-  /// Determines the minimum level of indentation
-  /// and uses it as a reference for ending the block.
-  fn read_indented_block (src_lines: &Vec<String>, start_line: Option<usize>, until_blank: Option<bool>,
-    strip_indent: Option<bool>, block_indent: Option<usize>, first_indent: Option<usize>, force_alignment: bool)
-  -> Result<(Vec<String>, Option<usize>, usize, bool), String> {
-
-    if src_lines.is_empty() {
-      return Err(String::from("An empty block of text was handed for parsing.\nComputer says no...\n"))
-    }
-
-    // Default function parameters
-    let start_line = start_line.unwrap_or(0);
-    let until_blank = until_blank.unwrap_or(false);
-    let strip_indent = strip_indent.unwrap_or(true);
-
-    let mut line_num = start_line;
-    let last_line_num = src_lines.len();
-
-    let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
-
-    // Setting the initial level of minimal indentation
-    let mut minimal_indent = match block_indent {
-      Some(indent) => Some(indent),
-      None => None
-    };
-
-    // If there is block indentation but no predetermined indentation for the first line,
-    // set the indentation of the first line equal to block indentation.
-    let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
-      Some(block_indent)
-    } else {
-      first_indent
-    };
-
-    // Push first line into `block_lines` and increment
-    // line number to ignore indentation (for now) if first_indent was set
-    if first_indent.is_some() {
-      let line = src_lines.get(line_num).unwrap().to_owned();
-      block_lines.push(line);
-      line_num += 1;
-    }
-
-    let mut blank_finish: bool = false;
-    let mut loop_broken: bool = false; // Used to detect whether the below while loop was broken out of
-
-    while line_num < last_line_num {
-
-      let line: String = match src_lines.get(line_num) {
-        Some(line) => line.clone(),
-        None => return Err(format!("Line {} could not be read. Computer says no...", line_num))
-      };
-
-      let line_is_empty = line.trim().is_empty();
-
-      // Check for sufficient (or correct if block alignment was forced) indentation if line isn't empty
-      let line_indent = line.as_str().chars().take_while(|c| c.is_whitespace()).count();
-
-      let break_when_not_aligned: bool = if block_indent.is_some() && force_alignment {
-        line_indent != block_indent.unwrap()
-      } else if block_indent.is_some() {
-        line_indent < block_indent.unwrap()
-      } else {
-        false
-      };
-
-      if !line_is_empty && ( line_indent < 1 || break_when_not_aligned ) {
-
-        // Ended with a blank finish if the last line before unindent was blank
-        blank_finish = (line_num > start_line) && src_lines.get(line_num - 1).unwrap().trim().is_empty();
-        loop_broken = true;
-        break
-      }
-
-      // Updating the minimal level of indentation, if line isn't blank
-      // and there isn't predetermined block indentation
-      if line_is_empty && until_blank {
-        blank_finish = true;
-        break
-      } else if block_indent.is_none() {
-        if minimal_indent.is_none() {
-          minimal_indent = Some(line_indent);
-        } else if line_indent > 0 {
-          minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
+                None => continue, // no match, do nothing
+            };
         }
-      }
 
-      block_lines.push(line);
-      line_num += 1;
+        None
     }
 
-    if !loop_broken { blank_finish = true; } // Made it to the end of input
+    /// ### parse_first_node_block
+    /// Parses the first block of a node, in case it contains body level nodes
+    /// right after a marker such as an enumerator, on the same line.
+    fn parse_first_node_block(
+        doctree: DocTree,
+        src_lines: &Vec<String>,
+        base_indent: usize,
+        current_line: &mut LineCursor,
+        text_indent: usize,
+        first_indent: Option<usize>,
+        start_state: State,
+        section_level: &mut usize,
+        force_alignment: bool,
+    ) -> Result<(ParsingResult, usize), ParsingResult> {
+        let relative_first_indent = first_indent.unwrap_or(text_indent) - base_indent;
+        let relative_block_indent = text_indent - base_indent;
 
-    // Strip all minimal indentation from each line
-    if let Some(min_indent) = minimal_indent {
-      if strip_indent {
-        for (index, line) in block_lines.iter_mut().enumerate() {
-          let indent = if first_indent.is_some() && index == 0 { first_indent.unwrap() } else { min_indent };
-          *line = line
+        // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
+        let (block, line_offset) = match Parser::read_indented_block(
+            src_lines,
+            Some(current_line.relative_offset()),
+            Some(true),
+            None,
+            Some(relative_block_indent),
+            Some(relative_first_indent),
+            force_alignment,
+        ) {
+            Ok((lines, min_indent, line_offset, blank_finish)) => (lines, line_offset),
+            Err(e) => {
+                return Err(ParsingResult::Failure {
+                    message: format!(
+                        "Error when reading in a block of text for nested parse: {}",
+                        e
+                    ),
+                    doctree: doctree,
+                })
+            }
+        };
+
+        // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
+        match Parser::new(
+            block,
+            doctree,
+            Some(text_indent),
+            current_line.sum_total(),
+            Some(start_state),
+            *section_level,
+        )
+        .parse()
+        {
+            ParsingResult::EOF {
+                doctree,
+                state_stack,
+            } => {
+                return Ok((
+                    ParsingResult::EOF {
+                        doctree: doctree,
+                        state_stack: state_stack,
+                    },
+                    line_offset,
+                ))
+            }
+            ParsingResult::EmptyStateStack {
+                doctree,
+                state_stack,
+            } => {
+                return Ok((
+                    ParsingResult::EmptyStateStack {
+                        doctree: doctree,
+                        state_stack: state_stack,
+                    },
+                    line_offset,
+                ))
+            }
+            ParsingResult::Failure { message, doctree } => {
+                return Err(ParsingResult::Failure {
+                    message: format!("Nested parse ended in failure: {}", message),
+                    doctree: doctree,
+                })
+            }
+        };
+    }
+
+    /// ### skip_to_next_block
+    ///
+    /// Skips empty lines until a non-empty one is found.
+    /// Panics (for now) if it runs over the end of input.
+    fn skip_to_next_block(src_lines: &Vec<String>, line_cursor: &mut LineCursor) {
+        loop {
+            if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+                if line.trim().is_empty() {
+                    line_cursor.increment_by(1);
+                } else {
+                    break;
+                }
+            } else {
+                panic!("Encountered end of input while skipping lines...")
+            }
+        }
+    }
+
+    /// ### read_text_block
+    /// Reads in an contiguous set of lines of text.
+    /// A text block in rST terms is a set of lines
+    /// separated from other elements by empty lines above and below.
+    /// Checks for indentation:
+    /// if indentation is not allowed but indentation is found,
+    /// returns an error message in an `Err`.
+    fn read_text_block(
+        src_lines: &Vec<String>,
+        start_line: usize,
+        indent_allowed: bool,
+        remove_indent: bool,
+        alignment: Option<usize>,
+    ) -> Result<(Vec<String>, usize), String> {
+        let mut line_num = start_line;
+        let last_line = src_lines.len();
+
+        let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
+
+        while line_num < last_line {
+            let mut line: String = match src_lines.get(line_num) {
+                Some(line) => line.clone(),
+                None => {
+                    return Err(format!(
+                        "Text block could not be read because of line {}...",
+                        line_num
+                    ))
+                }
+            };
+
+            if line.trim().is_empty() {
+                break;
+            }
+
+            let line_indent = line
+                .as_str()
+                .chars()
+                .take_while(|c| c.is_whitespace())
+                .count();
+
+            if !indent_allowed && line_indent > 0 {
+                break;
+            }
+
+            if let Some(alignment) = alignment {
+                if alignment != line_indent {
+                    break;
+                }
+            }
+
+            if remove_indent {
+                line = line.as_str().trim_start().to_string();
+            }
+
+            lines.push(line);
+            line_num += 1;
+        }
+
+        lines.shrink_to_fit();
+        let offset = lines.len();
+        Ok((lines, offset))
+    }
+
+    /// ### read_indented_block
+    /// Reads in a block of indented lines text.
+    /// Determines the minimum level of indentation
+    /// and uses it as a reference for ending the block.
+    fn read_indented_block(
+        src_lines: &Vec<String>,
+        start_line: Option<usize>,
+        until_blank: Option<bool>,
+        strip_indent: Option<bool>,
+        block_indent: Option<usize>,
+        first_indent: Option<usize>,
+        force_alignment: bool,
+    ) -> Result<(Vec<String>, Option<usize>, usize, bool), String> {
+        if src_lines.is_empty() {
+            return Err(String::from(
+                "An empty block of text was handed for parsing.\nComputer says no...\n",
+            ));
+        }
+
+        // Default function parameters
+        let start_line = start_line.unwrap_or(0);
+        let until_blank = until_blank.unwrap_or(false);
+        let strip_indent = strip_indent.unwrap_or(true);
+
+        let mut line_num = start_line;
+        let last_line_num = src_lines.len();
+
+        let mut block_lines: Vec<String> = Vec::with_capacity(last_line_num - start_line);
+
+        // Setting the initial level of minimal indentation
+        let mut minimal_indent = match block_indent {
+            Some(indent) => Some(indent),
+            None => None,
+        };
+
+        // If there is block indentation but no predetermined indentation for the first line,
+        // set the indentation of the first line equal to block indentation.
+        let first_indent = if let (Some(block_indent), None) = (block_indent, first_indent) {
+            Some(block_indent)
+        } else {
+            first_indent
+        };
+
+        // Push first line into `block_lines` and increment
+        // line number to ignore indentation (for now) if first_indent was set
+        if first_indent.is_some() {
+            let line = src_lines.get(line_num).unwrap().to_owned();
+            block_lines.push(line);
+            line_num += 1;
+        }
+
+        let mut blank_finish: bool = false;
+        let mut loop_broken: bool = false; // Used to detect whether the below while loop was broken out of
+
+        while line_num < last_line_num {
+            let line: String = match src_lines.get(line_num) {
+                Some(line) => line.clone(),
+                None => {
+                    return Err(format!(
+                        "Line {} could not be read. Computer says no...",
+                        line_num
+                    ))
+                }
+            };
+
+            let line_is_empty = line.trim().is_empty();
+
+            // Check for sufficient (or correct if block alignment was forced) indentation if line isn't empty
+            let line_indent = line
+                .as_str()
+                .chars()
+                .take_while(|c| c.is_whitespace())
+                .count();
+
+            let break_when_not_aligned: bool = if block_indent.is_some() && force_alignment {
+                line_indent != block_indent.unwrap()
+            } else if block_indent.is_some() {
+                line_indent < block_indent.unwrap()
+            } else {
+                false
+            };
+
+            if !line_is_empty && (line_indent < 1 || break_when_not_aligned) {
+                // Ended with a blank finish if the last line before unindent was blank
+                blank_finish = (line_num > start_line)
+                    && src_lines.get(line_num - 1).unwrap().trim().is_empty();
+                loop_broken = true;
+                break;
+            }
+
+            // Updating the minimal level of indentation, if line isn't blank
+            // and there isn't predetermined block indentation
+            if line_is_empty && until_blank {
+                blank_finish = true;
+                break;
+            } else if block_indent.is_none() {
+                if minimal_indent.is_none() {
+                    minimal_indent = Some(line_indent);
+                } else if line_indent > 0 {
+                    minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
+                }
+            }
+
+            block_lines.push(line);
+            line_num += 1;
+        }
+
+        if !loop_broken {
+            blank_finish = true;
+        } // Made it to the end of input
+
+        // Strip all minimal indentation from each line
+        if let Some(min_indent) = minimal_indent {
+            if strip_indent {
+                for (index, line) in block_lines.iter_mut().enumerate() {
+                    let indent = if first_indent.is_some() && index == 0 {
+                        first_indent.unwrap()
+                    } else {
+                        min_indent
+                    };
+                    *line = line.chars().skip(indent).collect::<String>();
+                }
+            }
+        }
+
+        block_lines.shrink_to_fit(); // Free unnecessary used memory
+        let line_diff = block_lines.len();
+
+        Ok((block_lines, minimal_indent, line_diff, blank_finish))
+    }
+
+    /// ### parent_indent_matches
+    ///
+    /// Checks how a given indentation matches with the indentation of a given parent node type.
+    fn parent_indent_matches(
+        parent: &TreeNodeType,
+        relevant_child_indent: usize,
+    ) -> IndentationMatch {
+        if let Some(indent) = parent.body_indent() {
+            if indent > relevant_child_indent {
+                IndentationMatch::TooLittle
+            } else if indent == relevant_child_indent {
+                IndentationMatch::JustRight
+            } else {
+                IndentationMatch::TooMuch
+            }
+        } else {
+            panic!("Asked for parent indentation inside a \"{}\" that is not a container. Computer says no...", parent)
+        }
+    }
+
+    /// ### indent_on_subsequent_lines
+    /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
+    fn indent_on_subsequent_lines(
+        src_lines: &Vec<String>,
+        start_line: usize,
+    ) -> Option<(usize, usize)> {
+        let mut current_line = start_line;
+        loop {
+            if let Some(line) = src_lines.get(current_line) {
+                if line.trim().is_empty() {
+                    current_line += 1;
+                    continue;
+                } else {
+                    break Some((
+                        line.chars().take_while(|c| c.is_whitespace()).count(),
+                        current_line - start_line,
+                    ));
+                }
+            } else {
+                break None;
+            }
+        }
+    }
+
+    /// ### line_prefix
+    /// Takes characters from a given string, until a given index, or until a newline is encountered.
+    fn line_prefix(line: &str, end_index: usize) -> String {
+        let prefix = line
             .chars()
-            .skip(indent)
+            .enumerate()
+            .take_while(|(i, c)| *c == '\n' || *i < end_index)
+            .map(|(i, c)| c)
             .collect::<String>();
+
+        if prefix.chars().count() < end_index {
+            eprintln!("Encountered a newline or line shorter than given...")
         }
-      }
+
+        prefix
     }
 
-    block_lines.shrink_to_fit(); // Free unnecessary used memory
-    let line_diff = block_lines.len();
+    /// ### line_suffix
+    /// Skips the first `start_index` characters of the given `line`
+    /// and returns the remainder as a string. If a new
+    fn line_suffix(line: &str, start_index: usize) -> String {
+        let suffix_len = match line.chars().count().checked_sub(start_index) {
+            Some(len) => len,
+            None => {
+                panic!("Cannot scan line suffix whose start index is greater than the line length")
+            }
+        };
 
-    Ok((block_lines, minimal_indent, line_diff, blank_finish))
-  }
+        let suffix = line
+            .chars()
+            .enumerate()
+            .skip_while(|(i, c)| *c == '\n' || *i < start_index)
+            .map(|(i, c)| c)
+            .collect::<String>();
 
-
-  /// ### parent_indent_matches
-  ///
-  /// Checks how a given indentation matches with the indentation of a given parent node type.
-  fn parent_indent_matches (parent: &TreeNodeType, relevant_child_indent: usize) -> IndentationMatch {
-
-    if let Some(indent) = parent.body_indent() {
-
-      if indent > relevant_child_indent {
-        IndentationMatch::TooLittle
-      } else if indent == relevant_child_indent {
-        IndentationMatch::JustRight
-      } else {
-        IndentationMatch::TooMuch
-      }
-    } else {
-      panic!("Asked for parent indentation inside a \"{}\" that is not a container. Computer says no...", parent)
-    }
-  }
-
-
-  /// ### indent_on_subsequent_lines
-  /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
-  fn indent_on_subsequent_lines (src_lines: &Vec<String>, start_line: usize) -> Option<(usize, usize)> {
-
-    let mut current_line = start_line;
-    loop {
-      if let Some(line) = src_lines.get(current_line) {
-        if line.trim().is_empty() {
-          current_line += 1;
-          continue
+        if suffix.chars().count() > suffix_len {
+            eprintln!("Encountered a newline before reaching suffix. Returning an empty string...");
+            String::new()
         } else {
-          break Some(
-            (line.chars().take_while(|c| c.is_whitespace()).count(), current_line - start_line)
-          )
+            suffix
         }
-      } else {
-        break None
-      }
-    }
-  }
-
-
-  /// ### line_prefix
-  /// Takes characters from a given string, until a given index, or until a newline is encountered.
-  fn line_prefix (line: &str, end_index: usize) -> String {
-
-    let prefix = line
-      .chars()
-      .enumerate()
-      .take_while(|(i, c)| *c == '\n' || *i < end_index)
-      .map(|(i, c)| c)
-      .collect::<String>();
-
-    if prefix.chars().count() < end_index {
-      eprintln!("Encountered a newline or line shorter than given...")
     }
 
-    prefix
-  }
+    /// ### skip_empty_lines
+    ///
+    /// Increments the given line cursor while empyt lines are found.
+    /// Returns the number of lines skipped.
+    fn skip_empty_lines(src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> usize {
+        let mut lines_skipped = 0 as usize;
 
+        while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+            if line.trim().is_empty() {
+                line_cursor.increment_by(1); // Jump over empty lines
+                lines_skipped += 1;
+            } else {
+                break;
+            }
+        }
 
-  /// ### line_suffix
-  /// Skips the first `start_index` characters of the given `line`
-  /// and returns the remainder as a string. If a new
-  fn line_suffix (line: &str, start_index: usize) -> String {
-
-    let suffix_len = match line.chars().count().checked_sub(start_index) {
-      Some(len) => len,
-      None => panic!("Cannot scan line suffix whose start index is greater than the line length")
-    };
-
-    let suffix = line
-      .chars()
-      .enumerate()
-      .skip_while(|(i, c)| *c == '\n' || *i < start_index)
-      .map(|(i, c)| c)
-      .collect::<String>();
-
-    if suffix.chars().count() > suffix_len {
-      eprintln!("Encountered a newline before reaching suffix. Returning an empty string...");
-      String::new()
-    } else {
-      suffix
+        lines_skipped
     }
-  }
-
-
-  /// ### skip_empty_lines
-  ///
-  /// Increments the given line cursor while empyt lines are found.
-  /// Returns the number of lines skipped.
-  fn skip_empty_lines (src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> usize {
-
-    let mut lines_skipped = 0 as usize;
-
-    while let Some(line)= src_lines.get(line_cursor.relative_offset()) {
-      if line.trim().is_empty() {
-        line_cursor.increment_by(1); // Jump over empty lines
-        lines_skipped += 1;
-      } else {
-        break
-      }
-    }
-
-    lines_skipped
-  }
 }

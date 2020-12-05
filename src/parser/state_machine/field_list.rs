@@ -3,31 +3,43 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
-
 
 /// ### field_marker
 /// Creates FieldListItems, if parameters such as detected indentation and such match with the parent node ones.
-pub fn field_marker (src_lines: &Vec<String>, base_indent: usize, section_level: &mut usize, line_cursor: &mut LineCursor, doctree: Option<DocTree>, captures: &regex::Captures, pattern_name: &PatternName) -> TransitionResult {
+pub fn field_marker(
+    src_lines: &Vec<String>,
+    base_indent: usize,
+    section_level: &mut usize,
+    line_cursor: &mut LineCursor,
+    doctree: Option<DocTree>,
+    captures: &regex::Captures,
+    pattern_name: &PatternName,
+) -> TransitionResult {
+    let mut doctree = doctree.unwrap();
 
-  let mut doctree = doctree.unwrap();
+    let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+    let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
+    let detected_marker_name = captures.get(2).unwrap().as_str();
 
-  let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
-  let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
-  let detected_marker_name = captures.get(2).unwrap().as_str();
-
-  let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1) {
-    if line.trim().is_empty() {
-      detected_text_indent
+    let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1)
+    {
+        if line.trim().is_empty() {
+            detected_text_indent
+        } else {
+            let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+            if indent < detected_marker_indent + 1 {
+                detected_text_indent
+            } else {
+                indent
+            }
+        }
     } else {
-      let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-      if indent < detected_marker_indent + 1 { detected_text_indent } else { indent }
-    }
-  } else { detected_text_indent };
+        detected_text_indent
+    };
 
-  // Make sure we are inside a FieldList and that indentations match
-  match doctree.shared_node_data() {
+    // Make sure we are inside a FieldList and that indentations match
+    match doctree.shared_node_data() {
 
     TreeNodeType::FieldList { marker_indent } => {
 

@@ -8,62 +8,57 @@
 #[allow(non_camel_case_types)]
 #[derive(Debug)]
 pub struct ruSTLaOptions {
+    /// Choose between standard output and a file next to the original one.
+    output_stream: OutputStream,
 
-  /// Choose between standard output and a file next to the original one.
-  output_stream: OutputStream,
-
-  /// Whether to add \(begin|end){document} to the output file.
-  is_full_document: bool
+    /// Whether to add \(begin|end){document} to the output file.
+    is_full_document: bool,
 }
-
 
 impl ruSTLaOptions {
+    pub fn new(args: &Vec<String>) -> Self {
+        let mut arg_index = 0usize;
+        let args_len = args.len();
 
-  pub fn new(args: &Vec<String>) -> Self {
+        let mut options = Self {
+            output_stream: OutputStream::StdOut,
+            is_full_document: false,
+        };
 
-    let mut arg_index = 0usize;
-    let args_len = args.len();
+        while arg_index < args_len {
+            let arg = if let Some(arg) = args.get(arg_index) {
+                arg
+            } else {
+                break;
+            };
 
-    let mut options = Self {
-      output_stream: OutputStream::StdOut,
-      is_full_document: false,
-    };
+            match arg.as_str() {
+                "--to-stdout" => options.output_stream = OutputStream::StdOut,
+                "--to-file" => options.output_stream = OutputStream::File,
+                "--full-doc" => options.is_full_document = true,
 
-    while arg_index < args_len {
+                _ => {}
+            }
 
-      let arg = if let Some(arg) = args.get(arg_index) { arg } else { break };
+            arg_index += 1;
+        }
 
-      match arg.as_str() {
-
-        "--to-stdout" => options.output_stream = OutputStream::StdOut,
-        "--to-file" => options.output_stream = OutputStream::File,
-        "--full-doc" => options.is_full_document = true,
-
-        _ => {}
-      }
-
-      arg_index += 1;
+        options
     }
 
-    options
-  }
+    /// Returns a shared reference to the chosen output stream: `stdout` or `file`.
+    pub fn shared_out_stream(&self) -> &OutputStream {
+        &self.output_stream
+    }
 
-
-  /// Returns a shared reference to the chosen output stream: `stdout` or `file`.
-  pub fn shared_out_stream (&self) -> &OutputStream {
-    &self.output_stream
-  }
-
-
-  /// Returns a copy of the boolean indicating whether the document is to be directly compilable with pdflatex or not.
-  pub fn is_full_document (&self) -> bool {
-    self.is_full_document
-  }
+    /// Returns a copy of the boolean indicating whether the document is to be directly compilable with pdflatex or not.
+    pub fn is_full_document(&self) -> bool {
+        self.is_full_document
+    }
 }
-
 
 #[derive(Debug)]
 pub enum OutputStream {
-  StdOut,
-  File
+    StdOut,
+    File,
 }

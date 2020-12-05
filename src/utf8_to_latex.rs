@@ -1,14 +1,11 @@
+use lazy_static::lazy_static;
 /// ## utf8_to_latex
 ///
 /// This file contains a mapping between a subset of UTF-8 to LaTeX commands.
 ///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
-
 use std::collections::HashMap;
-use lazy_static::lazy_static;
-
 
 /// str_to_latex
 ///
@@ -18,22 +15,20 @@ use lazy_static::lazy_static;
 /// which is *not* taken into account by this function.
 ///
 /// If not conversion exists, adds the unicode scalar into the string unchanged.
-pub fn unicode_math_to_latex (utf_str: &str) -> String {
+pub fn unicode_math_to_latex(utf_str: &str) -> String {
+    let source_char_count = utf_str.chars().count();
+    let mut latex_string = String::with_capacity(source_char_count);
 
-  let source_char_count = utf_str.chars().count();
-  let mut latex_string = String::with_capacity(source_char_count);
-
-  for c in utf_str.chars() {
-    if let Some(latex_str) = UTF8_MATH_TO_LATEX_MAP.get(&c) {
-      latex_string += latex_str;
-    } else {
-      latex_string.push(c);
+    for c in utf_str.chars() {
+        if let Some(latex_str) = UTF8_MATH_TO_LATEX_MAP.get(&c) {
+            latex_string += latex_str;
+        } else {
+            latex_string.push(c);
+        }
     }
-  }
 
-  latex_string
+    latex_string
 }
-
 
 /// ### unicode_text_to_latex
 ///
@@ -43,100 +38,106 @@ pub fn unicode_math_to_latex (utf_str: &str) -> String {
 ///
 /// For example, `'_' ↦ "\_"` and `'@' ↦ "\@"`. If a character is not recognized as a control character,
 /// it is added to the generated `String` as is.
-pub fn unicode_text_to_latex (utf_str: &str) -> String {
+pub fn unicode_text_to_latex(utf_str: &str) -> String {
+    let source_char_count = utf_str.chars().count();
+    let mut latex_string = String::with_capacity(source_char_count);
+    let mut char_iter = utf_str.chars().peekable();
 
-  let source_char_count = utf_str.chars().count();
-  let mut latex_string = String::with_capacity(source_char_count);
-  let mut char_iter = utf_str.chars().peekable();
+    while let Some(c1) = char_iter.next() {
+        let c1 = if c1 == '\\' {
+            if let Some(c2) = char_iter.peek() {
+                char_iter.next().unwrap()
+            } else {
+                c1
+            }
+        } else {
+            c1
+        };
 
-  while let Some(c1) = char_iter.next() {
+        let space = if let Some(c) = char_iter.peek() {
+            if (*c).is_whitespace()
+                || *c == '\\'
+                || TeXCategory::Other.symbol_table().iter().any(|sym| c == sym)
+                || TeXCategory::SuperScript
+                    .symbol_table()
+                    .iter()
+                    .any(|sym| c == sym)
+                || TeXCategory::SubScript
+                    .symbol_table()
+                    .iter()
+                    .any(|sym| c == sym)
+                || TeXCategory::StartGroup
+                    .symbol_table()
+                    .iter()
+                    .any(|sym| c == sym)
+                || TeXCategory::EndGroup
+                    .symbol_table()
+                    .iter()
+                    .any(|sym| c == sym)
+            {
+                ""
+            } else {
+                " "
+            }
+        } else {
+            ""
+        };
 
-    let c1 = if c1 == '\\' {
-      if let Some(c2) = char_iter.peek() {
-        char_iter.next().unwrap()
-      } else {
-        c1
-      }
-    } else {
-      c1
-    };
-
-    let space = if let Some(c) = char_iter.peek() {
-      if (*c).is_whitespace() || *c == '\\'
-      || TeXCategory::Other.symbol_table().iter().any(|sym| c == sym)
-      || TeXCategory::SuperScript.symbol_table().iter().any(|sym| c == sym)
-      || TeXCategory::SubScript.symbol_table().iter().any(|sym| c == sym)
-      || TeXCategory::StartGroup.symbol_table().iter().any(|sym| c == sym)
-      || TeXCategory::EndGroup.symbol_table().iter().any(|sym| c == sym) {
-        ""
-      } else {
-        " "
-      }
-    } else {
-      ""
-    };
-
-    if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c1) {
-      latex_string = latex_string + latex_str + space;
-    } else {
-      latex_string.push(c1);
+        if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c1) {
+            latex_string = latex_string + latex_str + space;
+        } else {
+            latex_string.push(c1);
+        }
     }
-  }
 
-  latex_string
+    latex_string
 }
-
 
 /// An enumeration of the different TeX character categories.
 enum TeXCategory {
-  Escape,
-  StartGroup,
-  EndGroup,
-  MathShift,
-  AlignmentTab,
-  EndOfLine,
-  MacroParameter,
-  SuperScript,
-  SubScript,
-  Ignored,
-  Spacer,
-  Letter,
-  Other,
-  Active,
-  Comment,
-  Invalid,
+    Escape,
+    StartGroup,
+    EndGroup,
+    MathShift,
+    AlignmentTab,
+    EndOfLine,
+    MacroParameter,
+    SuperScript,
+    SubScript,
+    Ignored,
+    Spacer,
+    Letter,
+    Other,
+    Active,
+    Comment,
+    Invalid,
 }
 
 impl TeXCategory {
-
-  /// Returns an array slice of the unicode scalars known to belong to the given category.
-  fn symbol_table (&self) -> &[char] {
-    match self {
-      Self::Escape => &['\\'],
-      Self::StartGroup => &['{'],
-      Self::EndGroup => &['}'],
-      Self::MathShift => &['$'],
-      Self::AlignmentTab => &['&'],
-      Self::EndOfLine => &['\r'],
-      Self::MacroParameter => &['#'],
-      Self::SuperScript => &['^'],
-      Self::SubScript => &['_'],
-      Self::Ignored => &['\u{0}'],
-      Self::Spacer => &[' ', '\t'],
-      Self::Letter => &[],
-      Self::Other => &['0','1','2','3','4','5','6','7','8', '9',',', '.', ';', '?', '"'],
-      Self::Active => &[],
-      Self::Comment => &['%'],
-      Self::Invalid => &['\u{127}']
+    /// Returns an array slice of the unicode scalars known to belong to the given category.
+    fn symbol_table(&self) -> &[char] {
+        match self {
+            Self::Escape => &['\\'],
+            Self::StartGroup => &['{'],
+            Self::EndGroup => &['}'],
+            Self::MathShift => &['$'],
+            Self::AlignmentTab => &['&'],
+            Self::EndOfLine => &['\r'],
+            Self::MacroParameter => &['#'],
+            Self::SuperScript => &['^'],
+            Self::SubScript => &['_'],
+            Self::Ignored => &['\u{0}'],
+            Self::Spacer => &[' ', '\t'],
+            Self::Letter => &[],
+            Self::Other => &[
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '.', ';', '?', '"',
+            ],
+            Self::Active => &[],
+            Self::Comment => &['%'],
+            Self::Invalid => &['\u{127}'],
+        }
     }
-  }
 }
-
-
-
-
-
-
 
 lazy_static! {
 
@@ -580,4 +581,3 @@ lazy_static! {
     map
   };
 }
-

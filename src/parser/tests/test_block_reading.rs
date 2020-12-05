@@ -3,15 +3,12 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
 
 #[cfg(test)]
-
 #[test]
-fn read_text_block_01 () {
-
-  let src = "
+fn read_text_block_01() {
+    let src = "
 
 asdsafasfga  sffwsdaf
 asfsdafasdfffasfsdfsaf
@@ -24,34 +21,34 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  eprintln!("{:#?}", lines);
+    eprintln!("{:#?}", lines);
 
-  let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None) {
-    Ok(block) => block,
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+    let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None) {
+        Ok(block) => block,
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 
-  eprintln!("{:#?}", block);
+    eprintln!("{:#?}", block);
 
-  let block_str = block.join("\n");
+    let block_str = block.join("\n");
 
-  assert_eq!("asdsafasfga  sffwsdaf
+    assert_eq!(
+        "asdsafasfga  sffwsdaf
 asfsdafasdfffasfsdfsaf
 asfdfasdfasdfafasdfasdf
-asdfsdafasdfsdafadsfsdf", block_str);
-
+asdfsdafasdfsdafadsfsdf",
+        block_str
+    );
 }
 
-
 #[test]
-fn read_text_block_02 () {
-
-  let src = "
+fn read_text_block_02() {
+    let src = "
 
 asdsafasfgasf  fwsdaf
 asfsdafasdfffasfsdfsaf
@@ -64,30 +61,27 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  eprintln!("{:#?}", lines);
+    eprintln!("{:#?}", lines);
 
-  match Parser::read_text_block(&lines, 2, false, false, None) {
-    Ok((lines, offset)) => {
-      assert_eq!(
-        vec!["asdsafasfgasf  fwsdaf", "asfsdafasdfffasfsdfsaf"],
-        lines
-      )
-    },
-    Err(e) => {
-      eprintln!("{:#?}", e);
-      panic!()
-    }
-  };
-
+    match Parser::read_text_block(&lines, 2, false, false, None) {
+        Ok((lines, offset)) => {
+            assert_eq!(
+                vec!["asdsafasfgasf  fwsdaf", "asfsdafasdfffasfsdfsaf"],
+                lines
+            )
+        }
+        Err(e) => {
+            eprintln!("{:#?}", e);
+            panic!()
+        }
+    };
 }
 
-
 #[test]
-fn read_text_block_03 () {
-
-  let src = "
+fn read_text_block_03() {
+    let src = "
 
   asdsafasfgasf  fwsdaf
   asfsdafasdfffasfsdfsaf
@@ -100,37 +94,32 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  eprintln!("{:#?}", lines);
+    eprintln!("{:#?}", lines);
 
-  match Parser::read_text_block(&lines, 2, true, false, None) {
-    Ok((block, offset)) => {
+    match Parser::read_text_block(&lines, 2, true, false, None) {
+        Ok((block, offset)) => {
+            eprintln!("{:#?}", block);
 
-      eprintln!("{:#?}", block);
-
-      assert_eq!(
-        block.join("\n"),
-"  asdsafasfgasf  fwsdaf
+            assert_eq!(
+                block.join("\n"),
+                "  asdsafasfgasf  fwsdaf
   asfsdafasdfffasfsdfsaf
   asfdfasdfasdfafasdfasdf
   asdfsdafasdfsdafadsfsdf"
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
-
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
-
-
 #[test]
-fn read_indented_block_01 () {
-
-  let src = "
+fn read_indented_block_01() {
+    let src = "
 
   asdsafasfgasf  fwsdaf
       asfsdafasdfffas  fsdfsaf
@@ -143,34 +132,31 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None, false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None, false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
-
-      assert_eq!(
-        lines.join("\n"),
-"asdsafasfgasf  fwsdaf
+            assert_eq!(
+                lines.join("\n"),
+                "asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
-");
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
-
+"
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
-
 #[test]
-fn read_indented_block_02 () {
-
-  let src = "
+fn read_indented_block_02() {
+    let src = "
 
     asdsafasfgasf  fwsdaf
       asfsdafasdfffas  fsdfsaf
@@ -183,35 +169,31 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None, false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None, false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
-
-      assert_eq!(
-        lines.join("\n"),
-"  asdsafasfgasf  fwsdaf
+            assert_eq!(
+                lines.join("\n"),
+                "  asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
 "
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
-
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
-
 #[test]
-fn read_indented_block_03 () {
-
-  let src = "
+fn read_indented_block_03() {
+    let src = "
 
  asdsafasfgasf  fwsdaf
       asfsdafasdfffas  fsdfsaf
@@ -223,34 +205,31 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), None, None, None, None, false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), None, None, None, None, false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
-
-      assert_eq!(
-        lines.join("\n"),
-"asdsafasfgasf  fwsdaf
+            assert_eq!(
+                lines.join("\n"),
+                "asdsafasfgasf  fwsdaf
      asfsdafasdfffas  fsdfsaf
    asfdfasd  fasdfafasdfasdf
  asdfsdafasdfsda  fadsfsdf
  asdfdsfsdafsadfaf"
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
-
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
 #[test]
-fn read_indented_block_04 () {
-
-  let src = "
+fn read_indented_block_04() {
+    let src = "
 
 * asdsafasfgasf  fwsdaf
   asfsdafasdfffas  fsdfsaf
@@ -263,39 +242,35 @@ asdfsdafasdfasdfa
 
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
+            assert_eq!(line_diff, 7);
 
-      assert_eq!(line_diff, 7);
-
-      assert_eq!(
-        lines.join("\n"),
-"asdsafasfgasf  fwsdaf
+            assert_eq!(
+                lines.join("\n"),
+                "asdsafasfgasf  fwsdaf
 asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
 asdfdsfsdafsadfaf
 asfsffdsfasfasdf
 "
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
-
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
-
 #[test]
-fn read_indented_block_05 () {
-
-  let src = "
+fn read_indented_block_05() {
+    let src = "
 
 * asdsafasfgasf  fwsdaf
   asfsdafasdfffas  fsdfsaf
@@ -312,18 +287,17 @@ fn read_indented_block_05 () {
 asfsadfasdfsad
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
+            assert_eq!(line_diff, 12);
 
-      assert_eq!(line_diff, 12);
-
-      assert_eq!(
-        lines.join("\n"),
-"asdsafasfgasf  fwsdaf
+            assert_eq!(
+                lines.join("\n"),
+                "asdsafasfgasf  fwsdaf
 asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
@@ -335,20 +309,18 @@ adasdasdasdasdfasd
 <sdfasdfadsffafs
 sadfdfdsasfasff
 "
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }
 
-
 #[test]
-fn read_indented_block_06 () {
-
-  let src = "
+fn read_indented_block_06() {
+    let src = "
 
   sdasdasdasdasd
   adsadadasdasd
@@ -360,24 +332,23 @@ fn read_indented_block_06 () {
 asfsadfasdfsad
 ";
 
-  let lines = crate::common::str_to_lines(src);
+    let lines = crate::common::str_to_lines(src);
 
-  match Parser::read_indented_block(&lines, Some(2), Some(true), None, Some(2), None, false) {
-    Ok((lines, _indent, line_diff, _empty_finish)) => {
+    match Parser::read_indented_block(&lines, Some(2), Some(true), None, Some(2), None, false) {
+        Ok((lines, _indent, line_diff, _empty_finish)) => {
+            eprintln!("{:#?}", lines);
 
-      eprintln!("{:#?}", lines);
+            assert_eq!(line_diff, 2);
 
-      assert_eq!(line_diff, 2);
-
-      assert_eq!(
-        lines.join("\n"),
-"sdasdasdasdasd
+            assert_eq!(
+                lines.join("\n"),
+                "sdasdasdasdasd
 adsadadasdasd"
-      );
-    },
-    Err(e) => {
-      eprintln!("{}", e);
-      panic!();
-    }
-  };
+            );
+        }
+        Err(e) => {
+            eprintln!("{}", e);
+            panic!();
+        }
+    };
 }

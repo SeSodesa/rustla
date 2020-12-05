@@ -5,415 +5,582 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
-
 
 /// =================================
 /// StateMachine associated constants
 /// =================================
 impl State {
-
-  /// ### BODY_TRANSITIONS
-  /// An array of transitions related to `State::Body`.
-  pub const BODY_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
-    (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
-
-    (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoNumbered ), AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::SimpleRefName ), SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoSymbol ), AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
-
-    (PatternName::Citation, CITATION_PATTERN, body::citation),
-
-    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
-
-    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
-
-    (PatternName::Comment, COMMENT_PATTERN, body::comment),
-
-    (PatternName::Line, LINE_PATTERN, body::line),
-
-    (PatternName::Text, TEXT_PATTERN, body::text)
-  ];
-
-
-  /// ### BLOCK_QUOTE_TRANSITIONS
-  /// An array of transitions related to `State::Body`.
-  pub const BLOCK_QUOTE_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Attribution, ATTRIBUTION_PATTERN, block_quote::attribution),
-    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
-    (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
-
-    (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoNumbered ), AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::SimpleRefName ), SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoSymbol ), AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
-
-    (PatternName::Citation, CITATION_PATTERN, body::citation),
-
-    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
-
-    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
-
-    (PatternName::Comment, COMMENT_PATTERN, body::comment),
-
-    (PatternName::Line, LINE_PATTERN, body::line),
-
-    (PatternName::Text, TEXT_PATTERN, body::text)
-  ];
-
-  /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
-  /// An array of transitions related to `State::BulletList`.
-  pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, BULLET_PATTERN, bullet_list::bullet)
-  ];
-
-
-  /// ### DEFINITION_LIST_TRANSITIONS
-  /// An array of transitions related to `State::DefinitionList`.
-  pub const DEFINITION_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, BULLET_PATTERN, unknown_transitions::back_up),
-    (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, unknown_transitions::back_up),
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote ( FootnoteKind::AutoNumbered ), AUTO_NUM_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote ( FootnoteKind::SimpleRefName ), SIMPLE_NAME_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-    (PatternName::Footnote ( FootnoteKind::AutoSymbol ), AUTO_SYM_FOOTNOTE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Citation, CITATION_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Directive, DIRECTIVE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Comment, COMMENT_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Line, LINE_PATTERN, unknown_transitions::back_up),
-
-    (PatternName::Text, TEXT_PATTERN, definition_list::text)
-  ];
-
-  /// ### ENUMERATED_LIST_TRANSITIONS
-  /// An array of transitions related to `State::EnumeratedList`.
-  pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, enumerated_list::enumerator),
-  ];
-
-
-  /// ### FIELD_LIST_TRANSITIONS
-  /// An array of transitions related to `State::FieldList`.
-  pub const FIELD_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, field_list::field_marker),
-  ];
-
-
-  const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-  /// ### OPTION_LIST_TRANSITIONS
-  /// An array of transitions related to `State::OptionList`.
-  pub const OPTION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### LINE_BLOCK_TRANSITIONS
-  /// An array of transitions related to `State::LineBlock`.
-  pub const LINE_BLOCK_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### LITERAL_BLOCK_TRANSITIONS
-  /// An array of transitions related to `State::Line`.
-  pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::QuotedLiteralBlock, QUOTED_LITERAL_BLOCK_PATTERN, literal_block::literal_block),
-    (PatternName::IndentedLiteralBlock, INDENTED_LITERAL_BLOCK_PATTERN, literal_block::literal_block),
-  ];
-
-
-  /// ### EXTENSION_OPTIONS_TRANSITIONS
-  /// An array of transitions related to `State::ExtensionOptions`.
-  pub const EXTENSION_OPTION_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### EXPLICIT_MARKUP_TRANSITIONS
-  /// An array of transitions related to `State::ExplicitMarkup`.
-  pub const EXPLICIT_MARKUP_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### TEXT_TRANSITIONS
-  /// An array of transitions related to `State::Text`.
-  pub const TEXT_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### DEFINITION_TRANSITIONS
-  /// An array of transitions related to `State::Definition`.
-  pub const DEFINITION_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### LINE_TRANSITIONS
-  /// An array of transitions related to `State::Line`.
-  pub const LINE_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-
-  /// ### SUBSTITUTION_DEF_TRANSITIONS
-  /// An array of transitions related to `State::SubstitutionDef`.
-  pub const SUBSTITUTION_DEF_TRANSITIONS: [UncompiledTransition; 0] = [
-
-  ];
-
-  pub const LIST_TABLE_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
-  ];
-
-
-  /// ### APLUS_MULTICOL_TRANSITIONS
-  /// An array of transitions allowed in multi-column A+ directives such as points of interest.
-  /// These are indentical to those, except the state also recognizes
-  pub const APLUS_MULTICOL_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-
-    (PatternName::AplusColBreak, APLUS_COL_BREAK_PATTERN, aplus::aplus_col_break),
-
-    (PatternName::Bullet, BULLET_PATTERN, body::bullet),
-    (PatternName::Enumerator, crate::parser::regex_patterns::ENUMERATOR_PATTERN, body::enumerator),
-    (PatternName::FieldMarker, FIELD_MARKER_PATTERN, body::field_marker),
-    (PatternName::Footnote ( FootnoteKind::Manual ), MANUAL_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoNumbered ), AUTO_NUM_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::SimpleRefName ), SIMPLE_NAME_FOOTNOTE_PATTERN, body::footnote),
-    (PatternName::Footnote ( FootnoteKind::AutoSymbol ), AUTO_SYM_FOOTNOTE_PATTERN, body::footnote),
-
-    (PatternName::Citation, CITATION_PATTERN, body::citation),
-
-    (PatternName::HyperlinkTarget, HYPERLINK_TARGET_PATTERN, body::hyperlink_target),
-
-    (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
-
-    (PatternName::Comment, COMMENT_PATTERN, body::comment),
-
-    (PatternName::Line, LINE_PATTERN, body::line),
-
-    (PatternName::Text, TEXT_PATTERN, body::text),
-  ];
-
-
-  pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
-    (PatternName::EmptyLine, BLANK_LINE_PATTERN, common::empty_line),
-    (PatternName::AplusQuestionnaireDirective, APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_directive),
-    (PatternName::Text, TEXT_PATTERN, aplus_questionnaire::parse_aplus_questionnaire_text)
-  ];
-
-
-  /// ### INLINE_TRANSITIONS
-  /// An array of inline transitions.
-  pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
-    (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
-    (PatternName::StrongEmphasis, STRONG_EMPH_PATTERN, inline::paired_delimiter),
-    (PatternName::Emphasis, EMPH_PATTERN, inline::paired_delimiter),
-    (PatternName::Literal, LITERAL_PATTERN, inline::paired_delimiter),
-    (PatternName::InlineTarget, INLINE_TARGET_PATTERN, inline::inline_target),
-    (PatternName::PhraseRef, PHRASE_REF_PATTERN, inline::phrase_ref),
-    (PatternName::Interpreted , INTERPRETED_TEXT_PATTERN, inline::interpreted_text),
-    (PatternName::FootNoteRef, FOOTNOTE_REF_PATTERN, inline::footnote_ref),
-    (PatternName::SimpleRef, SIMPLE_REF_PATTERN, inline::simple_ref),
-    (PatternName::SubstitutionRef, SUBSTITUTION_REF_PATTERN, inline::substitution_ref),
-
-    // ### StandaloneHyperlink
-    //
-    // source: https://www.rfc-editor.org/rfc/rfc2396.txt, appendix B
-    //
-    // The capturing groups correspond to the following constructs:
-    //   $1 = http:
-    //   $2 = http
-    //   $3 = //www.ics.uci.edu
-    //   $4 = www.ics.uci.edu
-    //   $5 = /pub/ietf/uri/
-    //   $6 = <undefined>
-    //   $7 = <undefined>
-    //   $8 = #Related
-    //   $9 = Related
-    //
-    // where <undefined> indicates that the component is not present, as is
-    // the case for the query component in the above example.  Therefore, we
-    // can determine the value of the four components and fragment as
-    //
-    //   scheme    = $2
-    //   authority = $4
-    //   path      = $5
-    //   query     = $7
-    //   fragment  = $9
-    //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
-    (PatternName::StandaloneHyperlink, URI_PATTERN, inline::uri),
-    //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
-    (PatternName::Text, r"^(\S+)", inline::text)
-  ];
-
+    /// ### BODY_TRANSITIONS
+    /// An array of transitions related to `State::Body`.
+    pub const BODY_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+        (
+            PatternName::Enumerator,
+            crate::parser::regex_patterns::ENUMERATOR_PATTERN,
+            body::enumerator,
+        ),
+        (
+            PatternName::FieldMarker,
+            FIELD_MARKER_PATTERN,
+            body::field_marker,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::Manual),
+            MANUAL_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            AUTO_NUM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            SIMPLE_NAME_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            AUTO_SYM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (PatternName::Citation, CITATION_PATTERN, body::citation),
+        (
+            PatternName::HyperlinkTarget,
+            HYPERLINK_TARGET_PATTERN,
+            body::hyperlink_target,
+        ),
+        (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+        (PatternName::Comment, COMMENT_PATTERN, body::comment),
+        (PatternName::Line, LINE_PATTERN, body::line),
+        (PatternName::Text, TEXT_PATTERN, body::text),
+    ];
+
+    /// ### BLOCK_QUOTE_TRANSITIONS
+    /// An array of transitions related to `State::Body`.
+    pub const BLOCK_QUOTE_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::Attribution,
+            ATTRIBUTION_PATTERN,
+            block_quote::attribution,
+        ),
+        (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+        (
+            PatternName::Enumerator,
+            crate::parser::regex_patterns::ENUMERATOR_PATTERN,
+            body::enumerator,
+        ),
+        (
+            PatternName::FieldMarker,
+            FIELD_MARKER_PATTERN,
+            body::field_marker,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::Manual),
+            MANUAL_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            AUTO_NUM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            SIMPLE_NAME_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            AUTO_SYM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (PatternName::Citation, CITATION_PATTERN, body::citation),
+        (
+            PatternName::HyperlinkTarget,
+            HYPERLINK_TARGET_PATTERN,
+            body::hyperlink_target,
+        ),
+        (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+        (PatternName::Comment, COMMENT_PATTERN, body::comment),
+        (PatternName::Line, LINE_PATTERN, body::line),
+        (PatternName::Text, TEXT_PATTERN, body::text),
+    ];
+
+    /// ### BULLET_LIST_TRANSITIONS_TRANSITIONS
+    /// An array of transitions related to `State::BulletList`.
+    pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (PatternName::Bullet, BULLET_PATTERN, bullet_list::bullet),
+    ];
+
+    /// ### DEFINITION_LIST_TRANSITIONS
+    /// An array of transitions related to `State::DefinitionList`.
+    pub const DEFINITION_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::Bullet,
+            BULLET_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Enumerator,
+            crate::parser::regex_patterns::ENUMERATOR_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::FieldMarker,
+            FIELD_MARKER_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::Manual),
+            MANUAL_FOOTNOTE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            AUTO_NUM_FOOTNOTE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            SIMPLE_NAME_FOOTNOTE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            AUTO_SYM_FOOTNOTE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Citation,
+            CITATION_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::HyperlinkTarget,
+            HYPERLINK_TARGET_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Directive,
+            DIRECTIVE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Comment,
+            COMMENT_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (
+            PatternName::Line,
+            LINE_PATTERN,
+            unknown_transitions::back_up,
+        ),
+        (PatternName::Text, TEXT_PATTERN, definition_list::text),
+    ];
+
+    /// ### ENUMERATED_LIST_TRANSITIONS
+    /// An array of transitions related to `State::EnumeratedList`.
+    pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::Enumerator,
+            crate::parser::regex_patterns::ENUMERATOR_PATTERN,
+            enumerated_list::enumerator,
+        ),
+    ];
+
+    /// ### FIELD_LIST_TRANSITIONS
+    /// An array of transitions related to `State::FieldList`.
+    pub const FIELD_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::FieldMarker,
+            FIELD_MARKER_PATTERN,
+            field_list::field_marker,
+        ),
+    ];
+
+    const HYPERLINK_TARGET_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### OPTION_LIST_TRANSITIONS
+    /// An array of transitions related to `State::OptionList`.
+    pub const OPTION_LIST_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### LINE_BLOCK_TRANSITIONS
+    /// An array of transitions related to `State::LineBlock`.
+    pub const LINE_BLOCK_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### LITERAL_BLOCK_TRANSITIONS
+    /// An array of transitions related to `State::Line`.
+    pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::QuotedLiteralBlock,
+            QUOTED_LITERAL_BLOCK_PATTERN,
+            literal_block::literal_block,
+        ),
+        (
+            PatternName::IndentedLiteralBlock,
+            INDENTED_LITERAL_BLOCK_PATTERN,
+            literal_block::literal_block,
+        ),
+    ];
+
+    /// ### EXTENSION_OPTIONS_TRANSITIONS
+    /// An array of transitions related to `State::ExtensionOptions`.
+    pub const EXTENSION_OPTION_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### EXPLICIT_MARKUP_TRANSITIONS
+    /// An array of transitions related to `State::ExplicitMarkup`.
+    pub const EXPLICIT_MARKUP_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### TEXT_TRANSITIONS
+    /// An array of transitions related to `State::Text`.
+    pub const TEXT_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### DEFINITION_TRANSITIONS
+    /// An array of transitions related to `State::Definition`.
+    pub const DEFINITION_LIST_ITEM_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### LINE_TRANSITIONS
+    /// An array of transitions related to `State::Line`.
+    pub const LINE_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    /// ### SUBSTITUTION_DEF_TRANSITIONS
+    /// An array of transitions related to `State::SubstitutionDef`.
+    pub const SUBSTITUTION_DEF_TRANSITIONS: [UncompiledTransition; 0] = [];
+
+    pub const LIST_TABLE_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+    ];
+
+    /// ### APLUS_MULTICOL_TRANSITIONS
+    /// An array of transitions allowed in multi-column A+ directives such as points of interest.
+    /// These are indentical to those, except the state also recognizes
+    pub const APLUS_MULTICOL_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::AplusColBreak,
+            APLUS_COL_BREAK_PATTERN,
+            aplus::aplus_col_break,
+        ),
+        (PatternName::Bullet, BULLET_PATTERN, body::bullet),
+        (
+            PatternName::Enumerator,
+            crate::parser::regex_patterns::ENUMERATOR_PATTERN,
+            body::enumerator,
+        ),
+        (
+            PatternName::FieldMarker,
+            FIELD_MARKER_PATTERN,
+            body::field_marker,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::Manual),
+            MANUAL_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            AUTO_NUM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            SIMPLE_NAME_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (
+            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            AUTO_SYM_FOOTNOTE_PATTERN,
+            body::footnote,
+        ),
+        (PatternName::Citation, CITATION_PATTERN, body::citation),
+        (
+            PatternName::HyperlinkTarget,
+            HYPERLINK_TARGET_PATTERN,
+            body::hyperlink_target,
+        ),
+        (PatternName::Directive, DIRECTIVE_PATTERN, body::directive),
+        (PatternName::Comment, COMMENT_PATTERN, body::comment),
+        (PatternName::Line, LINE_PATTERN, body::line),
+        (PatternName::Text, TEXT_PATTERN, body::text),
+    ];
+
+    pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
+        (
+            PatternName::EmptyLine,
+            BLANK_LINE_PATTERN,
+            common::empty_line,
+        ),
+        (
+            PatternName::AplusQuestionnaireDirective,
+            APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN,
+            aplus_questionnaire::parse_aplus_questionnaire_directive,
+        ),
+        (
+            PatternName::Text,
+            TEXT_PATTERN,
+            aplus_questionnaire::parse_aplus_questionnaire_text,
+        ),
+    ];
+
+    /// ### INLINE_TRANSITIONS
+    /// An array of inline transitions.
+    pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
+        (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
+        (
+            PatternName::StrongEmphasis,
+            STRONG_EMPH_PATTERN,
+            inline::paired_delimiter,
+        ),
+        (
+            PatternName::Emphasis,
+            EMPH_PATTERN,
+            inline::paired_delimiter,
+        ),
+        (
+            PatternName::Literal,
+            LITERAL_PATTERN,
+            inline::paired_delimiter,
+        ),
+        (
+            PatternName::InlineTarget,
+            INLINE_TARGET_PATTERN,
+            inline::inline_target,
+        ),
+        (
+            PatternName::PhraseRef,
+            PHRASE_REF_PATTERN,
+            inline::phrase_ref,
+        ),
+        (
+            PatternName::Interpreted,
+            INTERPRETED_TEXT_PATTERN,
+            inline::interpreted_text,
+        ),
+        (
+            PatternName::FootNoteRef,
+            FOOTNOTE_REF_PATTERN,
+            inline::footnote_ref,
+        ),
+        (
+            PatternName::SimpleRef,
+            SIMPLE_REF_PATTERN,
+            inline::simple_ref,
+        ),
+        (
+            PatternName::SubstitutionRef,
+            SUBSTITUTION_REF_PATTERN,
+            inline::substitution_ref,
+        ),
+        // ### StandaloneHyperlink
+        //
+        // source: https://www.rfc-editor.org/rfc/rfc2396.txt, appendix B
+        //
+        // The capturing groups correspond to the following constructs:
+        //   $1 = http:
+        //   $2 = http
+        //   $3 = //www.ics.uci.edu
+        //   $4 = www.ics.uci.edu
+        //   $5 = /pub/ietf/uri/
+        //   $6 = <undefined>
+        //   $7 = <undefined>
+        //   $8 = #Related
+        //   $9 = Related
+        //
+        // where <undefined> indicates that the component is not present, as is
+        // the case for the query component in the above example.  Therefore, we
+        // can determine the value of the four components and fragment as
+        //
+        //   scheme    = $2
+        //   authority = $4
+        //   path      = $5
+        //   query     = $7
+        //   fragment  = $9
+        //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
+        (PatternName::StandaloneHyperlink, URI_PATTERN, inline::uri),
+        //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
+        (PatternName::Text, r"^(\S+)", inline::text),
+    ];
 }
 
+// ==================================
+// Patterns common to multiple states
+// ==================================
 
-  // ==================================
-  // Patterns common to multiple states
-  // ==================================
+/// #### ATTRIBUTION_PATTERN
+/// A pattern for matching attributions inside block quotes.
+pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
 
+/// #### BLANK_LINE_PATTERN
+/// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
+const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
 
-  /// #### ATTRIBUTION_PATTERN
-  /// A pattern for matching attributions inside block quotes.
-  pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
+/// #### BULLET_PATTERN
+/// A pattern for matching bullet list bullets.
+const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
-  /// #### BLANK_LINE_PATTERN
-  /// A pattern for matching blank lines, as in lines that contain nothing but whitespace.
-  const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
+/// A pattern for Arabic numerals with closing parentheses
+const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
+/// A pattern for Arabic numerals with a closing right parenthesis
+const ARABIC_RPAREN_PATTERN: &'static str = r"^(\s*)([0-9]+)\)(?: +|$)";
+/// A pattern for Arabic numerals with a closing period
+const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
 
+/// A pattern for lower case alphabetic numerals with closing parentheses
+const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
+/// A pattern for lower case alphabetic numerals with a closing right parenthesis
+const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
+/// A pattern for lower case alphabetic numerals with a closing period
+const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
 
-  /// #### BULLET_PATTERN
-  /// A pattern for matching bullet list bullets.
-  const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
+/// A pattern for upper case alphabetic numerals with closing parentheses
+const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
+/// A pattern for upper case alphabetic numerals with a closing right parenthesis
+const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
+/// A pattern for upper case alphabetic numerals with a closing period
+const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
 
-  /// A pattern for Arabic numerals with closing parentheses
-  const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing right parenthesis
-  const ARABIC_RPAREN_PATTERN: &'static str = r"^(\s*)([0-9]+)\)(?: +|$)";
-  /// A pattern for Arabic numerals with a closing period
-  const ARABIC_PERIOD_PATTERN: &'static str = r"^(\s*)([0-9]+)\.(?: +|$)";
+/// A pattern for lower Roman numerals with closing parentheses
+const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
+/// A pattern for lower Roman numerals with a closing right parenthesis
+const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
+/// A pattern for lower Roman numerals with a closing period
+const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
 
-  /// A pattern for lower case alphabetic numerals with closing parentheses
-  const LOWER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([a-z])\)(?: +|$)";
-  /// A pattern for lower case alphabetic numerals with a closing right parenthesis
-  const LOWER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([a-z])\)(?: +|$)";
-  /// A pattern for lower case alphabetic numerals with a closing period
-  const LOWER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([a-z])\.(?: +|$)";
+/// A pattern for upper Roman numerals with closing parentheses
+const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing right parenthesis
+const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing period
+const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
 
-  /// A pattern for upper case alphabetic numerals with closing parentheses
-  const UPPER_ALPHA_PARENS_PATTERN: &'static str = r"^(\s*)\(([A-Z])\)(?: +|$)";
-  /// A pattern for upper case alphabetic numerals with a closing right parenthesis
-  const UPPER_ALPHA_RPAREN_PATTERN: &'static str = r"^(\s*)([A-Z])\)(?: +|$)";
-  /// A pattern for upper case alphabetic numerals with a closing period
-  const UPPER_ALPHA_PERIOD_PATTERN: &'static str = r"^(\s*)([A-Z])\.(?: +|$)";
+/// A pattern for upper Roman numerals with closing parentheses
+const AUTO_ENUM_PARENS_PATTERN: &'static str = r"^(\s*)\((\#)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing right parenthesis
+const AUTO_ENUM_RPAREN_PATTERN: &'static str = r"^(\s*)(\#)\)(?: +|$)";
+/// A pattern for upper Roman numerals with a closing period
+const AUTO_ENUM_PERIOD_PATTERN: &'static str = r"^(\s*)(\#)\.(?: +|$)";
 
-  /// A pattern for lower Roman numerals with closing parentheses
-  const LOWER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for lower Roman numerals with a closing right parenthesis
-  const LOWER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\)(?: +|$)";
-  /// A pattern for lower Roman numerals with a closing period
-  const LOWER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([ivxlcdm]+)\.(?: +|$)";
+/// #### FIELD_MARKER_PATTERN
+/// A pattern that signifies the start of a field list, such as a bibliography.
+/// Colons inside field names `:field name:` must be escaped if followed by whitespace,
+/// as ": " signifies the end of a list marker.
+pub const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):([\S&&[^\\]]|\S.*?[\S&&[^\\]]):(?: +|$)";
 
-  /// A pattern for upper Roman numerals with closing parentheses
-  const UPPER_ROMAN_PARENS_PATTERN: &'static str = r"^(\s*)\(([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing right parenthesis
-  const UPPER_ROMAN_RPAREN_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing period
-  const UPPER_ROMAN_PERIOD_PATTERN: &'static str = r"^(\s*)([IVXLCDM]+)\.(?: +|$)";
+/// #### INDENTED_LITERAL_BLOCK_PATTERN
+/// A pattern for matching against an indented block of text when in `State::LiteralBlock`.
+const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
 
-  /// A pattern for upper Roman numerals with closing parentheses
-  const AUTO_ENUM_PARENS_PATTERN: &'static str = r"^(\s*)\((\#)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing right parenthesis
-  const AUTO_ENUM_RPAREN_PATTERN: &'static str = r"^(\s*)(\#)\)(?: +|$)";
-  /// A pattern for upper Roman numerals with a closing period
-  const AUTO_ENUM_PERIOD_PATTERN: &'static str = r"^(\s*)(\#)\.(?: +|$)";
+/// #### QUOTED_LITERAL_BLOCK_PATTERN
+/// A pattern for matching against an "quoted" block of text when in `State::LiteralBlock`.
+const QUOTED_LITERAL_BLOCK_PATTERN: &'static str =
+    r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
 
-  /// #### FIELD_MARKER_PATTERN
-  /// A pattern that signifies the start of a field list, such as a bibliography.
-  /// Colons inside field names `:field name:` must be escaped if followed by whitespace,
-  /// as ": " signifies the end of a list marker.
-  pub const FIELD_MARKER_PATTERN: &'static str = r"^(\s*):([\S&&[^\\]]|\S.*?[\S&&[^\\]]):(?: +|$)";
+// ========================
+// Explicit markup patterns
+// ========================
 
+/// #### MANUAL_FOOTNOTE_PATTERN
+/// A pattern for matching against manually numbered footnotes.
+const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
 
-  /// #### INDENTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an indented block of text when in `State::LiteralBlock`.
-  const INDENTED_LITERAL_BLOCK_PATTERN: &'static str = r"^(\s+)\S";
+/// #### AUTO_NUM_FOOTNOTE_PATTERN
+/// A footnote pattern with the symbol '#' for a label.
+/// This triggers automatic numbering for the footnote to be generated.
+const AUTO_NUM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#)\](?:[ ]+|$)";
 
+/// #### SIMPLE_NAME_FOOTNOTE_PATTERN
+/// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
+/// multiple times, as there is a simple reference name pointing to the footnote.
+const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+\[\#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
-  /// #### QUOTED_LITERAL_BLOCK_PATTERN
-  /// A pattern for matching against an "quoted" block of text when in `State::LiteralBlock`.
-  const QUOTED_LITERAL_BLOCK_PATTERN: &'static str = r#"^(\s*)(!|"|#|\$|%|&|'|\(|\)|\*|\+|,|-|\.|/|:|;|<|=|>|\?|@|\[|\\|\]|\^|_|`|\{|\||\}|~)"#;
+/// #### AUTO_SYM_FOOTNOTE_PATTERN
+/// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
+const AUTO_SYM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\*)\](?:[ ]+|$)";
 
+/// #### CITATION_PATTERN
+/// A pattern for matching against citations.
+/// Similar to `FOOTNOTE_PATTERN`, but only
+/// recognizes simple reference names in labels.
+const CITATION_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]*(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
 
-  // ========================
-  // Explicit markup patterns
-  // ========================
+/// #### HYPERLINK_TARGET_PATTERN
+/// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
+/// with and underscore `_`, the latter of which signifies an anonymous link.
+const HYPERLINK_TARGET_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+_([a-zA-Z0-9][a-zA-Z0-9 ]*(?:[-+._:][a-zA-Z0-9 ]+)*[a-zA-Z0-9]+|_):(?:[ ]+|$)";
 
-  /// #### MANUAL_FOOTNOTE_PATTERN
-  /// A pattern for matching against manually numbered footnotes.
-  const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
+/// #### SUBSTITUTION_DEF_PATTERN
+/// A pattern for matching substitution definitions, a.k.a. macros.
+const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
 
-  /// #### AUTO_NUM_FOOTNOTE_PATTERN
-  /// A footnote pattern with the symbol '#' for a label.
-  /// This triggers automatic numbering for the footnote to be generated.
-  const AUTO_NUM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\#)\](?:[ ]+|$)";
+/// #### DIRECTIVE_PATTERN
+/// A pattern for matching directives. The directive label is used to determine the type of directive
+/// inside a transition function. The label itself is a simple reference name (an identifier).
+const DIRECTIVE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
 
-  /// #### SIMPLE_NAME_FOOTNOTE_PATTERN
-  /// Similar to `AUTO_NUM_FOONOTE_PATTERN`, except allows referencing the same footnote
-  /// multiple times, as there is a simple reference name pointing to the footnote.
-  const SIMPLE_NAME_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[\#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
+/// #### COMMENT_PATTERN
+///
+/// A pattern for recognizing comments, after no other explicit markup pattern has matched.
+const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
 
-  /// #### AUTO_SYM_FOOTNOTE_PATTERN
-  /// Prompts the generation of symbolic footnotes, with automatic reference mark generation.
-  const AUTO_SYM_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\*)\](?:[ ]+|$)";
+/// #### LINE_PATTERN
+/// A pattern for recognizing lines related to section titles and transitions.
+pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
 
-
-  /// #### CITATION_PATTERN
-  /// A pattern for matching against citations.
-  /// Similar to `FOOTNOTE_PATTERN`, but only
-  /// recognizes simple reference names in labels.
-  const CITATION_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[([a-zA-Z][a-zA-Z0-9]*(?:[-+._:][a-zA-Z0-9]+)*)\](?:[ ]+|$)";
-
-
-  /// #### HYPERLINK_TARGET_PATTERN
-  /// A pattern for matching hyperlink targets. A hyperlink target may either be labeled with a simple reference name or
-  /// with and underscore `_`, the latter of which signifies an anonymous link.
-  const HYPERLINK_TARGET_PATTERN: &'static str = r"^(\s*)\.\.[ ]+_([a-zA-Z0-9][a-zA-Z0-9 ]*(?:[-+._:][a-zA-Z0-9 ]+)*[a-zA-Z0-9]+|_):(?:[ ]+|$)";
-
-
-  /// #### SUBSTITUTION_DEF_PATTERN
-  /// A pattern for matching substitution definitions, a.k.a. macros.
-  const SUBSTITUTION_DEF_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\|(\S|\S.*\S)\| ::(?:[ ]+|$)";
-
-
-  /// #### DIRECTIVE_PATTERN
-  /// A pattern for matching directives. The directive label is used to determine the type of directive
-  /// inside a transition function. The label itself is a simple reference name (an identifier).
-  const DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)[ ]?::(?:[ ]+|$)";
-
-  /// #### COMMENT_PATTERN
-  ///
-  /// A pattern for recognizing comments, after no other explicit markup pattern has matched.
-  const COMMENT_PATTERN: &'static str = r"^(\s*)\.\.(?: +|$)";
-
-  /// #### LINE_PATTERN
-  /// A pattern for recognizing lines related to section titles and transitions.
-  pub const LINE_PATTERN: &'static str = r#"^(!+|"+|#+|\$+|%+|&+|'+|\(+|\)+|\*+|\++|,+|-+|\.+|/+|:+|;+|<+|=+|>+|\?+|@+|\[+|\\+|\]+|\^+|_+|`+|\{+|\|+|\}+|~+) *$"#;
-
-  /// #### TEXT_PATTERN
-  /// A pattern for detecting any text, possibly beginning with whitespace.
-  /// This pattern should generally be tested against only after all other
-  /// possibilities have been eliminated.
-  pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
+/// #### TEXT_PATTERN
+/// A pattern for detecting any text, possibly beginning with whitespace.
+/// This pattern should generally be tested against only after all other
+/// possibilities have been eliminated.
+pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
 
 // =================
 //  Inline patterns
@@ -620,7 +787,6 @@ const CITATION_REF_PATTERN: &str = r#"(?x)^"
   )
 "#;
 
-
 const SUBSTITUTION_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
@@ -705,7 +871,6 @@ const URI_PATTERN: &str = r#"(?x)^
 )
 "#;
 
-
 // ======================
 //  A+ specific patterns
 // ======================
@@ -715,9 +880,9 @@ const URI_PATTERN: &str = r#"(?x)^
 /// A+ directives, such as points of interest.
 const APLUS_COL_BREAK_PATTERN: &str = r#"^(\s+)::newcol"#;
 
-
 /// ### APLUS_PICK_ONE_PATTERN
-const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+(pick-one|pick-any|freetext)::(?:[ ]+|$)";
+const APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN: &'static str =
+    r"^(\s*)\.\.[ ]+(pick-one|pick-any|freetext)::(?:[ ]+|$)";
 
 /// ### APLUS_PICK_ANY_PATTERN
 const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$)";
@@ -729,7 +894,8 @@ const APLUS_PICK_ANY_PATTERN: &'static str = r"^(\s*)\.\.[ ]+pick-any::(?:[ ]+|$
 /// Initially selected options may be set with `+`.
 /// The initially selected options are pre-selected when the exercise is loaded.
 /// The `+` character is written before `*` or `?` if they are combined.
-const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
+const APLUS_PICK_ONE_CHOICE_PATTERN: &'static str =
+    r"^(\s*)(?P<pre_selected>\+)?(?P<correct>\*)?(?P<enumerator>[a-zA-Z0-9])\.(?:[ ]+|$)";
 
 /// ### APLUS_PICK_ANY_CHOICE_PATTERN
 /// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.

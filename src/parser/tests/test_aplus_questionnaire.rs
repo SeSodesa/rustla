@@ -4,16 +4,13 @@
 ///
 /// author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
 use super::*;
 
 #[cfg(test)]
-
-
 #[test]
-fn aplus_questionnaire_01 () {
-
-  let src = String::from(r#"
+fn aplus_questionnaire_01() {
+    let src = String::from(
+        r#"
 .. questionnaire:: 1 A
   :submissions: 4
   :points-to-pass: 0
@@ -79,31 +76,65 @@ fn aplus_questionnaire_01 () {
     The model solution is a regular expression.
 
     red|blue
-  "#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  "#,
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_data() {  } else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(1).shared_data() {  } else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(3).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusPickAny { .. } = doctree.shared_child(0).shared_child(4).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(5).shared_data() {  } else { panic!() }
-  if let TreeNodeType::AplusFreeText { .. } = doctree.shared_child(0).shared_child(6).shared_data() {  } else { panic!() }
+    if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_data() {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(1).shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_data() {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(3).shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickAny { .. } = doctree.shared_child(0).shared_child(4).shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusFreeText { .. } =
+        doctree.shared_child(0).shared_child(5).shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusFreeText { .. } =
+        doctree.shared_child(0).shared_child(6).shared_data()
+    {
+    } else {
+        panic!()
+    }
 }
 
-
 #[test]
-fn aplus_questionnaire_02 () {
-
-  let src = String::from(r#"
+fn aplus_questionnaire_02() {
+    let src = String::from(
+        r#"
 (K) Suostumus anonyymin kurssidatan tutkimuskäyttöön
 ====================================================
 
@@ -132,20 +163,75 @@ Kurssi pyytää siten jokaiselta opiskelijalta suostumuksen datan käyttöön.
 
 
 
-"#).lines().map(|s| s.to_string()).collect::<Vec<String>>();
+"#,
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_child(2).shared_data() {} else { panic!() }
-  if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_data() {} else { panic!() }
-  if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(0).shared_data() {} else { panic!() }
-  if let TreeNodeType::AplusPickChoices { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_data() {} else { panic!() }
-  if let TreeNodeType::AplusPickChoice { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_child(0).shared_data() {} else { panic!() }
-  if let TreeNodeType::AplusPickChoice { .. } = doctree.shared_child(0).shared_child(2).shared_child(0).shared_child(1).shared_child(1).shared_data() {} else { panic!() }
+    if let TreeNodeType::AplusQuestionnaire { .. } =
+        doctree.shared_child(0).shared_child(2).shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickOne { .. } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_child(0)
+        .shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_child(0)
+        .shared_child(0)
+        .shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickChoices { .. } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickChoice { .. } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(0)
+        .shared_data()
+    {
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::AplusPickChoice { .. } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(1)
+        .shared_data()
+    {
+    } else {
+        panic!()
+    }
 }

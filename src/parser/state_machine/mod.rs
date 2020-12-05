@@ -5,8 +5,6 @@
 ///
 /// Author: Santtu Söderholm
 /// email:  santtu.soderholm@tuni.fi
-
-
 // ===============================================
 // Submodules for namespacing transition functions
 // ===============================================
@@ -23,16 +21,15 @@ mod inline;
 mod literal_block;
 pub mod transitions;
 mod unknown_transitions;
-use transitions::{LINE_PATTERN, TEXT_PATTERN, FIELD_MARKER_PATTERN};
+use transitions::{FIELD_MARKER_PATTERN, LINE_PATTERN, TEXT_PATTERN};
 
 use std::collections::HashMap;
 
-use regex;
 use lazy_static::lazy_static;
+use regex;
 
 use super::*;
 use crate::common::EnumAsInt;
-
 
 /// ### StateMachine
 /// An enum of `MachineWithState`s.
@@ -46,214 +43,212 @@ use crate::common::EnumAsInt;
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum State {
+    /// #### Admonition
+    /// A state for parsing body nodes inside admonitions.
+    Admonition,
 
-  /// #### Admonition
-  /// A state for parsing body nodes inside admonitions.
-  Admonition,
+    /// #### AplusMultiCol
+    ///
+    /// A state for detecting reStructuredText & Sphinx body elements,
+    /// in addition to column breaks in the form of `::newcol` for A+ nodes that support them.
+    /// These include the Point of Interest directive.
+    AplusMultiCol,
 
-  /// #### AplusMultiCol
-  ///
-  /// A state for detecting reStructuredText & Sphinx body elements,
-  /// in addition to column breaks in the form of `::newcol` for A+ nodes that support them.
-  /// These include the Point of Interest directive.
-  AplusMultiCol,
+    /// #### AplusQuestionnaire
+    ///
+    /// A state for recognizing the sub-directives:
+    /// 1. `pick-one`,
+    /// 2. `pick-any` and
+    /// 3. `freetext`
+    AplusQuestionnaire,
 
-  /// #### AplusQuestionnaire
-  ///
-  /// A state for recognizing the sub-directives:
-  /// 1. `pick-one`,
-  /// 2. `pick-any` and
-  /// 3. `freetext`
-  AplusQuestionnaire,
+    /// #### AplusPickOne
+    ///
+    /// A state for detecting choices and assignments inside a A+ questionnaire
+    /// subdirective `pick-one`.
+    AplusPickOne,
 
-  /// #### AplusPickOne
-  ///
-  /// A state for detecting choices and assignments inside a A+ questionnaire
-  /// subdirective `pick-one`.
-  AplusPickOne,
+    /// #### AplusPickAny
+    ///
+    /// A state for detecting choices and assignments inside a A+ questionnaire
+    /// subdirective `pick-any`.
+    AplusPickAny,
 
-  /// #### AplusPickAny
-  ///
-  /// A state for detecting choices and assignments inside a A+ questionnaire
-  /// subdirective `pick-any`.
-  AplusPickAny,
+    /// #### Body
+    /// A state for recognizing body elements such as lists or footnotes when focused on document root.
+    Body,
 
-  /// #### Body
-  /// A state for recognizing body elements such as lists or footnotes when focused on document root.
-  Body,
+    /// #### Section
+    /// A state for detecting body elements inside a section.
+    Section,
 
-  /// #### Section
-  /// A state for detecting body elements inside a section.
-  Section,
+    /// #### BlockQuote
+    /// A state for recognizing body elements inside a block quote.
+    /// In addition to normal body elements, attributions are also
+    /// recognized as such in this state.
+    BlockQuote,
 
-  /// #### BlockQuote
-  /// A state for recognizing body elements inside a block quote.
-  /// In addition to normal body elements, attributions are also
-  /// recognized as such in this state.
-  BlockQuote,
+    /// #### BulletList
+    /// In this state, the parser only recognizes empty lines and bullet list items.
+    BulletList,
 
-  /// #### BulletList
-  /// In this state, the parser only recognizes empty lines and bullet list items.
-  BulletList,
+    /// #### Citation
+    /// Citation nodes may contain arbitrary body elements.
+    /// This state is therefore reserved for recognizing them when focused on a citation node.
+    Citation,
 
-  /// #### Citation
-  /// Citation nodes may contain arbitrary body elements.
-  /// This state is therefore reserved for recognizing them when focused on a citation node.
-  Citation,
+    /// ### DefinitionList
+    /// Definition lists may only contain empty lines and definition list items.
+    DefinitionList,
 
-  /// ### DefinitionList
-  /// Definition lists may only contain empty lines and definition list items.
-  DefinitionList,
+    /// #### EnumeratedList
+    /// When in this state, the parser only recognizes empty lines and enumerated list items.
+    EnumeratedList,
 
-  /// #### EnumeratedList
-  /// When in this state, the parser only recognizes empty lines and enumerated list items.
-  EnumeratedList,
+    HyperlinkTarget,
 
+    /// #### ListItem
+    /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
+    /// This state is reserved for recognizing them when focused on one of the list item type nodes.
+    ListItem,
 
-  HyperlinkTarget,
+    /// #### FieldList
+    /// When focused on a field list node, the parser only recognizes empty lines and field list items.
+    FieldList,
 
-  /// #### ListItem
-  /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
-  /// This state is reserved for recognizing them when focused on one of the list item type nodes.
-  ListItem,
+    Figure,
 
-  /// #### FieldList
-  /// When focused on a field list node, the parser only recognizes empty lines and field list items.
-  FieldList,
+    /// #### Footnote
+    /// Footnotes can contain arbitrary body elements.
+    /// This state is reserved for recognizing them when focused on a footnote node.
+    Footnote,
 
-  Figure,
+    /// #### HyperlinkTarget
+    /// There are 3 different types of hyperlink targets:
+    ///
+    /// 1. *internal*, which link to body elements that directly follow them,
+    /// 2. *external*, that reference external URIs and
+    /// 3. *indirect*, which reference other hyperlink targets inside the same document.
+    ///
+    /// ??? Normally, an external or indirect hyperlink target would simply be a node on its own, that simply contains a reference label
+    /// of some kind. However, chained *internal* hyperlinks all reference the same target node,
+    /// so a state of its own (this one) is reserved for parsing them until a node of a different kind (including other types
+    /// of hyperlink targets) is encountered. Once this happens, all of the internal hyperlinks are set to point
+    /// to this same target node. ???
+    InternalHyperlinkTarget,
 
-  /// #### Footnote
-  /// Footnotes can contain arbitrary body elements.
-  /// This state is reserved for recognizing them when focused on a footnote node.
-  Footnote,
+    /// #### OptionList
+    /// When focused on an option list, only empty lines and option list items are recognized.
+    /// This state is reserved for that purpose.
+    OptionList,
 
-  /// #### HyperlinkTarget
-  /// There are 3 different types of hyperlink targets:
-  ///
-  /// 1. *internal*, which link to body elements that directly follow them,
-  /// 2. *external*, that reference external URIs and
-  /// 3. *indirect*, which reference other hyperlink targets inside the same document.
-  ///
-  /// ??? Normally, an external or indirect hyperlink target would simply be a node on its own, that simply contains a reference label
-  /// of some kind. However, chained *internal* hyperlinks all reference the same target node,
-  /// so a state of its own (this one) is reserved for parsing them until a node of a different kind (including other types
-  /// of hyperlink targets) is encountered. Once this happens, all of the internal hyperlinks are set to point
-  /// to this same target node. ???
-  InternalHyperlinkTarget,
+    /// #### LineBlock
+    /// Empty and line block lines (lines beginning with '`|`') are recognized in this state.
+    LineBlock,
 
-  /// #### OptionList
-  /// When focused on an option list, only empty lines and option list items are recognized.
-  /// This state is reserved for that purpose.
-  OptionList,
+    /// #### ListTable
+    /// A state for recognizing bullet list items inside a ListTable
+    ListTable,
 
-  /// #### LineBlock
-  /// Empty and line block lines (lines beginning with '`|`') are recognized in this state.
-  LineBlock,
+    /// #### ExtensionOptions
+    /// A state for parsing field lists inside diretives. Field lists located inside directive nodes
+    /// work as directive parameters or settings.
+    ExtensionOptions,
 
-  /// #### ListTable
-  /// A state for recognizing bullet list items inside a ListTable
-  ListTable,
+    /// #### Line
+    /// A state for parsing section titles and document transitions (a.k.a. `\hrulefill` commands in LaTeX terms).
+    Line,
 
-  /// #### ExtensionOptions
-  /// A state for parsing field lists inside diretives. Field lists located inside directive nodes
-  /// work as directive parameters or settings.
-  ExtensionOptions,
+    /// #### LiteralBlock
+    /// A state for parsing empty lines and literal blocks of text.
+    /// Literal blocks are (non-contiguous) indented or "quoted" blocks of text that
+    /// are  preceded by a paragraph ending in a `::`.
+    LiteralBlock,
 
-  /// #### Line
-  /// A state for parsing section titles and document transitions (a.k.a. `\hrulefill` commands in LaTeX terms).
-  Line,
+    /// #### Failure
+    /// An explicit failure state. Allows explicit signalling of transition failures.
+    Failure,
 
-  /// #### LiteralBlock
-  /// A state for parsing empty lines and literal blocks of text.
-  /// Literal blocks are (non-contiguous) indented or "quoted" blocks of text that
-  /// are  preceded by a paragraph ending in a `::`.
-  LiteralBlock,
-
-  /// #### Failure
-  /// An explicit failure state. Allows explicit signalling of transition failures.
-  Failure,
-
-  /// #### EOF
-  /// An End of File state. Could have also been named EOI, as in end of input,
-  /// as this state is transitioned to when a parser reaches the end of its source input:
-  /// This does not neecssarily correspond to the end of the given file during nested parsing sessions,
-  /// as nested parsers are usually limited to a parsijng single block of text behind a node indentifier.
-  EOF
+    /// #### EOF
+    /// An End of File state. Could have also been named EOI, as in end of input,
+    /// as this state is transitioned to when a parser reaches the end of its source input:
+    /// This does not neecssarily correspond to the end of the given file during nested parsing sessions,
+    /// as nested parsers are usually limited to a parsijng single block of text behind a node indentifier.
+    EOF,
 }
-
 
 // ====================
 // Statemachine methods
 // ====================
 impl State {
-
-  /// ### to_failure
-  /// Transitions a `StateMachine` into a `Failure` state using the From trait,
-  /// the implementation of which automatically implements the Into trait.
-  pub fn to_failure (self) -> Self {
-    match self {
-      _ => State::Failure
+    /// ### to_failure
+    /// Transitions a `StateMachine` into a `Failure` state using the From trait,
+    /// the implementation of which automatically implements the Into trait.
+    pub fn to_failure(self) -> Self {
+        match self {
+            _ => State::Failure,
+        }
     }
-  }
 
-  /// ### get_transitions
-  /// Retrieves the list of transitions based on a given `StateMachine` variant
-  /// using a `match` statement. First checks for end states that don't contain transitions,
-  /// such as `EOF` or `Failure` and if these are not matched,
-  /// retrieves a list of transitions from the `TRANSITION_MAP`.
-  pub fn get_transitions (&self, line_cursor: &LineCursor) -> Result<&Vec<Transition>, &'static str> {
-
-    match self {
-      State::EOF         => Err("Already moved past EOF. No transitions to perform.\n"),
-      State::Failure     => Err("Failure state has no transitions\n"),
-      State::Section
-      | State::ListItem
-      | State::Footnote
-      | State::Citation
-      | Self::Admonition
-      | Self::Figure            => Ok(TRANSITION_MAP.get(&State::Body).unwrap()),
-      _                         => if let Some(transition_table) = TRANSITION_MAP.get(self) {
-        Ok(transition_table)
-      } else {
-        panic!("Found no transition table for state {:#?} on line {}", self, line_cursor.sum_total())
-      },
+    /// ### get_transitions
+    /// Retrieves the list of transitions based on a given `StateMachine` variant
+    /// using a `match` statement. First checks for end states that don't contain transitions,
+    /// such as `EOF` or `Failure` and if these are not matched,
+    /// retrieves a list of transitions from the `TRANSITION_MAP`.
+    pub fn get_transitions(
+        &self,
+        line_cursor: &LineCursor,
+    ) -> Result<&Vec<Transition>, &'static str> {
+        match self {
+            State::EOF => Err("Already moved past EOF. No transitions to perform.\n"),
+            State::Failure => Err("Failure state has no transitions\n"),
+            State::Section
+            | State::ListItem
+            | State::Footnote
+            | State::Citation
+            | Self::Admonition
+            | Self::Figure => Ok(TRANSITION_MAP.get(&State::Body).unwrap()),
+            _ => {
+                if let Some(transition_table) = TRANSITION_MAP.get(self) {
+                    Ok(transition_table)
+                } else {
+                    panic!(
+                        "Found no transition table for state {:#?} on line {}",
+                        self,
+                        line_cursor.sum_total()
+                    )
+                }
+            }
+        }
     }
-  }
 }
-
 
 /// =================================
 /// StateMachine associated functions
 /// =================================
 impl State {
+    /// ### compile_state_transitions
+    /// Takes in a reference/slice to an associated array of uncompiled transitions
+    /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
+    /// in palce of the regex patterns.
+    ///
+    /// Error handling needs to be added.
+    fn compile_state_transitions(transitions: &[UncompiledTransition]) -> Vec<Transition> {
+        let mut compiled_transitions = Vec::with_capacity(transitions.len());
 
-  /// ### compile_state_transitions
-  /// Takes in a reference/slice to an associated array of uncompiled transitions
-  /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
-  /// in palce of the regex patterns.
-  ///
-  /// Error handling needs to be added.
-  fn compile_state_transitions (transitions: &[UncompiledTransition]) -> Vec<Transition> {
+        for (pat_name, expr, fun) in transitions.iter() {
+            let r = regex::Regex::new(expr).unwrap();
+            compiled_transitions.push((*pat_name, r, *fun));
+        }
 
-    let mut compiled_transitions = Vec::with_capacity(transitions.len());
-
-    for (pat_name, expr, fun) in transitions.iter() {
-      let r = regex::Regex::new(expr).unwrap();
-      compiled_transitions.push((*pat_name, r, *fun));
+        compiled_transitions
     }
-
-    compiled_transitions
-  }
-
 }
 
 /// =================================
 /// StateMachine associated constants
 /// =================================
-impl State {
-
-}
+impl State {}
 
 lazy_static! {
 
@@ -350,27 +345,43 @@ lazy_static! {
 }
 
 impl Parser {
-  /// Checks whether the line following the current one allows for the construction of an enumerate list item.
-  /// If successful, returns `Ok(DocTree)`, else returns
-  fn is_enumerated_list_item (
+    /// Checks whether the line following the current one allows for the construction of an enumerate list item.
+    /// If successful, returns `Ok(DocTree)`, else returns
+    fn is_enumerated_list_item(
+        doctree: DocTree,
+        src_lines: &Vec<String>,
+        line_cursor: &mut LineCursor,
+        captures: &regex::Captures,
+        section_level: &mut usize,
+        base_indent: usize,
+        detected_enumerator_indent: usize,
+        detected_number: usize,
+        detected_kind: EnumKind,
+        detected_delims: EnumDelims,
+        pattern_name: &PatternName,
+        list_kind: Option<&EnumKind>,
+        in_list_item: bool,
+        list_item_number: Option<usize>,
+        list_start_index: Option<usize>,
+    ) -> Result<DocTree, TransitionResult> {
+        if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
+            let line_indent =
+                next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
 
-    doctree: DocTree, src_lines: &Vec<String>, line_cursor: &mut LineCursor, captures: &regex::Captures,
-    section_level: &mut usize, base_indent: usize, detected_enumerator_indent: usize, detected_number: usize,
-    detected_kind: EnumKind, detected_delims: EnumDelims, pattern_name: &PatternName,
-    list_kind: Option<&EnumKind>, in_list_item: bool, list_item_number: Option<usize>, list_start_index: Option<usize>
-  ) -> Result<DocTree, TransitionResult> {
-
-    if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
-
-      let line_indent = next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-
-      if ! next_line.is_empty() && line_indent <= detected_enumerator_indent {
-
-        return Err(crate::parser::state_machine::body::text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name))
-
-      } else if let Some(next_captures) = crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line) {
-
-        let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
+            if !next_line.is_empty() && line_indent <= detected_enumerator_indent {
+                return Err(crate::parser::state_machine::body::text(
+                    src_lines,
+                    base_indent,
+                    section_level,
+                    line_cursor,
+                    Some(doctree),
+                    captures,
+                    pattern_name,
+                ));
+            } else if let Some(next_captures) =
+                crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line)
+            {
+                let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
           Some((number, kind, delims)) => (number, kind, delims),
           None => return Err(
             TransitionResult::Failure {
@@ -379,19 +390,28 @@ impl Parser {
             }
           )
         };
-        if ! (next_number == detected_number + 1 && next_kind == detected_kind && next_delims == detected_delims) {
-          eprintln!("Non-matching enumerator n next line...");
-          return Err(crate::parser::state_machine::body::text (src_lines, base_indent, section_level, line_cursor, Some(doctree), captures, pattern_name))
+                if !(next_number == detected_number + 1
+                    && next_kind == detected_kind
+                    && next_delims == detected_delims)
+                {
+                    eprintln!("Non-matching enumerator n next line...");
+                    return Err(crate::parser::state_machine::body::text(
+                        src_lines,
+                        base_indent,
+                        section_level,
+                        line_cursor,
+                        Some(doctree),
+                        captures,
+                        pattern_name,
+                    ));
+                } else {
+                    return Ok(doctree);
+                }
+            } else {
+                Ok(doctree)
+            }
         } else {
-          return Ok(doctree)
+            Ok(doctree)
         }
-      } else {
-
-        Ok(doctree)
-      }
-    } else {
-
-      Ok(doctree)
     }
-  }
 }

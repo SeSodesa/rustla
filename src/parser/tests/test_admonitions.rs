@@ -1,14 +1,12 @@
 /// ## test_admonitions
 /// A submodule for admonition unit tests
-
 use super::*;
 
 #[cfg(test)]
-
-
 #[test]
-fn standard_admonition_01 () {
-  let src = String::from("
+fn standard_admonition_01() {
+    let src = String::from(
+        "
 .. note:: This is a note admonition.
   This is the second line of the first paragraph.
 
@@ -24,66 +22,80 @@ fn standard_admonition_01 () {
   This paragraph forms the contents of the tip admonition above.
   If content is not found, the parser will panic.
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  match doctree.shared_child(0).shared_data() {
-    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
-      match (classes, name, variant) {
-        (None, None, AdmonitionType::Note) => {}
-        _ => panic!()
-      }
-    },
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_data() {
+        TreeNodeType::Admonition {
+            content_indent,
+            classes,
+            name,
+            variant,
+        } => match (classes, name, variant) {
+            (None, None, AdmonitionType::Note) => {}
+            _ => panic!(),
+        },
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph {..} => {},
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(0).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(1).shared_data() {
-    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
-      match (classes, name, variant) {
-        (None, None, AdmonitionType::Warning) => {}
-        _ => panic!()
-      }
-    },
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_data() {
+        TreeNodeType::Admonition {
+            content_indent,
+            classes,
+            name,
+            variant,
+        } => match (classes, name, variant) {
+            (None, None, AdmonitionType::Warning) => {}
+            _ => panic!(),
+        },
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(1).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph {..} => {},
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_child(0).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(2).shared_data() {
-    TreeNodeType::Admonition { content_indent, classes, name, variant } => {
-      match (classes, name, variant) {
-        (Some(class), Some(name), AdmonitionType::Tip) if class.as_str() == "class" && name.as_str() == "test" => {}
-        _ => panic!()
-      }
-    },
-    _ => panic!()
-  }
+    match doctree.shared_child(2).shared_data() {
+        TreeNodeType::Admonition {
+            content_indent,
+            classes,
+            name,
+            variant,
+        } => match (classes, name, variant) {
+            (Some(class), Some(name), AdmonitionType::Tip)
+                if class.as_str() == "class" && name.as_str() == "test" => {}
+            _ => panic!(),
+        },
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(2).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph {..} => {},
-    _ => panic!()
-  }
+    match doctree.shared_child(2).shared_child(0).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 }
 
-
 #[test]
-fn generic_admonition_01 () {
-  let src = String::from("
+fn generic_admonition_01() {
+    let src = String::from(
+        "
 .. admonition:: This is a generic admonition with the argument on the first
     line after the directive marker and extending on the following line as well.
     :option1: This is not recognized as an admonition option, only \"class\" and \"name\" are valid.
@@ -94,17 +106,21 @@ fn generic_admonition_01 () {
 
 This paragraph no longer belongs to the above admonition.
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-  match doctree.shared_child(0).shared_data() {
+    match doctree.shared_child(0).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionType::Admonition {title}) if title.as_str() == "This is a generic admonition with the argument on the first line after the directive marker and extending on the following line as well." && classes.is_none() && name.as_deref().unwrap() == "hyperref target name" => {}
@@ -114,21 +130,21 @@ This paragraph no longer belongs to the above admonition.
     _ => panic!()
   }
 
-  match doctree.shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(0).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(1).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(1).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 }
 
-
 #[test]
-fn generic_admonition_02 () {
-  let src = String::from("
+fn generic_admonition_02() {
+    let src = String::from(
+        "
 .. admonition::
   This is a generic admonition, the argument of which starts on
   the line following the directive marker.
@@ -142,18 +158,21 @@ fn generic_admonition_02 () {
   - followed by
   - a bullet list
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+  ",
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
 
-  let mut doctree = DocTree::new(PathBuf::from("test"));
+    let mut doctree = DocTree::new(PathBuf::from("test"));
 
-  let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
 
-  doctree = parser.parse().unwrap_tree();
-  doctree = doctree.walk_to_root();
-  doctree.print_tree();
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
-
-  match doctree.shared_child(0).shared_data() {
+    match doctree.shared_child(0).shared_data() {
     TreeNodeType::Admonition { content_indent, classes, name, variant } => {
       match (classes, name, variant) {
         (classes, name, AdmonitionType::Admonition { title }) if title.as_str() == "This is a generic admonition, the argument of which starts on the line following the directive marker." && classes.as_deref().unwrap() == "options start here" && name.as_deref().unwrap() == "here is a reference name" => {}
@@ -163,23 +182,33 @@ fn generic_admonition_02 () {
     _ => panic!()
   }
 
-  match doctree.shared_child(0).shared_child(0).shared_data() {
-    TreeNodeType::Paragraph { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(0).shared_data() {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(1).shared_data() {
-    TreeNodeType::BulletList { .. } => {}
-    _ => panic!()
-  }
+    match doctree.shared_child(0).shared_child(1).shared_data() {
+        TreeNodeType::BulletList { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
-    TreeNodeType::BulletListItem { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(0)
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { .. } => {}
+        _ => panic!(),
+    }
 
-  match doctree.shared_child(0).shared_child(1).shared_child(1).shared_data() {
-    TreeNodeType::BulletListItem { .. } => {}
-    _ => panic!()
-  }
+    match doctree
+        .shared_child(0)
+        .shared_child(1)
+        .shared_child(1)
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { .. } => {}
+        _ => panic!(),
+    }
 }
