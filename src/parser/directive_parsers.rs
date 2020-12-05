@@ -749,10 +749,8 @@ impl Parser {
             String::new()
         };
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (header_rows, stub_columns, width, widths, class, name, align) =
-            if let Some(mut options) = options {
+            if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
                 let header_rows = options.remove("header-rows");
                 let stub_columns = options.remove("stub-columns");
                 let width = options.remove("width");
@@ -2140,8 +2138,6 @@ impl Parser {
             *points_from_children += points;
         }
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (
             class,
             required,
@@ -2150,7 +2146,7 @@ impl Parser {
             randomized,
             correct_count,
             preserve_questions_between_attempts,
-        ) = if let Some(mut options) = options {
+        ) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
             let class = options.remove("class");
             let required = options.remove("required");
             let key = options.remove("key");
@@ -2608,9 +2604,7 @@ impl Parser {
             *points_from_children += points;
         }
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
-        let (class, required, key, length, height) = if let Some(mut options) = options {
+        let (class, required, key, length, height) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
             let class = options.remove("class");
             let required = options.remove("required");
             let key = options.remove("key");
@@ -2923,8 +2917,6 @@ impl Parser {
 
         Parser::skip_empty_lines(src_lines, line_cursor);
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (
             config,
             submissions,
@@ -2944,7 +2936,7 @@ impl Parser {
             lti_resource_link_id,
             lti_open_in_iframe,
             lti_aplus_get_and_post,
-        ) = if let Some(mut options) = options {
+        ) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
             let config = options.remove("config");
             let submissions = options.remove("submissions");
             let points_to_pass = options.remove("points-to-pass");
@@ -3174,10 +3166,8 @@ impl Parser {
       };
         };
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (title, default, class, width, height, clear, input_type, file) =
-            if let Some(mut options) = options {
+            if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
                 let title = options.remove("title");
                 let default = options.remove("default");
                 let class = options.remove("class");
@@ -3318,8 +3308,6 @@ impl Parser {
       };
         };
 
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (
             config,
             inputs,
@@ -3332,7 +3320,7 @@ impl Parser {
             submissions,
             scale_size,
             status,
-        ) = if let Some(mut options) = options {
+        ) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
             let config = options.remove("config");
             let inputs = options.remove("inputs");
             let title = options.remove("title");
@@ -3510,7 +3498,6 @@ impl Parser {
             Some(first_indent),
             empty_after_marker,
         );
-        let options = Parser::scan_directive_options(src_lines, line_cursor, body_indent);
 
         // Read recognized options
         let (
@@ -3525,7 +3512,7 @@ impl Parser {
             not_in_slides,
             not_in_book,
             no_poi_box,
-        ) = if let Some(mut options) = options {
+        ) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
             let id = options.remove("id");
             let previous = options.remove("previous");
             let next = options.remove("next");
