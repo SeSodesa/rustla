@@ -54,27 +54,10 @@ pub fn unicode_text_to_latex(utf_str: &str) -> String {
             c1
         };
 
-        let space = if let Some(c) = char_iter.peek() {
+        let space_based_on_next_char = if let Some(c) = char_iter.peek() {
             if (*c).is_whitespace()
                 || *c == '\\'
-                || TeXCategory::Other.symbol_table().iter().any(|sym| c == sym)
-                || TeXCategory::SuperScript
-                    .symbol_table()
-                    .iter()
-                    .any(|sym| c == sym)
-                || TeXCategory::SubScript
-                    .symbol_table()
-                    .iter()
-                    .any(|sym| c == sym)
-                || TeXCategory::StartGroup
-                    .symbol_table()
-                    .iter()
-                    .any(|sym| c == sym)
-                || TeXCategory::EndGroup
-                    .symbol_table()
-                    .iter()
-                    .any(|sym| c == sym)
-            {
+                || ! (*c).is_ascii_alphabetic() {
                 ""
             } else {
                 " "
@@ -84,7 +67,7 @@ pub fn unicode_text_to_latex(utf_str: &str) -> String {
         };
 
         if let Some(latex_str) = UTF8_TEXT_TO_LATEX_MAP.get(&c1) {
-            latex_string = latex_string + latex_str + space;
+            latex_string = latex_string + latex_str + space_based_on_next_char;
         } else {
             latex_string.push(c1);
         }
