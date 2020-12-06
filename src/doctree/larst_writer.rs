@@ -117,7 +117,7 @@ impl TreeZipper {
 }
 
 impl TreeNode {
-    /// ### write_to_larst_file
+
     /// Recursively writes a node and its children (and the children of those, etc.) to LarST.
     fn write_to_larst(&self, output_stream: &mut Box<dyn Write>) {
         self.larst_pre_order_write(output_stream);
@@ -178,8 +178,6 @@ impl TreeNode {
 
 impl TreeNodeType {
 
-    /// ### larst_pre_order_string
-    ///
     /// Defines the text pattern each `TreeNodeType` variant starts with.
     fn larst_pre_order_string(&self, ref_names: String) -> String {
         let pre_string = match self {
@@ -1171,8 +1169,6 @@ impl TreeNodeType {
         pre_string
     }
 
-    /// ### larst_post_order_string
-    ///
     /// Defines the text pattern each `TreeNodeType` variant ends with.
     fn larst_post_order_string(&self, ref_names: String) -> String {
         let post_string = match self {
