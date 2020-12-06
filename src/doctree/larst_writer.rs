@@ -3,13 +3,13 @@
 /// A submodule that contains the larst writer method of the doctree,
 /// and the patterns related to it.
 ///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+
+
 use std::io::Write;
 
 use super::*;
 use crate::common::AplusExerciseStatus;
-// use crate::common::OutputStream;
 use crate::rustla_options::ruSTLaOptions;
 use crate::rustla_options::OutputStream;
 
@@ -18,40 +18,36 @@ const LATEX_OPTION_DELIM: &str = ",";
 impl DocTree {
     /// ### write_to_larst
     ///
-    /// A function that writes a rusTLa doctree into a LarST file.
-    ///
-    /// #### TODO
-    ///
-    /// Add a return type such as a `Result<String, ()>` that contains the generated object code in a single string.
-    /// Alternatively, pass a file pointer around and write (append) to it, returning it at the end if successful.
+    /// A function that writes a rusTLa doctree into `stdout` or a file, depending on the given output option.
     pub fn write_to_larst(self, rustla_options: &ruSTLaOptions) {
-        match rustla_options.shared_out_stream() {
-            OutputStream::StdOut => {
-                // Windows users beware. Only valid UTF-8 accepted.
-                let mut stdout = std::io::stdout();
-                self.tree.write_to_larst_stdout(&mut stdout);
-            }
-            OutputStream::File => {
-                use std::fs::{File, OpenOptions};
 
-                // Cannot write to file without knowing the
+        // Generate output stream based on given options...
+        let mut output_stream: Box<dyn Write> = match rustla_options.shared_out_stream() {
+
+            OutputStream::StdOut => {
+                // Windows users beware: only valid UTF-8 accepted.
+                let stdout = std::io::stdout();
+                Box::new(stdout)
+            }
+
+            OutputStream::File => {
+
+                // Cannot write to file without knowing the file location
                 if self.file_folder.is_empty() || self.filename_stem.is_empty() {
                     panic!("Cannot write to file without knowing the location. Computer says no...")
                 }
 
+                /// LaTeX file suffix
                 const TEX_FILE_SUFFIX: &str = ".tex";
-                const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";
 
                 let folder = &self.file_folder;
-                let mut object_file_path = PathBuf::from(folder);
-                let mut aplus_class_file_path = PathBuf::from(folder);
+                let mut object_file_path = std::path::PathBuf::from(folder);
                 object_file_path.push(self.filename_stem + TEX_FILE_SUFFIX);
-                aplus_class_file_path.push(APLUS_CLASS_FILE_NAME);
 
                 eprintln!("Writing output to {:#?}...", object_file_path);
 
                 // TODO: Add check for file existence...
-                let mut object_file: File = match OpenOptions::new()
+                let object_file: std::fs::File = match std::fs::OpenOptions::new()
                     .write(true)
                     .truncate(true)
                     .create(true)
@@ -61,8 +57,25 @@ impl DocTree {
                     Err(e) => panic!("Could not open LarST file for writing purposes: {}", e),
                 };
 
-                // If object file generation was successful, generate A+ class file
-                let mut aplus_class_file: File = match OpenOptions::new()
+                Box::new(object_file)
+            }
+        };
+
+        self.tree.write_to_larst(&mut output_stream);
+
+        // If a file was requested and the write to LarST didnt panic!, create A+ class file...
+        // TODO: check for file existence.
+        match rustla_options.shared_out_stream() {
+
+            OutputStream::File => {
+
+                /// The name of the A+ LaTeX class file
+                const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";
+
+                let folder = &self.file_folder;
+                let mut aplus_class_file_path = std::path::PathBuf::from(folder);
+                aplus_class_file_path.push(APLUS_CLASS_FILE_NAME);
+                let mut aplus_class_file: std::fs::File = match std::fs::OpenOptions::new()
                     .write(true)
                     .truncate(true)
                     .create(true)
@@ -73,12 +86,11 @@ impl DocTree {
                 };
 
                 match aplus_class_file.write(aplus_cls_contents().as_bytes()){
-          Ok(_) => {},
-          Err(_) => panic!("Could not write to A+ class file after generating object code. Computer says no...")
-        };
-
-                self.tree.write_to_larst_file(&mut object_file)
+                    Ok(_) => {},
+                    Err(_) => panic!("Could not write to A+ class file after generating object code. Computer says no...")
+                };
             }
+            _ => {}
         }
     }
 }
@@ -89,62 +101,43 @@ impl TreeZipper {
     /// Starts out by calling `TreeNodeType`-specific pre-order action,
     /// then recursively calls itself for the children of the node and
     /// finishes by calling a post-order action on `self`.
-    fn write_to_larst_file(mut self, file_ptr: &mut std::fs::File) {
+    fn write_to_larst(mut self, output_stream: &mut Box<dyn Write>) {
         self = self.walk_to_root(); // Start out by walking to root.
 
-        self.shared_node().larst_pre_order_file_write(file_ptr);
+        self.shared_node().larst_pre_order_write(output_stream);
 
         if let Some(children) = self.shared_node().shared_children() {
             for child in children {
-                child.write_to_larst_file(file_ptr);
+                child.write_to_larst(output_stream);
             }
         }
 
-        self.shared_node().larst_post_order_file_write(file_ptr);
-    }
-
-    /// This is the actual recursive function that goes over the tree zipper and writes each node
-    /// into its LarST string representation based on its `TreeNodeType`.
-    /// Starts out by calling `TreeNodeType`-specific pre-order action,
-    /// then recursively calls itself for the children of the node and
-    /// finishes by calling a post-order action on `self`.
-    fn write_to_larst_stdout(mut self, stdout: &mut std::io::Stdout) {
-        self = self.walk_to_root(); // Start out by walking to root.
-
-        self.shared_node().larst_pre_order_stdout_write(stdout);
-
-        if let Some(children) = self.shared_node().shared_children() {
-            for child in children {
-                child.write_to_larst_stdout(stdout);
-            }
-        }
-
-        self.shared_node().larst_post_order_stdout_write(stdout);
+        self.shared_node().larst_post_order_write(output_stream);
     }
 }
 
 impl TreeNode {
     /// ### write_to_larst_file
     /// Recursively writes a node and its children (and the children of those, etc.) to LarST.
-    fn write_to_larst_file(&self, file_ptr: &mut std::fs::File) {
-        self.larst_pre_order_file_write(file_ptr);
+    fn write_to_larst(&self, output_stream: &mut Box<dyn Write>) {
+        self.larst_pre_order_write(output_stream);
 
         if let Some(children) = self.shared_children() {
             for child in children {
-                child.write_to_larst_file(file_ptr);
+                child.write_to_larst(output_stream);
             }
         }
 
-        self.larst_post_order_file_write(file_ptr);
+        self.larst_post_order_write(output_stream);
     }
 
     /// Calls the pre-order LarST writer method of the contained `TreeNodeType` variant.
     /// output is directed to the given file.
-    fn larst_pre_order_file_write(&self, file_ptr: &mut std::fs::File) {
+    fn larst_pre_order_write(&self, output_stream: &mut Box<dyn Write>) {
         let refnames = self.ref_names_into_larst_labels();
 
         let pre_string = self.shared_data().larst_pre_order_string(refnames);
-        match file_ptr.write(pre_string.as_bytes()) {
+        match output_stream.write(pre_string.as_bytes()) {
             Ok(_) => {}
             Err(_) => panic!(
                 "Could not write the prefix string \"{}\" to file. Computer says no...",
@@ -155,11 +148,11 @@ impl TreeNode {
 
     /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
     /// output is directed to the given file.
-    fn larst_post_order_file_write(&self, file_ptr: &mut std::fs::File) {
+    fn larst_post_order_write(&self, output_stream: &mut Box<dyn Write>) {
         let refnames = self.ref_names_into_larst_labels();
 
         let post_string = self.shared_data().larst_post_order_string(refnames);
-        match file_ptr.write(post_string.as_bytes()) {
+        match output_stream.write(post_string.as_bytes()) {
             Ok(_) => {}
             Err(_) => panic!(
                 "Could not write the prefix string \"{}\" to file. Computer says no...",
@@ -168,47 +161,6 @@ impl TreeNode {
         };
     }
 
-    /// Recursively writes a node and its children (and the children of those, etc.) to LarST.
-    /// Writes the result into `stdout`.
-    fn write_to_larst_stdout(&self, stdout: &mut std::io::Stdout) {
-        self.larst_pre_order_stdout_write(stdout);
-
-        if let Some(children) = self.shared_children() {
-            for child in children {
-                child.write_to_larst_stdout(stdout);
-            }
-        }
-
-        self.larst_post_order_stdout_write(stdout);
-    }
-
-    /// Calls the pre-order LarST writer method of the contained `TreeNodeType` variant.
-    /// Sends the resulting string to stdout.
-    fn larst_pre_order_stdout_write(&self, stdout: &mut std::io::Stdout) {
-        let refnames = self.ref_names_into_larst_labels();
-        let pre_string = self.shared_data().larst_pre_order_string(refnames);
-        match stdout.write(pre_string.as_bytes()) {
-            Ok(_) => {}
-            Err(_) => panic!(
-                "Could not write the prefix string \"{}\" to stdout. Computer says no...",
-                pre_string
-            ),
-        };
-    }
-
-    /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
-    /// Sends the resulting string to stdout.
-    fn larst_post_order_stdout_write(&self, stdout: &mut std::io::Stdout) {
-        let refnames = self.ref_names_into_larst_labels();
-        let post_string = self.shared_data().larst_post_order_string(refnames);
-        match stdout.write(post_string.as_bytes()) {
-            Ok(_) => {}
-            Err(_) => panic!(
-                "Could not write the postfix string \"{}\" to stdout. Computer says no...",
-                post_string
-            ),
-        };
-    }
 
     /// Generates a single string of LarST labels from contained reference names.
     fn ref_names_into_larst_labels(&self) -> String {
@@ -225,6 +177,7 @@ impl TreeNode {
 }
 
 impl TreeNodeType {
+
     /// ### larst_pre_order_string
     ///
     /// Defines the text pattern each `TreeNodeType` variant starts with.
