@@ -25,26 +25,34 @@ to become effective. This allows it to be run from anywhere by simply typing
 $ rustla path/to/rst/file.rst
 ```
 
-Options can be given to `rustla` by typing the respective `key`--`value` pairs *before* the reStructuredText source file path:
+Options can be given to `rustla` via different flags, specified *before* the reStructuredText source file path:
 ```
-$ ./rustla key1 value1 key2 value2 ... keyN valueN path/to/rst/file.rst
+$ ./rustla --flag1 --flag2 ... --flagN path/to/rst/file.rst
 ```
 
-The recognized options are given in the following listing:
+The recognized flags are given in the following listing:
 ```
 Option              Known values and explanation
-======              ============================
+===========         ============================
 
-output-stream       stdout|file
-
-                    The option "stdout" is self-explanatory:
+--to-stdout         The option "stdout" is self-explanatory:
                     it directs the program output to the standard output of rustla.
                     This is the default functionality if "output-stream" is not specified.
 
-                    The option "file" creates a new reStructuredText file next to the source file,
+--to-file           The option "file" creates a new reStructuredText file next to the source file,
                     with the same name except for the suffix ".rst", which is replaced with ".tex".
                     There is currently no way to prevent this object file from being overwritten,
-                    so care should be taken when running the program.
+                    so care should be taken when running the program with this flag set.
+
+--full-doc          If this is set, the resulting output will be surrounded by the string::
+
+                        \documentclass{aplus}
+                        \begin{document}
+                        <output>
+                        \end{document}
+
+--aplus-cls         This option generates an aplus.cls file next to the file generated,
+                    when the flag --to-file is set.
 ```
 
 ## Project structure

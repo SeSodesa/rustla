@@ -67,7 +67,7 @@ impl DocTree {
         // TODO: check for file existence.
         match rustla_options.shared_out_stream() {
 
-            OutputStream::File => {
+            OutputStream::File if rustla_options.create_class_file() => {
 
                 /// The name of the A+ LaTeX class file
                 const APLUS_CLASS_FILE_NAME: &str = "aplus.cls";

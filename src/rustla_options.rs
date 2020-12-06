@@ -11,8 +11,11 @@ pub struct ruSTLaOptions {
     /// Choose between standard output and a file next to the original one.
     output_stream: OutputStream,
 
-    /// Whether to add \(begin|end){document} to the output file.
-    is_full_document: bool,
+    /// Whether to add "\(begin&&end){document}" to the output file.
+    print_full_document: bool,
+
+    /// A flag that specifies whether the A+ class file should be written next to the source file.
+    generate_class_file: bool
 }
 
 impl ruSTLaOptions {
@@ -25,7 +28,8 @@ impl ruSTLaOptions {
 
         let mut options = Self {
             output_stream: OutputStream::StdOut,
-            is_full_document: false,
+            print_full_document: false,
+            generate_class_file: false
         };
 
         while arg_index < args_len {
@@ -36,10 +40,10 @@ impl ruSTLaOptions {
             };
 
             match arg.as_str() {
-                "--to-stdout" => options.output_stream = OutputStream::StdOut,
-                "--to-file" => options.output_stream = OutputStream::File,
-                "--full-doc" => options.is_full_document = true,
-
+                "--to-stdout"   => options.output_stream = OutputStream::StdOut,
+                "--to-file"     => options.output_stream = OutputStream::File,
+                "--full-doc"    => options.print_full_document = true,
+                "--aplus-cls"   => options.generate_class_file = true,
                 _ => {}
             }
 
@@ -56,7 +60,12 @@ impl ruSTLaOptions {
 
     /// Returns a copy of the boolean indicating whether the document is to be directly compilable with pdflatex or not.
     pub fn is_full_document(&self) -> bool {
-        self.is_full_document
+        self.print_full_document
+    }
+
+    /// Returns a copy of the flag which determines whether a class file should be written next to the source file.
+    pub fn create_class_file (&self) -> bool {
+        self.generate_class_file
     }
 }
 
