@@ -292,14 +292,11 @@ impl TreeNodeType {
             Self::Description => todo!(),
             Self::DocInfo => todo!(),
             Self::DoctestBlock { .. } => todo!(),
-            Self::Document { .. } => {
-                format!(
-                    "\
-\\documentclass{{aplus}}
-
-\\begin{{document}}\n\n"
-                )
-            }
+            Self::Document { .. } => if rustla_options.is_full_document() {
+                format!("\\documentclass{{aplus}}\n\\begin{{document}}\n\n")
+            } else {
+                String::new()
+            },
             Self::Emphasis { text } => {
                 format!("\\textit{{{}}}", text)
             }
@@ -1212,7 +1209,11 @@ impl TreeNodeType {
             Self::Description => todo!(),
             Self::DocInfo => todo!(),
             Self::DoctestBlock { .. } => todo!(),
-            Self::Document { .. } => "\\end{document}\n".to_string(),
+            Self::Document { .. } => if rustla_options.is_full_document() {
+                "\\end{document}\n".to_string()
+            } else {
+                String::new()
+            },
             Self::Emphasis { .. } => "".to_string(),
             Self::EmptyLine => "".to_string(),
             Self::Entry { is_last } => {
