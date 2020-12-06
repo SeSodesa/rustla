@@ -16,6 +16,9 @@ pub struct ruSTLaOptions {
 }
 
 impl ruSTLaOptions {
+
+    /// The ruSTLaOptions constructor. Receives the command line arguments in a vector of strings,
+    /// and constructs the option object from them.
     pub fn new(args: &Vec<String>) -> Self {
         let mut arg_index = 0usize;
         let args_len = args.len();
