@@ -17,6 +17,7 @@ pub const BLANK_LINE_PATTERN: &'static str = r"^\s*$";
 /// A pattern for matching bullet list bullets.
 pub const BULLET_PATTERN: &'static str = r"^(\s*)([+\-*\u{2022}\u{2023}\u{2043}])(?: +|$)";
 
+/// A pattern for recognizing enumerators of enumerated lists.
 pub const ENUMERATOR_PATTERN: &'static str = r#"^(?x)
     (?P<indent>
       \s*
@@ -107,7 +108,7 @@ pub const ENUMERATOR_PATTERN: &'static str = r#"^(?x)
     (?P<after_marker>
       \ +|$
     )
-  "#;
+"#;
 
 /// A pattern for Arabic numerals with closing parentheses
 pub const ARABIC_PARENS_PATTERN: &'static str = r"^(\s*)\(([0-9]+)\)(?: +|$)";
