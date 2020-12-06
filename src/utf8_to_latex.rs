@@ -577,6 +577,7 @@ lazy_static! {
     map.insert('}', r#"\}"#);
     map.insert('#', r#"\#"#);
     map.insert('&', r#"\&"#);
+    map.insert('%', r#"\%"#);
 
     map
   };
