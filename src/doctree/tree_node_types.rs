@@ -452,8 +452,8 @@ pub enum TreeNodeType {
         end_line: Option<u32>,
         start_after: Option<u32>,
         end_before: Option<u32>,
-        literal: Option<bool>,
-        code: Option<String>,
+        literal: bool,
+        code: Option<Option<String>>,
         /// This might be set or not, and if it is, it might contain a start line number or not.
         number_lines: Option<Option<u32>>,
         encoding: Option<String>,

@@ -1065,8 +1065,155 @@ impl Parser {
         todo!()
     }
 
-    pub fn parse_include() {
-        todo!()
+    /// Parses in "include" directive for its argument and options.
+    /// Generates an "include" node in the parse tree with the given options.
+    pub fn parse_include(
+        src_lines: &Vec<String>,
+        mut doctree: DocTree,
+        line_cursor: &mut LineCursor,
+        first_indent: usize,
+        body_indent: usize,
+        empty_after_marker: bool,
+        section_level: usize,
+    ) -> TransitionResult {
+
+        let uri = match Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+            Some(arg) => arg.join(""),
+            None => return TransitionResult::Failure {
+                message: format!("Include directive on line {} did not have a file URI as an argument.", line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
+
+        let (
+            start_line,
+            end_line,
+            start_after,
+            end_before,
+            literal,
+            code,
+            number_lines,
+            encoding,
+            tab_width,
+            name,
+            class
+        ) = if let Some(mut options) = Parser::scan_directive_options(src_lines, line_cursor, body_indent) {
+            let start_line = if let Some(option) = options.remove("start-line") {
+                match option.parse::<u32>() {
+                    Ok(num) => Some(num),
+                    Err(_) => None
+                }
+            } else {
+                None
+            };
+            let end_line = if let Some(option) = options.remove("end-line") {
+                match option.parse::<u32>() {
+                    Ok(num) => Some(num),
+                    Err(_) => None
+                }
+            } else {
+                None
+            };
+            let start_after = if let Some(option) = options.remove("start-after") {
+                match option.parse::<u32>() {
+                    Ok(num) => Some(num),
+                    Err(_) => None
+                }
+            } else {
+                None
+            };
+            let end_before = if let Some(option) = options.remove("end-before") {
+                match option.parse::<u32>() {
+                    Ok(num) => Some(num),
+                    Err(_) => None
+                }
+            } else {
+                None
+            };
+            let literal = if let Some(option) = options.remove("literal") {
+                true
+            } else {
+                false
+            };
+            let code = if let Some(language) = options.remove("code") {
+                if language.trim().is_empty() {
+                    Some(None)
+                } else {
+                    Some(Some(language))
+                }
+            } else {
+                None
+            };
+            let number_lines = if let Some(option) = options.remove("code") {
+                if option.trim().is_empty() {
+                    Some(None)
+                } else {
+                    match option.parse::<u32>() {
+                        Ok(number) => Some(Some(number)),
+                        Err(_) => Some(None)
+                    }
+                }
+            } else {
+                None
+            };
+            let encoding = if let Some(encoding) = options.remove("encoding") {
+                Some(encoding)
+            } else {
+                None
+            };
+            let tab_width = if let Some(option) = options.remove("tab-width") {
+                match option.parse::<u32>() {
+                    Ok(number) => Some(number),
+                    Err(_) => None
+                }
+            } else {
+                None
+            };
+            let name = if let Some(option) = options.remove("name") {
+                Some(option)
+            } else {
+                None
+            };
+            let class = if let Some(option) = options.remove("class") {
+                Some(option)
+            } else {
+                None
+            };
+
+            (start_line, end_line, start_after, end_before, literal, code, number_lines, encoding, tab_width, name, class)
+
+        } else {
+            (None, None, None, None, false, None, None, None, None, None, None)
+        };
+
+        let include_node_data = TreeNodeType::Include {
+            uri: uri,
+            start_line: start_line,
+            end_line: end_line,
+            start_after: start_after,
+            end_before: end_before,
+            literal: literal,
+            code: code,
+            number_lines: number_lines,
+            encoding: encoding,
+            tab_width: tab_width,
+            name: name,
+            class: class
+        };
+
+        doctree = match doctree.push_data(include_node_data) {
+            Ok(tree) => tree,
+            Err(tree) => return TransitionResult::Failure {
+                message: format!("Node insertion error on line {}.", line_cursor.sum_total()),
+                doctree: tree
+            }
+        };
+
+        TransitionResult::Success {
+            doctree: doctree,
+            push_or_pop: PushOrPop::Neither,
+            line_advance: LineAdvance::None
+        }
     }
 
     pub fn parse_raw() {

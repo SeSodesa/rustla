@@ -408,6 +408,7 @@ impl TreeNodeType {
                 format!("\\includegraphics{}{{{}}}\n", options, uri)
             }
             Self::Include { uri, .. } => {
+                // Options ignored for now...
                 format!("\\input{{{}}}\n", uri)
             }
             Self::IndirectHyperlinkTarget { .. } => todo!(),
