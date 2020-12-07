@@ -445,6 +445,23 @@ pub enum TreeNodeType {
         class: Option<String>,
     },
 
+    Include {
+        uri: String,
+        // Options
+        start_line: Option<u32>,
+        end_line: Option<u32>,
+        start_after: Option<u32>,
+        end_before: Option<u32>,
+        literal: Option<bool>,
+        code: Option<String>,
+        /// This might be set or not, and if it is, it might contain a start line number or not.
+        number_lines: Option<Option<u32>>,
+        encoding: Option<String>,
+        tab_width: Option<u32>,
+        name: Option<String>,
+        class: Option<String>
+    },
+
     /// #### IndirectHyperlinkTarget
     /// An indirect hyperlink target. Contains a hyperlink reference pointing
     /// to an internal or and external hyperlink.
@@ -1053,6 +1070,7 @@ impl TreeNodeType {
             Self::Header { body_indent, .. } => Some(*body_indent),
             Self::Generated => None,
             Self::Image { .. } => None,
+            Self::Include { .. } => None,
             Self::IndirectHyperlinkTarget { .. } => None,
             Self::Inline { .. } => None,
             Self::InlineTarget { .. } => None,
@@ -1187,6 +1205,7 @@ impl TreeNodeType {
             Self::Header { .. } => &HEADER_CATEGORIES,
             Self::Generated => &GENERATED_CATEGORIES,
             Self::Image { .. } => &IMAGE_CATEGORIES,
+            Self::Include { .. } => &INCLUDE_CATEGORIES,
             Self::IndirectHyperlinkTarget { .. } => &INDIRECT_HYPERLINK_TARGET_CATEGORIES,
             Self::Inline { .. } => &INLINE_CATEGORIES,
             Self::InlineTarget { .. } => &INLINE_TARGET_CATEGORIES,
@@ -1324,6 +1343,7 @@ impl fmt::Display for TreeNodeType {
             Self::Header { .. } => "header",
             Self::Generated => "generated",
             Self::Image { .. } => "image",
+            Self::Include { .. } => "include",
             Self::IndirectHyperlinkTarget { .. } => "hyperlink target",
             Self::Inline { .. } => "inline",
             Self::InlineTarget { .. } => "inline target",

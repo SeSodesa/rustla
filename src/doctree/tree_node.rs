@@ -604,6 +604,7 @@ impl TreeNode {
             }
             TreeNodeType::Generated => todo!(),
             TreeNodeType::Image { .. } => false,
+            TreeNodeType::Include { .. } => false,
             TreeNodeType::IndirectHyperlinkTarget { .. } => false,
             TreeNodeType::Inline { .. } => false,
             TreeNodeType::InlineTarget { .. } => false,

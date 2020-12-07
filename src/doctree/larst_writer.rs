@@ -407,6 +407,9 @@ impl TreeNodeType {
 
                 format!("\\includegraphics{}{{{}}}\n", options, uri)
             }
+            Self::Include { uri, .. } => {
+                format!("\\input{{{}}}\n", uri)
+            }
             Self::IndirectHyperlinkTarget { .. } => todo!(),
             Self::Inline { .. } => todo!(),
             Self::InlineTarget { .. } => todo!(),
@@ -1237,6 +1240,7 @@ impl TreeNodeType {
             Self::Header { .. } => todo!(),
             Self::Generated => todo!(),
             Self::Image { .. } => "".to_string(),
+            Self::Include { .. } => "".to_string(),
             Self::IndirectHyperlinkTarget { .. } => todo!(),
             Self::Inline { .. } => todo!(),
             Self::InlineTarget { .. } => todo!(),

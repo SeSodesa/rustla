@@ -98,6 +98,7 @@ impl TreeNode {
             TreeNodeType::Header { .. } => {}
             TreeNodeType::Generated => {}
             TreeNodeType::Image { .. } => {}
+            TreeNodeType::Include { .. } => {}
             TreeNodeType::IndirectHyperlinkTarget { .. } => {}
             TreeNodeType::Inline { .. } => {}
             TreeNodeType::InlineTarget { .. } => {}

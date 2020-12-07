@@ -216,6 +216,10 @@ pub const IMAGE_CATEGORIES: [NodeCategory; 3] = [
     NodeCategory::SimpleBody,
     NodeCategory::Inline,
 ];
+pub const INCLUDE_CATEGORIES: [NodeCategory; 2] = [
+    NodeCategory::Body,
+    NodeCategory::SimpleBody
+];
 pub const INDIRECT_HYPERLINK_TARGET_CATEGORIES: [NodeCategory; 2] =
     [NodeCategory::Body, NodeCategory::SimpleBody];
 pub const INLINE_CATEGORIES: [NodeCategory; 1] = [
