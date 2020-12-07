@@ -1635,3 +1635,35 @@ fn horizontal_alignment_to_string(alignment: &HorizontalAlignment) -> String {
         HorizontalAlignment::Right => String::from("right"),
     }
 }
+
+/// Generates a single `rstlabel` string form a given optional vector of strings.
+/// The generated string is empty, if `None` is given or the label vector is empty.
+fn rstlabel_string_from_labels (labels: Option<&Vec<String>>) -> String {
+
+    if let Some(labels) = labels {
+        let mut label_string = String::new();
+        for label in labels {
+            let rst_label = format!("\\rstlabel{{{}}}\n", label);
+            label_string.push_str(&rst_label)
+        }
+        label_string
+    } else {
+        String::new()
+    }
+}
+
+/// Generates a single `rstlabel` string form a given optional vector of strings.
+/// The generated string is empty, if `None` is given or the label vector is empty.
+fn latex_label_string_from_labels (labels: Option<&Vec<String>>) -> String {
+
+    if let Some(labels) = labels {
+        let mut label_string = String::new();
+        for label in labels {
+            let rst_label = format!("\\label{{{}}}\n", label);
+            label_string.push_str(&rst_label)
+        }
+        label_string
+    } else {
+        String::new()
+    }
+}
