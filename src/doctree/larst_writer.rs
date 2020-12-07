@@ -102,6 +102,7 @@ impl TreeZipper {
     /// then recursively calls itself for the children of the node and
     /// finishes by calling a post-order action on `self`.
     fn write_to_larst(mut self, output_stream: &mut Box<dyn Write>, rustla_options: &ruSTLaOptions) {
+
         self = self.walk_to_root(); // Start out by walking to root.
 
         self.shared_node().larst_pre_order_write(output_stream, rustla_options);
@@ -120,6 +121,7 @@ impl TreeNode {
 
     /// Recursively writes a node and its children (and the children of those, etc.) to LarST.
     fn write_to_larst(&self, output_stream: &mut Box<dyn Write>, rustla_options: &ruSTLaOptions) {
+
         self.larst_pre_order_write(output_stream, rustla_options);
 
         if let Some(children) = self.shared_children() {
@@ -135,7 +137,7 @@ impl TreeNode {
     /// output is directed to the given file.
     fn larst_pre_order_write(&self, output_stream: &mut Box<dyn Write>, rustla_options: &ruSTLaOptions) {
 
-        let refnames = self.ref_names_into_larst_labels();
+        let refnames = self.shared_target_labels().as_ref();
 
         let pre_string = self.shared_data().larst_pre_order_string(refnames, rustla_options);
         match output_stream.write(pre_string.as_bytes()) {
@@ -150,7 +152,8 @@ impl TreeNode {
     /// Calls the post-order LarST writer method of the contained `TreeNodeType` variant.
     /// output is directed to the given file.
     fn larst_post_order_write(&self, output_stream: &mut Box<dyn Write>, rustla_options: &ruSTLaOptions) {
-        let refnames = self.ref_names_into_larst_labels();
+
+        let refnames = self.shared_target_labels().as_ref();
 
         let post_string = self.shared_data().larst_post_order_string(refnames, rustla_options);
         match output_stream.write(post_string.as_bytes()) {
@@ -180,7 +183,7 @@ impl TreeNode {
 impl TreeNodeType {
 
     /// Defines the text pattern each `TreeNodeType` variant starts with.
-    fn larst_pre_order_string(&self, ref_names: String, rustla_options: &ruSTLaOptions) -> String {
+    fn larst_pre_order_string(&self, ref_names: Option<&Vec<String>>, rustla_options: &ruSTLaOptions) -> String {
         let pre_string = match self {
             Self::Abbreviation { .. } => todo!(),
             Self::AbsoluteURI { text } => {
@@ -1168,7 +1171,7 @@ impl TreeNodeType {
     }
 
     /// Defines the text pattern each `TreeNodeType` variant ends with.
-    fn larst_post_order_string(&self, ref_names: String, rustla_options: &ruSTLaOptions) -> String {
+    fn larst_post_order_string(&self, ref_names:  Option<&Vec<String>>, rustla_options: &ruSTLaOptions) -> String {
         let post_string = match self {
             Self::Abbreviation { .. } => todo!(),
             Self::AbsoluteURI { .. } => "".to_string(),
