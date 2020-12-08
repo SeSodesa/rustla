@@ -557,6 +557,7 @@ pub fn hyperlink_target(
     };
 
     match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
+
         IndentationMatch::JustRight => {
             // Read in the following block of text here and parse it to find out the type of hyperref target in question
 
@@ -608,55 +609,57 @@ pub fn hyperlink_target(
 
             let node_type: TreeNodeType = match Parser::inline_parse(block_string, Some(&mut doctree), line_cursor) {
 
-        InlineParsingResult::Nodes(nodes_data) => {
+                InlineParsingResult::Nodes(nodes_data) => {
 
-          if nodes_data.len() != 1 {
-            return TransitionResult::Failure {
-              message: format!("Hyperlink targets should only contain a single node. Computer says no on line {}...", line_cursor.sum_total()),
-              doctree: doctree
-            }
-          }
+                    if nodes_data.len() != 1 {
+                        return TransitionResult::Failure {
+                            message: format!("Hyperlink targets should only contain a single node. Computer says no on line {}...", line_cursor.sum_total()),
+                            doctree: doctree
+                        }
+                    }
 
-          match nodes_data.get(0) {
+                    match nodes_data.get(0) {
 
-            // Indirect target
-            Some(TreeNodeType::Reference { reference, displayed_text }) =>  {
+                        // Indirect target
+                        Some(TreeNodeType::Reference { reference, displayed_text }) =>  {
 
-              use crate::common::Reference;
+                            use crate::common::Reference;
 
-              match reference {
-                Reference::Internal (ref_str) => TreeNodeType::IndirectHyperlinkTarget {
-                  target: label_as_string,
-                  indirect_target: match reference {
-                    Reference::Internal(ref_str) => ref_str.to_string(),
-                    Reference::URI(ref_str) | Reference::EMail(ref_str) => return TransitionResult::Failure {
-                      message: format!("Wrong type of inline node when parsing an indirect target {} on line {}. Computer says no...", ref_str, line_cursor.sum_total()),
-                      doctree: doctree
-                    },
-                  },
-                  marker_indent: detected_marker_indent
-                },
-                Reference::URI (ref_str) => TreeNodeType::ExternalHyperlinkTarget {
-                  marker_indent: detected_marker_indent,
-                  target: label_as_string,
-                  uri: ref_str.to_owned()
-                },
-                Reference::EMail (ref_str) => TreeNodeType::ExternalHyperlinkTarget {
-                  marker_indent: detected_marker_indent,
-                  target: label_as_string,
-                  uri: ref_str.to_owned()
+                            match reference {
+                                Reference::Internal (ref_str) => TreeNodeType::IndirectHyperlinkTarget {
+                                    target: label_as_string,
+                                    indirect_target: match reference {
+                                        Reference::Internal(ref_str) => ref_str.to_string(),
+                                        Reference::URI(ref_str) | Reference::EMail(ref_str) => return TransitionResult::Failure {
+                                        message: format!("Wrong type of inline node when parsing an indirect target {} on line {}. Computer says no...", ref_str, line_cursor.sum_total()),
+                                        doctree: doctree
+                                        },
+                                    },
+                                    marker_indent: detected_marker_indent
+                                },
+                                Reference::URI (ref_str) => TreeNodeType::ExternalHyperlinkTarget {
+                                    marker_indent: detected_marker_indent,
+                                    target: label_as_string,
+                                    uri: ref_str.to_owned()
+                                },
+                                Reference::EMail (ref_str) => TreeNodeType::ExternalHyperlinkTarget {
+                                    marker_indent: detected_marker_indent,
+                                    target: label_as_string,
+                                    uri: ref_str.to_owned()
+                                }
+                            }
+                        }
+
+                        _ => return TransitionResult::Failure {
+                            message: format!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total()),
+                            doctree: doctree
+                        }
+                    }
                 }
-              }
-            }
 
-            _ => return TransitionResult::Failure {
-              message: format!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total()),
-              doctree: doctree
-            }
-          }
-        }
-        _ => panic!("Inline parser failed when parsing a hyperlink target on line {} .Computer says no...", line_cursor.sum_total())
-      };
+                _ => panic!("Inline parser failed when parsing a hyperlink target on line {} .Computer says no...", line_cursor.sum_total())
+
+            };
 
             let node = TreeNode::new(node_type, doctree.node_count(), None, None);
 
@@ -679,10 +682,13 @@ pub fn hyperlink_target(
                 line_advance: LineAdvance::Some(1),
             };
         }
+
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
