@@ -489,13 +489,10 @@ impl TreeNodeType {
                 displayed_text,
                 reference,
             } => {
-                // let command = if *has_embedded_uri { "href" } else { "hyperref" };
-                // let parens = if *has_embedded_uri { ("{", "}") } else { ("[", "]") };
-                // format!("\\{}{}{}{}{{{}}}", command, parens.0, target_label, parens.1, displayed_text)
 
                 use crate::common::Reference;
 
-                match &reference {
+                match reference {
                     Reference::Internal(ref_str) => {
                         if let Some(text) = displayed_text {
                             format!("\\hyperref[{}]{{{}}}", ref_str, text)

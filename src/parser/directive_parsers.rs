@@ -544,53 +544,41 @@ impl Parser {
         src_lines: &Vec<String>,
         mut doctree: DocTree,
         line_cursor: &mut LineCursor,
-        base_indent: usize,
+        body_indent: usize,
         empty_after_marker: bool,
         first_indent: usize,
-        section_level: usize,
     ) -> TransitionResult {
-        let math_after_marker = if !empty_after_marker {
-            if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-                Some(Parser::line_suffix(line, first_indent))
-            } else {
-                unreachable!(
-                    "On line {} with a marker but found no line?",
-                    line_cursor.sum_total()
-                )
-            }
-        } else {
-            None
-        };
 
-        // Fetch content indentation and option|content offset from directive marker line
-        let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-            Some( (indent, offset ) ) => (indent, offset),
-            None => return TransitionResult::Failure {
-                message: format!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-                doctree: doctree
-            }
-        };
+        let math_after_marker = Parser::scan_directive_arguments(
+            src_lines,
+            line_cursor,
+            Some(first_indent),
+            empty_after_marker
+        );
 
-        line_cursor.increment_by(content_offset + 1);
-
-        let directive_options =
-            Self::scan_directive_options(src_lines, line_cursor, content_indent);
-
-        let (classes, name) = if let Some(mut options) = directive_options {
+        let (classes, name, nowrap, label) = if let Some(mut options)
+            = Self::scan_directive_options(src_lines, line_cursor, body_indent)
+        {
             let classes = options.remove("class");
             let name = options.remove("name");
+            // These were added by Sphinx
+            let nowrap = options.remove("nowrap");
+            let label = options.remove("label");
 
-            (classes, name)
+            (classes, name, nowrap, label)
         } else {
-            (None, None)
+            (None, None, None, None)
         };
 
+        // If an equation was given as an argument, quit early
         if let Some(math) = math_after_marker {
-            doctree = match doctree.push_data(TreeNodeType::MathBlock {
-                block_text: math,
-                class: classes,
-                name: name,
-            }) {
+            doctree = match doctree.push_data(
+                TreeNodeType::MathBlock {
+                    block_text: math.join("\n"),
+                    class: classes,
+                    name: name,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -609,12 +597,13 @@ impl Parser {
             };
         }
 
+        // If no equation as argument, try reading block contents as multiple equations...
         let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
             src_lines,
             Some(line_cursor.relative_offset()),
             Some(false),
             Some(true),
-            Some(content_indent),
+            Some(body_indent),
             None,
             true,
         ) {
@@ -637,7 +626,7 @@ impl Parser {
             for line in lines.iter() {
                 if line.trim().is_empty() && !block.trim().is_empty() {
                     blocks.push(block);
-                    block = String::new()
+                    block = String::new();
                 } else if line.trim().is_empty() && block.trim().is_empty() {
                     continue;
                 }

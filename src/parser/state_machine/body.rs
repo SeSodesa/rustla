@@ -857,10 +857,9 @@ pub fn directive(
                     src_lines,
                     doctree,
                     line_cursor,
-                    base_indent,
+                    body_indent,
                     empty_after_marker,
-                    detected_first_indent,
-                    *section_level,
+                    detected_first_indent
                 ),
 
                 "rubric" => Parser::parse_unknown_directive(
