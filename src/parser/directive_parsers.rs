@@ -3546,7 +3546,7 @@ impl Parser {
         todo!()
     }
 
-    /// Parses an A+ point of interest directove into the respective node
+    /// Parses an A+ point of interest directive into the respective node.
     ///
     /// ### TODO
     /// Add support for the row and column directives introduced in November 2020.
