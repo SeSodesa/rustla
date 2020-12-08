@@ -171,9 +171,11 @@ pub fn enumerator(
             };
         }
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_enumerator_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                TreeNodeType::BlockQuote {
+                    body_indent: detected_enumerator_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -244,9 +246,11 @@ pub fn field_marker(
             };
         }
         IndentationMatch::TooMuch => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            tree_wrapper = match tree_wrapper.push_data_and_focus(
+                TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -265,9 +269,8 @@ pub fn field_marker(
             };
         }
         _ => {
-            tree_wrapper = tree_wrapper.focus_on_parent();
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: tree_wrapper.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -396,9 +399,8 @@ pub fn footnote(
             };
         }
         _ => {
-            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: doctree,
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -509,9 +511,8 @@ pub fn citation(
             };
         }
         _ => {
-            tree_wrapper = tree_wrapper.focus_on_parent();
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: tree_wrapper.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -713,9 +714,8 @@ pub fn hyperlink_target(
             };
         }
         _ => {
-            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: doctree,
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -1472,9 +1472,8 @@ pub fn directive(
             };
         }
         _ => {
-            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: doctree,
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -1583,9 +1582,8 @@ pub fn comment(
             };
         }
         _ => {
-            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: doctree,
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -2349,9 +2347,8 @@ fn parse_paragraph(
         }
 
         _ => {
-            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: doctree,
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
