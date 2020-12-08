@@ -75,15 +75,15 @@ impl Parser {
 
         // Read in the rest of the admonition contents...
         let offset = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(body_indent), false) {
-      Ok((mut body_lines, _, offset, _)) => {
-        lines.append(&mut body_lines);
-        offset
-      },
-      Err(e) => return TransitionResult::Failure {
-        message: format!("Error when reading in the contents of \"{}\" around line {}. Computer says no...", variant.to_string(), line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+            Ok((mut body_lines, _, offset, _)) => {
+                lines.append(&mut body_lines);
+                offset
+            },
+            Err(e) => return TransitionResult::Failure {
+                message: format!("Error when reading in the contents of \"{}\" around line {}. Computer says no...", variant.to_string(), line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
 
         // Create admonition node...
         let admonition_data = TreeNodeType::Admonition {
@@ -115,9 +115,7 @@ impl Parser {
             line_cursor.sum_total(),
             Some(State::Admonition),
             section_level,
-        )
-        .parse()
-        {
+        ).parse() {
             ParsingResult::EOF {
                 doctree,
                 state_stack,
@@ -161,12 +159,12 @@ impl Parser {
     ) -> TransitionResult {
         // Fetch content indentation and option|content offset from directive marker line
         let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => return TransitionResult::Failure {
-        message: format!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+            Some( (indent, offset ) ) => (indent, offset),
+            None => return TransitionResult::Failure {
+                message: format!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
 
         let argument = if let Some(arg) =
             Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
@@ -174,9 +172,9 @@ impl Parser {
             arg
         } else {
             return TransitionResult::Failure {
-        message: format!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("General admonition on line {} does not contain a compulsory title argument. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         };
 
         let directive_options =
@@ -185,7 +183,6 @@ impl Parser {
         let (classes, name) = if let Some(mut options) = directive_options {
             let classes = options.remove("class");
             let name = options.remove("name");
-
             (classes, name)
         } else {
             (None, None)
@@ -231,12 +228,12 @@ impl Parser {
 
         // Fetch content indentation and option|content offset from directive marker line
         let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => return TransitionResult::Failure {
-        message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+            Some( (indent, offset ) ) => (indent, offset),
+            None => return TransitionResult::Failure {
+                message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
 
         let argument = if let Some(arg) =
             Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
