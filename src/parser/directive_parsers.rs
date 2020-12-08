@@ -3361,6 +3361,7 @@ impl Parser {
         }
     }
 
+    /// Parses an A+ active element output directive into the respective node
     pub fn parse_aplus_active_element_output(
         src_lines: &Vec<String>,
         mut doctree: DocTree,
@@ -3545,6 +3546,10 @@ impl Parser {
         todo!()
     }
 
+    /// Parses an A+ point of interest directove into the respective node
+    ///
+    /// ### TODO
+    /// Add support for the row and column directives introduced in November 2020.
     pub fn parse_aplus_point_of_interest(
         src_lines: &Vec<String>,
         mut doctree: DocTree,
