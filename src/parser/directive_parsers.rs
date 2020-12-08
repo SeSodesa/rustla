@@ -2208,11 +2208,9 @@ impl Parser {
         const APLUS_PICK_HINT_PATTERN: &'static str =
             r"^(\s*)(?P<show_not_answered>!)?(?P<label>\S+)[ ]*§[ ]*(?P<hint>.+)";
 
-        use regex::{Captures, Regex};
-
         lazy_static::lazy_static! {
-          static ref CHOICE_RE: Regex = Regex::new(APLUS_PICK_ANY_CHOICE_PATTERN).unwrap();
-          static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
+          static ref CHOICE_RE: regex::Regex = regex::Regex::new(APLUS_PICK_ANY_CHOICE_PATTERN).unwrap();
+          static ref HINT_RE: regex::Regex = regex::Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
         }
 
         use crate::common::QuizPoints;
@@ -2424,7 +2422,7 @@ impl Parser {
                 break;
             }
 
-            let captures: Captures = if let Some(capts) = CHOICE_RE.captures(current_line) {
+            let captures: regex::Captures = if let Some(capts) = CHOICE_RE.captures(current_line) {
                 capts
             } else {
                 break;
@@ -2443,18 +2441,18 @@ impl Parser {
 
             if answer.trim().is_empty() {
                 return TransitionResult::Failure {
-          message: format!("Discovered a pick-any answer without content on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("Discovered a pick-any answer without content on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             }
 
             let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-any answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             let choice_node = TreeNodeType::AplusPickChoice {
                 label: label,
@@ -2756,17 +2754,21 @@ impl Parser {
         // Read in assignment
 
         let assignment_inline_nodes: Vec<TreeNodeType> = {
-            let (block_lines, offset) = Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)).expect(
-          format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()).
-          as_str()
-        );
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+                Ok((lines, offset)) => (lines, offset),
+                Err(message) => return TransitionResult::Failure {
+                    message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
+
             let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             line_cursor.increment_by(1);
 
@@ -2823,17 +2825,17 @@ impl Parser {
                 model_answer.push_str(answer.trim());
             } else {
                 return TransitionResult::Failure {
-          message: format!("Not focused on A+ freetext node when reading its model answer on line {}? Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("Not focused on A+ freetext node when reading its model answer on line {}? Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             }
 
             line_cursor.increment_by(1);
         } else {
             return TransitionResult::Failure {
-        message: format!("Tried scanning freetext question for correct answer but encountered end of input on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("Tried scanning freetext question for correct answer but encountered end of input on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         };
 
         // Read possible hints
@@ -2913,12 +2915,12 @@ impl Parser {
             }
 
             let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse freetext hint on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse freetext hint on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             if hint_nodes.is_empty() {
                 return TransitionResult::Failure {
