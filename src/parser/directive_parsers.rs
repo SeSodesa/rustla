@@ -468,12 +468,12 @@ impl Parser {
     ) -> TransitionResult {
         // Fetch content indentation and option|content offset from directive marker line
         let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => return TransitionResult::Failure {
-        message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+            Some( (indent, offset ) ) => (indent, offset),
+            None => return TransitionResult::Failure {
+                message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
         let language = if let Some(arg) =
             Self::scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
         {
@@ -517,7 +517,6 @@ impl Parser {
 
         let code_block = TreeNodeType::Code {
             text: lines.join("\n"),
-
             language: language,
             number_lines: number_lines,
             class: classes,
@@ -571,12 +570,12 @@ impl Parser {
 
         // Fetch content indentation and option|content offset from directive marker line
         let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-      Some( (indent, offset ) ) => (indent, offset),
-      None => return TransitionResult::Failure {
-        message: format!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      }
-    };
+            Some( (indent, offset ) ) => (indent, offset),
+            None => return TransitionResult::Failure {
+                message: format!("Math block on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            }
+        };
 
         line_cursor.increment_by(content_offset + 1);
 
@@ -657,9 +656,9 @@ impl Parser {
 
         if blocks.is_empty() {
             return TransitionResult::Failure {
-        message: format!("Tried reading a math block on line {} but didn't find any actual content. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("Tried reading a math block on line {} but didn't find any actual content. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         }
 
         for block in blocks {
@@ -769,10 +768,24 @@ impl Parser {
                 if widths.as_str().trim() == "auto" {
                     Some(TableColWidths::Auto)
                 } else {
-                    let widths = widths.split_whitespace()
-            .filter(|s| ! s.is_empty())
-            .map(|int| if let Ok(result) = int.parse::<f64>() { result } else { panic!("Tried converting a list table column width into a integer on line {} but failed. Computer says no...", line_cursor.sum_total()); })
-            .collect::<Vec<f64>>();
+                    let widths = widths
+                        .split_whitespace()
+                        .filter(
+                            |s| ! s.is_empty()
+                        )
+                        .map(
+                            |int|
+                                if let Ok(result) = int.parse::<f64>() {
+                                    result
+                                } else {
+                                    panic!(
+                                        "Tried converting a list table column width \"{}\" into a integer on line {} but failed. Computer says no...",
+                                        int,
+                                        line_cursor.sum_total()
+                                    );
+                                }
+                        )
+                        .collect::<Vec<f64>>();
                     if widths.len() == 0 {
                         None
                     } else {
@@ -861,9 +874,9 @@ impl Parser {
             (lines, offset)
         } else {
             return TransitionResult::Failure {
-        message: format!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("Could not read the legend contents of the figure on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         };
 
         let (mut doctree, mut nested_state_stack) = match Parser::new(
@@ -873,9 +886,7 @@ impl Parser {
             line_cursor.sum_total(),
             Some(State::ListTable),
             section_level,
-        )
-        .parse()
-        {
+        ).parse() {
             ParsingResult::EOF {
                 doctree,
                 state_stack,
@@ -885,13 +896,12 @@ impl Parser {
                 state_stack,
             } => (doctree, state_stack),
             ParsingResult::Failure { message, doctree } => {
-                eprintln!(
-                    "Error when parsing a list-table on line {}: {}",
-                    line_cursor.sum_total(),
-                    message
-                );
                 return TransitionResult::Failure {
-                    message: message,
+                    message: format!(
+                        "Error when parsing a list-table on line {}: {}",
+                        line_cursor.sum_total(),
+                        message
+                    ),
                     doctree: doctree,
                 };
             }
@@ -907,9 +917,9 @@ impl Parser {
             // A-Ok
         } else {
             return TransitionResult::Failure {
-        message: format!("Not focused on list-table after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("Not focused on list-table after parsing its contents starting on line {}. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         };
 
         // Check largest number of columns and validate list at the same time
@@ -925,62 +935,57 @@ impl Parser {
                             for list_item in list_items {
                                 if let Some(children) = list_item.shared_children() {
                                     if let Some(nested_list) = children.get(0) {
-                                        if let TreeNodeType::BulletList { .. } =
-                                            nested_list.shared_data()
-                                        {
+                                        if let TreeNodeType::BulletList { .. } = nested_list.shared_data() {
                                             if let Some(items) = nested_list.shared_children() {
                                                 let row_entry_count = items
                                                     .iter()
-                                                    .filter(|item| {
-                                                        if let TreeNodeType::BulletListItem {
-                                                            ..
-                                                        } = item.shared_data()
-                                                        {
-                                                            true
-                                                        } else {
-                                                            false
+                                                    .filter(
+                                                        |item| {
+                                                            if let TreeNodeType::BulletListItem { .. } = item.shared_data() {
+                                                                true
+                                                            } else {
+                                                                false
+                                                            }
                                                         }
-                                                    })
-                                                    .count()
-                                                    as u32;
-                                                use std::cmp;
-                                                max_cols = cmp::max(max_cols, row_entry_count);
+                                                    )
+                                                    .count() as u32;
+                                                max_cols = std::cmp::max(max_cols, row_entry_count);
                                             } else {
                                                 return TransitionResult::Failure {
-                          message: format!("Second level list has no children inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
-                          doctree: doctree
-                        };
+                                                    message: format!("Second level list has no children inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
+                                                    doctree: doctree
+                                                };
                                             }
                                         } else {
                                             return TransitionResult::Failure {
-                        message: format!("No second level bullet list inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
-                        doctree: doctree
-                      };
+                                                message: format!("No second level bullet list inside list-table before line {}. Computer says no...", line_cursor.sum_total()),
+                                                doctree: doctree
+                                            };
                                         }
                                     } else {
                                         return TransitionResult::Failure {
-                      message: format!("List item in list-table on line {} does not contain children. Computer says no...", line_cursor.sum_total()),
-                      doctree: doctree
-                    };
+                                            message: format!("List item in list-table on line {} does not contain children. Computer says no...", line_cursor.sum_total()),
+                                            doctree: doctree
+                                        };
                                     }
                                 } else {
                                     return TransitionResult::Failure {
-                    message: format!("First level list item inside list-table on line {} has no children. Computer says no...", line_cursor.sum_total()),
-                    doctree: doctree
-                  };
+                                        message: format!("First level list item inside list-table on line {} has no children. Computer says no...", line_cursor.sum_total()),
+                                        doctree: doctree
+                                    };
                                 }
                             }
                         } else {
                             return TransitionResult::Failure {
-                message: format!("Bullet list in list-table on line {} cannot have children? Computer says no...", line_cursor.sum_total()),
-                doctree: doctree
-              };
+                                message: format!("Bullet list in list-table on line {} cannot have children? Computer says no...", line_cursor.sum_total()),
+                                doctree: doctree
+                            };
                         }
                     } else {
                         return TransitionResult::Failure {
-              message: format!("First child if list-table on line {} is not a bullet list. Computer says no...", line_cursor.sum_total()),
-              doctree: doctree
-            };
+                            message: format!("First child if list-table on line {} is not a bullet list. Computer says no...", line_cursor.sum_total()),
+                            doctree: doctree
+                        };
                     }
                 } else {
                     return TransitionResult::Failure {
@@ -1007,18 +1012,19 @@ impl Parser {
 
         if let TreeNodeType::ListTable { widths, .. } = doctree.mut_node_data() {
             if widths.is_none() {
-                use std::iter;
-                *widths = Some(TableColWidths::Columns(
-                    iter::repeat(1.0 / n_of_columns as f64)
-                        .take(n_of_columns as usize)
-                        .collect(),
-                ))
+                *widths = Some(
+                    TableColWidths::Columns(
+                        std::iter::repeat(1.0 / n_of_columns as f64)
+                            .take(n_of_columns as usize)
+                            .collect(),
+                    )
+                )
             }
         } else {
             return TransitionResult::Failure {
-        message: format!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("Not focused on list-table before line {}, after validating said table. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         }
 
         TransitionResult::Success {
