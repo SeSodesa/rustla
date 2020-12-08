@@ -1238,11 +1238,9 @@ pub fn directive(
                     src_lines,
                     doctree,
                     line_cursor,
-                    base_indent,
                     empty_after_marker,
                     detected_first_indent,
                     body_indent,
-                    *section_level,
                 ),
 
                 "tabularcolumns" => Parser::parse_unknown_directive(

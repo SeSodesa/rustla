@@ -1543,11 +1543,9 @@ impl Parser {
         src_lines: &Vec<String>,
         mut doctree: DocTree,
         line_cursor: &mut LineCursor,
-        base_indent: usize,
         empty_after_marker: bool,
         first_indent: usize,
         body_indent: usize,
-        section_level: usize,
     ) -> TransitionResult {
         /// ### ALWAYS_DEFINED_TAGS
         ///
@@ -1558,13 +1556,9 @@ impl Parser {
         /// They should be included with the directive argument.
         const ALWAYS_DEFINED_TAGS: &[&str] = &["html", "latex", "text"];
 
-        let expression = if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
-            Parser::line_suffix(line, first_indent).trim().to_string()
-        } else {
-            unreachable!(
-                "On line {} with a marker but found no line?",
-                line_cursor.sum_total()
-            )
+        let expression = match Parser::scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+            Some(lines) => lines.join(" "),
+            None => String::new()
         };
 
         if expression.is_empty() {
