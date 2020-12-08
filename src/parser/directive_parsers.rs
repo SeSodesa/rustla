@@ -2193,30 +2193,29 @@ impl Parser {
           static ref HINT_RE: regex::Regex = regex::Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
         }
 
-        use crate::common::QuizPoints;
-
-        let points: QuizPoints = if let Some(arg) = Parser::scan_directive_arguments(
+        let points: crate::common::QuizPoints = match Parser::scan_directive_arguments(
             src_lines,
             line_cursor,
             Some(first_indent),
             empty_after_marker,
         ) {
-            if let Ok(points) = arg.join(" ").as_str().parse() {
-                points
-            } else {
-                return TransitionResult::Failure {
-                    message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+            Some(lines) => match lines.join(" ").as_str().parse() {
+                Ok(points) => points,
+                Err(e) => return TransitionResult::Failure {
+                    message: format!(
+                        "Quiz question points preceding line {} could not be parsed into an integer. Computer says no...",
+                        line_cursor.sum_total()
+                    ),
                     doctree: doctree
-                };
-            }
-        } else {
-            return TransitionResult::Failure {
+                }
+            },
+            None => return TransitionResult::Failure {
                 message: format!(
                     "No points provided for pick-any question on line {}. Computer says no...",
                     line_cursor.sum_total()
                 ),
                 doctree: doctree,
-            };
+            }
         };
 
         if let TreeNodeType::AplusQuestionnaire {
