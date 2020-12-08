@@ -531,7 +531,6 @@ pub fn hyperlink_target(
     captures: &regex::Captures,
     pattern_name: &PatternName,
 ) -> TransitionResult {
-    use crate::common::normalize_refname;
 
     let mut doctree = doctree.unwrap();
 
@@ -544,7 +543,7 @@ pub fn hyperlink_target(
     let label_as_string = if detected_target_label == "_" {
         doctree.next_anon_target_label()
     } else {
-        normalize_refname(detected_target_label)
+        crate::common::normalize_refname(detected_target_label)
     };
 
     let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1)
