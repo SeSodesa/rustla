@@ -1286,9 +1286,7 @@ impl Parser {
             line_cursor.sum_total(),
             Some(State::Body),
             section_level,
-        )
-        .parse()
-        {
+        ).parse() {
             ParsingResult::EOF {
                 doctree,
                 state_stack,
@@ -1658,8 +1656,6 @@ impl Parser {
             };
         };
 
-        let directive_options = Self::scan_directive_options(src_lines, line_cursor, body_indent);
-
         let (
             submissions,
             points_to_pass,
@@ -1674,7 +1670,7 @@ impl Parser {
             show_model,
             allow_assistant_viewing,
             allow_assistant_grading,
-        ) = if let Some(mut options) = directive_options {
+        ) = if let Some(mut options) = Self::scan_directive_options(src_lines, line_cursor, body_indent) {
 
             let submissions = options.remove("submissions");
             let points_to_pass = options.remove("points-to-pass");
@@ -1825,8 +1821,7 @@ impl Parser {
         if let TreeNodeType::AplusQuestionnaire {
             points_from_children,
             ..
-        } = doctree.mut_node_data()
-        {
+        } = doctree.mut_node_data() {
             *points_from_children += points;
         }
 
@@ -1875,26 +1870,32 @@ impl Parser {
 
         Parser::skip_empty_lines(src_lines, line_cursor);
 
-        let start_line = src_lines.get(line_cursor.relative_offset()).expect(
-            format!(
-                "Input overflow on line {} when parsing pick-one assignment. Computer says no...",
-                line_cursor.sum_total()
-            )
-            .as_str(),
-        );
+        let start_line = match src_lines.get(line_cursor.relative_offset()) {
+            Some(line) => line,
+            None => return TransitionResult::Failure {
+                message: format!(
+                    "Input overflow on line {} when parsing pick-one assignment. Computer says no...",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            }
+        };
 
         let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
-            let (block_lines, offset) = Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)).expect(
-          format!("Could not read pick-one assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()).
-          as_str()
-        );
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+                Ok((lines, offset)) => (lines, offset),
+                Err(message) => return TransitionResult::Failure {
+                    message: format!("Could not read pick-one assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
             let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-one assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             line_cursor.increment_by(1);
 
@@ -1986,18 +1987,18 @@ impl Parser {
 
             if answer.trim().is_empty() {
                 return TransitionResult::Failure {
-          message: format!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("Discovered a pick-one answer without content on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             }
 
             let answer_nodes: Vec<TreeNodeType> = match Parser::inline_parse(answer.to_string(), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             let choice_node = TreeNodeType::AplusPickChoice {
                 label: label,
@@ -2124,12 +2125,12 @@ impl Parser {
             }
 
             let hint_nodes: Vec<TreeNodeType> = match Parser::inline_parse(hint.to_string(), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-one answer on line {} for inline nodes. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             if hint_nodes.is_empty() {
                 return TransitionResult::Failure {
@@ -2225,9 +2226,9 @@ impl Parser {
                 points
             } else {
                 return TransitionResult::Failure {
-          message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("Quiz question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             }
         } else {
             return TransitionResult::Failure {
@@ -2242,8 +2243,7 @@ impl Parser {
         if let TreeNodeType::AplusQuestionnaire {
             points_from_children,
             ..
-        } = doctree.mut_node_data()
-        {
+        } = doctree.mut_node_data() {
             *points_from_children += points;
         }
 
@@ -2299,9 +2299,9 @@ impl Parser {
                     Some(result)
                 } else {
                     return TransitionResult::Failure {
-            message: format!("No correct count provided for pick-any on line {} with randomization activated. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-          };
+                        message: format!("No correct count provided for pick-any on line {} with randomization activated. Computer says no...", line_cursor.sum_total()),
+                        doctree: doctree
+                    };
                 }
             } else {
                 None
@@ -2330,26 +2330,33 @@ impl Parser {
 
         Parser::skip_empty_lines(src_lines, line_cursor);
 
-        let start_line = src_lines.get(line_cursor.relative_offset()).expect(
-            format!(
-                "Input overflow on line {} when parsing pick-any assignment. Computer says no...",
-                line_cursor.sum_total()
-            )
-            .as_str(),
-        );
+        let start_line = match src_lines.get(line_cursor.relative_offset()) {
+            Some(line) => line,
+            None => return TransitionResult::Failure {
+                message: format!(
+                    "Input overflow on line {} when parsing pick-any assignment. Computer says no...",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            }
+        };
 
         let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
-            let (block_lines, offset) = Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)).expect(
-          format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()).
-          as_str()
-        );
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+                Ok((lines, offset)) => (lines, offset),
+                Err(message) => return TransitionResult::Failure {
+                    message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
+
             let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => return TransitionResult::Failure {
-          message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        }
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => return TransitionResult::Failure {
+                    message: format!("Could not parse pick-any assignment for inline nodes on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                }
+            };
 
             line_cursor.increment_by(1);
 
@@ -2674,9 +2681,9 @@ impl Parser {
                     result
                 } else {
                     return TransitionResult::Failure {
-            message: format!("Quiz freetext question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-          };
+                        message: format!("Quiz freetext question points preceding line {} could not be parsed into an integer. Computer says no...", line_cursor.sum_total()),
+                        doctree: doctree
+                    };
                 }
             } else {
                 return TransitionResult::Failure {
@@ -2816,9 +2823,9 @@ impl Parser {
             let indent = answer.chars().take_while(|c| c.is_whitespace()).count();
             if indent != body_indent {
                 return TransitionResult::Failure {
-          message: format!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("A+ freetext answer has incorrect indentation on line {}. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             }
 
             if let TreeNodeType::AplusFreeText { model_answer, .. } = doctree.mut_node_data() {
@@ -2839,18 +2846,19 @@ impl Parser {
         };
 
         // Read possible hints
-        use regex::Regex;
         const APLUS_PICK_HINT_PATTERN: &'static str =
             r"^(\s*)(?P<show_not_answered>!)?(?P<label>.+)[ ]*§[ ]*(?P<hint>.+)";
         lazy_static::lazy_static! {
-          static ref HINT_RE: Regex = Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
+            static ref HINT_RE: regex::Regex = regex::Regex::new(APLUS_PICK_HINT_PATTERN).unwrap();
         }
 
         Parser::skip_empty_lines(src_lines, line_cursor);
 
-        doctree = match doctree.push_data_and_focus(TreeNodeType::AplusQuestionnaireHints {
-            body_indent: body_indent,
-        }) {
+        doctree = match doctree.push_data_and_focus(
+            TreeNodeType::AplusQuestionnaireHints {
+                body_indent: body_indent,
+            }
+        ) {
             Ok(tree) => tree,
             Err(tree) => {
                 return TransitionResult::Failure {
@@ -3293,14 +3301,14 @@ impl Parser {
             },
             clear: if let Some(clear) = clear {
                 match clear.as_str() {
-          "both" => Some(AplusActiveElementClear::Both),
-          "left" => Some(AplusActiveElementClear::Left),
-          "right" => Some(AplusActiveElementClear::Right),
-          _ => return TransitionResult::Failure {
-            message: format!("No such clear type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-          }
-        }
+                    "both" => Some(AplusActiveElementClear::Both),
+                    "left" => Some(AplusActiveElementClear::Left),
+                    "right" => Some(AplusActiveElementClear::Right),
+                    _ => return TransitionResult::Failure {
+                        message: format!("No such clear type for A+ active element input before line {}. Computer says no...", line_cursor.sum_total()),
+                        doctree: doctree
+                    }
+                }
             } else {
                 None
             },
@@ -3314,18 +3322,18 @@ impl Parser {
                         options
                     } else {
                         return TransitionResult::Failure {
-              message: format!("No options for dropdown input for A+ activ element input before line {}. Computer says no...", line_cursor.sum_total()),
-              doctree: doctree
-            };
+                            message: format!("No options for dropdown input for A+ activ element input before line {}. Computer says no...", line_cursor.sum_total()),
+                            doctree: doctree
+                        };
                     };
                     Some(crate::common::AplusActiveElementInputType::Dropdown(
                         options.to_string(),
                     ))
                 } else {
                     return TransitionResult::Failure {
-            message: format!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total()),
-            doctree: doctree
-          };
+                        message: format!("No such input type for A+ active element input before line {}. Ignoring...", line_cursor.sum_total()),
+                        doctree: doctree
+                    };
                 }
             } else {
                 None
@@ -3381,9 +3389,9 @@ impl Parser {
             args.join(" ")
         } else {
             return TransitionResult::Failure {
-        message: format!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!("A+ active element output before line {} has no key for output. Computer says no...", line_cursor.sum_total()),
+                doctree: doctree
+            };
         };
 
         let (
@@ -3441,17 +3449,17 @@ impl Parser {
                 config
             } else {
                 return TransitionResult::Failure {
-          message: format!("A+ active element output before line {} must have a set config file via the \"config\" option. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("A+ active element output before line {} must have a set config file via the \"config\" option. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             },
             inputs: if let Some(inputs) = inputs {
                 inputs
             } else {
                 return TransitionResult::Failure {
-          message: format!("A+ active element output before line {} must have a set of inputs set via the \"inputs\" setting. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        };
+                    message: format!("A+ active element output before line {} must have a set of inputs set via the \"inputs\" setting. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                };
             },
             title: title,
             class: class,
@@ -3467,25 +3475,19 @@ impl Parser {
             },
             clear: if let Some(clear) = clear {
                 match clear.as_str() {
-                    "both" => Some(AplusActiveElementClear::Both),
-                    "left" => Some(AplusActiveElementClear::Left),
+                    "both"  => Some(AplusActiveElementClear::Both),
+                    "left"  => Some(AplusActiveElementClear::Left),
                     "right" => Some(AplusActiveElementClear::Right),
-                    _ => {
-                        // eprintln!("No such clear type for A+ active element output before line {}. Ignoring...", line_cursor.sum_total());
-                        None
-                    }
+                    _       => None
                 }
             } else {
                 None
             },
             output_type: if let Some(output_type) = output_type {
                 match output_type.as_str() {
-                    "text" => AplusActiveElementOutputType::Text,
+                    "text"  => AplusActiveElementOutputType::Text,
                     "image" => AplusActiveElementOutputType::Image,
-                    _ => {
-                        // eprintln!("Warning: No such output type for A+ active element output beforeline {}. Setting it as text...", line_cursor.sum_total());
-                        AplusActiveElementOutputType::Text
-                    }
+                    _       => AplusActiveElementOutputType::Text
                 }
             } else {
                 AplusActiveElementOutputType::Text
@@ -3506,16 +3508,13 @@ impl Parser {
             },
             status: if let Some(status) = status {
                 match status.as_str().trim() {
-                    "ready" => AplusExerciseStatus::Ready,
-                    "unlisted" => AplusExerciseStatus::Unlisted,
-                    "hidden" => AplusExerciseStatus::Hidden,
-                    "enrollment" => AplusExerciseStatus::Enrollment,
-                    "enrollment_ext" => AplusExerciseStatus::EnrollmentExt,
-                    "maintenance" => AplusExerciseStatus::Maintenance,
-                    _ => {
-                        // eprintln!("No such exercise status for A+ active element output before line {}. Setting as unlisted...", line_cursor.sum_total());
-                        AplusExerciseStatus::Unlisted
-                    }
+                    "ready"     => AplusExerciseStatus::Ready,
+                    "unlisted"  => AplusExerciseStatus::Unlisted,
+                    "hidden"    => AplusExerciseStatus::Hidden,
+                    "enrollment"        => AplusExerciseStatus::Enrollment,
+                    "enrollment_ext"    => AplusExerciseStatus::EnrollmentExt,
+                    "maintenance"       => AplusExerciseStatus::Maintenance,
+                    _                   => AplusExerciseStatus::Unlisted
                 }
             } else {
                 AplusExerciseStatus::Unlisted
