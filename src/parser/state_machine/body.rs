@@ -1760,10 +1760,8 @@ pub fn text(
                         };
                     }
                     _ => {
-                        doctree = doctree.focus_on_parent();
-
                         return TransitionResult::Success {
-                            doctree: doctree,
+                            doctree: doctree.focus_on_parent(),
                             push_or_pop: PushOrPop::Pop,
                             line_advance: LineAdvance::None,
                         };
