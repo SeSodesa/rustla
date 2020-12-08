@@ -1621,22 +1621,20 @@ impl Parser {
         first_indent: usize,
         body_indent: usize,
     ) -> TransitionResult {
-        let (key, difficulty, max_points): (String, String, String) = if let Some(arg) =
-            Self::scan_directive_arguments(
+        let (key, difficulty, max_points): (String, String, String) = match Self::scan_directive_arguments(
                 src_lines,
                 line_cursor,
                 Some(first_indent),
                 empty_after_marker,
-            ) {
-            Parser::aplus_key_difficulty_and_max_points(arg.join(" ").as_str(), line_cursor)
-        } else {
-            return TransitionResult::Failure {
+        ) {
+            Some(lines) => Parser::aplus_key_difficulty_and_max_points(lines.join(" ").as_str(), line_cursor),
+            None => return TransitionResult::Failure {
                 message: format!(
                     "A+ questionnaire on line {} was not given arguments. Computer says no...",
                     line_cursor.sum_total()
                 ),
                 doctree: doctree,
-            };
+            }
         };
 
         let (
