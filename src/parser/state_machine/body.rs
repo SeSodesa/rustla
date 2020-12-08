@@ -313,9 +313,9 @@ pub fn footnote(
         kind
     } else {
         return TransitionResult::Failure {
-      message: format!("No footnote type information inside footnote transition function. Computer says no..."),
-      doctree: doctree
-    };
+            message: format!("No footnote type information inside footnote transition function. Computer says no..."),
+            doctree: doctree
+        };
     };
 
     let (label, target) = if let Some(label_and_target) =
@@ -324,9 +324,9 @@ pub fn footnote(
         (label_and_target.0, label_and_target.1)
     } else {
         return TransitionResult::Failure {
-      message: format!("Cound not transform a footnote marker into a label--target-pair on line {}. Computer says no...", line_cursor.sum_total()),
-      doctree: doctree
-    };
+            message: format!("Cound not transform a footnote marker into a label--target-pair on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+        };
     };
 
     // Match against the parent node. Only document root ignores indentation;
@@ -353,17 +353,20 @@ pub fn footnote(
             };
 
             let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Footnote, section_level, false) {
-        Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-          (doctree, offset, state_stack)
-        } else {
-          unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
-        },
-        Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-          message: format!("Looks like footnote on line {} has no content. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        },
-        _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
-      };
+                Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+                    (doctree, offset, state_stack)
+                } else {
+                    unreachable!(
+                        "Returned from a nested parsing session on line {} without necessary information. Computer says no...",
+                        line_cursor.sum_total()
+                    )
+                },
+                Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+                    message: format!("Looks like footnote on line {} has no content. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                },
+                _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
+            };
 
             return TransitionResult::Success {
                 doctree: doctree,
@@ -461,17 +464,20 @@ pub fn citation(
             };
 
             let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Citation, section_level,false) {
-        Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-          (doctree, offset, state_stack)
-        } else {
-          unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
-        },
-        Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-          message: format!("Looks like citation on line {} has no content. Computer says no...", line_cursor.sum_total()),
-          doctree: doctree
-        },
-        _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
-      };
+                Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+                    (doctree, offset, state_stack)
+                } else {
+                    unreachable!(
+                        "Returned from a nested parsing session on line {} without necessary information. Computer says no...",
+                        line_cursor.sum_total()
+                    )
+                },
+                Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+                    message: format!("Looks like citation on line {} has no content. Computer says no...", line_cursor.sum_total()),
+                    doctree: doctree
+                },
+                _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
+            };
 
             tree_wrapper = doctree;
 
