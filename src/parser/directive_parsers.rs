@@ -224,7 +224,6 @@ impl Parser {
         empty_after_marker: bool,
         first_indent: Option<usize>,
     ) -> TransitionResult {
-        // use crate::doctree::directives::ImageDirective;
 
         // Fetch content indentation and option|content offset from directive marker line
         let (content_indent, content_offset) = match Self::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
@@ -451,8 +450,6 @@ impl Parser {
         todo!()
     }
 
-    /// ### parse_code
-    ///
     /// The "code" directive parser.
     pub fn parse_code(
         src_lines: &Vec<String>,
