@@ -728,15 +728,6 @@ impl Parser {
         body_indent: usize,
         section_level: usize,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "header-rows",
-            "stub-columns",
-            "width",
-            "widths",
-            "class",
-            "name",
-            "align",
-        ];
 
         let table_title = if let Some(title) = Parser::scan_directive_arguments(
             src_lines,
@@ -1684,21 +1675,6 @@ impl Parser {
             allow_assistant_viewing,
             allow_assistant_grading,
         ) = if let Some(mut options) = directive_options {
-            const RECOGNIZED_OPTIONS: &[&str] = &[
-                "submissions",
-                "points-to-pass",
-                "feedback",
-                "title",
-                "no_override",
-                "pick_randomly",
-                "preserve-questions-between-attempts",
-                "category",
-                "status",
-                "reveal-model-at-max-submissions",
-                "show-model",
-                "allow-assistant-viewing",
-                "allow-assistant-grading",
-            ];
 
             let submissions = options.remove("submissions");
             let points_to_pass = options.remove("points-to-pass");
@@ -1798,9 +1774,6 @@ impl Parser {
         body_indent: usize,
         empty_after_marker: bool,
     ) -> TransitionResult {
-        // Constants related to this parser
-
-        const RECOGNIZED_OPTIONS: &[&str] = &["class", "required", "key", "dropdown"];
 
         /// ### APLUS_PICK_ONE_CHOICE_PATTERN
         /// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
@@ -2230,15 +2203,6 @@ impl Parser {
         body_indent: usize,
         empty_after_marker: bool,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "class",
-            "required",
-            "key",
-            "partial-points",
-            "randomized",
-            "correct-count",
-            "preserve-questions-between-attempts",
-        ];
 
         const APLUS_PICK_ANY_CHOICE_PATTERN: &'static str = r"^(\s*)(?P<pre_selected>\+)?(?:(?P<neutral>\?)|(?P<correct>\*))?(?P<label>\S+)\.[ ]+(?P<answer>.+)";
         const APLUS_PICK_HINT_PATTERN: &'static str =
@@ -2692,7 +2656,6 @@ impl Parser {
         body_indent: usize,
         empty_after_marker: bool,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &["class", "required", "key", "length", "height"];
 
         use crate::common::QuizPoints;
 
@@ -3024,25 +2987,6 @@ impl Parser {
         body_indent: usize,
         empty_after_marker: bool,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "config",
-            "submissions",
-            "points-to-pass",
-            "class",
-            "title",
-            "category",
-            "status",
-            "ajax",
-            "allow-assistant-viewing",
-            "allow-assistant-grading",
-            "quiz",
-            "url",
-            "radar-tokenizer",
-            "radar_minimum_match_tokens",
-            "lti_resource_link_id",
-            "lti_open_in_iframe",
-            "lti_aplus_get_and_post",
-        ];
 
         let (key, difficulty, max_points): (String, String, String) = if let Some(arg) =
             Self::scan_directive_arguments(
@@ -3295,9 +3239,6 @@ impl Parser {
         first_indent: usize,
         body_indent: usize,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "title", "default", "class", "width", "height", "clear", "type", "file",
-        ];
 
         let key_for_input = if let Some(args) = Parser::scan_directive_arguments(
             src_lines,
@@ -3427,19 +3368,6 @@ impl Parser {
         first_indent: usize,
         body_indent: usize,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "config",
-            "inputs",
-            "title",
-            "class",
-            "width",
-            "height",
-            "clear",
-            "type",
-            "submissions",
-            "scale-size",
-            "status",
-        ];
 
         let key_for_output = if let Some(args) = Parser::scan_directive_arguments(
             src_lines,
@@ -3625,19 +3553,6 @@ impl Parser {
         body_indent: usize,
         section_level: usize,
     ) -> TransitionResult {
-        const RECOGNIZED_OPTIONS: &[&str] = &[
-            "id",
-            "previous",
-            "next",
-            "hidden",
-            "class",
-            "height",
-            "columns",
-            "bgimg",
-            "not_in_slides",
-            "not_in_book",
-            "no_poi_box",
-        ];
 
         let title = Parser::scan_directive_arguments(
             src_lines,
