@@ -363,7 +363,7 @@ impl TreeNodeType {
                     String::new()
                 };
 
-                format!("\\begin{{figure}}{}\n", options_string)
+                format!("\\begin{{center}}\n")//{}\n"), options_string)
             }
             Self::Footer { .. } => todo!(),
             Self::Footnote { .. } => todo!(),
@@ -1231,7 +1231,7 @@ impl TreeNodeType {
             Self::FieldBody { .. } => todo!(),
             Self::FieldList { .. } => "\\end{itemize}\n\n".to_string(),
             Self::FieldListItem { .. } => "\n".to_string(),
-            Self::Figure { .. } => "\\end{figure}\n\n".to_string(),
+            Self::Figure { .. } => "\\end{center}\n\n".to_string(),
             Self::Footer { .. } => todo!(),
             Self::Footnote { .. } => todo!(),
             Self::FootnoteReference { .. } => todo!(),
