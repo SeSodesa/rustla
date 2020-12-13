@@ -33,11 +33,11 @@ fn math_block_01() {
 
     match doctree.shared_child(0).shared_data() {
         TreeNodeType::MathBlock {
-            block_text,
+            math_block,
             name,
             class,
         } => {
-            assert_eq!(block_text.as_str(), r"\alpha + \beta = \gamma");
+            assert_eq!(math_block.as_str(), r"\alpha + \beta = \gamma");
             assert_eq!(name.as_ref().unwrap().as_str(), r"name");
             assert_eq!(class.as_ref().unwrap().as_str(), r"class");
         }
@@ -74,7 +74,7 @@ fn math_block_02() {
 
     match doctree.shared_child(0).shared_data() {
         TreeNodeType::MathBlock {
-            block_text,
+            math_block: block_text,
             name,
             class,
         } => {
@@ -90,7 +90,7 @@ fn math_block_02() {
 
     match doctree.shared_child(1).shared_data() {
         TreeNodeType::MathBlock {
-            block_text,
+            math_block: block_text,
             name,
             class,
         } => {

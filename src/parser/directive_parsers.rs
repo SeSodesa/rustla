@@ -574,7 +574,7 @@ impl Parser {
         if let Some(math) = math_after_marker {
             doctree = match doctree.push_data(
                 TreeNodeType::MathBlock {
-                    block_text: math.join("\n"),
+                    math_block: math.join("\n"),
                     class: classes,
                     name: name,
                 }
@@ -598,14 +598,13 @@ impl Parser {
         }
 
         // If no equation as argument, try reading block contents as multiple equations...
-        let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
+        let (lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(
             src_lines,
-            Some(line_cursor.relative_offset()),
-            Some(false),
-            Some(true),
-            Some(body_indent),
-            None,
+            line_cursor.relative_offset(),
             true,
+            true,
+            Some(body_indent),
+            false,
         ) {
             (lines, offset)
         } else {
@@ -624,14 +623,18 @@ impl Parser {
             let mut block = String::new();
 
             for line in lines.iter() {
-                if line.trim().is_empty() && !block.trim().is_empty() {
+                if ! line.trim().is_empty() {
+                    block = block + "\n" + line;
+                } else if line.trim().is_empty() && !block.trim().is_empty() {
                     blocks.push(block);
                     block = String::new();
-                } else if line.trim().is_empty() && block.trim().is_empty() {
-                    continue;
+                } else {
+                    continue
                 }
+            }
 
-                block = block + "\n" + line;
+            if ! block.trim().is_empty() {
+                blocks.push(block)
             }
 
             blocks
@@ -646,7 +649,7 @@ impl Parser {
 
         for block in blocks {
             doctree = match doctree.push_data(TreeNodeType::MathBlock {
-                block_text: block.trim().to_string(),
+                math_block: block.trim().to_string(),
                 name: name.clone(),
                 class: classes.clone(),
             }) {
@@ -666,7 +669,7 @@ impl Parser {
         TransitionResult::Success {
             doctree: doctree,
             push_or_pop: PushOrPop::Neither,
-            line_advance: LineAdvance::Some(offset),
+            line_advance: LineAdvance::Some(offset + 1),
         }
     }
 
@@ -1861,7 +1864,7 @@ impl Parser {
         };
 
         let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
-            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent),true) {
                 Ok((lines, offset)) => (lines, offset),
                 Err(message) => return TransitionResult::Failure {
                     message: format!("Could not read pick-one assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
@@ -2320,7 +2323,7 @@ impl Parser {
         };
 
         let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
-            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent), true) {
                 Ok((lines, offset)) => (lines, offset),
                 Err(message) => return TransitionResult::Failure {
                     message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
@@ -2739,7 +2742,7 @@ impl Parser {
         // Read in assignment
 
         let assignment_inline_nodes: Vec<TreeNodeType> = {
-            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent)) {
+            let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent), true) {
                 Ok((lines, offset)) => (lines, offset),
                 Err(message) => return TransitionResult::Failure {
                     message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),

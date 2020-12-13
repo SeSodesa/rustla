@@ -454,7 +454,7 @@ impl TreeNodeType {
                 format!(r"\({}\)", crate::utf8_to_latex::unicode_math_to_latex(text))
             }
             Self::MathBlock {
-                block_text,
+                math_block,
                 name,
                 class,
             } => {
@@ -473,7 +473,7 @@ impl TreeNodeType {
                 };
                 format!(
                     "\\begin{{equation}}\n{}{}\n",
-                    ref_labels, crate::utf8_to_latex::unicode_math_to_latex(block_text)
+                    ref_labels, crate::utf8_to_latex::unicode_math_to_latex(math_block)
                 )
             }
             Self::OptionList { .. } => todo!(),

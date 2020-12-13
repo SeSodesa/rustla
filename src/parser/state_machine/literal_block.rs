@@ -148,6 +148,7 @@ fn parse_quoted_literal(
         true,
         true,
         Some(detected_indent),
+        true
     ) {
         Ok((mut lines, line_offset)) => {
             for line in lines.iter_mut() {

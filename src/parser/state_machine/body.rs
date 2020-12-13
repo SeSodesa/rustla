@@ -2211,6 +2211,7 @@ fn parse_paragraph(
                 true,
                 true,
                 Some(relative_indent),
+                true
             ) {
                 Ok((lines, line_offset)) => lines.join("\n").trim_end().to_string(),
                 Err(e) => {

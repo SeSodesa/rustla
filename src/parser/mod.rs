@@ -599,7 +599,6 @@ impl Parser {
         }
     }
 
-    /// ### read_text_block
     /// Reads in an contiguous set of lines of text.
     /// A text block in rST terms is a set of lines
     /// separated from other elements by empty lines above and below.
@@ -612,6 +611,7 @@ impl Parser {
         indent_allowed: bool,
         remove_indent: bool,
         alignment: Option<usize>,
+        until_blank: bool
     ) -> Result<(Vec<String>, usize), String> {
         let mut line_num = start_line;
         let last_line = src_lines.len();
@@ -630,7 +630,13 @@ impl Parser {
             };
 
             if line.trim().is_empty() {
-                break;
+                if until_blank {
+                    break
+                } else {
+                    lines.push(line.trim().to_string());
+                    line_num += 1;
+                    continue
+                }
             }
 
             let line_indent = line

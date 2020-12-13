@@ -140,6 +140,7 @@ impl Parser {
             indent_allowed,
             remove_indent,
             Some(alignment),
+            true
         ) {
             (lines, offset)
         } else {

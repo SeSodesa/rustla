@@ -34,6 +34,7 @@ pub fn parse_aplus_questionnaire_text(
                 indent_allowed,
                 remove_indent,
                 alignment,
+                true
             ) {
                 (lines, offset)
             } else {

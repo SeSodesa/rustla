@@ -25,7 +25,7 @@ asdfsdafasdfasdfa
 
     eprintln!("{:#?}", lines);
 
-    let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None) {
+    let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None, true) {
         Ok(block) => block,
         Err(e) => {
             eprintln!("{}", e);
@@ -65,7 +65,7 @@ asdfsdafasdfasdfa
 
     eprintln!("{:#?}", lines);
 
-    match Parser::read_text_block(&lines, 2, false, false, None) {
+    match Parser::read_text_block(&lines, 2, false, false, None, true) {
         Ok((lines, offset)) => {
             assert_eq!(
                 vec!["asdsafasfgasf  fwsdaf", "asfsdafasdfffasfsdfsaf"],
@@ -98,7 +98,7 @@ asdfsdafasdfasdfa
 
     eprintln!("{:#?}", lines);
 
-    match Parser::read_text_block(&lines, 2, true, false, None) {
+    match Parser::read_text_block(&lines, 2, true, false, None, true) {
         Ok((block, offset)) => {
             eprintln!("{:#?}", block);
 

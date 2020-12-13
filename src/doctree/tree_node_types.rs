@@ -563,7 +563,7 @@ pub enum TreeNodeType {
     /// #### MathBlock
     /// A node for display-style mathematics (LaTeX).
     MathBlock {
-        block_text: String,
+        math_block: String,
 
         name: Option<String>,
         class: Option<String>,
