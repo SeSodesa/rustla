@@ -451,7 +451,7 @@ impl TreeNodeType {
                 format!("\\begin{{codeblock}}\n{}", unicode_text_to_latex(text))
             }
             Self::Math { text, class, name } => {
-                format!(r"\({}\)", text)
+                format!(r"\({}\)", crate::utf8_to_latex::unicode_math_to_latex(text))
             }
             Self::MathBlock {
                 block_text,
@@ -472,8 +472,8 @@ impl TreeNodeType {
                     String::new()
                 };
                 format!(
-                    "\\begin{{equation}}\n{}\\begin{{split}}\n{}\n",
-                    ref_labels, block_text
+                    "\\begin{{equation}}\n{}{}\n",
+                    ref_labels, crate::utf8_to_latex::unicode_math_to_latex(block_text)
                 )
             }
             Self::OptionList { .. } => todo!(),
@@ -1251,7 +1251,7 @@ impl TreeNodeType {
             Self::Literal { .. } => "".to_string(),
             Self::LiteralBlock { .. } => "\n\\end{codeblock}\n\n".to_string(),
             Self::Math { .. } => "".to_string(),
-            Self::MathBlock { .. } => "\\end{split}\n\\end{equation}\n\n".to_string(),
+            Self::MathBlock { .. } => "\\end{equation}\n\n".to_string(),
             Self::OptionList { .. } => "\n".to_string(),
             Self::OptionListItem { .. } => "\n".to_string(),
             Self::OptionString { .. } => todo!(),

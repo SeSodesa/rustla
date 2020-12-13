@@ -155,6 +155,7 @@ lazy_static! {
     map.insert('\u{f7}', r#"\eth"#);
 
     // Combining diacritics
+    map.insert('\u{251}', r#"\alpha"#);
     map.insert('\u{300}', r#"\grave"#);
     map.insert('\u{301}', r#"\acute"#);
     map.insert('\u{302}', r#"\hat"#);
