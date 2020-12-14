@@ -82,7 +82,7 @@ fn math_block_02() {
                 block_text.as_str(),
                 "(1) \\alpha + \\beta = \\gamma\n\\delta"
             );
-            assert_eq!(name.as_ref().unwrap().as_str(), r"name");
+            assert_eq!(name.as_ref().unwrap().as_str(), r"name1");
             assert_eq!(class.as_ref().unwrap().as_str(), r"class");
         }
         _ => panic!(),
@@ -98,7 +98,7 @@ fn math_block_02() {
                 block_text.as_str(),
                 r#"Another block with math (printed as "Anotherblockwithmath" in LaTeX)"#
             );
-            assert_eq!(name.as_ref().unwrap().as_str(), r"name");
+            assert_eq!(name.as_ref().unwrap().as_str(), r"name2");
             assert_eq!(class.as_ref().unwrap().as_str(), r"class");
         }
         _ => panic!(),
