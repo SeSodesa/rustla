@@ -1,6 +1,6 @@
 /*!
-/// A submodule that contains the functions related to parsing literal blocks of text.
-///
+A submodule that contains the functions related to parsing literal blocks of text.
+
 (c) Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
