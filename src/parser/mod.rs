@@ -1,8 +1,10 @@
-/// ## parser
-/// This is the `parser` module of ruSTLa
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+This is the `parser` module of ruSTLa.
+It contains the `Parser` type and the `state_machine` submodule,
+that hosts the state transition functions of different states.
+
+Author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 // =========
 //  Imports
 // =========

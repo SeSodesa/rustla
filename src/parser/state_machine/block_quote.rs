@@ -1,8 +1,9 @@
-/// ## block_quote
-/// Contains the transition function for parsing attributions inside block quotes.
+/*!
+Contains the transition function for parsing attributions inside block quotes.
+*/
+
 use super::*;
 
-/// ### attribution
 /// A function that generates attribution nodes inside a block quote.
 /// An attribution ends block quotes, so encoutnering one makes the parser focus on its parent.
 pub fn attribution(

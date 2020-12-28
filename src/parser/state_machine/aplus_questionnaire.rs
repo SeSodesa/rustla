@@ -1,13 +1,10 @@
-/// ## aplus_questionnaire
-///
-/// A submodule dedicated to parsing functions of the `StateMachine::AplusQuestionnaire` state.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule dedicated to parsing functions of the `StateMachine::AplusQuestionnaire` state.
+
+(c) Santtu Söderholm <email:  santtu.soderholm@tuni.fi>
+*/
 use super::*;
 
-/// ### aplus_questionnaire_text
-///
 /// A function for reading in blocks of intermediate text (rST paragraphs) between questionnaire questions.
 pub fn parse_aplus_questionnaire_text(
     src_lines: &Vec<String>,

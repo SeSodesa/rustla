@@ -1,9 +1,9 @@
-/// ## type_aliases
-///
-/// A submodule that contains Parser-related type aliases.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule that contains Parser-related type aliases.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
 // =====================================

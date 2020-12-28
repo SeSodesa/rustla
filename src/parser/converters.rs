@@ -1,10 +1,10 @@
+/*!
+A submodule for converter functions related to the parser.
+These include Roman numeral -> integer transofrmations and the like.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use crate::common::{EnumDelims, EnumKind, HTMLAlignment, HorizontalAlignment, Length, LengthNum};
-/// ## Converters
-/// A submodule for converters functions related to the parser.
-/// These include Roman numeral -> integer transofrmations and the like.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
 use crate::parser::Parser;
 
 impl Parser {

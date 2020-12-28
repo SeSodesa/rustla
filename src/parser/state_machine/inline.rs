@@ -1,42 +1,40 @@
-/// ## inline
-/// A submodule related to parsing blocks of text for inline elements.
-///
-/// ### Inline markup recognition rules
-///
-/// Inline markup start-strings and end-strings are only recognized if the following conditions are met:
-///
-/// 1. Inline markup start-strings must be immediately followed by non-whitespace.
-/// 2. Inline markup end-strings must be immediately preceded by non-whitespace.
-/// 3. The inline markup end-string must be separated by at least one character from the start-string.
-/// 4. Both, inline markup start-string and end-string must not be preceded by an unescaped backslash
-///    (except for the end-string of inline literals). See Escaping Mechanism above for details.
-/// 5. If an inline markup start-string is immediately preceded by one of the ASCII characters ' " < ( [ { or a similar non-ASCII character,
-///    it must not be followed by the corresponding closing character from ' " ) ] } > or a similar non-ASCII character.
-///    (For quotes, matching characters can be any of the quotation marks in international usage.)
-///
-/// If the configuration setting simple-inline-markup is False (default),
-/// additional conditions apply to the characters "around" the inline markup:
-///
-/// 6. Inline markup start-strings must start a text block or be immediately preceded by
-///   * whitespace,
-///   * one of the ASCII characters - : / ' " < ( [ {
-///   * or a similar non-ASCII punctuation character.
-///
-/// 7. Inline markup end-strings must end a text block or be immediately followed by
-///   * whitespace,
-///   * one of the ASCII characters - . , : ; ! ? \ / ' " ) ] } >
-///   * or a similar non-ASCII punctuation character.
-///
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule related to parsing blocks of text for inline elements.
+
+### Inline markup recognition rules
+
+Inline markup start-strings and end-strings are only recognized if the following conditions are met:
+
+1. Inline markup start-strings must be immediately followed by non-whitespace.
+2. Inline markup end-strings must be immediately preceded by non-whitespace.
+3. The inline markup end-string must be separated by at least one character from the start-string.
+4. Both, inline markup start-string and end-string must not be preceded by an unescaped backslash
+   (except for the end-string of inline literals). See Escaping Mechanism above for details.
+5. If an inline markup start-string is immediately preceded by one of the ASCII characters ' " < ( [ { or a similar non-ASCII character,
+   it must not be followed by the corresponding closing character from ' " ) ] } > or a similar non-ASCII character.
+   (For quotes, matching characters can be any of the quotation marks in international usage.)
+
+If the configuration setting simple-inline-markup is False (default),
+additional conditions apply to the characters "around" the inline markup:
+
+6. Inline markup start-strings must start a text block or be immediately preceded by
+    * whitespace,
+    * one of the ASCII characters - : / ' " < ( [ {
+    * or a similar non-ASCII punctuation character.
+
+7. Inline markup end-strings must end a text block or be immediately followed by
+    * whitespace,
+    * one of the ASCII characters - . , : ; ! ? \ / ' " ) ] } >
+    * or a similar non-ASCII punctuation character.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 use crate::common::normalize_refname;
 use crate::common::Reference;
 use utf8_to_latex::unicode_text_to_latex;
 
-/// ### paired_delimiter
-///
 /// Parses inline text elements that have identical opening
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter(
@@ -167,9 +165,7 @@ pub fn inline_target(
     (node_vec, char_count)
 }
 
-/// ### whitespace
-///
-/// Parses inline whitespace
+/// Parses inline whitespace.
 pub fn whitespace(
     opt_doctree_ref: &mut Option<&mut DocTree>,
     pattern_name: PatternName,
@@ -308,8 +304,7 @@ pub fn interpreted_text(
     } else if !back_role.is_empty() {
         back_role
     } else {
-        /// ### DEFAULT_DEFAULT_ROLE
-        ///
+
         /// This is used as the interpreted text role, if no role was specified.
         /// This is in accordance with the
         /// [reStructuredText Markup Specification](https://docutils.sourceforge.io/docs/ref/rst/roles.html).
@@ -448,8 +443,6 @@ pub fn interpreted_text(
     }
 }
 
-/// ### simple_ref
-///
 /// Parses simple hyperlink references.
 pub fn simple_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
@@ -510,8 +503,6 @@ pub fn simple_ref(
     }
 }
 
-/// ### phrase_ref
-///
 /// Parses phrase references.
 pub fn phrase_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
@@ -613,8 +604,6 @@ pub fn phrase_ref(
     (vec![ref_node], match_len)
 }
 
-/// ### footnote_ref
-///
 /// Parses footnote references.
 pub fn footnote_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
@@ -677,8 +666,6 @@ pub fn footnote_ref(
     }
 }
 
-/// ### citation_ref
-///
 /// Parses citation references.
 pub fn citation_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
@@ -729,8 +716,6 @@ pub fn citation_ref(
     todo!()
 }
 
-/// ### substitution_ref
-///
 /// Parses inline subsitution references. Also adds hyperlink information to the reference,
 /// if the matched string ended with a `__?`.
 pub fn substitution_ref(
@@ -823,8 +808,6 @@ pub fn substitution_ref(
     (vec![substitution_ref_node], match_len)
 }
 
-/// ### uri
-///
 /// Parses inline URIs. These are split into general URIs and standalone email addresses.
 /// These two are differentiate by whether the URI starts with a protocol scheme,
 /// such as `https://`.
@@ -952,8 +935,6 @@ pub fn uri(
     (vec![data], match_len)
 }
 
-/// ### text
-///
 /// This function is invoked when no other inline pattern matched.
 /// Eats up any consequent non-whitespace characters as a single
 /// word of "text".
@@ -982,8 +963,6 @@ pub fn text(
 //  Constants and helpers
 // =======================
 
-/// ### quotation matches
-///
 /// Checks the two given string slices for matching reStructuredText quotation characters.
 fn quotation_matches(start: &str, end: &str) -> bool {
     for (i, c) in OPENERS.iter().enumerate() {
@@ -1001,8 +980,6 @@ fn quotation_matches(start: &str, end: &str) -> bool {
     false
 }
 
-/// ### OPENERS
-///
 /// A long string of "quotation openers".
 ///
 /// source: https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/utils/punctuation_chars.py#l46
@@ -1024,8 +1001,6 @@ const OPENERS: &[char] = &[
     '\u{201d}', '\u{203a}',
 ];
 
-/// ### CLOSERS
-///
 /// A long list of "quotation" closers.
 ///
 /// source: https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/utils/punctuation_chars.py#l56
@@ -1047,8 +1022,6 @@ const CLOSERS: &[char] = &[
     '\u{201d}', '\u{203a}',
 ];
 
-/// ### DELIMITERS
-///
 /// A long string of general delimiters in the unicode range smaller than `\u{FFFFFF}`.
 /// Wider code points have been exluded because of Rust limitations on unicode digits,
 /// for now. The docutils parser supports even those, so a solution might have to be invented.

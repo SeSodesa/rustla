@@ -1,11 +1,11 @@
-/// ## tree_node
-/// A submodule for the TreeNode type.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for the `TreeNode` type.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### TreeNode
 /// A tree node that contains a struct of `TreeNodeType`
 /// plus the information needed to traverse the tree.
 #[derive(Debug)]
@@ -18,7 +18,7 @@ pub struct TreeNode {
 }
 
 impl TreeNode {
-    /// ### new
+
     /// A `TreeNode` constructor.
     pub fn new(
         data: TreeNodeType,
@@ -35,7 +35,6 @@ impl TreeNode {
         }
     }
 
-    /// ### children_or_none
     /// Set the children of a `TreeNode` to `Some(Children)` or `None`,
     /// depending on the given node data variant.
     fn children_or_none(data_variant: &TreeNodeType) -> Option<Children> {
@@ -65,7 +64,6 @@ impl TreeNode {
         self.id
     }
 
-    /// ### shared_target_label
     /// Returns a shared (immutable) reference to the optional target label.
     /// If the label is `None`, as is hasn't been set, returns an
     /// empty string slice instead.
@@ -73,7 +71,6 @@ impl TreeNode {
         &self.refnames
     }
 
-    /// ### push_child
     /// Pushes a given child node the the end of `self.children`.
     pub fn push_child(&mut self, node: TreeNode) -> Result<(), TreeNode> {
         if self.child_is_allowed(&node.data) {
@@ -110,7 +107,6 @@ impl TreeNode {
         }
     }
 
-    /// ### append_children
     /// Appends multiple children to `self.children`.
     pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
         // Check whether all children are valid
@@ -132,31 +128,26 @@ impl TreeNode {
         }
     }
 
+    /// Retuns a shared reference to own target labels.
     pub fn shared_target_labels(&self) -> &Option<Vec<String>> {
         &self.refnames
     }
 
-    /// ### set_target_label
     /// Sets the target label of the node to given `Option<Vec<String>>`.
     pub fn set_target_label(&mut self, label: Option<Vec<String>>) {
         self.refnames = label;
     }
 
-    /// ### shared_children
-    ///
     /// Optionally returns a shared reference to vector containing child nodes.
     pub fn shared_children(&self) -> &Option<Children> {
         &self.children
     }
 
-    /// ### mut_children
-    ///
     /// Optionally returns a mutable reference to vector containing child nodes.
     pub fn mut_children(&mut self) -> &mut Option<Children> {
         &mut self.children
     }
 
-    /// ### child_is_allowed
     /// Checks whether a node is allowed to be inserted into another node.
     pub fn child_is_allowed(&self, node_data: &TreeNodeType) -> bool {
         use crate::doctree::node_categories::NodeCategory;
@@ -1007,7 +998,6 @@ impl TreeNode {
         }
     }
 
-    /// ### shared_child
     /// Returns a shared reference to a child node of a given index.
     /// Panics, if the child does not exist.
     pub fn shared_child(&self, index: usize) -> &Self {
@@ -1021,7 +1011,6 @@ impl TreeNode {
         }
     }
 
-    /// ### mut_child
     /// Returns a mutable reference to a child node of a given index.
     /// Panics, if the child does not exist.
     pub fn mut_child(&mut self, index: usize) -> &mut Self {
@@ -1035,13 +1024,11 @@ impl TreeNode {
         }
     }
 
-    /// ### shared_data
     /// For retrieving an immutable reference to the data type of a node.
     pub fn shared_data(&self) -> &TreeNodeType {
         &self.data
     }
 
-    /// ### mut_data
     /// For retrieving a mutable reference to the data type of a node.
     pub fn mut_data(&mut self) -> &mut TreeNodeType {
         &mut self.data

@@ -1,10 +1,12 @@
-/// ## enumerated_list
-/// A submodule for `Statemachine::EnumeratedList` related transition functions.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for `Statemachine::EnumeratedList` related transition functions.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
+/// Parses enumerated list items inside enumerated lists.
 pub fn enumerator(
     src_lines: &Vec<String>,
     base_indent: usize,

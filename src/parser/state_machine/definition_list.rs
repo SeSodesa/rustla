@@ -1,10 +1,10 @@
-/// ## definition_list
-/// A submodule with transition functions related to parsing definition list items.
-/// Every other transition function is redefined to focus on tree parent and pop
-/// from the parser state stack.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule with transition functions related to parsing definition list items.
+Every other transition function is redefined to focus on tree parent and pop
+from the parser state stack.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use super::*;
 
 /// ### text

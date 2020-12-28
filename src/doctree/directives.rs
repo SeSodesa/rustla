@@ -1,13 +1,15 @@
-/// ## directives
-/// A submodule that contains an enumeration for the different directive types recognized by reStructuredText
-/// and associated functions and metods. The documentation found in the comments in this file was taken from
-/// https://docutils.sourceforge.io/docs/ref/rst/directives.html
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule that contains an enumeration for the different directive types recognized by reStructuredText
+and associated functions and metods. The documentation found in the comments in this file was taken from
+https://docutils.sourceforge.io/docs/ref/rst/directives.html
+
+This module is currently obsolete, and the only really relevant enumeration still
+found in here is the `AdmonitionType` type.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use super::*;
 
-/// ### DirectiveType
 /// An enumeration of the different directive types found in reStructuredText and LarST.
 #[derive(Debug)]
 pub enum DirectiveNode {
@@ -71,7 +73,6 @@ impl std::fmt::Display for AdmonitionType {
     }
 }
 
-/// ### ImageDirective
 /// An enumeration of different image types.
 /// There are two image directives: `image` and `figure`.
 ///
@@ -98,7 +99,7 @@ pub enum ImageDirective {
         class: Option<String>,
     },
 
-    /// #### Figure
+
     /// A "figure" consists of image data (including image options), an optional caption (a single paragraph), and an optional legend (arbitrary body elements). For page-based output media,
     /// figures might float to a different position if this helps the page layout.
     ///
@@ -122,7 +123,6 @@ pub enum ImageDirective {
     },
 }
 
-/// ### FigWidth
 /// Alternatives to `Figure` width settings.
 #[derive(Debug)]
 pub enum FigWidth {
@@ -131,11 +131,10 @@ pub enum FigWidth {
     Percentage(u32),
 }
 
-/// ### BodyElementDirective
 /// An enumeration of different body element directives.
 #[derive(Debug)]
 pub enum BodyElementDirective {
-    /// #### Topic
+
     /// A topic is like a block quote with a title, or a self-contained section with no subsections.
     /// Use the "topic" directive to indicate a self-contained idea that is separate from the flow of the document.
     /// Topics may occur anywhere a section or transition may occur. Body elements and topics may not contain nested topics.
@@ -147,7 +146,7 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### SideBar
+
     /// Sidebars are like miniature, parallel documents that occur inside other documents, providing related or reference material.
     /// A sidebar is typically offset by a border and "floats" to the side of the page; the document's main text may flow around it. Sidebars can also be likened to super-footnotes;
     /// their content is outside of the flow of the document's main text.
@@ -159,7 +158,7 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### ParsedLiteralBlock
+
     /// Unlike an ordinary literal block, the "parsed-literal" directive constructs a literal block
     /// where the text is parsed for inline markup. It is equivalent to a line block with different
     /// rendering: typically in a typewriter/monospaced typeface, like an ordinary literal block.
@@ -172,7 +171,7 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### Code
+
     /// The "code" directive constructs a literal block.
     /// If the code language is specified, the content is parsed by the Pygments syntax highlighter
     /// and tokens are stored in nested inline elements with class arguments according to their syntactic category.
@@ -193,7 +192,7 @@ pub enum BodyElementDirective {
         number_lines: Option<u32>,
     },
 
-    /// #### Math
+
     /// The "math" directive inserts blocks with mathematical content (display formulas, equations)
     /// into the document. The input format is subset of LaTeX math syntax with support for Unicode symbols.
     /// For inline formulas, use the "math" role.
@@ -204,7 +203,7 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### Rubric
+
     /// The "rubric" directive inserts a "rubric" element into the document tree. A rubric is like an informal
     /// heading that doesn't correspond to the document's structure.
     ///
@@ -214,14 +213,14 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### Epigraph
+
     /// An epigraph is an apposite (suitable, apt, or pertinent) short inscription, often a quotation or poem,
     /// at the beginning of a document or section.
     ///
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#epigraph
     Epigraph,
 
-    /// #### Highlights
+
     /// Highlights summarize the main points of a document or section, often consisting of a list.
     ///
     /// The "highlights" directive produces a "highlights"-class block quote.
@@ -230,7 +229,7 @@ pub enum BodyElementDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#highlights
     Highlights,
 
-    /// #### PullQuote
+
     /// A pull-quote is a small selection of text "pulled out and quoted", typically in a larger typeface.
     /// Pull-quotes are used to attract attention, especially in long articles.
     ///
@@ -240,7 +239,7 @@ pub enum BodyElementDirective {
     /// Details https://docutils.sourceforge.io/docs/ref/rst/directives.html#pull-quote
     PullQuote,
 
-    /// #### CompoundParagraph
+
     /// The "compound" directive is used to create a compound paragraph,
     /// which is a single logical paragraph containing multiple physical body elements
     /// such as simple paragraphs,literal blocks, tables, lists, etc.,
@@ -252,7 +251,7 @@ pub enum BodyElementDirective {
         class: Option<String>,
     },
 
-    /// #### Container
+
     /// The "container" directive surrounds its contents (arbitrary body elements) with a generic block-level "container" element.
     /// Combined with the optional "classes" attribute argument(s), this is an extension mechanism for users & applications.
     /// The "container" directive is the equivalent of HTML's <div> element. It may be used to group a sequence of elements for user-
@@ -270,13 +269,13 @@ pub enum TableWidth {
     Percentage(u32),
 }
 
-/// ### TableDirective
+
 /// An enumeration of different table directive types.
 ///
 /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#tables
 #[derive(Debug)]
 pub enum TableDirective {
-    /// #### Table
+
     /// The "table" directive is used to associate a title with a table or specify options.
     ///
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#table
@@ -288,7 +287,6 @@ pub enum TableDirective {
         width: Option<Length>,
     },
 
-    /// #### CSVTable
     /// The "csv-table" directive is used to create a table from CSV (comma-separated values) data. CSV is
     /// a common data format generated by spreadsheet applications and commercial databases.
     /// The data may be internal (an integral part of the document) or external (a separate file).
@@ -312,7 +310,6 @@ pub enum TableDirective {
         align: Option<HorizontalAlignment>,
     },
 
-    /// #### ListTable
     /// The "list-table" directive is used to create a table from data in a uniform two-level bullet list.
     /// "Uniform" means that each sublist (second-level list) must contain the same number of list items.
     ///
@@ -326,14 +323,12 @@ pub enum TableDirective {
     },
 }
 
-/// ### DocumentPartDirective
 /// An enumeration of different table directive types.
 ///
 /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#document-parts
 #[derive(Debug)]
 pub enum DocumentPartDirective {}
 
-/// ### ReferenceDirective
 /// An enumeration of different reference directive types.
 #[derive(Debug)]
 pub enum ReferenceDirective {
@@ -361,11 +356,10 @@ pub enum ReferenceDirective {
     Citation,
 }
 
-/// ### HTMLSpecificDirective
 /// An enumeration of different HTML-specific directive types.
 #[derive(Debug)]
 pub enum HTMLSpecificDirective {
-    /// #### Meta
+
     /// The "meta" directive is used to specify HTML metadata stored in HTML META tags.
     /// "Metadata" is data about data, in this case data about web pages.
     /// Metadata is used to describe and classify web pages in the World Wide Web, in a form that is easy for search engines to extract and collate.
@@ -378,26 +372,23 @@ pub enum HTMLSpecificDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#meta
     Meta,
 
-    /// #### ImageMap
     /// Not implemented in docutils.
     ///
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#imagemap
     ImageMap,
 }
 
-/// ### SubstitutionDefDirective
 /// An enumeration of different macro directive types.
 ///
 /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#directives-for-substitution-definitions
 #[derive(Debug)]
 pub enum SubstitutionDefDirective {
-    /// #### ReplacementText
+
     /// The "replace" directive is used to indicate replacement text for a substitution reference. It may be used within substitution definitions only. For example, this directive can be used to expand abbreviations:
     ///
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#replacement-text
     ReplacementText,
 
-    /// #### UnicodeCharCode
     /// The "unicode" directive converts Unicode character codes (numerical values) to characters, and may be used in substitution definitions only.
     ///
     /// The arguments, separated by spaces, can be:
@@ -414,7 +405,6 @@ pub enum SubstitutionDefDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#unicode-character-codes
     UnicodeCharCode,
 
-    /// #### Date
     /// The "date" directive generates the current local date and inserts it into the document as text.
     /// This directive may be used in substitution definitions only.
     ///
@@ -426,16 +416,13 @@ pub enum SubstitutionDefDirective {
     Date,
 }
 
-/// ### MiscellaneousDirective
 /// An enumeration of different miscellaneous directive types.
 ///
 /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#miscellaneous
 #[derive(Debug)]
 pub enum MiscellaneousDirective {
-    /// #### Include
-    ///
-    /// ##### !!!WARNING!!!
-    /// The "include" directive represents a potential security hole.
+
+    /// **!!!WARNING!!!** The "include" directive represents a potential security hole.
     /// It can be disabled with the "file_insertion_enabled" runtime setting.
     ///
     /// The "include" directive reads a text file.
@@ -459,13 +446,10 @@ pub enum MiscellaneousDirective {
         name: Option<String>,
     },
 
-    /// #### RawDataPassthrough
+    /// **Warning** The "raw" directive represents a potential security hole.
+    /// It can be disabled with the "raw_enabled" or "file_insertion_enabled" runtime settings.
     ///
-    /// ##### Warning
-    /// The "raw" directive represents a potential security hole. It can be disabled with the "raw_enabled" or "file_insertion_enabled" runtime settings.
-    ///
-    /// ##### Caution
-    /// The "raw" directive is a stop-gap measure allowing the author to bypass reStructuredText's markup. It is a "power-user" feature that should not be overused or abused.
+    /// **Caution** The "raw" directive is a stop-gap measure allowing the author to bypass reStructuredText's markup. It is a "power-user" feature that should not be overused or abused.
     /// The use of "raw" ties documents to specific output formats and makes them less portable.
     ///
     /// If you often need to use the "raw" directive or a "raw"-derived interpreted text role, that is a sign either of overuse/abuse or that functionality may be missing from reStructuredText.
@@ -482,8 +466,6 @@ pub enum MiscellaneousDirective {
         encoding: Option<String>,
     },
 
-    /// #### Class
-    ///
     /// The "class" directive sets the "classes" attribute value on its content or on the first immediately following
     /// non-comment element. The directive argument consists of one or more space-separated class names.
     /// The names are transformed to conform to the regular expression [a-z](-?[a-z0-9]+)* (see Identifier Normalization below).
@@ -491,7 +473,6 @@ pub enum MiscellaneousDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#class
     Class { class_names: Option<Vec<String>> },
 
-    /// #### CustomInterpretedTextRole
     /// The "role" directive dynamically creates a custom interpreted text
     /// role and registers it with the parser.
     /// The role must be declared in a document before it can be used.
@@ -509,8 +490,6 @@ pub enum MiscellaneousDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#custom-interpreted-text-roles
     CustomInterpretedTextRole,
 
-    /// #### DefaultRole
-    ///
     /// The "default-role" directive sets the default interpreted text role,
     /// the role that is used for interpreted text without an explicit role.
     /// The "default-role" directive sets the default interpreted text role,
@@ -519,8 +498,6 @@ pub enum MiscellaneousDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#setting-the-default-interpreted-text-role
     DefaultRole,
 
-    /// #### MetadataDocTitle
-    ///
     /// The "title" directive specifies the document title as metadata,
     /// which does not become part of the document body.
     /// It overrides a document-supplied title.
@@ -530,7 +507,6 @@ pub enum MiscellaneousDirective {
     /// Details: https://docutils.sourceforge.io/docs/ref/rst/directives.html#metadata-document-title
     MetadataDocTitle,
 
-    /// #### ReStructuredTextTestDirective
     /// This directive is provided for test purposes only.
     /// (Nobody is expected to type in a name that long!)
     /// It is converted into a level-1 (info) system message showing the directive data,
@@ -538,15 +514,12 @@ pub enum MiscellaneousDirective {
     ReStructuredTextTestDirective,
 }
 
-/// ### AplusDirectve
-///
 /// Directives defined in the A+ rST Tools submodule of the A+ LMS.
 ///
 /// Details: https://github.com/apluslms/a-plus-rst-tools
 #[derive(Debug)]
 pub enum AplusDirective {
-    /// #### GradedQuestionnaire
-    ///
+
     /// The questionnaire directive arguments define the exercise key and optional max points with the difficulty.
     /// For example, .. questionnaire:: 1 A50 sets key 1, max points 50 and difficulty A.
     /// If not set in the directive arguments, the max points will be set to the sum of the question points.
@@ -555,8 +528,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#1-graded-questionnaire
     GradedQuestionnaire,
 
-    /// #### FeedbackQuestionnaire
-    ///
     /// A feedback questionnaire is almost like a graded questionnaire. When the feedback option is set,
     /// the questionnaire uses the feedback category and CSS class by default.
     /// Feedback questionnaires always grant full points if all of the required questions are answered.
@@ -569,8 +540,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#2-feedback-questionnaire
     FeedbackQuestionnaire,
 
-    /// #### SubmittableExercise
-    ///
     /// These types of exercises are configured separately for the MOOC grader by linking a YAML configuration file with the config option.
     /// Some settings may also be defined directly with the directive options.
     /// The directive will attach the exercise at this position in the content chapter.
@@ -583,8 +552,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#3-submittable-exercise
     SubmittableExercise,
 
-    /// ### LTIExercise
-    ///
     /// This exercise opens an external tool via the LTI launch protocol.
     /// The LTI service must be configured beforehand in A+ by an administrator.
     /// The lti option refers to the label of the LTI service.
@@ -594,8 +561,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#4-external-exercise-lti
     LTIExercise,
 
-    /// #### RoundSettings
-    ///
     /// The meta directive is used to define module (exercise round) settings. It should be defined in the RST
     /// file that defines the toctree of the module (module index). Furthermore, it may be used in chapters to hide them (i.e.,
     /// set status hidden) with the hidden option or to set the chapter audience with the audience option.
@@ -603,15 +568,11 @@ pub enum AplusDirective {
     /// Details: Details: https://github.com/apluslms/a-plus-rst-tools#5-meta-exercise-round-settings
     RoundSettings,
 
-    /// #### ActiveElementInput
-    ///
     /// This creates an input field for active element.
     ///
     /// Details: https://github.com/apluslms/a-plus-rst-tools#6-active-element-input
     ActiveElementInput,
 
-    /// #### ActiveElementOutput
-    ///
     /// This creates an output field for active element.
     ///
     /// More active element examples can be found at
@@ -620,16 +581,12 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#7-active-element-output
     ActiveElementOutput,
 
-    /// #### HiddenBlock
-    ///
     /// Directive for creating hidden content blocks. The content can be shown/hidden by clicking the link.
     /// (This uses the Bootstrap collapse component.)
     ///
     /// Details: https://github.com/apluslms/a-plus-rst-tools#8-hidden-block
     HiddenBlock,
 
-    /// #### PointOfInterest
-    ///
     /// Directive for creating a "point of interest" summary block.
     /// This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "point_of_interest"]).
     /// A point of interest is mostly like a normal admonition ("coloured info box"), but they are also linked to each other with next/previous links.
@@ -641,8 +598,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#9-point-of-interest
     PointOfInterest,
 
-    /// #### AnnotatedCodeBlock
-    ///
     /// Code blocks may be annotated with comments for specific lines. This extension must be activated separately in the project conf.py
     /// (extensions = ["aplus_setup", "annotated"]).
     /// This extension requires custom JavaScript code and CSS styles in order to highlight the annotations on mouse hover in the web browser.
@@ -651,8 +606,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#10-annotated-code-blocks
     AnnotatedCodeBlock,
 
-    /// #### CodeBlockWithLineReference
-    ///
     /// With the `lineref-code-block`, you may add links from the chapter contents to specific lines of the code block.
     /// You define labels enclosed in :: for lines of the code block. Labels can include alphanumeric characters, underscore (_),
     /// and hyphen (-). The directive is used similarly to the Sphinx directive code-block. This extension must be activated
@@ -661,16 +614,12 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#11-code-blocks-with-line-references
     CodeBlockWithLineReference,
 
-    /// #### REPLSession
-    ///
     /// The repl directive is used to print a (Scala) REPL session (read-eval-print loop).
     /// This extension must be activated separately in the project conf.py (extensions = ["aplus_setup", "repl"]).
     ///
     /// Details: https://github.com/apluslms/a-plus-rst-tools#12-repl-sessions
     REPLSession,
 
-    /// #### SubmittableACOSExercise
-    ///
     /// The custom directive acos-submit behaves almost identically to the normal submit directive.
     /// It is intended for exercises that are hosted outside the MOOC grader, such as the ACOS server.
     /// The directive option url should define the URL path of the exercise in the ACOS server.
@@ -680,8 +629,6 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#13-submittable-acos-exercises
     SubmittableACOSExercise,
 
-    /// #### HTMLDiv
-    ///
     /// The div directive can be used to insert basic <div> html elements into the generated document.
     /// This is useful for styling and other similar reasons.
     ///
@@ -690,15 +637,11 @@ pub enum AplusDirective {
     /// Details: https://github.com/apluslms/a-plus-rst-tools#14-html-div-elements
     HTMLDiv,
 
-    /// #### CSSStyledTopic
-    ///
     /// Directive that inserts topic elements that are more friendly to css styling using the bootstrap framework.
     ///
     /// Details: https://github.com/apluslms/a-plus-rst-tools#15-css-styled-topics
     CSSStyledTopic,
 
-    /// #### Media
-    ///
     /// The media directives were developed basically for a single course and they may
     /// not be quite reusable for other usecases, but they are listed here anyway.
     /// This extension must be activated separately in the project conf.py

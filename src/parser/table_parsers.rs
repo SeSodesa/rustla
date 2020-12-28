@@ -1,10 +1,10 @@
+/*!
+This submodule contains the table parsing functions,
+that the state machine uses as helpers in constructing tables.
+
+author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use crate::parser::line_cursor::LineCursor;
-/// ## Table parsers
-///
-/// This submodule contains the table parsing functions,
-/// that the state machine uses as helpers in constructing tables.
-///
-/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
 use crate::parser::Parser;
 
 #[derive(Debug)]

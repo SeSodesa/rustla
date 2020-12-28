@@ -1,11 +1,11 @@
-/// ## common
-/// A submodule for transition functions common to all states, such as blank line detection.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for transition functions common to all states, such as blank line detection.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### empty_line
 /// Simply adds an empty line to the children of the curren node.
 pub fn empty_line(
     src_lines: &Vec<String>,

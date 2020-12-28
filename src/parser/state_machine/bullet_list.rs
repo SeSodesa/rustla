@@ -1,11 +1,11 @@
-/// ## bullet_list
-/// A submodule that contains `StateMachine::BulletList` related transition functions.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule that contains `StateMachine::BulletList` related transition functions.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### bullet
 /// A `BulletList` version of the bullet list related
 /// transition method. Differs from the `Body` state version
 /// in that this detects whether a list of a different type has started

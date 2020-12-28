@@ -1,8 +1,9 @@
-/// ## Literal Block
-///
+/*!
 /// A submodule that contains the functions related to parsing literal blocks of text.
 ///
-/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use crate::common::PatternName;
 use crate::doctree::tree_node_types::TreeNodeType;
 use crate::doctree::DocTree;
@@ -11,7 +12,6 @@ use crate::parser::types_and_aliases::TransitionResult;
 use crate::parser::types_and_aliases::{LineAdvance, PushOrPop};
 use crate::parser::Parser;
 
-/// ### literal_block
 /// A function for parsing indented literal block nodes.
 pub fn literal_block(
     src_lines: &Vec<String>,

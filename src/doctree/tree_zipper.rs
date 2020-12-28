@@ -1,11 +1,12 @@
-/// A zipper module for accessing `TreeNode`s.
-/// Inspired by https://stackoverflow.com/a/36168919/6449910
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A zipper module for accessing `TreeNode`s.
+Inspired by https://stackoverflow.com/a/36168919/6449910
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### TreeZipper
 /// A [zipper](https://en.wikipedia.org/wiki/Zipper_%28data_structure%29)
 /// of `TreeNode`s. Makes it possible to traverse the tree and
 /// access a specific child/parent in constant time.
@@ -17,7 +18,7 @@ pub struct TreeZipper {
 }
 
 impl TreeZipper {
-    /// ### new
+
     /// A `TreeZipper` constructor. A new `TreeZipper`
     /// consists of nothing but the root node.
     pub fn new(
@@ -32,7 +33,6 @@ impl TreeZipper {
         }
     }
 
-    /// ### push child
     /// Adds a child node to the contained node.
     /// Returns and `Ok`-wrapped empty value if sucessful,
     /// else returns the given `TreeNode` wrapped in an `Err`.
@@ -51,27 +51,21 @@ impl TreeZipper {
         }
     }
 
-    /// ### append_children
     /// Adds a sequence of children to `self.node.children`.
     pub fn append_children(&mut self, children: &mut Vec<TreeNode>) {
         self.node.append_children(children);
     }
 
-    /// ### shared_children
-    ///
     /// Optionally returns a shared reference to the children of the focused-on node.
     pub fn shared_children(&self) -> &Option<Vec<TreeNode>> {
         self.node.shared_children()
     }
 
-    /// ### mut_children
-    ///
     /// Optionally returns a mutable reference to the children of the focused-on node.
     pub fn mut_children(&mut self) -> &mut Option<Vec<TreeNode>> {
         self.node.mut_children()
     }
 
-    /// ### focus_on_child
     /// Moves focus to a specific child of a node.
     /// Returns `Ok(TreeZipper)` focused
     /// on the child, if successful. Otherwise
@@ -100,7 +94,6 @@ impl TreeZipper {
         })
     }
 
-    /// ### focus_on_parent
     /// Moves focus to the parent of the current node,
     /// or at least tries to. Returns with `Ok(TreeZipper)`
     /// if successful and `Err(message: &str)` if not.
@@ -161,7 +154,6 @@ impl TreeZipper {
         })
     }
 
-    /// ### walk_to_root
     /// A function that walks up the tree (zipper) until no more parents are encountered.
     pub fn walk_to_root(mut self) -> Self {
         loop {
@@ -177,7 +169,6 @@ impl TreeZipper {
         self
     }
 
-    /// ### walk_to_parent_section_level
     /// Walks up the tree until a parent of a given section level is encountered.
     pub fn walk_to_parent_section_level(mut self, section_level: usize) -> Self {
         loop {
@@ -210,7 +201,6 @@ impl TreeZipper {
         self
     }
 
-    /// ### focus_on_last_child
     /// Moves the focus to the last child of the current focus.
     pub fn focus_on_last_child(self) -> Result<Self, Self> {
         let children_len = if let Some(children) = self.node.shared_children() {
@@ -228,7 +218,6 @@ impl TreeZipper {
         Ok(with_focus_on_latest_child)
     }
 
-    /// ### focus_on_sibling
     /// Moves focus to the given nth sibling.
     pub fn focus_on_sibling(self, sibling_index: usize) -> Result<Self, Self> {
         let parent = if let Some(parent) = &self.parent {
@@ -251,7 +240,6 @@ impl TreeZipper {
         Ok(sibling)
     }
 
-    /// ### push_data
     /// Given a variant `TreeNodeType`, constructs a TreeNode from the data and
     /// pushes it to current node's children.
     pub fn push_data(
@@ -268,7 +256,6 @@ impl TreeZipper {
         }
     }
 
-    /// ### push_and_focus
     /// Given a variant `TreeNodeType`, constructs a TreeNode from the data,
     /// pushes it to current node's children and focuses on it.
     pub fn push_data_and_focus(
@@ -298,7 +285,6 @@ impl TreeZipper {
         node_result
     }
 
-    /// shared_parent_ref
     /// Returns a shared reference to the parent of the node.
     /// Else returns `None`.
     pub fn shared_parent_ref(&self) -> Option<&TreeZipper> {
@@ -311,7 +297,6 @@ impl TreeZipper {
         }
     }
 
-    /// ### shared_sibling_data
     /// Returns a shared reference to the sibling of the current node at a given index,
     /// if there is one. Else returns `None`.
     pub fn shared_sibling_data(&self, sibling_index: usize) -> Option<&TreeNodeType> {
@@ -332,13 +317,11 @@ impl TreeZipper {
         }
     }
 
-    /// ### index_in_parent
     /// Returns the index of the focused-on node in its parent, if there is a parent available.
     pub fn index_in_parent(&self) -> Option<usize> {
         self.index_in_parent
     }
 
-    /// ### n_of_children
     /// Returns the number of children of the current node.
     pub fn n_of_children(&self) -> usize {
         if let Some(children) = self.node.shared_children() {
@@ -348,13 +331,11 @@ impl TreeZipper {
         }
     }
 
-    /// ### shared_data
     /// Returns a shared reference to the data of the current node.
     pub fn shared_data(&self) -> &TreeNodeType {
         self.node.shared_data()
     }
 
-    /// ### node_id
     /// Reurn the id of the contained node.
     pub fn node_id(&self) -> NodeId {
         self.node.id()

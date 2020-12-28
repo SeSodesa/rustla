@@ -1,11 +1,10 @@
-/// ## field_list
-/// A submodule that contains transition functions responsible for creating FieldListItem nodes.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!A submodule that contains transition functions responsible for creating FieldListItem nodes.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### field_marker
 /// Creates FieldListItems, if parameters such as detected indentation and such match with the parent node ones.
 pub fn field_marker(
     src_lines: &Vec<String>,

@@ -1,8 +1,12 @@
-/// ## doctree
-/// This module defines the document tree and its nodes
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+This module defines the document tree and its nodes.
+The implementation is in the form of a zipper:
+the `DocTree` is a container for the metadata (such as hyperlinks) related to the parsing of the tree
+and store the tree in the form a a `TreeZipper` in its field `DocTree.tree`.
+The `TreeZipper` type is specified in the submodule `crate::parser::tree_zipper`.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use std::collections::HashMap;
 
 mod larst_writer;

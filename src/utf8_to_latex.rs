@@ -1,14 +1,12 @@
+/*!
+This file contains a mapping between a subset of UTF-8 to LaTeX commands.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use lazy_static::lazy_static;
-/// ## utf8_to_latex
-///
-/// This file contains a mapping between a subset of UTF-8 to LaTeX commands.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
 use std::collections::HashMap;
 
-/// str_to_latex
-///
 /// A function for converting a given `&str` (which is valid UTF-8)
 /// into a valid LaTeX string. Some more exotic symbols might require
 /// a specific LaTeX package fo the resulting object code to parse without errors,
@@ -30,8 +28,6 @@ pub fn unicode_math_to_latex(utf_str: &str) -> String {
     latex_string
 }
 
-/// ### unicode_text_to_latex
-///
 /// Escapes any non-text category LaTeX characters in a given `&str`,
 /// so as to allow the generated `.tex` document to compile if it has
 /// control characters such as underscores in a text node.
@@ -124,8 +120,6 @@ impl TeXCategory {
 
 lazy_static! {
 
-  /// ### UTF8_MATH_TO_LATEX_MAP
-  ///
   /// A mapping of certain utf8 scalars to LaTeX strings.
   ///
   /// source: http://milde.users.sourceforge.net/LUCR/Math/unimathsymbols.html, 2020-09-15
@@ -543,9 +537,6 @@ lazy_static! {
     map
   };
 
-
-  /// ### UTF8_TEXT_TO_LATEX_MAP
-  ///
   /// A mapping of characters that LaTeX does not recognize as text to escaped versions of them.
   /// This allows the parser to transform any plain text node contents into LaTeX-compatible strings.
   static ref UTF8_TEXT_TO_LATEX_MAP: HashMap<char, &'static str> = {

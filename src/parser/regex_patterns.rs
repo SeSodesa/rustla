@@ -1,9 +1,9 @@
-/// ## Regex patterns
-///
-/// This submodule contains different regex patterns that can be compiled into finite automata.
-/// This is done in the module `crate::parser::automata`.
-///
-/// (c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+This submodule contains different regex patterns that can be compiled into finite automata.
+This is done lazily in the module `crate::parser::automata`.
+
+(c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 
 /// #### ATTRIBUTION_PATTERN
 /// A pattern for matching attributions inside block quotes.

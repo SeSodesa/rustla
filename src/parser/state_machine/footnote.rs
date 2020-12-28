@@ -1,7 +1,7 @@
-/// ## footnote
-/// A submodule with the transition function related to parsing footnotes
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule with the transition function related to parsing footnotes
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 
 use super::*;

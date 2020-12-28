@@ -1,11 +1,13 @@
-/// ## class_data
-///
-/// A submodule that defines a HTML class container `ClassData`, that a `DocTree` holds on to.
-///
-/// Copyright (c) 2020, Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+A submodule that defines a HTML class container `ClassData`, that a `DocTree` holds on to.
+If a `class` reST directive is encountered, the classes specified by it
+are stored in the `ClassData` container. If a reST text element *other* than `class`
+is ran into, the classes stored in the container are given to the node corresponding
+to thetext element.
 
-/// ### ClassData
-///
+(c) 2020, Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 /// A container for HTML classes encountered in the reStructuredText document being parsed.
 pub struct ClassData {
     incoming_classes: Vec<String>,

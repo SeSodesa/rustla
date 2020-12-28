@@ -1,12 +1,12 @@
-/// ## aplus
-///
-/// A submodule that contains transition methods specific to creating A+ nodes.
-///
-/// author: Santtu Söderholm
-/// email:   santtu.soderholm@tuni.fi
+/*!
+A submodule that contains transition methods specific to creating A+ nodes.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 use super::*;
 
-/// ### aplus_col_break
+/// Parses an A+ col break(deprecated).
 pub fn aplus_col_break(
     src_lines: &Vec<String>,
     base_indent: usize,

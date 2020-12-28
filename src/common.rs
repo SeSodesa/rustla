@@ -1,11 +1,10 @@
+/*!
+This submodule contains useful functions and other constructs that don't
+sensibly belong to any specific entity in the program.
+
+Author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use std::io::BufRead;
-/// ## common
-///
-/// This submoddule contains useful functions and other constructs that don't
-/// sensibly belong to any specific entity in the program.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
 use std::{fs, io, path, str};
 
 // =======================
@@ -185,7 +184,7 @@ pub enum EnumKind {
 
 /// ### FootnoteKind
 /// There are 4 different kinds of footnote markers:
-/// 1. Manually numbered: .. [1] , .. [2], ...
+/// 1. Manually numbered: `.. [1]` , `.. [2]`, ...
 /// 2. automatically numbered: .. [#]
 /// 3. automatically nubered with a simple reference name: .. [#simple_ref-name]
 /// 4. Automatically generated symbolic markers: .. [*]

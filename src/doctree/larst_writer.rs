@@ -1,10 +1,10 @@
-/// ## larst_writer
-///
-/// A submodule that contains the larst writer method of the doctree,
-/// and the patterns related to it.
-///
-/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+A submodule that contains the larst writer method of the doctree,
+and the patterns related to it. The prefix and postfix strings
+of each node are defined here.
 
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 
 use std::io::Write;
 
@@ -16,8 +16,7 @@ use crate::rustla_options::OutputStream;
 const LATEX_OPTION_DELIM: &str = ",";
 
 impl DocTree {
-    /// ### write_to_larst
-    ///
+
     /// A function that writes a rusTLa doctree into `stdout` or a file, depending on the given output option.
     pub fn write_to_larst(self, rustla_options: &ruSTLaOptions) {
 
@@ -96,6 +95,7 @@ impl DocTree {
 }
 
 impl TreeZipper {
+
     /// This is the actual recursive function that goes over the tree zipper and writes each node
     /// into its LarST string representation based on its `TreeNodeType`.
     /// Starts out by calling `TreeNodeType`-specific pre-order action,
@@ -1331,8 +1331,6 @@ impl TreeNodeType {
 //  HELPERS
 // =========
 
-/// ### aplus_cls_contents
-///
 /// Returns the contents of the LaTeX class file required by Larst projects
 /// being compiled by `pdflatex` or `lualatex` as a `&'static str`.
 /// The string was authored by Tomi Janhunen.

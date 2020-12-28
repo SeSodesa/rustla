@@ -1,13 +1,15 @@
+/*!
+# This is ruSTLa
+
+ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
+It is intended to function as the counterpart to the LarST, or LaTeX to reStructuredText
+parser, written by Tomi Janhunen.
+
+Author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 #![allow(dead_code, unused_variables)]
 mod parser;
-/// # This is ruSTLa
-///
-/// ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
-/// It is intended to function as the counterpart to the LarST, or LaTeX to reStructuredText
-/// parser, written by Tomi Janhunen.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+
 mod rustla_options;
 use parser::Parser;
 mod doctree;

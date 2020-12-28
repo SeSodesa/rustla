@@ -1,8 +1,8 @@
-/// ## rustla_options
-///
-/// This submodule contains the type definition and implementation of ruSTLaOptions.
-///
-/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+This submodule contains the type definition and implementation of ruSTLaOptions.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 
 /// A container for the flags and settings of the ruSTLa transpiler at a type level.
 #[allow(non_camel_case_types)]

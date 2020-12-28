@@ -1,10 +1,11 @@
-/// ## directive_parsers
-///
-/// A submodule that contains functions dedicated to
-/// parsing *directives*, reStructuredText extensions.
-///
-/// Author: Santtu Söderholm
-/// email: santtu.soderholm@tuni.fi
+/*!
+A file that contains functions dedicated to
+parsing *directives*, reStructuredText extensions.
+These are all namespaced under the `Parser` type,
+which is why this page appears empty in the docs.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 use std::collections::HashMap;
 
 use crate::common::ParsingResult;

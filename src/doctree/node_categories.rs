@@ -1,9 +1,8 @@
-/// ## node_categories
-///
-/// A submodule that contains the different categories each node type might belong to.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule that contains the different categories each node type might belong to.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
 
 /// ### NodeCategory
 ///

@@ -1,10 +1,10 @@
-/// ## state_machine
-///
-/// This module contains specifications
-/// of state machines used by the parser.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+This module contains the state typ and the different transition functions corresponding to each state
+in its submodules.
+
+(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+*/
+
 // ===============================================
 // Submodules for namespacing transition functions
 // ===============================================
@@ -31,99 +31,77 @@ use regex;
 use super::*;
 use crate::common::EnumAsInt;
 
-/// ### StateMachine
-/// An enum of `MachineWithState`s.
+/// An enum of states.
 /// Enclosing state variants in an enum allows us
 /// to give ownership of a generic machine to an arbitrary structure,
 /// as enums are only as large as their largest variant.
-/// Inspired heavily by [this](https://hoverbear.org/blog/rust-state-machine-pattern/)
-/// article.
 ///
 /// The variants are used as keys to the static `TRANSITION_MAP`, which stores vectors of
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub enum State {
-    /// #### Admonition
+
     /// A state for parsing body nodes inside admonitions.
     Admonition,
 
-    /// #### AplusMultiCol
-    ///
     /// A state for detecting reStructuredText & Sphinx body elements,
     /// in addition to column breaks in the form of `::newcol` for A+ nodes that support them.
     /// These include the Point of Interest directive.
     AplusMultiCol,
 
-    /// #### AplusQuestionnaire
-    ///
     /// A state for recognizing the sub-directives:
     /// 1. `pick-one`,
     /// 2. `pick-any` and
     /// 3. `freetext`
     AplusQuestionnaire,
 
-    /// #### AplusPickOne
-    ///
     /// A state for detecting choices and assignments inside a A+ questionnaire
     /// subdirective `pick-one`.
     AplusPickOne,
 
-    /// #### AplusPickAny
-    ///
     /// A state for detecting choices and assignments inside a A+ questionnaire
     /// subdirective `pick-any`.
     AplusPickAny,
 
-    /// #### Body
     /// A state for recognizing body elements such as lists or footnotes when focused on document root.
     Body,
 
-    /// #### Section
     /// A state for detecting body elements inside a section.
     Section,
 
-    /// #### BlockQuote
     /// A state for recognizing body elements inside a block quote.
     /// In addition to normal body elements, attributions are also
     /// recognized as such in this state.
     BlockQuote,
 
-    /// #### BulletList
     /// In this state, the parser only recognizes empty lines and bullet list items.
     BulletList,
 
-    /// #### Citation
     /// Citation nodes may contain arbitrary body elements.
     /// This state is therefore reserved for recognizing them when focused on a citation node.
     Citation,
 
-    /// ### DefinitionList
     /// Definition lists may only contain empty lines and definition list items.
     DefinitionList,
 
-    /// #### EnumeratedList
     /// When in this state, the parser only recognizes empty lines and enumerated list items.
     EnumeratedList,
 
     HyperlinkTarget,
 
-    /// #### ListItem
     /// List items of any type, such as enumerated or field list items can contain arbitrary body elements.
     /// This state is reserved for recognizing them when focused on one of the list item type nodes.
     ListItem,
 
-    /// #### FieldList
     /// When focused on a field list node, the parser only recognizes empty lines and field list items.
     FieldList,
 
     Figure,
 
-    /// #### Footnote
     /// Footnotes can contain arbitrary body elements.
     /// This state is reserved for recognizing them when focused on a footnote node.
     Footnote,
 
-    /// #### HyperlinkTarget
     /// There are 3 different types of hyperlink targets:
     ///
     /// 1. *internal*, which link to body elements that directly follow them,
@@ -137,39 +115,31 @@ pub enum State {
     /// to this same target node. ???
     InternalHyperlinkTarget,
 
-    /// #### OptionList
     /// When focused on an option list, only empty lines and option list items are recognized.
     /// This state is reserved for that purpose.
     OptionList,
 
-    /// #### LineBlock
     /// Empty and line block lines (lines beginning with '`|`') are recognized in this state.
     LineBlock,
 
-    /// #### ListTable
     /// A state for recognizing bullet list items inside a ListTable
     ListTable,
 
-    /// #### ExtensionOptions
     /// A state for parsing field lists inside diretives. Field lists located inside directive nodes
     /// work as directive parameters or settings.
     ExtensionOptions,
 
-    /// #### Line
     /// A state for parsing section titles and document transitions (a.k.a. `\hrulefill` commands in LaTeX terms).
     Line,
 
-    /// #### LiteralBlock
     /// A state for parsing empty lines and literal blocks of text.
     /// Literal blocks are (non-contiguous) indented or "quoted" blocks of text that
     /// are  preceded by a paragraph ending in a `::`.
     LiteralBlock,
 
-    /// #### Failure
     /// An explicit failure state. Allows explicit signalling of transition failures.
     Failure,
 
-    /// #### EOF
     /// An End of File state. Could have also been named EOI, as in end of input,
     /// as this state is transitioned to when a parser reaches the end of its source input:
     /// This does not neecssarily correspond to the end of the given file during nested parsing sessions,
@@ -181,7 +151,7 @@ pub enum State {
 // Statemachine methods
 // ====================
 impl State {
-    /// ### to_failure
+
     /// Transitions a `StateMachine` into a `Failure` state using the From trait,
     /// the implementation of which automatically implements the Into trait.
     pub fn to_failure(self) -> Self {
@@ -190,7 +160,6 @@ impl State {
         }
     }
 
-    /// ### get_transitions
     /// Retrieves the list of transitions based on a given `StateMachine` variant
     /// using a `match` statement. First checks for end states that don't contain transitions,
     /// such as `EOF` or `Failure` and if these are not matched,
@@ -227,7 +196,7 @@ impl State {
 /// StateMachine associated functions
 /// =================================
 impl State {
-    /// ### compile_state_transitions
+
     /// Takes in a reference/slice to an associated array of uncompiled transitions
     /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
     /// in palce of the regex patterns.
@@ -252,7 +221,6 @@ impl State {}
 
 lazy_static! {
 
-  /// ### TRANSITION_MAP
   /// A static map of transititions for each state of
   /// the `Parser` `StateMachine`.
   ///
@@ -308,8 +276,6 @@ lazy_static! {
 
   };
 
-  /// ### COMPILED_INLINE_TRANSITIONS
-  ///
   /// Inline text has different parsing requirements than (nested)
   /// `Body` elements as they do not form blocks of text,
   /// making detecting by source line impractical.
