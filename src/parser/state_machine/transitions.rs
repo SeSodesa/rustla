@@ -400,7 +400,8 @@ impl State {
         (
             PatternName::Comment,
             regex_patterns::COMMENT_PATTERN,
-            body::comment),
+            body::comment
+        ),
         (
             PatternName::Line,
             regex_patterns::LINE_PATTERN,
@@ -508,7 +509,6 @@ impl State {
             regex_patterns::URI_PATTERN,
             inline::uri
         ),
-        //(PatternName::Text, r"^([^\\\n\[*`:_]+)(?:[^_][a-zA-Z0-9]+_)?", Inline::text),
         (
             PatternName::Text,
             regex_patterns::INLINE_TEXT_PATTERN,
