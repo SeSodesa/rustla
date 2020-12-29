@@ -10,7 +10,7 @@ use super::*;
 //   Type aliases needed by the parser
 // =====================================
 
-/// ### TransitionMethod
+
 /// A function pointer type alias for a State transition method.
 /// `TransitionMethod`s take in the document tree and regex captures
 /// for doctree modifications.
@@ -29,16 +29,16 @@ pub type TransitionMethod = fn(
     pattern_name: &PatternName,
 ) -> TransitionResult;
 
-/// ### Transition
+
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
 pub type Transition = (PatternName, regex::Regex, TransitionMethod);
 
-/// ### UncompiledTransition
+
 /// A type alias for a transition `(PatternName, regex_pattern, TransitionMethod)`, whose regex pattern has not
 /// been compiled into a DFA yet.
 pub type UncompiledTransition = (PatternName, &'static str, TransitionMethod);
 
-/// ### InlineTransitionMethod
+
 /// A type alias for a function describing an inline transition.
 /// Returns a node a length of the match, so that the inline parser
 /// could determine how many characters to eat off the start of the
@@ -49,7 +49,7 @@ pub type InlineParsingMethod = fn(
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize);
 
-/// ### InlineTransition
+
 /// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
 pub type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 
@@ -57,8 +57,8 @@ pub type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 //   Types and enums used by submodules of the parser
 // ====================================================
 
-/// ### TransitionResult
-/// An enumeration fo the different results, including errors,
+
+/// An enumeration of the different results, including errors,
 /// that a transition function might have.
 pub enum TransitionResult {
     /// #### Success
@@ -78,7 +78,6 @@ pub enum TransitionResult {
     Failure { message: String, doctree: DocTree },
 }
 
-/// ### PushOrPop
 /// An enum for manipulating the machine stack. Transition methods should return this information
 /// with a possible next state, so the parser knows how to proceed. The `Push` variant signifies
 /// a state should be pushed on top of the stack, `Pop` tells of the need to pop from the stack
@@ -90,7 +89,6 @@ pub enum PushOrPop {
     Neither,
 }
 
-/// ### LineAdvance
 /// An enum returned by the transition methods to tell the parser whether
 /// it needs to advance its line cursor after the method execution or not.
 pub enum LineAdvance {
@@ -98,7 +96,6 @@ pub enum LineAdvance {
     None,
 }
 
-/// ### InlineParsingResult
 /// An enumeration of the different ways an inline parsing function might succeed or fail.
 pub enum InlineParsingResult {
     /// #### Nodes
@@ -111,7 +108,6 @@ pub enum InlineParsingResult {
     NoNodes,
 }
 
-/// ### IndentationMatch
 ///
 /// A enumeration of the different ways a node's child indentation might
 /// interact with the indentation of the parent.
