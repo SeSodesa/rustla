@@ -434,7 +434,10 @@ impl State {
 
     /// An array of inline transitions.
     pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
-        (PatternName::WhiteSpace, r"^\s+", inline::whitespace),
+        (
+            PatternName::WhiteSpace,
+            regex_patterns::INLINE_WHITESPACE_PATTERN,
+            inline::whitespace),
         (
             PatternName::StrongEmphasis,
             regex_patterns::STRONG_EMPH_PATTERN,

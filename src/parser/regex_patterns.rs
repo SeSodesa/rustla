@@ -182,6 +182,8 @@ pub const TEXT_PATTERN: &'static str = r"^(\s*)\S";
 //  Inline patterns
 // =================
 
+pub const INLINE_WHITESPACE_PATTERN: &'static str = r"^\s+";
+
 pub const STRONG_EMPH_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
