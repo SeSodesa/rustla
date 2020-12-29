@@ -5,6 +5,10 @@ This submodule contains the type definition and implementation of ruSTLaOptions.
 */
 
 /// A container for the flags and settings of the ruSTLa transpiler at a type level.
+/// The options include
+/// 1. the output stream (stdout or file), set with the `--to-stdout` and `--to-file` flags.
+/// 2. whether ruSTLa should surround its object code with the LaTeX `document` environment. Set with the `--full-doc` flag.
+/// 3. whether the `aplus.cls` file should be generated next to the source file with the `--aplus-cls` flag.
 #[allow(non_camel_case_types)]
 #[derive(Debug)]
 pub struct ruSTLaOptions {
@@ -68,9 +72,13 @@ impl ruSTLaOptions {
         self.generate_class_file
     }
 }
-
 #[derive(Debug)]
+/// An enumeration of the different output streams of ruSTLa.
+/// These can be set with the `--to-stdout` and `--to-file` command line flags.
 pub enum OutputStream {
+    /// As the name implies, this sets has ruSTLa print the object code to its stdout.
     StdOut,
+    /// With this set, ruSTLa will generate a file with the same stem as the source file,
+    /// next to the source file.
     File,
 }
