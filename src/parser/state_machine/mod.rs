@@ -21,7 +21,7 @@ mod inline;
 mod literal_block;
 pub mod transitions;
 mod unknown_transitions;
-use transitions::{FIELD_MARKER_PATTERN, LINE_PATTERN, TEXT_PATTERN};
+use crate::parser::regex_patterns::{FIELD_MARKER_PATTERN, LINE_PATTERN, TEXT_PATTERN};
 
 use std::collections::HashMap;
 

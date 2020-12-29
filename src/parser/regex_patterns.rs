@@ -468,6 +468,9 @@ pub const URI_PATTERN: &str = r#"(?x)^
 )
 "#;
 
+/// A pattern for inerpreting inline text as is, without any markup.
+pub const INLINE_TEXT_PATTERN: &'static str = r"^(\S+)";
+
 // ======================
 //  A+ specific patterns
 // ======================
