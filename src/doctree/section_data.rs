@@ -28,7 +28,7 @@ impl SectionData {
         }
     }
 
-    /// Increments the number of encoutnered sections.
+    /// Increments the number of encountered sections.
     pub fn increment_encountered_section_number(&mut self) {
         self.highest_encountered_section_level += 1;
     }
