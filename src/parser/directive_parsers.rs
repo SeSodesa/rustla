@@ -72,9 +72,10 @@ pub fn parse_standard_admonition(
     let (classes, name) = if let Some(mut options) =
         scan_directive_options(src_lines, line_cursor, body_indent)
     {
-        let classes = options.remove("class");
-        let name = options.remove("name");
-        (classes, name)
+        (
+            options.remove("class"),
+            options.remove("name"),
+        )
     } else {
         (None, None)
     };
@@ -180,9 +181,10 @@ pub fn parse_generic_admonition(
         scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
-        let classes = options.remove("class");
-        let name = options.remove("name");
-        (classes, name)
+        (
+            options.remove("class"),
+            options.remove("name")
+        )
     } else {
         (None, None)
     };
@@ -241,16 +243,16 @@ pub fn parse_image(
 
     let (alt, height, width, scale, align, target, classes, name) =
         if let Some(mut options) = scan_directive_options(src_lines, line_cursor, body_indent) {
-            let alt = options.remove("alt");
-            let height = options.remove("height");
-            let width = options.remove("width");
-            let scale = options.remove("scale");
-            let align = options.remove("align");
-            let target = options.remove("target");
-            let classes = options.remove("class");
-            let name = options.remove("name");
-
-            (alt, height, width, scale, align, target, classes, name)
+            (
+                options.remove("alt"),
+                options.remove("height"),
+                options.remove("width"),
+                options.remove("scale"),
+                options.remove("align"),
+                options.remove("target"),
+                options.remove("class"),
+                options.remove("name")
+            )
         } else {
             (None, None, None, None, None, None, None, None)
         };
@@ -328,19 +330,17 @@ pub fn parse_figure(
         if let Some(mut options) =
             scan_directive_options(src_lines, line_cursor, body_indent)
         {
-            let alt = options.remove("alt");
-            let height = options.remove("height");
-            let width = options.remove("width");
-            let scale = options.remove("scale");
-            let align = options.remove("align");
-            let target = options.remove("target");
-            let classes = options.remove("class");
-            let name = options.remove("name");
-            let figwidth = options.remove("figwidth");
-            let figclass = options.remove("figclass");
-
             (
-                alt, height, width, scale, align, target, classes, name, figwidth, figclass,
+                options.remove("alt"),
+                options.remove("height"),
+                options.remove("width"),
+                options.remove("scale"),
+                options.remove("align"),
+                options.remove("target"),
+                options.remove("class"),
+                options.remove("name"),
+                options.remove("figwidth"),
+                options.remove("figclass")
             )
         } else {
             (None, None, None, None, None, None, None, None, None, None)
