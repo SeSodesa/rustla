@@ -1,6 +1,6 @@
 /*!
 A submodule for converter functions related to the parser.
-These include Roman numeral -> integer transofrmations and the like.
+These include Roman numeral -> integer transformations and the like.
 
 (c) Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
