@@ -1,6 +1,6 @@
 [package]
 name = "ruSTLa"
-version = "0.0.1"
+version = "0.5.0"
 authors = ["Santtu Söderholm <santtu.soderholm@tuni.fi>"]
 edition = "2018"
 
