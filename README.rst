@@ -12,6 +12,16 @@ of Santtu Söderholm's Master's Thesis. In other words:
 
     Copyright © 2020 Santtu Söderholm
 
+Note about the state of the project
+-----------------------------------
+
+ruSTLa is still very much work in progress. For example reStructuredText tables and many directives
+are not yet supported, as can be witnessed by looking into the files ``src/parser/table_parsers``
+and ``src/parser/directive_parsers``.
+
+This tool can therefore help you with tranferring course materials to the LarST format,
+but certain things will need to be implemented by the user themselves.
+
 Build instructions
 ------------------
 
