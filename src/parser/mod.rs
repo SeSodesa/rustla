@@ -143,13 +143,16 @@ impl Parser {
 
             if !line_changed && line_not_changed_count >= 10 {
                 return ParsingResult::Failure {
-          message: format!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total()),
-          doctree: if let Some(doctree) = self.doctree.take() {
-            doctree
-          } else {
-            panic!("Doctree lost during parsing process around line {}. Computer says no...", self.line_cursor.sum_total())
-          }
-        };
+                    message: format!("Line not advanced even after {} iterations of the parsing loop on line {}. Clearly something is amiss...", line_not_changed_count, self.line_cursor.sum_total()),
+                    doctree: if let Some(doctree) = self.doctree.take() {
+                        doctree
+                    } else {
+                        panic!(
+                            "Doctree lost during parsing process around line {}. Computer says no...",
+                            self.line_cursor.sum_total()
+                        )
+                    }
+                };
             }
 
             line_changed = false;
@@ -220,16 +223,19 @@ impl Parser {
             for (pattern_name, regex, method) in latest_state_transitions.iter() {
                 // Fetching a reference to current line
                 let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
-          Some(line) => line,
-          None => {
-            return ParsingResult::Failure {
-              message: String::from("Parsing ended prematurely because of an unqualified move past EOF...\n"),
-              doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-                panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-              }
-            }
-          }
-        };
+                    Some(line) => line,
+                    None => {
+                        return ParsingResult::Failure {
+                            message: String::from("Parsing ended prematurely because of an unqualified move past EOF..."),
+                            doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                                panic!(
+                                    "Lost doctree inside parsing function before line {}. Computer says no...",
+                                    self.line_cursor.sum_total()
+                                )
+                            }
+                        }
+                    }
+                };
 
                 // Running the current line of text through a DFA compiled from a regex
                 if let Some(captures) = regex.captures(src_line) {
@@ -260,7 +266,6 @@ impl Parser {
                                 PushOrPop::Push(mut states) => {
                                     self.state_stack.append(&mut states);
                                 }
-
                                 PushOrPop::Pop => {
                                     match self.state_stack.pop() {
                                         Some(machine) => (),
@@ -269,8 +274,7 @@ impl Parser {
                                                 message: String::from(
                                                     "Can't pop from empty stack...\n",
                                                 ),
-                                                doctree: if let Some(doctree) = self.doctree.take()
-                                                {
+                                                doctree: if let Some(doctree) = self.doctree.take() {
                                                     doctree
                                                 } else {
                                                     panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
@@ -314,7 +318,6 @@ impl Parser {
             // parsing in the previous state down stack
             if !match_found {
                 // eprintln!("No match found.\nPopping from machine stack...\n");
-
                 if let None = self.state_stack.pop() {
                     // eprintln!("Cannot pop from an empty stack.\n");
                     return ParsingResult::EmptyStateStack {
@@ -322,16 +325,20 @@ impl Parser {
                         state_stack: self.state_stack.drain(..self.state_stack.len()).collect(),
                     };
                 };
-
                 if let Some(doctree) = self.doctree.take() {
                     self.doctree = Some(doctree.focus_on_parent());
                 } else {
                     return ParsingResult::Failure {
-            message: format!("Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total()),
-            doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
-              panic!("Lost doctree inside parsing function before line {}. Computer says no...", self.line_cursor.sum_total())
-            }
-          };
+                        message: format!(
+                            "Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total()
+                        ),
+                        doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
+                            panic!(
+                                "Lost doctree inside parsing function before line {}. Computer says no...",
+                                self.line_cursor.sum_total()
+                            )
+                        }
+                    };
                 }
             }
 
@@ -383,12 +390,12 @@ impl Parser {
             match self.line_cursor.relative_offset().checked_sub(n) {
                 Some(value) => value,
                 None => {
-                    return Err("Attempted indexing with integer overflow.\nComputer says no...\n")
+                    return Err("Attempted indexing with integer overflow. Computer says no...")
                 }
             };
 
         if self.line_cursor.relative_offset() > self.src_lines.len() {
-            return Err("No such line number.\nComputer says no...\n");
+            return Err("No such line number. Computer says no...");
         }
 
         Ok(())
@@ -480,11 +487,9 @@ impl Parser {
         chars_iter: &'chars str::Chars,
     ) -> Option<(Vec<TreeNodeType>, usize)> {
         let src_str = chars_iter.as_str();
-
         if src_str.is_empty() {
             return None;
         }
-
         for (pattern_name, regexp, parsing_function) in COMPILED_INLINE_TRANSITIONS.iter() {
             match regexp.captures(src_str) {
                 Some(capts) => {
@@ -492,11 +497,9 @@ impl Parser {
                         parsing_function(opt_doctree_ref, *pattern_name, &capts);
                     return Some((node_type, offset));
                 }
-
                 None => continue, // no match, do nothing
             };
         }
-
         None
     }
 
@@ -547,9 +550,7 @@ impl Parser {
             current_line.sum_total(),
             Some(start_state),
             *section_level,
-        )
-        .parse()
-        {
+        ).parse() {
             ParsingResult::EOF {
                 doctree,
                 state_stack,
