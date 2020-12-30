@@ -53,9 +53,9 @@ if you wish to view test output. See `Cargo documentation`_ for more options.
 Usage on a machine without Cargo
 --------------------------------
 
-The program can be run in the terminal without any options by navigating to the folder with the `rustla` binary and typing::
+The program can be run in the terminal without any options by typing::
 
-    $ ./rustla path/to/rst/file.rst
+    $ path/to/rustla path/to/rst/file.rst
 
 Note the required source file suffix `.rst`:
 rusTLa is opinionated in this way to protect the user from accidentally overwriting the source file with the object file.
@@ -69,7 +69,7 @@ to become effective. This allows it to be run from anywhere by simply typing::
 
 Options can be given to `rustla` via different flags, specified *before* the reStructuredText source file path::
 
-    $ ./rustla --flag1 --flag2 ... --flagN path/to/rst/file.rst
+    $ path/to/rustla --flag1 --flag2 ... --flagN path/to/rst/file.rst
 
 
 The recognized flags are given in the following listing::
