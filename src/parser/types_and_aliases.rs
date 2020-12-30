@@ -77,8 +77,12 @@ pub enum TransitionResult {
 /// and `Neither` initiates a transition of the current state into another one.
 #[derive(Debug)]
 pub enum PushOrPop {
+
+    /// Causes `Parser::parse` to push the contained states on top of the parser stack.
     Push(Vec<State>),
+    /// Causes `Parser::parse` to pop the topmost state from the parser state stack.
     Pop,
+    /// Signifies to `Parser::parse` that nothing about the stack needs to change.
     Neither,
 }
 
