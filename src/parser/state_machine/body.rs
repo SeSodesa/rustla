@@ -775,6 +775,7 @@ pub fn directive(
                     doctree,
                     line_cursor,
                     empty_after_marker,
+                    body_indent,
                     Some(detected_first_indent),
                 ),
 
@@ -783,6 +784,7 @@ pub fn directive(
                     doctree,
                     line_cursor,
                     empty_after_marker,
+                    body_indent,
                     Some(detected_first_indent),
                 ),
 
@@ -843,6 +845,7 @@ pub fn directive(
                     line_cursor,
                     base_indent,
                     empty_after_marker,
+                    body_indent,
                     Some(detected_first_indent),
                     *section_level,
                 ),

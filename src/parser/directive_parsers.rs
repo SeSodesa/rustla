@@ -58,6 +58,7 @@ pub fn parse_standard_admonition(
     let mut lines = if let Some(arg) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -159,19 +160,12 @@ pub fn parse_generic_admonition(
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     empty_after_marker: bool,
+    body_indent: usize,
     first_indent: Option<usize>,
 ) -> TransitionResult {
-    // Fetch content indentation and option|content offset from directive marker line
-    let (content_indent, content_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        Some( (indent, offset ) ) => (indent, offset),
-        None => return TransitionResult::Failure {
-            message: format!("Admonition on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-        }
-    };
 
     let argument = if let Some(arg) =
-        scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
+        scan_directive_arguments(src_lines, line_cursor, body_indent, first_indent, empty_after_marker)
     {
         arg
     } else {
@@ -182,7 +176,7 @@ pub fn parse_generic_admonition(
     };
 
     let directive_options =
-        scan_directive_options(src_lines, line_cursor, content_indent);
+        scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (classes, name) = if let Some(mut options) = directive_options {
         let classes = options.remove("class");
@@ -193,7 +187,7 @@ pub fn parse_generic_admonition(
     };
 
     let admonition_data = TreeNodeType::Admonition {
-        content_indent: content_indent,
+        content_indent: body_indent,
         classes: classes,
         name: name,
         variant: crate::doctree::directives::AdmonitionType::Admonition {
@@ -226,20 +220,12 @@ pub fn parse_image(
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     empty_after_marker: bool,
+    body_indent: usize,
     first_indent: Option<usize>,
 ) -> TransitionResult {
 
-    // Fetch content indentation and option|content offset from directive marker line
-    let (content_indent, content_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        Some( (indent, offset ) ) => (indent, offset),
-        None => return TransitionResult::Failure {
-            message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-        }
-    };
-
     let argument = if let Some(arg) =
-        scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
+        scan_directive_arguments(src_lines, line_cursor, body_indent, first_indent, empty_after_marker)
     {
         arg
     } else {
@@ -252,11 +238,8 @@ pub fn parse_image(
         };
     };
 
-    let directive_options =
-        scan_directive_options(src_lines, line_cursor, content_indent);
-
     let (alt, height, width, scale, align, target, classes, name) =
-        if let Some(mut options) = directive_options {
+        if let Some(mut options) = scan_directive_options(src_lines, line_cursor, body_indent) {
             let alt = options.remove("alt");
             let height = options.remove("height");
             let width = options.remove("width");
@@ -325,12 +308,12 @@ pub fn parse_figure(
     line_cursor: &mut LineCursor,
     base_indent: usize,
     empty_after_marker: bool,
-    content_indent: usize,
+    body_indent: usize,
     first_indent: Option<usize>,
     section_level: usize,
 ) -> TransitionResult {
     let argument = if let Some(arg) =
-        scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
+        scan_directive_arguments(src_lines, line_cursor, body_indent, first_indent, empty_after_marker)
     {
         arg
     } else {
@@ -342,7 +325,7 @@ pub fn parse_figure(
 
     let (alt, height, width, scale, align, target, classes, name, figwidth, figclass) =
         if let Some(mut options) =
-            scan_directive_options(src_lines, line_cursor, content_indent)
+            scan_directive_options(src_lines, line_cursor, body_indent)
         {
             let alt = options.remove("alt");
             let height = options.remove("height");
@@ -389,7 +372,7 @@ pub fn parse_figure(
     };
 
     let figure = TreeNodeType::Figure {
-        body_indent: content_indent,
+        body_indent: body_indent,
         align: if let Some(a) = &align {
             Parser::str_to_horizontal_alignment(a)
         } else {
@@ -461,19 +444,13 @@ pub fn parse_code(
     line_cursor: &mut LineCursor,
     base_indent: usize,
     empty_after_marker: bool,
+    body_indent: usize,
     first_indent: Option<usize>,
     section_level: usize,
 ) -> TransitionResult {
-    // Fetch content indentation and option|content offset from directive marker line
-    let (content_indent, content_offset) = match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-        Some( (indent, offset ) ) => (indent, offset),
-        None => return TransitionResult::Failure {
-            message: format!("Image on line {} could not be scanned for body indentation. Computer says no...", line_cursor.sum_total()),
-            doctree: doctree
-        }
-    };
+
     let language = if let Some(arg) =
-        scan_directive_arguments(src_lines, line_cursor, first_indent, empty_after_marker)
+        scan_directive_arguments(src_lines, line_cursor, body_indent, first_indent, empty_after_marker)
     {
         Some(arg.join(""))
     } else {
@@ -481,7 +458,7 @@ pub fn parse_code(
     };
 
     let directive_options =
-        scan_directive_options(src_lines, line_cursor, content_indent);
+        scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (classes, name, number_lines) = if let Some(mut options) = directive_options {
         let classes = options.remove("class");
@@ -498,7 +475,7 @@ pub fn parse_code(
         Some(line_cursor.relative_offset()),
         Some(false),
         Some(true),
-        Some(content_indent),
+        Some(body_indent),
         None,
         false,
     ) {
@@ -556,6 +533,7 @@ pub fn parse_math_block(
     let math_after_marker = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker
     );
@@ -738,6 +716,7 @@ pub fn parse_list_table(
     let table_title = if let Some(title) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         first_indent,
         empty_after_marker,
     ) {
@@ -1082,7 +1061,7 @@ pub fn parse_include(
     section_level: usize,
 ) -> TransitionResult {
 
-    let uri = match scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+    let uri = match scan_directive_arguments(src_lines, line_cursor, body_indent, Some(first_indent), empty_after_marker) {
         Some(arg) => arg.join(""),
         None => return TransitionResult::Failure {
             message: format!("Include directive on line {} did not have a file URI as an argument.", line_cursor.sum_total()),
@@ -1238,6 +1217,7 @@ pub fn parse_class(
     let classes = if let Some(classes) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -1396,6 +1376,7 @@ pub fn parse_sphinx_code_block(
     let formal_language = if let Some(arg) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         first_indent,
         empty_after_marker,
     ) {
@@ -1583,7 +1564,7 @@ pub fn parse_sphinx_only(
     /// They should be included with the directive argument.
     const ALWAYS_DEFINED_TAGS: &[&str] = &["html", "latex", "text"];
 
-    let expression = match scan_directive_arguments(src_lines, line_cursor, Some(first_indent), empty_after_marker) {
+    let expression = match scan_directive_arguments(src_lines, line_cursor, body_indent, Some(first_indent), empty_after_marker) {
         Some(lines) => lines.join(" "),
         None => String::new()
     };
@@ -1651,6 +1632,7 @@ pub fn parse_aplus_questionnaire(
     let (key, difficulty, max_points): (String, String, String) = match scan_directive_arguments(
             src_lines,
             line_cursor,
+            body_indent,
             Some(first_indent),
             empty_after_marker,
     ) {
@@ -1805,6 +1787,7 @@ pub fn parse_aplus_pick_one(
     let points: QuizPoints = match scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -2224,6 +2207,7 @@ pub fn parse_aplus_pick_any(
     let points: crate::common::QuizPoints = match scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -2674,6 +2658,7 @@ pub fn parse_aplus_freetext(
     let (points, method_string) = if let Some(arg) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -3010,6 +2995,7 @@ pub fn parse_aplus_submit(
         scan_directive_arguments(
             src_lines,
             line_cursor,
+            body_indent,
             Some(first_indent),
             empty_after_marker,
         ) {
@@ -3262,6 +3248,7 @@ pub fn parse_aplus_active_element_input(
     let key_for_input = if let Some(args) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -3393,6 +3380,7 @@ pub fn parse_aplus_active_element_output(
     let key_for_output = if let Some(args) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     ) {
@@ -3574,6 +3562,7 @@ pub fn parse_aplus_point_of_interest(
     let title = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_indent),
         empty_after_marker,
     );
@@ -3728,6 +3717,7 @@ pub fn parse_unknown_directive(
     let argument = if let Some(arg) = scan_directive_arguments(
         src_lines,
         line_cursor,
+        body_indent,
         Some(first_line_indent),
         empty_after_marker,
     ) {
@@ -3817,6 +3807,7 @@ pub fn parse_unknown_directive(
 fn scan_directive_arguments(
     src_lines: &Vec<String>,
     line_cursor: &mut LineCursor,
+    body_indent: usize,
     first_indent: Option<usize>,
     empty_after_marker: bool,
 ) -> Option<Vec<String>> {
@@ -3833,16 +3824,22 @@ fn scan_directive_arguments(
     }
 
     while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
+
+
         // Each collect allocates, but what the heck, it works.
         let line_without_indent: String = if on_marker_line {
             match first_indent {
-        Some(indent) => {
-        on_marker_line = false;
-        line.chars().skip(indent).collect()
-        }
-        _ => panic!("On directive marker line {} but couldn't skip the marker to parse line contents. Computer says no...", line_cursor.sum_total())
-    }
+                Some(indent) => {
+                    on_marker_line = false;
+                    line.chars().skip(indent).collect()
+                }
+                None => panic!("On directive marker line {} but couldn't skip the marker to parse line contents. Computer says no...", line_cursor.sum_total())
+            }
         } else {
+            // Check for proper indentation
+            if ! (line.chars().take_while(|c| c.is_whitespace()).count() == body_indent) {
+                break
+            };
             line.chars()
                 .skip_while(|c| c.is_whitespace())
                 .collect::<String>()
