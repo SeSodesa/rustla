@@ -1,4 +1,8 @@
-#![allow(unused_imports)] // Tests complain otehrwise...
+/*!
+A test module for the parser of ruSTLa. The submodules contain mainly structural tests for parsing results,
+as in the tests mainly observe whether a resulting doctree has the expected structure.
+*/
+#![allow(unused_imports)] // Tests complain otherwise...
 
 /// ## tests
 ///
