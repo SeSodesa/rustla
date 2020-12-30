@@ -1,8 +1,12 @@
 [package]
 name = "ruSTLa"
-version = "0.5.0"
+description = "A reStructuredText → LarST ⊂ LaTeX transpiler."
 authors = ["Santtu Söderholm <santtu.soderholm@tuni.fi>"]
+version = "0.5.0"
+repository= "https://github.com/SeSodesa/rustla"
 edition = "2018"
+license-file = "LICENSE.rst"
+readme = "README.rst"
 
 # See more keys and their definitions at
 # https://doc.rust-lang.org/cargo/reference/manifest.html
