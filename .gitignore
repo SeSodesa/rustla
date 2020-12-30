@@ -18,4 +18,4 @@
 !.gitlab-ci.yml
 
 # Blacklist specific files
-
+target/
