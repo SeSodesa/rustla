@@ -3928,22 +3928,6 @@ fn scan_directive_options(
     }
 }
 
-/// ### all_options_recognized
-///
-/// Checks that a given hashmap only contains recognized option keys,
-/// based on a given `&str` array slice.
-fn all_options_recognized(
-    option_map: &HashMap<String, String>,
-    recognized_keys: &[&str],
-) -> bool {
-    let mut option_iter = option_map.keys();
-    let mut recognized_iter = recognized_keys.iter();
-
-    // All option keys should be found in recognized keys
-    option_iter
-        .all(|option_key| recognized_iter.any(|recognized_key| option_key == recognized_key))
-}
-
 /// ### aplus_key_difficulty_and_max_points
 ///
 /// Parses the given `&str` for the directive key,
