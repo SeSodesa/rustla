@@ -1,8 +1,7 @@
 /*!
-# This is ruSTLa
-
-ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX parser.
-It is intended to function as the counterpart to the LarST, or LaTeX to reStructuredText
+ruSTLa is a Rust implementation of the rSTLa or resTructuredText → LaTeX transpiler.
+ruSTLa is a master's thesis project of Santtu Söderholm,
+and is intended to function as the counterpart to the LarST, or LaTeX → reStructuredText
 parser, written by Tomi Janhunen.
 
 Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
