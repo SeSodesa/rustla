@@ -1,9 +1,9 @@
 ruSTLa - rSTLa in Rust
 ======================
 
-ruSTLa is an implementation of the rSTLa (reStructuredText → :math:`\LaTeX`) transpiler,
+ruSTLa is an implementation of the rSTLa (reStructuredText → LaTeX) transpiler,
 written in the Rust programming language. rSTLa itself is an inverse transpiler to the
-LarST (:math:`\LaTeX` → reStructuredText) transpiler written by `Tomi Janhunen`_.
+LarST (LaTeX → reStructuredText) transpiler written by `Tomi Janhunen`_.
 
 .. _`Tomi Janhunen`: https://www.tuni.fi/fi/tomi-janhunen
 
