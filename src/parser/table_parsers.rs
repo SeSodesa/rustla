@@ -10,7 +10,7 @@ use crate::parser::Parser;
 
 #[derive(Debug)]
 /// A data structure that will be returned once the table parsing has been completed, or if it fails.
-/// Provides a variant for successfully constructed tables and an error formalformed tables.
+/// Provides a variant for successfully constructed tables and an error for malformed tables.
 ///
 /// Both grid and simple rST tables result in the data structure of column widhts,
 /// header rows and body rows. Each row is a vector of cells.
