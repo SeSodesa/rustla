@@ -3,6 +3,7 @@ A submodule dedicated to parsing functions of the `StateMachine::AplusQuestionna
 
 (c) Santtu Söderholm <email:  santtu.soderholm@tuni.fi>
 */
+
 use super::*;
 
 /// A function for reading in blocks of intermediate text (rST paragraphs) between questionnaire questions.
@@ -130,7 +131,7 @@ pub fn parse_aplus_questionnaire_directive(
 
     match Parser::parent_indent_matches(doctree.shared_data(), detected_marker_indent) {
         IndentationMatch::JustRight => match detected_directive_label.as_str() {
-            "pick-one" => Parser::parse_aplus_pick_one(
+            "pick-one" => directive_parsers::parse_aplus_pick_one(
                 src_lines,
                 doctree,
                 line_cursor,
@@ -138,7 +139,7 @@ pub fn parse_aplus_questionnaire_directive(
                 body_indent,
                 empty_after_marker,
             ),
-            "pick-any" => Parser::parse_aplus_pick_any(
+            "pick-any" => directive_parsers::parse_aplus_pick_any(
                 src_lines,
                 doctree,
                 line_cursor,
@@ -146,7 +147,7 @@ pub fn parse_aplus_questionnaire_directive(
                 body_indent,
                 empty_after_marker,
             ),
-            "freetext" => Parser::parse_aplus_freetext(
+            "freetext" => directive_parsers::parse_aplus_freetext(
                 src_lines,
                 doctree,
                 line_cursor,

@@ -759,7 +759,7 @@ pub fn directive(
         IndentationMatch::JustRight => {
             match detected_directive_label.as_str() {
                 "attention" | "caution" | "danger" | "error" | "hint" | "important" | "note"
-                | "tip" | "warning" => Parser::parse_standard_admonition(
+                | "tip" | "warning" => directive_parsers::parse_standard_admonition(
                     src_lines,
                     body_indent,
                     *section_level,
@@ -770,7 +770,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "admonition" => Parser::parse_generic_admonition(
+                "admonition" => directive_parsers::parse_generic_admonition(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -778,7 +778,7 @@ pub fn directive(
                     Some(detected_first_indent),
                 ),
 
-                "image" => Parser::parse_image(
+                "image" => directive_parsers::parse_image(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -786,7 +786,7 @@ pub fn directive(
                     Some(detected_first_indent),
                 ),
 
-                "figure" => Parser::parse_figure(
+                "figure" => directive_parsers::parse_figure(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -797,7 +797,7 @@ pub fn directive(
                     *section_level,
                 ),
 
-                "topic" => Parser::parse_unknown_directive(
+                "topic" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -807,7 +807,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "sidebar" => Parser::parse_unknown_directive(
+                "sidebar" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -817,7 +817,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "line-block" => Parser::parse_unknown_directive(
+                "line-block" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -827,7 +827,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "parsed-literal" => Parser::parse_unknown_directive(
+                "parsed-literal" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -837,7 +837,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "code" => Parser::parse_code(
+                "code" => directive_parsers::parse_code(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -847,7 +847,7 @@ pub fn directive(
                     *section_level,
                 ),
 
-                "math" => Parser::parse_math_block(
+                "math" => directive_parsers::parse_math_block(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -856,7 +856,7 @@ pub fn directive(
                     detected_first_indent
                 ),
 
-                "rubric" => Parser::parse_unknown_directive(
+                "rubric" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -866,7 +866,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "epigraph" => Parser::parse_unknown_directive(
+                "epigraph" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -876,7 +876,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "highlights" => Parser::parse_unknown_directive(
+                "highlights" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -886,7 +886,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "pull-quote" => Parser::parse_unknown_directive(
+                "pull-quote" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -896,7 +896,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "compound" => Parser::parse_unknown_directive(
+                "compound" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -906,7 +906,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "container" => Parser::parse_unknown_directive(
+                "container" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -916,7 +916,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "table" => Parser::parse_unknown_directive(
+                "table" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -926,7 +926,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "csv-table" => Parser::parse_unknown_directive(
+                "csv-table" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -936,7 +936,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "list-table" => Parser::parse_list_table(
+                "list-table" => directive_parsers::parse_list_table(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -948,7 +948,7 @@ pub fn directive(
                 ),
 
                 // DOCUMENT PARTS
-                "contents" => Parser::parse_unknown_directive(
+                "contents" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -958,7 +958,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "sectnum" | "section-numbering" => Parser::parse_unknown_directive(
+                "sectnum" | "section-numbering" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -968,7 +968,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "header" => Parser::parse_unknown_directive(
+                "header" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -978,7 +978,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "footer" => Parser::parse_unknown_directive(
+                "footer" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -988,7 +988,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "target-notes" => Parser::parse_unknown_directive(
+                "target-notes" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1006,7 +1006,7 @@ pub fn directive(
                     unimplemented!("Citations (plural) directive is mentioned in the rST specification but is not implemented yet.")
                 }
 
-                "meta" => Parser::parse_unknown_directive(
+                "meta" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1017,7 +1017,7 @@ pub fn directive(
                 ),
 
                 // MISCELLANEOUS
-                "include" => Parser::parse_unknown_directive(
+                "include" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1027,7 +1027,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "raw" => Parser::parse_unknown_directive(
+                "raw" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1037,7 +1037,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "class" => Parser::parse_class(
+                "class" => directive_parsers::parse_class(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1047,7 +1047,7 @@ pub fn directive(
                     *section_level,
                 ),
 
-                "role" => Parser::parse_unknown_directive(
+                "role" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1057,7 +1057,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "default-role" => Parser::parse_unknown_directive(
+                "default-role" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1067,7 +1067,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "title" => Parser::parse_unknown_directive(
+                "title" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1077,7 +1077,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "restructuredtext-test-directive" => Parser::parse_unknown_directive(
+                "restructuredtext-test-directive" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1088,7 +1088,7 @@ pub fn directive(
                 ),
 
                 // SPHINX-SPECIFIC DIRECTIVES
-                "toctree" => Parser::parse_unknown_directive(
+                "toctree" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1098,7 +1098,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "versionadded" => Parser::parse_unknown_directive(
+                "versionadded" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1108,7 +1108,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "versionchanged" => Parser::parse_unknown_directive(
+                "versionchanged" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1118,7 +1118,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "deprecated" => Parser::parse_unknown_directive(
+                "deprecated" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1128,7 +1128,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "seealso" => Parser::parse_unknown_directive(
+                "seealso" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1138,7 +1138,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "centered" => Parser::parse_unknown_directive(
+                "centered" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1148,7 +1148,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "hlist" => Parser::parse_unknown_directive(
+                "hlist" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1158,7 +1158,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "highlight" => Parser::parse_unknown_directive(
+                "highlight" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1168,7 +1168,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "code-block" | "sourcecode" => Parser::parse_sphinx_code_block(
+                "code-block" | "sourcecode" => directive_parsers::parse_sphinx_code_block(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1178,7 +1178,7 @@ pub fn directive(
                     Some(detected_first_indent),
                 ),
 
-                "literalinclude" => Parser::parse_unknown_directive(
+                "literalinclude" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1188,7 +1188,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "glossary" => Parser::parse_unknown_directive(
+                "glossary" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1198,7 +1198,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "sectionauthor" => Parser::parse_unknown_directive(
+                "sectionauthor" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1208,7 +1208,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "codeauthor" => Parser::parse_unknown_directive(
+                "codeauthor" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1218,7 +1218,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "index" => Parser::parse_unknown_directive(
+                "index" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1228,7 +1228,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "only" => Parser::parse_sphinx_only(
+                "only" => directive_parsers::parse_sphinx_only(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1237,7 +1237,7 @@ pub fn directive(
                     body_indent,
                 ),
 
-                "tabularcolumns" => Parser::parse_unknown_directive(
+                "tabularcolumns" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1247,7 +1247,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "productionlist" => Parser::parse_unknown_directive(
+                "productionlist" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1258,7 +1258,7 @@ pub fn directive(
                 ),
 
                 // A+-SPECIFIC DIRECTIVES
-                "questionnaire" => Parser::parse_aplus_questionnaire(
+                "questionnaire" => directive_parsers::parse_aplus_questionnaire(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1268,7 +1268,7 @@ pub fn directive(
                     body_indent,
                 ),
 
-                "submit" => Parser::parse_aplus_submit(
+                "submit" => directive_parsers::parse_aplus_submit(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1277,17 +1277,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "ae-input" => Parser::parse_aplus_active_element_input(
-                    src_lines,
-                    doctree,
-                    line_cursor,
-                    base_indent,
-                    empty_after_marker,
-                    detected_first_indent,
-                    body_indent,
-                ),
-
-                "ae-output" => Parser::parse_aplus_active_element_output(
+                "ae-input" => directive_parsers::parse_aplus_active_element_input(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1297,7 +1287,17 @@ pub fn directive(
                     body_indent,
                 ),
 
-                "hidden_block" => Parser::parse_unknown_directive(
+                "ae-output" => directive_parsers::parse_aplus_active_element_output(
+                    src_lines,
+                    doctree,
+                    line_cursor,
+                    base_indent,
+                    empty_after_marker,
+                    detected_first_indent,
+                    body_indent,
+                ),
+
+                "hidden_block" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1307,7 +1307,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "point-of-interest" => Parser::parse_aplus_point_of_interest(
+                "point-of-interest" => directive_parsers::parse_aplus_point_of_interest(
                     src_lines,
                     doctree,
                     line_cursor,
@@ -1318,7 +1318,7 @@ pub fn directive(
                     *section_level,
                 ),
 
-                "annotated" => Parser::parse_unknown_directive(
+                "annotated" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1328,7 +1328,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "lineref-code-block" => Parser::parse_unknown_directive(
+                "lineref-code-block" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1338,7 +1338,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "repl-res-count-reset" => Parser::parse_unknown_directive(
+                "repl-res-count-reset" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1348,7 +1348,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "acos-submit" => Parser::parse_unknown_directive(
+                "acos-submit" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1358,7 +1358,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "div" => Parser::parse_unknown_directive(
+                "div" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1368,7 +1368,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "styled-topic" => Parser::parse_unknown_directive(
+                "styled-topic" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1379,7 +1379,7 @@ pub fn directive(
                 ),
 
                 // A+ MEDIA DIRECTIVES
-                "story" => Parser::parse_unknown_directive(
+                "story" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1389,7 +1389,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "jsvee" => Parser::parse_unknown_directive(
+                "jsvee" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1399,7 +1399,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "youtube" => Parser::parse_unknown_directive(
+                "youtube" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1409,7 +1409,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "local-video" => Parser::parse_unknown_directive(
+                "local-video" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1419,7 +1419,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                "embedded-page" => Parser::parse_unknown_directive(
+                "embedded-page" => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,
@@ -1429,7 +1429,7 @@ pub fn directive(
                     empty_after_marker,
                 ),
 
-                _ => Parser::parse_unknown_directive(
+                _ => directive_parsers::parse_unknown_directive(
                     doctree,
                     src_lines,
                     line_cursor,

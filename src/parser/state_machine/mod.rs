@@ -24,7 +24,6 @@ mod unknown_transitions;
 use crate::parser::regex_patterns::{FIELD_MARKER_PATTERN, LINE_PATTERN, TEXT_PATTERN};
 
 use std::collections::HashMap;
-
 use lazy_static::lazy_static;
 use regex;
 
