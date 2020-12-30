@@ -462,11 +462,11 @@ pub fn parse_code(
         scan_directive_options(src_lines, line_cursor, body_indent);
 
     let (classes, name, number_lines) = if let Some(mut options) = directive_options {
-        let classes = options.remove("class");
-        let name = options.remove("name");
-        let number_lines = options.remove("number-lines");
-
-        (classes, name, number_lines)
+        (
+            options.remove("class"),
+            options.remove("name"),
+            options.remove("number-lines"),
+        )
     } else {
         (None, None, None)
     };
@@ -542,13 +542,13 @@ pub fn parse_math_block(
     let (classes, name, nowrap, label) = if let Some(mut options)
         = scan_directive_options(src_lines, line_cursor, body_indent)
     {
-        let classes = options.remove("class");
-        let name = options.remove("name");
-        // These were added by Sphinx
-        let nowrap = options.remove("nowrap");
-        let label = options.remove("label");
-
-        (classes, name, nowrap, label)
+        (
+            options.remove("class"),
+            options.remove("name"),
+            // These were added by Sphinx
+            options.remove("nowrap"),
+            options.remove("label"),
+        )
     } else {
         (None, None, None, None)
     };
@@ -729,15 +729,15 @@ pub fn parse_list_table(
     let (header_rows, stub_columns, width, widths, class, name, align) =
         if let Some(mut options) = scan_directive_options
         (src_lines, line_cursor, body_indent) {
-            let header_rows = options.remove("header-rows");
-            let stub_columns = options.remove("stub-columns");
-            let width = options.remove("width");
-            let widths = options.remove("widths");
-            let class = options.remove("class");
-            let name = options.remove("name");
-            let align = options.remove("align");
-
-            (header_rows, stub_columns, width, widths, class, name, align)
+            (
+                options.remove("header-rows"),
+                options.remove("stub-columns"),
+                options.remove("width"),
+                options.remove("widths"),
+                options.remove("class"),
+                options.remove("name"),
+                options.remove("align"),
+            )
         } else {
             (None, None, None, None, None, None, None)
         };
