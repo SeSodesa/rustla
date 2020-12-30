@@ -1,8 +1,16 @@
 /*!
 A file that contains functions dedicated to
 parsing *directives*, reStructuredText extensions.
-These are all namespaced under the `Parser` type,
-which is why this page appears empty in the docs.
+All of these follow the same basic pattern:
+
+1. check for directive argument
+2. check for directive options and filter them for accepted ones,
+3. return with a transition result, so that the `parser` might continue
+    parsing the contents of the directive node.
+
+Some small deviations from this pattern might occur,
+since a directive might not accept arguments or options,
+or just not have any content.
 
 (c) Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
