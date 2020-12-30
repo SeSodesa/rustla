@@ -11,7 +11,6 @@ use std::{fs, io, path, str};
 // Text handling utilities
 // =======================
 
-/// ### str_to_lines
 /// Returns a `Vec<String>` from a given `&str`,
 /// split at new lines `\n` or `\r\n`.
 pub fn str_to_lines(string: &str) -> Vec<String> {
@@ -23,7 +22,6 @@ pub fn str_to_lines(string: &str) -> Vec<String> {
     line_vec
 }
 
-/// ### read_path_lines
 /// Read the lines of a given file into a buffer.
 pub fn read_path_lines<P>(file_path: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
 where
@@ -33,12 +31,11 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-/// ### normalize_refname
 /// Normalizes the given `&str` according to the reStructuredText specification.
 /// In this context, normalization means converting any contiguous whitespace into
 /// a single ASCII space character and converting letters to their lower-case variants.
 ///
-/// #### Note
+/// ### Note
 /// This might return something nonsensical, as converting a single multi-scalar grapheme
 /// into lower-case will return the multiple constituent "characters" as their lower-case variants.
 pub fn normalize_refname(name: &str) -> String {
@@ -49,7 +46,6 @@ pub fn normalize_refname(name: &str) -> String {
                         // into their lower-case counterparts
 }
 
-/// ### strip_indent
 /// A whitespace-aware function for stripping indentation
 /// from `String`s. Returns `Ok(String)` if successful.
 /// If non-whitespace characters are encountered before
@@ -77,19 +73,16 @@ pub fn strip_indent(line: String, amount: usize) -> Result<String, &'static str>
 // Type aliases
 // ============
 
-/// ### NodeId
 /// A type alias for an integer used as a node identifier.
 pub type NodeId = u32;
 
-/// ### EnumInt
 /// A type alias for different kinds of enumerators such as list or foonote ordinals in integer format.
 pub type EnumAsInt = u32;
 
-/// ### QuizPoints
 /// A type alias for question points.
 pub type QuizPoints = u32;
 
-/// ### LengthNum
+
 /// A type alias for the number type used in the `Length` enum.
 pub type LengthNum = f64;
 
@@ -98,7 +91,7 @@ pub type LengthNum = f64;
 // ==========================
 
 #[derive(Copy, Clone, Debug)]
-/// ### PatternName
+
 /// An enum of transition regex pattern names, both for body and inline level elements.
 pub enum PatternName {
     // Body elements, possibly nested
@@ -151,7 +144,6 @@ pub enum AplusQuestionnaireType {
     FreeText,
 }
 
-/// ### SectionLineStyle
 /// A section can be underlined, or over- and underlined with a certain character.
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum SectionLineStyle {
@@ -159,7 +151,6 @@ pub enum SectionLineStyle {
     Under(char),
 }
 
-/// ### EnumDelims
 /// Enumerated list item labels can either end with a period `.` or a right parenthesis `)`.
 /// A third option is to enclose them in matching parentheses `(` and `)`.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -169,7 +160,6 @@ pub enum EnumDelims {
     RParen,
 }
 
-/// ### EnumKind
 /// List enumerator labels can be Arabic numerals, lower- or upper-case alphet `a--z` or `A--Z`,
 /// or lower- or upper-case Roman numerals between `1--4999`.
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -182,7 +172,6 @@ pub enum EnumKind {
     Automatic,
 }
 
-/// ### FootnoteKind
 /// There are 4 different kinds of footnote markers:
 /// 1. Manually numbered: `.. [1]` , `.. [2]`, ...
 /// 2. automatically numbered: .. [#]
@@ -233,7 +222,6 @@ pub enum Reference {
     EMail(String),
 }
 
-/// ### IterpretedTextKind
 /// There are 3 types of interpreted inline text, such as math:
 /// 1. where the given role precedes the interpreted content and
 /// 2. where the interpreted content precedes the given role.
@@ -245,7 +233,6 @@ pub enum InterpretedTextKind {
     ContentThenRole,
 }
 
-/// ### MetricType
 /// An enumeration of how lengths can be interpreted.
 /// This includes precentages of current context and absolute length
 #[derive(Debug)]
@@ -254,42 +241,41 @@ pub enum MetricType {
     Lenght(Length),
 }
 
-/// ### Length
 /// Units of length recognized by reStructuredText.
 #[derive(Debug)]
 pub enum Length {
-    /// #### Em
+
     /// em unit, the element's font size
     Em(LengthNum),
 
-    /// ### Ex
+
     /// ex unit, x-height of the element's font size
     Ex(LengthNum),
 
-    /// ### Mn
+
     /// Millimeters
     Mm(LengthNum),
 
-    /// #### Cm
+
     /// Centimeters.
     Cm(LengthNum),
 
-    /// #### In
+
     /// Inches. 1in == 2.54 cm == 96 px.
     In(LengthNum),
 
-    /// #### Px
+
     /// Pixels. 1px == 1/96 in
     ///
-    /// ##### Note!
+    /// ### Note!
     /// In LaTeX, 1 px == 1/72 in.
     Px(LengthNum),
 
-    /// #### Pt
+
     /// Points. 1pt == 1/72 in
     Pt(LengthNum),
 
-    /// #### Pc
+
     /// Picas. 1 pc == 1/6 in == 12 pt
     Pc(LengthNum),
 }
@@ -310,7 +296,6 @@ impl std::fmt::Display for Length {
     }
 }
 
-/// ### TableColWidths
 /// An enumeration of different horizontal alignment options.
 #[derive(Debug)]
 pub enum TableColWidths {
@@ -318,7 +303,6 @@ pub enum TableColWidths {
     Auto, // Determined by writer
 }
 
-/// ### HorizontalAlignment
 /// An enumeration of different horizontal alignment options:
 /// `Left`, `Middle` or `Right`.
 #[derive(Debug)]
@@ -339,7 +323,6 @@ impl std::fmt::Display for HorizontalAlignment {
     }
 }
 
-/// ### ToCBacklinks
 /// An enumeration of different backlinking alternatives for a table of contents node.
 /// Instructs the doctree to generate links from section headers back to the table of
 /// contents entries, the table of contents itself, or generate no backlinks.
@@ -350,7 +333,6 @@ pub enum ToCBacklinks {
     None,
 }
 
-/// #### HTMLAlignment
 /// An enumeration of the (deprecated) "align" attribute alternatives
 /// recognized by the HTML `<img>` tag.
 #[derive(Debug)]
@@ -377,11 +359,10 @@ impl std::fmt::Display for HTMLAlignment {
     }
 }
 
-/// ### TraversalType
 ///
 /// Enumerated the types of tree traversals that one of the `DocTree` walk methods might perform.
 pub enum TraversalType {
-    /// #### ID
+
     /// Traversal based on node ID. Causes the walker method to look for a specific node
     /// with the given ID.
     ID(NodeId),
@@ -390,13 +371,12 @@ pub enum TraversalType {
 use crate::doctree::DocTree;
 use crate::parser::state_machine::State;
 
-/// ### ParsingResult
 /// An enumeration of the different ways a (nested) parsing session might terminate.
 /// The return type of the `Parser::parse` method. Generally, finishing conditions
 /// that are not outright failures will enclose the document tree fed to the parser
 /// when it was initialized.
 pub enum ParsingResult {
-    /// #### EOF
+
     /// This will be returned, if the parser finished by passing over the last line of the source.
     /// This generally indicates that the source file was parsed successfully.
     EOF {
@@ -404,7 +384,6 @@ pub enum ParsingResult {
         state_stack: Vec<State>,
     },
 
-    /// #### EmptyStateStack
     /// This will be returned if the parser was unable to parse any elements on some line of the source,
     /// as patterns not matching will drain the parser state stack of states. This might be useful during
     /// nested parsing sessions, when an empty stack right at the start of the parsing process indicates
@@ -414,13 +393,12 @@ pub enum ParsingResult {
         state_stack: Vec<State>,
     },
 
-    /// #### Failure
     /// A simple failure type. This will be returned when there was clearly no way to recover.
     Failure { message: String, doctree: DocTree },
 }
 
 impl ParsingResult {
-    /// ### unwrap_tree
+
     /// Unwraps the contained doctree in one of the non-failure variants.
     /// Simply panics if this is attempted for the `Failure` variant.
     pub fn unwrap_tree(self) -> DocTree {
@@ -438,7 +416,6 @@ impl ParsingResult {
     }
 }
 
-/// ### AplusExerciseStatus
 ///
 /// There are 6 possible statuses for A+ exercises:
 ///
@@ -458,7 +435,6 @@ pub enum AplusExerciseStatus {
     Maintenance,
 }
 
-/// ### AplusRadarTokenizer
 ///
 /// An enumeration of the different tokenizers offered by the A+ Radar tokenizer.
 ///
@@ -473,7 +449,6 @@ pub enum AplusRadarTokenizer {
     None,
 }
 
-/// ### AplusActiveElementClear
 ///
 /// The variant "both" forces the element to a new line, "left" ("right") allows
 /// no floating elements on the left (right)
@@ -489,7 +464,6 @@ pub enum AplusActiveElementClear {
     Right,
 }
 
-/// ### AplusActiveElementInputType
 ///
 /// Use "file" for file inputs, "clickable" for clickable inputs, and
 /// "dropdown" for dropdown. For dropdowns, the available options should
@@ -507,7 +481,6 @@ pub enum AplusActiveElementInputType {
     Dropdown(String),
 }
 
-/// ### AplusActiveElementOutputType
 ///
 /// Default type is text; for image (png) outputs use "image"
 #[derive(Clone, Copy, Debug)]
@@ -516,17 +489,14 @@ pub enum AplusActiveElementOutputType {
     Image,
 }
 
-/// ### OutputStream
 ///
 /// An enumeration of the different writer output formats.
 /// Currently stdout and files are supported.
 pub enum OutputStream {
     /// Directs the output to the stdout stream.
     StdOut,
-
     /// Directs the output to the stderr stream.
     StdErr,
-
     /// Directs to output to a file.
     File,
 }
@@ -535,7 +505,6 @@ pub enum OutputStream {
 //  Constants
 // ===========
 
-/// #### FOOTNOTE_SYMBOLS
 /// The standard Docutils system uses these symbols as footnote marks
 /// when a FootnoteKind::AutoSymbol is detected.
 /// They are, from first to last:
@@ -560,7 +529,6 @@ pub enum OutputStream {
 /// then its label will be `‡‡ = ‡² = ‡¹⁺¹`.
 pub const FOOTNOTE_SYMBOLS: [char; 10] = ['*', '†', '‡', '§', '¶', '#', '♠', '♥', '♦', '♣'];
 
-/// #### SECTION_AND_QUOTING_CHARS
 ///
 /// These are the characters that can be used in underlining section titles,
 ///  marking the lines of literal text blocks and creating transitions.
