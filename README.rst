@@ -15,7 +15,19 @@ of Santtu Söderholm's Master's Thesis. In other words:
 Build instructions
 ------------------
 
-If you wish to build the project yourself, the easiest way to do it is to install [`rustup`](https://rustup.rs/), reboot your computer so the necessary `PATH` modifications come into effect, navigate to the project folder and run (`cargo build`|`cargo run path/to/rst/file.rst`). To run the unit tests, type `cargo test`. Running a specific test includes typing `cargo test path::to::test::function`. Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
+If you wish to build the project yourself, the easiest way to do it is to install `rustup`_,
+reboot your computer so the necessary `PATH` modifications come into effect,
+navigate to the project folder and run::
+
+    cargo build [--release] | cargo run path/to/rst/file.rst
+
+To run the unit tests, type `cargo test`. Running a specific test includes typing::
+
+    cargo test path::to::test::function
+
+Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
+
+.. _`rustup`: https://rustup.rs/
 
 Usage on a machine without Cargo
 --------------------------------
