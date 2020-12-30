@@ -1,9 +1,13 @@
 # ruSTLa - rSTLa in Rust
 
-ruSTLa is an implementation of the rSTLa (reStructuredText ⟶ $`\LaTeX`$) transpiler,
-written in the Rust programming language.
-rSTLa itself is an inverse transpiler to the LarST ($`\LaTeX`$ ⟶ reStructuredText)
-transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
+ruSTLa is an implementation of the rSTLa (reStructuredText → $`\LaTeX`$) transpiler,
+written in the Rust programming language. rSTLa itself is an inverse transpiler to the
+LarST ($`\LaTeX`$ → reStructuredText) transpiler written by [Tomi Janhunen](https://www.tuni.fi/fi/tomi-janhunen).
+
+ruSTLa was originally written as the "practical part"
+of Santtu Söderholm's Master's Thesis. In other words:
+
+    Copyright © 2020 Santtu Söderholm
 
 ## Build instructions
 
@@ -60,10 +64,10 @@ Option              Known values and explanation
 The current structure of the project is given below.
 This is subject to change as the project advances further.
 ```bash
-src
-├── bin
+src/
 ├── common.rs
 ├── doctree
+│   ├── class_data.rs
 │   ├── directives.rs
 │   ├── hyperref_data.rs
 │   ├── larst_writer.rs
@@ -71,18 +75,22 @@ src
 │   ├── node_categories.rs
 │   ├── restructuredtext_transforms.rs
 │   ├── section_data.rs
-│   ├── tests.rs
-│   ├── test_walkers.rs
+│   ├── tests
+│   │   ├── mod.rs
+│   │   ├── test_constructor.rs
+│   │   └── test_walkers.rs
 │   ├── tree_node.rs
 │   ├── tree_node_types.rs
 │   ├── tree_zipper.rs
 │   └── walkers.rs
 ├── main.rs
 ├── parser
+│   ├── automata.rs
 │   ├── converters.rs
 │   ├── directive_parsers.rs
 │   ├── line_cursor.rs
 │   ├── mod.rs
+│   ├── regex_patterns.rs
 │   ├── state_machine
 │   │   ├── aplus_questionnaire.rs
 │   │   ├── aplus.rs
@@ -93,11 +101,12 @@ src
 │   │   ├── definition_list.rs
 │   │   ├── enumerated_list.rs
 │   │   ├── field_list.rs
-│   │   ├── footnote.rs
 │   │   ├── inline.rs
+│   │   ├── literal_block.rs
 │   │   ├── mod.rs
 │   │   ├── transitions.rs
 │   │   └── unknown_transitions.rs
+│   ├── table_parsers.rs
 │   ├── tests
 │   │   ├── mod.rs
 │   │   ├── test_admonitions.rs
@@ -106,6 +115,7 @@ src
 │   │   ├── test_block_quotes.rs
 │   │   ├── test_block_reading.rs
 │   │   ├── test_bullet_lists.rs
+│   │   ├── test_class.rs
 │   │   ├── test_comments.rs
 │   │   ├── test_converters.rs
 │   │   ├── test_definition_lists.rs
@@ -118,11 +128,13 @@ src
 │   │   ├── test_literal_blocks.rs
 │   │   ├── test_math_blocks.rs
 │   │   ├── test_mixed_structures.rs
+│   │   ├── test_regexes.rs
 │   │   ├── test_sections_and_transitions.rs
 │   │   ├── test_sphinx_only.rs
 │   │   └── test_unknown_directives.rs
 │   └── types_and_aliases.rs
+├── rustla_options.rs
 └── utf8_to_latex.rs
 
-5 directories, 57 files
+6 directories, 65 files
 ```
