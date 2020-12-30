@@ -90,6 +90,8 @@ pub fn parse_aplus_questionnaire_text(
     }
 }
 
+/// Parses an A+ questionnaire directive. Works as an entry point between the parser and the functions
+/// `crate::parser::directive_parsers::{parse_aplus_pick_any, parse_aplus_pick_one, parse_aplus_freetext}`.
 pub fn parse_aplus_questionnaire_directive(
     src_lines: &Vec<String>,
     base_indent: usize,

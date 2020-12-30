@@ -6,7 +6,7 @@ A submodule that contains transition methods specific to creating A+ nodes.
 
 use super::*;
 
-/// Parses an A+ col break(deprecated).
+/// Parses an A+ col break, found in Points of Interest nodes (deprecated).
 pub fn aplus_col_break(
     src_lines: &Vec<String>,
     base_indent: usize,

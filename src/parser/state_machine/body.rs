@@ -6,7 +6,6 @@ This module contains the transition functions related to `StateMachine::Body`.
 
 use super::*;
 
-/// ### bullet
 /// The transition method for matching bullets in `Body` state.
 /// Causes the parser to push a new machine in the state
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
@@ -84,7 +83,6 @@ pub fn bullet(
     }
 }
 
-/// ### enumerator
 /// Transition method for matching enumerators in the `Body` state.
 /// Attempts to create a new enumerated list node and focus on it,
 /// while at the same time pushing a new `EnumeratedList` state on
@@ -205,7 +203,6 @@ pub fn enumerator(
     }
 }
 
-/// ### field_marker
 /// A transitioin function for handling detected field markers in a state that generates body type nodes.
 pub fn field_marker(
     src_lines: &Vec<String>,
@@ -279,7 +276,6 @@ pub fn field_marker(
     }
 }
 
-/// ### footnote
 /// A transition function for generating footnotes
 pub fn footnote(
     src_lines: &Vec<String>,
@@ -409,7 +405,6 @@ pub fn footnote(
     }
 }
 
-/// ### citation
 /// A transition function for generating citations
 pub fn citation(
     src_lines: &Vec<String>,
@@ -521,7 +516,6 @@ pub fn citation(
     }
 }
 
-/// ### hyperlink_target
 /// Parses a hyperlink target into a node.
 pub fn hyperlink_target(
     src_lines: &Vec<String>,
@@ -723,7 +717,6 @@ pub fn hyperlink_target(
     }
 }
 
-/// ### directive
 /// A transition function for parsing directives in a state that recognizes body elements.
 pub fn directive(
     src_lines: &Vec<String>,
@@ -1478,7 +1471,6 @@ pub fn directive(
     }
 }
 
-/// ### comment
 /// A function for parsing reST comments.
 pub fn comment(
     src_lines: &Vec<String>,
@@ -1588,10 +1580,9 @@ pub fn comment(
     }
 }
 
-/// ### text
 /// A function that handles the parsing of blocks that start with text.
-/// This includes paragraphs, but also underlined titles.
-/// These are detected via line lookahead.
+/// This includes paragraphs, but also underlined titles and definition lists.
+/// The latter are detected via lookahead.
 pub fn text(
     src_lines: &Vec<String>,
     base_indent: usize,
@@ -1796,7 +1787,7 @@ pub fn text(
     }
 }
 
-/// ### line
+/// Parses reStructuredText transitions and section titles prefixed with an overline.
 pub fn line(
     src_lines: &Vec<String>,
     base_indent: usize,
@@ -2108,7 +2099,6 @@ pub fn line(
 //  Helper functions
 // ==================
 
-/// ### foonote_label_to_int
 /// Converts a foonote label into a label--target-pair based on the current state of `DocTree.foonote_data`,
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label(
@@ -2193,7 +2183,6 @@ pub fn detected_footnote_label_to_ref_label(
     }
 }
 
-/// ### parse_paragraph
 /// A helper for parsing a paragraph node.
 fn parse_paragraph(
     src_lines: &Vec<String>,
