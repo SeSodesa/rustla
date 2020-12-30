@@ -9,7 +9,7 @@ use std::collections::HashMap;
 
 /// A function for converting a given `&str` (which is valid UTF-8)
 /// into a valid LaTeX string. Some more exotic symbols might require
-/// a specific LaTeX package fo the resulting object code to parse without errors,
+/// a specific LaTeX package for the resulting object code to parse without errors,
 /// which is *not* taken into account by this function.
 ///
 /// If not conversion exists, adds the unicode scalar into the string unchanged.
