@@ -1,9 +1,9 @@
-/// ## test_unknown_directives
-///
-/// A submodule for unit testing unknown directives
-///
-/// author: Santtu Söderholm
-/// email: santtu.soderholm@tuni.fi
+/*!
+A submodule for testing te parsing of unknown directives.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

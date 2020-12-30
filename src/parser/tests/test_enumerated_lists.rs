@@ -1,8 +1,9 @@
-/// ## test_enumerated_lists
-/// A submodule for tests related to enumerated lists.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing enumerated lists.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

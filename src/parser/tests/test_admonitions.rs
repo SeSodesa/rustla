@@ -1,5 +1,9 @@
-/// ## test_admonitions
-/// A submodule for admonition unit tests
+/*!
+A submodule for admonition unit tests.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

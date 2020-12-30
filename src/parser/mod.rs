@@ -3,7 +3,7 @@ This is the `parser` module of ruSTLa.
 It contains the `Parser` type and the `state_machine` submodule,
 that hosts the state transition functions of different states.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 // =========
 //  Imports

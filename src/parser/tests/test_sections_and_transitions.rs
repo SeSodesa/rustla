@@ -1,8 +1,9 @@
-/// ## test_sections_and_transitions
-/// A submodule for testing document transitions and section titles.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing sections and transitions.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

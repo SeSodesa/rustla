@@ -1,9 +1,9 @@
-/// ## test_list_tables
-///
-/// A submodule for testing reStructuredText list tables.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing list tables.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

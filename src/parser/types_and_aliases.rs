@@ -1,7 +1,7 @@
 /*!
 A submodule that contains Parser-related type aliases.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;

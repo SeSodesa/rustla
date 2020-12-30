@@ -3,7 +3,7 @@ A submodule with transition functions related to parsing definition list items.
 Every other transition function is redefined to focus on tree parent and pop
 from the parser state stack.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 use super::*;
 

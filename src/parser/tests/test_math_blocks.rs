@@ -1,9 +1,9 @@
-/// ## test_math_blocks
-///
-/// A submodule for testing math blocks.
-///
-/// author: Santtu Söderholm
-/// email: santtu.soderholm@tuni.fi
+/*!
+A submodule for testing math blocks.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

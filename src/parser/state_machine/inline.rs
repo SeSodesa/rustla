@@ -27,7 +27,7 @@ additional conditions apply to the characters "around" the inline markup:
     * one of the ASCII characters - . , : ; ! ? \ / ' " ) ] } >
     * or a similar non-ASCII punctuation character.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;

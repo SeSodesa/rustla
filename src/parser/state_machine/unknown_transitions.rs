@@ -8,7 +8,7 @@ Parsing definition lists is one of these cases, as other than
 purely textual inputs need to be checked for first before interpreting
 a definition term line as simple text.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 use super::*;
 

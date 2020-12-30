@@ -1,8 +1,9 @@
-/// ## test_block_reading
-/// A submodule for tests related to reading blocks of text.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing block reading functions.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

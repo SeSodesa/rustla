@@ -1,7 +1,9 @@
-/// ## test_converters
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing converter functions.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 use crate::parser::converters;
 

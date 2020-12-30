@@ -1,9 +1,9 @@
-/// ## test_mixed_structures
-///
-/// A submodule for tests related to mixed document structures.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing mixed structures.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

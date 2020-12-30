@@ -1,8 +1,9 @@
-/// ## test_literal_block
-/// A submodule for testing the parsing of literal blocks of text|code.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing literal blocks.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

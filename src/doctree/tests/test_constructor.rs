@@ -1,8 +1,8 @@
-/// ## test_constructor
-///
-/// A submodule for testing the DocTree constructor function.
-///
-/// author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+A submodule for testing the DocTree constructor function.
+
+Copyright © 2020 Santtu Söderholm
+*/
 use super::*;
 
 #[cfg(test)]

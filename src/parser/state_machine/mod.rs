@@ -2,7 +2,7 @@
 This module contains the state typ and the different transition functions corresponding to each state
 in its submodules.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 // ===============================================

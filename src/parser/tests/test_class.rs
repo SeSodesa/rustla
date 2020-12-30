@@ -1,8 +1,9 @@
-/// ## test_class
-///
-/// A submodule for thesting the parsing of the `class` directive.
-///
-/// Copyright (c) 2020, Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+A submodule for testing the class directive.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

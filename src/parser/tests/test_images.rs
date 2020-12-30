@@ -1,8 +1,9 @@
-/// ## test_images
-/// A submodule for unit tests related to images.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing images and figures.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

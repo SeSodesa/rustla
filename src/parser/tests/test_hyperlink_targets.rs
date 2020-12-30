@@ -1,9 +1,9 @@
-/// ## test_hyperlink_targets
-///
-/// A submodule for tests related to parsing hyperlink targets.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing hyperlink targets.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

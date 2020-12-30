@@ -12,7 +12,7 @@ Some small deviations from this pattern might occur,
 since a directive might not accept arguments or options,
 or just not have any content.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 use std::collections::HashMap;
 

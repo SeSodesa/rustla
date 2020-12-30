@@ -1,9 +1,9 @@
-/// ## test_block_quotes
-///
-/// A submodule for unit testing block quotes.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing block quotes.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

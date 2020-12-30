@@ -1,6 +1,9 @@
-/// ## test_aplus_point_of_interest
-///
-/// A submodule for unit testing A+ point of interest parsing.
+/*!
+A submodule for unit testing A+ point of interest parsing.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

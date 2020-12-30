@@ -2,7 +2,7 @@
 This submodule contains useful functions and other constructs that don't
 sensibly belong to any specific entity in the program.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 use std::io::BufRead;
 use std::{fs, io, path, str};

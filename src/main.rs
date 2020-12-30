@@ -4,7 +4,7 @@ ruSTLa is a master's thesis project of Santtu Söderholm,
 and is intended to function as the counterpart to the LarST, or LaTeX → reStructuredText
 parser, written by Tomi Janhunen.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 #![allow(dead_code, unused_variables)]
 mod parser;

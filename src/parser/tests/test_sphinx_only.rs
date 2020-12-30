@@ -1,9 +1,9 @@
-/// ## test_sphinx_only
-///
-/// A unit test module for Sphinx "only" dirctives.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing the Sphinx `only` directive.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

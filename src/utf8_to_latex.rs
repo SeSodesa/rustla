@@ -1,7 +1,7 @@
 /*!
 This file contains a mapping between a subset of UTF-8 to LaTeX commands.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 use lazy_static::lazy_static;

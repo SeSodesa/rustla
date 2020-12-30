@@ -1,7 +1,7 @@
 /*!
 A submodule for transition functions common to all states, such as blank line detection.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;

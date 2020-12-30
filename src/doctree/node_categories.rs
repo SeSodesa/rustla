@@ -1,7 +1,7 @@
 /*!
 A submodule that contains the different categories each node type might belong to.
 
-© Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 /// ### NodeCategory

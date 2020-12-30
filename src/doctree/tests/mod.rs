@@ -1,10 +1,11 @@
+/*!
+This is the test module for the DocTree struct.
+
+Copyright © 2020 Santtu Söderholm
+*/
 #![allow(unused_imports)]
 
-/// ## tests
-/// This is the test module for the DocTree struct.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+
 use std::path::PathBuf;
 
 use crate::common::TraversalType;

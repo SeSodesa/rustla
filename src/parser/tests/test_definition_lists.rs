@@ -1,5 +1,9 @@
-/// ## test_definition_lists
-/// A submodule for definition list -related unit tests.
+/*!
+A submodule for testing definition lists.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

@@ -2,7 +2,7 @@
 In this submodule the patterns in `crate::parser::regex_patterns` are lazily compiled into finite automata
 using the standard Rust `regex` crate.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 use crate::parser::regex_patterns;
 use lazy_static::lazy_static;

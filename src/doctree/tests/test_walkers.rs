@@ -1,9 +1,8 @@
-/// ## test_walkers
-///
-/// A unit test module for testing document tree walker methods.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderolm@tuni.fi
+/*!
+A unit test module for testing document tree walker methods.
+
+Copyright © 2020 Santtu Söderholm
+*/
 use super::*;
 
 #[cfg(test)]

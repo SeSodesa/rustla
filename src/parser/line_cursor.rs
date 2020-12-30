@@ -1,7 +1,7 @@
 /*!
 A submodule that contains the line cursor type and its associated function definitions.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 /// ### LineCursor

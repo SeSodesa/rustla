@@ -1,8 +1,8 @@
-/// ## Test regexes
-///
-/// A submodule for testing the automata located in `crate::parser::automata`.
-///
-/// (c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+/*!
+A submodule for testing the regex patterns in `crate::parser::regex_patterns`.
+
+Copyright © 2020 Santtu Söderholm
+*/
 
 #[cfg(test)]
 #[test]

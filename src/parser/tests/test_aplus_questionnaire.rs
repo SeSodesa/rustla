@@ -1,9 +1,10 @@
-/// ## test_aplus_questionnaire
-///
-/// A submodule for testing A+ questionnaire directrives.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing A+ questionnaire directrives.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
+
 use super::*;
 
 #[cfg(test)]

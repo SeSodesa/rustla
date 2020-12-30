@@ -1,8 +1,9 @@
-/// ## test_field_lists
-/// A submodule for tests related to field lists.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing field lists.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

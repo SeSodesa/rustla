@@ -2,7 +2,7 @@
 A zipper module for accessing `TreeNode`s.
 Inspired by https://stackoverflow.com/a/36168919/6449910
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;

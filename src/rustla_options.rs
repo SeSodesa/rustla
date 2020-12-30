@@ -1,7 +1,7 @@
 /*!
 This submodule contains the type definition and implementation of ruSTLaOptions.
 
-Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm
 */
 
 /// A container for the flags and settings of the ruSTLa transpiler at a type level.

@@ -1,9 +1,9 @@
-/// ## test_comments
-///
-/// A unit test module for reST comments.
-///
-/// author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing reST comments.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 
 #[cfg(test)]

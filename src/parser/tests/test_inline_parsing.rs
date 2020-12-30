@@ -1,8 +1,9 @@
-/// ## test_inline_parsing
-/// Unit tests related to parsing inline text.
-///
-/// Author: Santtu Söderholm
-/// email:  santtu.soderholm@tuni.fi
+/*!
+A submodule for testing inline parsing functions.
+
+Copyright © 2020 Santtu Söderholm
+*/
+
 use super::*;
 use crate::common::Reference;
 
