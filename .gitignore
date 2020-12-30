@@ -13,6 +13,7 @@
 
 # Whitelist specific files
 !README.md
+!LICENSE.rst
 !Cargo.toml
 !.gitlab-ci.yml
 
