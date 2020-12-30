@@ -8,7 +8,7 @@ use crate::common::{EnumDelims, EnumKind, HTMLAlignment, HorizontalAlignment, Le
 use crate::parser::Parser;
 
 impl Parser {
-    /// ### enum_str_to_int_and_kind
+
     /// Converts an enumerator &str to an integer using one of the
     /// coverters, if possible.
     pub fn enum_str_to_int_and_kind(
@@ -211,7 +211,6 @@ impl Parser {
         Some((opt_number.unwrap(), enum_kind, enum_delims))
     }
 
-    /// ### alpha_to_usize
     /// Converts and ASCII letter to a corresponding `Option`al integer between 1--26 inclusive.
     /// Returns `None` if not successful.
     pub fn alpha_to_usize(alpha_str: &str) -> Option<usize> {
@@ -252,7 +251,6 @@ impl Parser {
         }
     }
 
-    /// ### upper_roman_to_usize
     /// Converts a valid given upper-case Roman numeral to a `Some(usize)`.
     /// If the numeral isn't valid, `None` is returned instead
     pub fn upper_roman_to_usize(roman_str: &str) -> Option<usize> {
@@ -331,7 +329,6 @@ impl Parser {
         Some(num_val)
     }
 
-    /// ### lower_roman_to_usize
     /// Converts a valid given lower-case Roman numeral to a `Some(usize)`.
     /// If the numeral isn't valid, `None` is returned instead
     pub fn lower_roman_to_usize(roman_str: &str) -> Option<usize> {
@@ -410,19 +407,15 @@ impl Parser {
         Some(num_val)
     }
 
-    /// ### str_to_length_unit
-    ///
     /// Converts a given string into a `Length` enum variant, if possible.
     /// If conversion succeeds, returns `Some(Length)`, else returns `None`.
     pub fn str_to_length(length_str: &str) -> Option<Length> {
-        use lazy_static::lazy_static;
-        use regex::Regex;
 
         const VALID_LENGTH_PATTERN: &str =
             r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?P<unit>em|ex|mm|cm|in|px|pt|pc)$"#;
 
-        lazy_static! {
-            static ref VALID_LENGTH_RE: Regex = Regex::new(VALID_LENGTH_PATTERN).unwrap();
+        lazy_static::lazy_static! {
+            static ref VALID_LENGTH_RE: regex::Regex = regex::Regex::new(VALID_LENGTH_PATTERN).unwrap();
         }
 
         let captures = if let Some(capts) = VALID_LENGTH_RE.captures(length_str.trim()) {
@@ -460,19 +453,15 @@ impl Parser {
         Some(length_unit)
     }
 
-    /// ### str_to_percentage
-    ///
     /// Converts a given string to a positive percentage (`Option<f64>`),
     /// if it can be intrepreted as such. Else returns `None`
     pub fn str_to_percentage(percentage_str: &str) -> Option<f64> {
-        use lazy_static::lazy_static;
-        use regex::Regex;
 
         const VALID_PERCENTAGE_PATTERN: &str =
             r#"^(?P<number>[0-9]+(?:[.][0-9]*)?|[.][0-9]+)\s*(?P<unit>%)$"#;
 
-        lazy_static! {
-            static ref VALID_PERCENTAGE_RE: Regex = Regex::new(VALID_PERCENTAGE_PATTERN).unwrap();
+        lazy_static::lazy_static! {
+            static ref VALID_PERCENTAGE_RE: regex::Regex = regex::Regex::new(VALID_PERCENTAGE_PATTERN).unwrap();
         }
 
         let captures = if let Some(capts) = VALID_PERCENTAGE_RE.captures(percentage_str.trim()) {
@@ -494,8 +483,6 @@ impl Parser {
         Some(percentage)
     }
 
-    /// ### str_to_html_alignment
-    ///
     /// Converts a given `&str` to a suitable HTMLAlignment variant, if possible.
     /// Successful conversion results in a `Some(HTMLAlignment)`.
     /// Else `None` is returned.
@@ -511,8 +498,6 @@ impl Parser {
         }
     }
 
-    /// ### str_to_horizontal_alignment
-    ///
     /// Converts a given `&str` to a suitable HTMLAlignment variant, if possible.
     /// Successful conversion results in a `Some(HTMLAlignment)`.
     /// Else `None` is returned.
