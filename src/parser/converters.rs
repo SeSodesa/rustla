@@ -9,8 +9,7 @@ use crate::parser::Parser;
 
 impl Parser {
 
-    /// Converts an enumerator &str to an integer using one of the
-    /// coverters, if possible.
+    /// Converts an enumerator &str to an integer using one of the converters, if possible.
     pub fn enum_str_to_int_and_kind(
         detected_enum_str: &str,
         detected_kind: &EnumKind,
