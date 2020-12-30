@@ -19,8 +19,8 @@ ruSTLa is still very much work in progress. For example reStructuredText tables 
 are not yet supported, as can be witnessed by looking into the files ``src/parser/table_parsers``
 and ``src/parser/directive_parsers``.
 
-This tool can therefore help you with tranferring course materials to the LarST format,
-but certain things will need to be implemented by the user themselves.
+This tool can therefore help you with tranferring course materials from reStructuredText
+to the LarST format, but certain structures will need to be transferred by the user themselves.
 
 Build instructions
 ------------------
