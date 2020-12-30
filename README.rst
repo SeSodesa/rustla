@@ -24,6 +24,10 @@ set in stone, moving towards version 1.0.0.
 This tool can therefore help you with tranferring course materials from reStructuredText
 to the LarST format, but certain structures will need to be transferred by the user themselves.
 
+.. note::
+
+    Add information about missing constructs.
+
 Build instructions
 ------------------
 
