@@ -25,7 +25,7 @@ To run the unit tests, type `cargo test`. Running a specific test includes typin
 
     cargo test path::to::test::function
 
-Type `cargo test path::to::test::function -- --nocapture` if you wish to view test output.
+Type ``cargo test path::to::test::function -- --nocapture`` if you wish to view test output.
 
 .. _`rustup`: https://rustup.rs/
 
