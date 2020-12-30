@@ -10,7 +10,6 @@ use super::*;
 //   Type aliases needed by the parser
 // =====================================
 
-
 /// A function pointer type alias for a State transition method.
 /// `TransitionMethod`s take in the document tree and regex captures
 /// for doctree modifications.
@@ -29,15 +28,12 @@ pub type TransitionMethod = fn(
     pattern_name: &PatternName,
 ) -> TransitionResult;
 
-
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
 pub type Transition = (PatternName, regex::Regex, TransitionMethod);
-
 
 /// A type alias for a transition `(PatternName, regex_pattern, TransitionMethod)`, whose regex pattern has not
 /// been compiled into a DFA yet.
 pub type UncompiledTransition = (PatternName, &'static str, TransitionMethod);
-
 
 /// A type alias for a function describing an inline transition.
 /// Returns a node a length of the match, so that the inline parser
@@ -49,7 +45,6 @@ pub type InlineParsingMethod = fn(
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize);
 
-
 /// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
 pub type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 
@@ -57,11 +52,10 @@ pub type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
 //   Types and enums used by submodules of the parser
 // ====================================================
 
-
 /// An enumeration of the different results, including errors,
 /// that a transition function might have.
 pub enum TransitionResult {
-    /// #### Success
+
     /// This is returned if nothing goes wrong with a transition method.
     /// It includes the modified document tree, plus information about
     /// how to manipulate the parser stack, whether the parser should advance
@@ -72,7 +66,6 @@ pub enum TransitionResult {
         line_advance: LineAdvance,
     },
 
-    /// #### Failure
     /// A general failure result. This will be returned if a clear error, such as a completetely invalid enumerator was
     /// encountered in a transition method functions. Contains an error message and the doctree in its current state.
     Failure { message: String, doctree: DocTree },
@@ -98,30 +91,26 @@ pub enum LineAdvance {
 
 /// An enumeration of the different ways an inline parsing function might succeed or fail.
 pub enum InlineParsingResult {
-    /// #### Nodes
+
     /// If no doctree was given to the inline parsing function, so tree nodes might be appended to it directly,
     /// the data of the generated nodes is given to the caller stored in a vector.
     Nodes(Vec<TreeNodeType>),
 
-    /// #### NoNodes
     /// If no nodes were discovered and no doctree was given to be modified, this empty variant is returned.
     NoNodes,
 }
 
-///
 /// A enumeration of the different ways a node's child indentation might
 /// interact with the indentation of the parent.
 pub enum IndentationMatch {
-    /// #### TooLittle
+
     /// If a (sub)?body node has less indentation than its parent would require,
     /// it is interpreted as not belonging to the currently focused on node.
     TooLittle,
 
-    /// #### JustRight
     /// This node belongs to the parent node.
     JustRight,
 
-    /// #### TooMuch
     /// This node is most likely a block quote.
     TooMuch,
 }
