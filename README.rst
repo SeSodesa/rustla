@@ -17,15 +17,15 @@ Build instructions
 
 If you wish to build the project yourself, the easiest way to do it is to install `rustup`_,
 reboot your computer so the necessary `PATH` modifications come into effect,
-navigate to the project folder and run::
+navigate to the project folder and run ::
 
     cargo build [--release] | cargo run path/to/rst/file.rst
 
-To run the unit tests, type `cargo test`. Running a specific test includes typing::
+To run the unit tests, type `cargo test`. Running a specific test includes typing ::
 
     cargo test path::to::test::function
 
-Type::
+Type ::
 
     cargo test path::to::test::function -- --nocapture
 
