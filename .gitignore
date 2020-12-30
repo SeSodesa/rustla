@@ -12,7 +12,7 @@
 !*.pdf
 
 # Whitelist specific files
-!README.md
+!README.rst
 !LICENSE.rst
 !Cargo.toml
 !.gitlab-ci.yml
