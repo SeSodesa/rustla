@@ -32,7 +32,7 @@ pub fn enumerator(
 
     // Retrieve parent list information
     let (detected_number, detected_kind, detected_delims) =
-        match Parser::enum_captures_to_int_kind_and_delims(
+        match converters::enum_captures_to_int_kind_and_delims(
             &captures,
             Some(&list_kind),
             true,

@@ -346,7 +346,7 @@ impl Parser {
             } else if let Some(next_captures) =
                 crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line)
             {
-                let (next_number, next_kind, next_delims) = match Parser::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
+                let (next_number, next_kind, next_delims) = match converters::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
           Some((number, kind, delims)) => (number, kind, delims),
           None => return Err(
             TransitionResult::Failure {

@@ -108,7 +108,7 @@ pub fn enumerator(
     // let detected_enum_str = captures.get(2).unwrap().as_str();
 
     let (detected_number, detected_kind, detected_delims) =
-        match Parser::enum_captures_to_int_kind_and_delims(&captures, None, false, None, None) {
+        match converters::enum_captures_to_int_kind_and_delims(&captures, None, false, None, None) {
             Some((number, kind, delims)) => (number, kind, delims),
             None => return TransitionResult::Failure {
                 message: format!(

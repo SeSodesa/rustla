@@ -25,6 +25,7 @@ use crate::parser::types_and_aliases::{
     InlineParsingResult, LineAdvance, PushOrPop, TransitionResult,
 };
 use crate::parser::Parser;
+use crate::parser::converters;
 
 pub fn parse_standard_admonition(
     src_lines: &Vec<String>,
@@ -258,22 +259,22 @@ pub fn parse_image(
         uri: argument.join(""),
         alt: alt,
         height: if let Some(h) = &height {
-            Parser::str_to_length(h)
+            converters::str_to_length(h)
         } else {
             None
         },
         width: if let Some(w) = &width {
-            Parser::str_to_length(w)
+            converters::str_to_length(w)
         } else {
             None
         },
         scale: if let Some(scale) = &scale {
-            Parser::str_to_percentage(scale)
+            converters::str_to_percentage(scale)
         } else {
             None
         },
         align: if let Some(a) = &align {
-            Parser::str_to_html_alignment(a)
+            converters::str_to_html_alignment(a)
         } else {
             None
         },
@@ -351,17 +352,17 @@ pub fn parse_figure(
 
         alt: alt,
         height: if let Some(h) = height {
-            Parser::str_to_length(&h)
+            converters::str_to_length(&h)
         } else {
             None
         },
         width: if let Some(w) = width {
-            Parser::str_to_length(&w)
+            converters::str_to_length(&w)
         } else {
             None
         },
         scale: if let Some(scale) = &scale {
-            Parser::str_to_percentage(scale)
+            converters::str_to_percentage(scale)
         } else {
             None
         },
@@ -374,13 +375,13 @@ pub fn parse_figure(
     let figure = TreeNodeType::Figure {
         body_indent: body_indent,
         align: if let Some(a) = &align {
-            Parser::str_to_horizontal_alignment(a)
+            converters::str_to_horizontal_alignment(a)
         } else {
             None
         },
         figclass: figclass,
         figwidth: if let Some(w) = &figwidth {
-            Parser::str_to_length(w)
+            converters::str_to_length(w)
         } else {
             None
         },
@@ -783,9 +784,9 @@ pub fn parse_list_table(
             None
         },
         width: if let Some(width) = width {
-            if let Some(length) = Parser::str_to_length(&width) {
+            if let Some(length) = converters::str_to_length(&width) {
                 Some(MetricType::Lenght(length))
-            } else if let Some(percentage) = Parser::str_to_percentage(&width) {
+            } else if let Some(percentage) = converters::str_to_percentage(&width) {
                 Some(crate::common::MetricType::Percentage(percentage))
             } else {
                 None
@@ -3287,12 +3288,12 @@ pub fn parse_aplus_active_element_input(
         default: default,
         class: class,
         width: if let Some(w) = &width {
-            Parser::str_to_length(w)
+            converters::str_to_length(w)
         } else {
             None
         },
         height: if let Some(h) = &height {
-            Parser::str_to_length(h)
+            converters::str_to_length(h)
         } else {
             None
         },
@@ -3463,12 +3464,12 @@ pub fn parse_aplus_active_element_output(
         title: title,
         class: class,
         width: if let Some(w) = &width {
-            Parser::str_to_length(w)
+            converters::str_to_length(w)
         } else {
             None
         },
         height: if let Some(h) = &height {
-            Parser::str_to_length(h)
+            converters::str_to_length(h)
         } else {
             None
         },
@@ -3627,7 +3628,7 @@ pub fn parse_aplus_point_of_interest(
         hidden: hidden,
         class: class,
         height: if let Some(h) = &height {
-            Parser::str_to_length(h)
+            converters::str_to_length(h)
         } else {
             None
         },
