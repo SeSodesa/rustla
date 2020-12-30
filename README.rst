@@ -32,7 +32,7 @@ Type::
 if you wish to view test output. See `Cargo documentation`_ for more options.
 
 .. _`rustup`: https://rustup.rs/
-.. _`Cargo documentation`:https://doc.rust-lang.org/cargo/commands/cargo-build.html
+.. _`Cargo documentation`: https://doc.rust-lang.org/cargo/commands/cargo-build.html
 
 Usage on a machine without Cargo
 --------------------------------
