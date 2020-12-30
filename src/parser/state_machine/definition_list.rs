@@ -3,11 +3,10 @@ A submodule with transition functions related to parsing definition list items.
 Every other transition function is redefined to focus on tree parent and pop
 from the parser state stack.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use super::*;
 
-/// ### text
 /// A transition function for parsing definition list items.
 pub fn text(
     src_lines: &Vec<String>,

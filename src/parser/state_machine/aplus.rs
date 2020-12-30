@@ -1,7 +1,7 @@
 /*!
 A submodule that contains transition methods specific to creating A+ nodes.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;

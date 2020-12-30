@@ -2,7 +2,7 @@
 This submodule contains different regex patterns that can be compiled into finite automata.
 This is done lazily in the module `crate::parser::automata`.
 
-(c) 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 /// A pattern for matching attributions inside block quotes.

@@ -1,7 +1,7 @@
 /*!
 A submodule that contains the different tree node types as a single huge enumeration.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use super::*;
 use crate::common::AplusActiveElementClear;

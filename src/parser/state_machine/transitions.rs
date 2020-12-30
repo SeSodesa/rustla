@@ -1,7 +1,7 @@
 /*!
 This Module contains lists of transition tuples related to different states and common patterns as &str constants.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;

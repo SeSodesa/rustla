@@ -5,7 +5,7 @@ are stored in the `ClassData` container. If a reST text element *other* than `cl
 is ran into, the classes stored in the container are given to the node corresponding
 to thetext element.
 
-(c) 2020, Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 /// A container for HTML classes encountered in the reStructuredText document being parsed.

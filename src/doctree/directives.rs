@@ -6,7 +6,7 @@ https://docutils.sourceforge.io/docs/ref/rst/directives.html
 This module is currently obsolete, and the only really relevant enumeration still
 found in here is the `AdmonitionType` type.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use super::*;
 

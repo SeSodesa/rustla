@@ -3,7 +3,7 @@ A submodule that contains the larst writer method of the doctree,
 and the patterns related to it. The prefix and postfix strings
 of each node are defined here.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use std::io::Write;

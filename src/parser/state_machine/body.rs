@@ -1,7 +1,7 @@
 /*!
 This module contains the transition functions related to `StateMachine::Body`.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;

@@ -2,7 +2,7 @@
 A submodule for converter functions related to the parser.
 These include Roman numeral -> integer transformations and the like.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use crate::common::{EnumDelims, EnumKind, HTMLAlignment, HorizontalAlignment, Length, LengthNum};

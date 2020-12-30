@@ -5,7 +5,7 @@ the `DocTree` is a container for the metadata (such as hyperlinks) related to th
 and store the tree in the form a a `TreeZipper` in its field `DocTree.tree`.
 The `TreeZipper` type is specified in the submodule `crate::parser::tree_zipper`.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+© Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use std::collections::HashMap;
 

@@ -3,7 +3,7 @@
 that the state machine uses as helpers in constructing tables.
 
 
-author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use crate::parser::line_cursor::LineCursor;
 use crate::parser::Parser;

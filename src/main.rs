@@ -5,7 +5,7 @@ ruSTLa is the Rust implementation of the rSTLa or resTructuredText to LaTeX pars
 It is intended to function as the counterpart to the LarST, or LaTeX to reStructuredText
 parser, written by Tomi Janhunen.
 
-Author: Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 #![allow(dead_code, unused_variables)]
 mod parser;

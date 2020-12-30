@@ -1,7 +1,7 @@
 /*!
 A submodule that contains the `HyperrefData` type and its methods.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use super::*;
 

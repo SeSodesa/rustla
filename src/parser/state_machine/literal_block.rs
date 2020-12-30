@@ -1,7 +1,7 @@
 /*!
 A submodule that contains the functions related to parsing literal blocks of text.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use crate::common::PatternName;

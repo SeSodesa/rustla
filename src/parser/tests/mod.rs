@@ -1,6 +1,8 @@
 /*!
 A test module for the parser of ruSTLa. The submodules contain mainly structural tests for parsing results,
 as in the tests mainly observe whether a resulting doctree has the expected structure.
+
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 #![allow(unused_imports)] // Tests complain otherwise...
 

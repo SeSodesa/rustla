@@ -3,7 +3,7 @@ A submodule that defines the transforms performed for each node type,
 before the tree is printed. These include things like transforming the
 second child of a `Figure` node to a `Caption`, if it is a `Paragraph`.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_zipper::TreeZipper;

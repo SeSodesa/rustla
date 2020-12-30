@@ -1,7 +1,7 @@
 /*!
 A submodule for `Statemachine::EnumeratedList` related transition functions.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;

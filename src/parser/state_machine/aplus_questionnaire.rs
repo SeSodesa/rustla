@@ -1,7 +1,7 @@
 /*!
 A submodule dedicated to parsing functions of the `StateMachine::AplusQuestionnaire` state.
 
-(c) Santtu Söderholm <email:  santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;

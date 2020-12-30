@@ -1,6 +1,6 @@
 /*!A submodule that contains transition functions responsible for creating FieldListItem nodes.
 
-(c) Santtu Söderholm <santtu.soderholm@tuni.fi>
+Copyright © 2020 Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
 
 use super::*;
