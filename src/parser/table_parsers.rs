@@ -1,6 +1,7 @@
 /*!
-This submodule contains the table parsing functions,
+**TODO:** This submodule contains the table parsing functions,
 that the state machine uses as helpers in constructing tables.
+
 
 author: Santtu Söderholm <santtu.soderholm@tuni.fi>
 */
