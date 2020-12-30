@@ -1388,10 +1388,9 @@ pub fn parse_sphinx_code_block(
 
     // Read the settings...
     let (linenos, lineno_start, emphasize_lines, caption, name, dedent, force) =
-        if let Some(mut settings) =
-            scan_directive_options
-            (src_lines, line_cursor, body_indent)
-        {
+        if let Some(mut settings) = scan_directive_options(
+            src_lines, line_cursor, body_indent
+        ){
             let mut linenos = if let Some(linenos) = settings.remove("linenos") {
                 true
             } else {
@@ -1662,36 +1661,20 @@ pub fn parse_aplus_questionnaire(
         allow_assistant_viewing,
         allow_assistant_grading,
     ) = if let Some(mut options) = scan_directive_options(src_lines, line_cursor, body_indent) {
-
-        let submissions = options.remove("submissions");
-        let points_to_pass = options.remove("points-to-pass");
-        let feedback = options.remove("feedback");
-        let title = options.remove("title");
-        let no_override = options.remove("no_override");
-        let pick_randomly = options.remove("pick_randomly");
-        let preserve_questions_between_attempts =
-            options.remove("preserve-questions-between-attempts");
-        let category = options.remove("category");
-        let status = options.remove("status");
-        let reveal_model_at_max_submissions = options.remove("reveal-model-at-max-submissions");
-        let show_model = options.remove("show-model");
-        let allow_assistant_viewing = options.remove("allow-assistant-viewing");
-        let allow_assistant_grading = options.remove("allow-assistant-grading");
-
         (
-            submissions,
-            points_to_pass,
-            feedback,
-            title,
-            no_override,
-            pick_randomly,
-            preserve_questions_between_attempts,
-            category,
-            status,
-            reveal_model_at_max_submissions,
-            show_model,
-            allow_assistant_viewing,
-            allow_assistant_grading,
+            options.remove("submissions"),
+            options.remove("points-to-pass"),
+            options.remove("feedback"),
+            options.remove("title"),
+            options.remove("no_override"),
+            options.remove("pick_randomly"),
+            options.remove("preserve-questions-between-attempts"),
+            options.remove("category"),
+            options.remove("status"),
+            options.remove("reveal-model-at-max-submissions"),
+            options.remove("show-model"),
+            options.remove("allow-assistant-viewing"),
+            options.remove("allow-assistant-grading"),
         )
     } else {
         (
@@ -1821,12 +1804,12 @@ pub fn parse_aplus_pick_one(
         scan_directive_options
         (src_lines, line_cursor, body_indent)
     {
-        let class = options.remove("class");
-        let required = options.remove("required");
-        let key = options.remove("key");
-        let dropdown = options.remove("dropdown");
-
-        (class, required, key, dropdown)
+        (
+            options.remove("class"),
+            options.remove("required"),
+            options.remove("key"),
+            options.remove("dropdown"),
+        )
     } else {
         (None, None, None, None)
     };
@@ -2248,23 +2231,14 @@ pub fn parse_aplus_pick_any(
         preserve_questions_between_attempts,
     ) = if let Some(mut options) = scan_directive_options
     (src_lines, line_cursor, body_indent) {
-        let class = options.remove("class");
-        let required = options.remove("required");
-        let key = options.remove("key");
-        let partial_points = options.remove("partial-points");
-        let randomized = options.remove("randomized");
-        let correct_count = options.remove("correct-count");
-        let preserve_questions_between_attempts =
-            options.remove("preserve-questions-between-attempts");
-
         (
-            class,
-            required,
-            key,
-            partial_points,
-            randomized,
-            correct_count,
-            preserve_questions_between_attempts,
+            options.remove("class"),
+            options.remove("required"),
+            options.remove("key"),
+            options.remove("partial-points"),
+            options.remove("randomized"),
+            options.remove("correct-count"),
+            options.remove("preserve-questions-between-attempts"),
         )
     } else {
         (None, None, None, None, None, None, None)
@@ -2714,13 +2688,13 @@ pub fn parse_aplus_freetext(
 
     let (class, required, key, length, height) = if let Some(mut options) = scan_directive_options
     (src_lines, line_cursor, body_indent) {
-        let class = options.remove("class");
-        let required = options.remove("required");
-        let key = options.remove("key");
-        let length = options.remove("length");
-        let height = options.remove("height");
-
-        (class, required, key, length, height)
+        (
+            options.remove("class"),
+            options.remove("required"),
+            options.remove("key"),
+            options.remove("length"),
+            options.remove("height"),
+        )
     } else {
         (None, None, None, None, None)
     };
@@ -3032,46 +3006,28 @@ pub fn parse_aplus_submit(
         lti_resource_link_id,
         lti_open_in_iframe,
         lti_aplus_get_and_post,
-    ) = if let Some(mut options) = scan_directive_options
-    (src_lines, line_cursor, body_indent) {
-        let config = options.remove("config");
-        let submissions = options.remove("submissions");
-        let points_to_pass = options.remove("points-to-pass");
-        let class = options.remove("class");
-        let title = options.remove("title");
-        let category = options.remove("category");
-        let status = options.remove("status");
-        let ajax = options.remove("ajax");
-        let allow_assistant_viewing = options.remove("allow-assistant-viewing");
-        let allow_assistant_grading = options.remove("allow-assistant-grading");
-        let quiz = options.remove("quiz");
-        let url = options.remove("url");
-        let radar_tokenizer = options.remove("radar-tokenizer");
-        let radar_minimum_match_tokens = options.remove("radar_minimum_match_tokens");
-        let lti = options.remove("lti");
-        let lti_resource_link_id = options.remove("lti_resource_link_id");
-        let lti_open_in_iframe = options.remove("lti_open_in_iframe");
-        let lti_aplus_get_and_post = options.remove("lti_aplus_get_and_post");
-
+    ) = if let Some(mut options) = scan_directive_options(
+        src_lines, line_cursor, body_indent
+    ) {
         (
-            config,
-            submissions,
-            points_to_pass,
-            class,
-            title,
-            category,
-            status,
-            ajax,
-            allow_assistant_viewing,
-            allow_assistant_grading,
-            quiz,
-            url,
-            radar_tokenizer,
-            radar_minimum_match_tokens,
-            lti,
-            lti_resource_link_id,
-            lti_open_in_iframe,
-            lti_aplus_get_and_post,
+            options.remove("config"),
+            options.remove("submissions"),
+            options.remove("points-to-pass"),
+            options.remove("class"),
+            options.remove("title"),
+            options.remove("category"),
+            options.remove("status"),
+            options.remove("ajax"),
+            options.remove("allow-assistant-viewing"),
+            options.remove("allow-assistant-grading"),
+            options.remove("quiz"),
+            options.remove("url"),
+            options.remove("radar-tokenizer"),
+            options.remove("radar_minimum_match_tokens"),
+            options.remove("lti"),
+            options.remove("lti_resource_link_id"),
+            options.remove("lti_open_in_iframe"),
+            options.remove("lti_aplus_get_and_post"),
         )
     } else {
         (
@@ -3264,17 +3220,15 @@ pub fn parse_aplus_active_element_input(
     let (title, default, class, width, height, clear, input_type, file) =
         if let Some(mut options) = scan_directive_options
         (src_lines, line_cursor, body_indent) {
-            let title = options.remove("title");
-            let default = options.remove("default");
-            let class = options.remove("class");
-            let width = options.remove("width");
-            let height = options.remove("height");
-            let clear = options.remove("clear");
-            let input_type = options.remove("type");
-            let file = options.remove("file");
-
             (
-                title, default, class, width, height, clear, input_type, file,
+                options.remove("title"),
+                options.remove("default"),
+                options.remove("class"),
+                options.remove("width"),
+                options.remove("height"),
+                options.remove("clear"),
+                options.remove("type"),
+                options.remove("file"),
             )
         } else {
             (None, None, None, None, None, None, None, None)
@@ -3402,40 +3356,30 @@ pub fn parse_aplus_active_element_output(
         height,
         clear,
         output_type,
+        file,
         submissions,
         scale_size,
         status,
-    ) = if let Some(mut options) = scan_directive_options
-    (src_lines, line_cursor, body_indent) {
-        let config = options.remove("config");
-        let inputs = options.remove("inputs");
-        let title = options.remove("title");
-        let class = options.remove("class");
-        let width = options.remove("width");
-        let height = options.remove("height");
-        let clear = options.remove("clear");
-        let output_type = options.remove("type");
-        let file = options.remove("file");
-        let submissions = options.remove("submissions");
-        let scale_size = options.remove("scale-size");
-        let status = options.remove("status");
-
+    ) = if let Some(mut options) = scan_directive_options(
+        src_lines, line_cursor, body_indent
+    ) {
         (
-            config,
-            inputs,
-            title,
-            class,
-            width,
-            height,
-            clear,
-            output_type,
-            submissions,
-            scale_size,
-            status,
+            options.remove("config"),
+            options.remove("inputs"),
+            options.remove("title"),
+            options.remove("class"),
+            options.remove("width"),
+            options.remove("height"),
+            options.remove("clear"),
+            options.remove("type"),
+            options.remove("file"),
+            options.remove("submissions"),
+            options.remove("scale-size"),
+            options.remove("status")
         )
     } else {
         (
-            None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None
         )
     };
 
@@ -3581,32 +3525,22 @@ pub fn parse_aplus_point_of_interest(
         not_in_slides,
         not_in_book,
         no_poi_box,
-    ) = if let Some(mut options) = scan_directive_options
-    (src_lines, line_cursor, body_indent) {
-        let id = options.remove("id");
-        let previous = options.remove("previous");
-        let next = options.remove("next");
-        let hidden = options.remove("hidden");
-        let class = options.remove("class");
-        let height = options.remove("height");
-        let columns = options.remove("columns");
-        let bgimg = options.remove("bgimg");
-        let not_in_slides = options.remove("not_in_slides");
-        let not_in_book = options.remove("not_in_book");
-        let no_poi_box = options.remove("no_poi_box");
+    ) = if let Some(mut options) = scan_directive_options(
+        src_lines, line_cursor, body_indent
+    ) {
 
         (
-            id,
-            previous,
-            next,
-            hidden,
-            class,
-            height,
-            columns,
-            bgimg,
-            not_in_slides,
-            not_in_book,
-            no_poi_box,
+            options.remove("id"),
+            options.remove("previous"),
+            options.remove("next"),
+            options.remove("hidden"),
+            options.remove("class"),
+            options.remove("height"),
+            options.remove("columns"),
+            options.remove("bgimg"),
+            options.remove("not_in_slides"),
+            options.remove("not_in_book"),
+            options.remove("no_poi_box"),
         )
     } else {
         (
