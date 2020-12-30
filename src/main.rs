@@ -130,8 +130,7 @@ fn copyright() {
     eprintln!("©{} {} <{}>\n", AUTHOR_YEAR, AUTHOR_NAME, AUTHOR_EMAIL);
 }
 
-/// A function that prints the usage instructions
-/// for ruSTLa
+/// A function that prints the usage instructions for ruSTLa
 fn usage() {
     println!("Instructions");
     println!("============");
