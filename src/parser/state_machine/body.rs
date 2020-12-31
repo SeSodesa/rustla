@@ -331,15 +331,19 @@ pub fn footnote(
         detected_text_indent
     };
 
-    let (label, target) = if let Some(label_and_target) =
-        detected_footnote_label_to_ref_label(&doctree, &detected_kind, detected_label_str)
-    {
-        (label_and_target.0, label_and_target.1)
-    } else {
-        return TransitionResult::Failure {
-            message: format!("Cound not transform a footnote marker into a label--target-pair on line {}. Computer says no...", line_cursor.sum_total()),
+    let (label, target) = match detected_footnote_label_to_ref_label(
+        &doctree,
+        &detected_kind,
+        detected_label_str
+    ){
+        Some((label, target)) => (label, target),
+        None => return TransitionResult::Failure {
+            message: format!(
+                "Cound not transform a footnote marker into a label--target-pair on line {}. Computer says no...",
+                line_cursor.sum_total()
+            ),
             doctree: doctree
-        };
+        }
     };
 
     // Match against the parent node. Only document root ignores indentation;
