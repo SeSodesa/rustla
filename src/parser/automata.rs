@@ -80,6 +80,12 @@ lazy_static! {
     panic!("Could not initialize SIMPLE_TABLE_BOTTOM_AUTOMATON automaton. Computer says no...")
   };
 
+  /// A DFA for recognizing footnotes.
+  pub static ref FOOTNOTE_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::FOOTNOTE_PATTERN) {
+    automaton
+  } else {
+    panic!("Could not initialize FOOTNOTE_AUTOMATON. Computer says no...");
+  };
 
   /// A DFA for recognising manually numbered footnotes.
   pub static ref MANUAL_FOOTNOTE_AUTOMATON: regex::Regex = if let Ok(automaton) = Regex::new(regex_patterns::MANUAL_FOOTNOTE_PATTERN) {

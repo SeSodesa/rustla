@@ -176,6 +176,30 @@ pub const SIMPLE_TABLE_BOTTOM_PATTERN: &'static str = r#"^(\s*)=+( +=+)+ *$"#;
 // Explicit markup patterns
 // ========================
 
+/// A single pattern for recognizing footnotes.
+pub const FOOTNOTE_PATTERN: &'static str = r#"^(?x)
+(?P<indent>
+    \s*
+)
+\[
+    (?P<manual>
+        \d+
+    )
+    |
+    (?P<autonumbered>
+        \#
+    )
+    |
+    (?P<simplename>
+        \#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)
+    )
+    |
+    (?P<autosymbol>
+        \*
+    )
+\]
+"#;
+
 /// A pattern for matching against manually numbered footnotes.
 pub const MANUAL_FOOTNOTE_PATTERN: &'static str = r"^(\s*)\.\.[ ]+\[(\d+)\](?:[ ]+|$)";
 
