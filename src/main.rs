@@ -18,15 +18,6 @@ mod utf8_to_latex;
 
 use std::io::BufRead;
 
-/// Version retrieved from cargo.toml
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-/// Author name retrieved from cargo.toml
-const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
-/// Author email retrieved from cargo.toml
-const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
-/// Year retrieved from cargo.toml
-const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
-
 /// Program starting point.
 /// Reads the input string, feeds it to the parser and prints the generated doctree.
 fn main() -> Result<(), MainError> {
@@ -125,8 +116,16 @@ fn main() -> Result<(), MainError> {
 
 /// Prints out copyright information of ruSTLa
 fn copyright() {
+    /// Version retrieved from cargo.toml
+    const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+    /// Author name retrieved from cargo.toml
+    const AUTHOR_NAME: &'static str = env!("AUTHOR_NAME");
+    /// Author email retrieved from cargo.toml
+    // const AUTHOR_EMAIL: &'static str = env!("AUTHOR_EMAIL");
+    /// Year retrieved from cargo.toml
+    const AUTHOR_YEAR: &'static str = env!("AUTHOR_YEAR");
     eprintln!("\nThis is ruSTLa, version {}", VERSION);
-    eprintln!("Copyright © {} {} <{}>\n", AUTHOR_YEAR, AUTHOR_NAME, AUTHOR_EMAIL);
+    eprintln!("Copyright © {} {}\n", AUTHOR_YEAR, AUTHOR_NAME);
 }
 
 /// A function that prints the usage instructions for ruSTLa
