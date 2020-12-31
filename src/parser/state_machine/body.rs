@@ -290,7 +290,7 @@ pub fn footnote(
 
     // Detected parameters...
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
-    let detected_marker_indent = match captures.get(1) {
+    let detected_marker_indent = match captures.name("indent") {
         Some(whitespace) => whitespace.as_str().chars().count() + base_indent,
         None => return TransitionResult::Failure {
             message: format!(
