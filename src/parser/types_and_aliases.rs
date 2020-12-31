@@ -25,15 +25,15 @@ pub type TransitionMethod = fn(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult;
 
 /// A type alias for a tuple `(PatternName, Regex, TransitionMethod)`
-pub type Transition = (PatternName, regex::Regex, TransitionMethod);
+pub type Transition = (Pattern, regex::Regex, TransitionMethod);
 
 /// A type alias for a transition `(PatternName, regex_pattern, TransitionMethod)`, whose regex pattern has not
 /// been compiled into a DFA yet.
-pub type UncompiledTransition = (PatternName, &'static str, TransitionMethod);
+pub type UncompiledTransition = (Pattern, &'static str, TransitionMethod);
 
 /// A type alias for a function describing an inline transition.
 /// Returns a node a length of the match, so that the inline parser
@@ -41,12 +41,12 @@ pub type UncompiledTransition = (PatternName, &'static str, TransitionMethod);
 /// source string.
 pub type InlineParsingMethod = fn(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize);
 
 /// A type alias for a tuple `(PatternName, regex pattern, InlineTransitionMethod)`.
-pub type InlineTransition = (PatternName, &'static str, InlineParsingMethod);
+pub type InlineTransition = (Pattern, &'static str, InlineParsingMethod);
 
 // ====================================================
 //   Types and enums used by submodules of the parser

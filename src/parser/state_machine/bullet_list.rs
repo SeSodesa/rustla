@@ -17,7 +17,7 @@ pub fn bullet(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut tree_wrapper = doctree.unwrap();
 

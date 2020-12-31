@@ -15,7 +15,7 @@ pub fn text(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
     let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;

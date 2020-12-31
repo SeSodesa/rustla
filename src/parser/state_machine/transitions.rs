@@ -15,67 +15,67 @@ impl State {
     /// An array of transitions related to `State::Body`.
     pub const BODY_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
-        (PatternName::Bullet, regex_patterns::BULLET_PATTERN, body::bullet),
+        (Pattern::Bullet, regex_patterns::BULLET_PATTERN, body::bullet),
         (
-            PatternName::Enumerator,
+            Pattern::Enumerator,
             regex_patterns::ENUMERATOR_PATTERN,
             body::enumerator,
         ),
         (
-            PatternName::FieldMarker,
+            Pattern::FieldMarker,
             regex_patterns::FIELD_MARKER_PATTERN,
             body::field_marker,
         ),
         (
-            PatternName::Footnote(FootnoteKind::Manual),
+            Pattern::Footnote(FootnoteKind::Manual),
             regex_patterns::MANUAL_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            Pattern::Footnote(FootnoteKind::AutoNumbered),
             regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            Pattern::Footnote(FootnoteKind::SimpleRefName),
             regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            Pattern::Footnote(FootnoteKind::AutoSymbol),
             regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Citation,
+            Pattern::Citation,
             regex_patterns::CITATION_PATTERN,
             body::citation
         ),
         (
-            PatternName::HyperlinkTarget,
+            Pattern::HyperlinkTarget,
             regex_patterns::HYPERLINK_TARGET_PATTERN,
             body::hyperlink_target,
         ),
         (
-            PatternName::Directive,
+            Pattern::Directive,
             regex_patterns::DIRECTIVE_PATTERN,
             body::directive
         ),
         (
-            PatternName::Comment,
+            Pattern::Comment,
             regex_patterns::COMMENT_PATTERN,
             body::comment
         ),
         (
-            PatternName::Line,
+            Pattern::Line,
             regex_patterns::LINE_PATTERN,
             body::line),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::TEXT_PATTERN,
             body::text
         ),
@@ -84,77 +84,77 @@ impl State {
     /// An array of transitions related to `State::Body`.
     pub const BLOCK_QUOTE_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::Attribution,
+            Pattern::Attribution,
             regex_patterns::ATTRIBUTION_PATTERN,
             block_quote::attribution,
         ),
         (
-            PatternName::Bullet,
+            Pattern::Bullet,
             regex_patterns::BULLET_PATTERN,
             body::bullet
         ),
         (
-            PatternName::Enumerator,
+            Pattern::Enumerator,
             regex_patterns::ENUMERATOR_PATTERN,
             body::enumerator,
         ),
         (
-            PatternName::FieldMarker,
+            Pattern::FieldMarker,
             regex_patterns::FIELD_MARKER_PATTERN,
             body::field_marker,
         ),
         (
-            PatternName::Footnote(FootnoteKind::Manual),
+            Pattern::Footnote(FootnoteKind::Manual),
             regex_patterns::MANUAL_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            Pattern::Footnote(FootnoteKind::AutoNumbered),
             regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            Pattern::Footnote(FootnoteKind::SimpleRefName),
             regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            Pattern::Footnote(FootnoteKind::AutoSymbol),
             regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Citation,
+            Pattern::Citation,
             regex_patterns::CITATION_PATTERN,
             body::citation
         ),
         (
-            PatternName::HyperlinkTarget,
+            Pattern::HyperlinkTarget,
             regex_patterns::HYPERLINK_TARGET_PATTERN,
             body::hyperlink_target,
         ),
         (
-            PatternName::Directive,
+            Pattern::Directive,
             regex_patterns::DIRECTIVE_PATTERN,
             body::directive
         ),
         (
-            PatternName::Comment,
+            Pattern::Comment,
             regex_patterns::COMMENT_PATTERN,
             body::comment
         ),
         (
-            PatternName::Line,
+            Pattern::Line,
             regex_patterns::LINE_PATTERN,
             body::line
         ),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::TEXT_PATTERN,
             body::text
         ),
@@ -163,12 +163,12 @@ impl State {
     /// An array of transitions related to `State::BulletList`.
     pub const BULLET_LIST_TRANSITIONS: [UncompiledTransition; 2] = [
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::Bullet,
+            Pattern::Bullet,
             regex_patterns::BULLET_PATTERN,
             bullet_list::bullet
         ),
@@ -177,72 +177,72 @@ impl State {
     /// An array of transitions related to `State::DefinitionList`.
     pub const DEFINITION_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::Bullet,
+            Pattern::Bullet,
             regex_patterns::BULLET_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Enumerator,
+            Pattern::Enumerator,
             regex_patterns::ENUMERATOR_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::FieldMarker,
+            Pattern::FieldMarker,
             regex_patterns::FIELD_MARKER_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Footnote(FootnoteKind::Manual),
+            Pattern::Footnote(FootnoteKind::Manual),
             regex_patterns::MANUAL_FOOTNOTE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            Pattern::Footnote(FootnoteKind::AutoNumbered),
             regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            Pattern::Footnote(FootnoteKind::SimpleRefName),
             regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            Pattern::Footnote(FootnoteKind::AutoSymbol),
             regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Citation,
+            Pattern::Citation,
             regex_patterns::CITATION_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::HyperlinkTarget,
+            Pattern::HyperlinkTarget,
             regex_patterns::HYPERLINK_TARGET_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Directive,
+            Pattern::Directive,
             regex_patterns::DIRECTIVE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Comment,
+            Pattern::Comment,
             regex_patterns::COMMENT_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Line,
+            Pattern::Line,
             regex_patterns::LINE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::TEXT_PATTERN,
             definition_list::text
         ),
@@ -251,12 +251,12 @@ impl State {
     /// An array of transitions related to `State::EnumeratedList`.
     pub const ENUMERATED_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::Enumerator,
+            Pattern::Enumerator,
             regex_patterns::ENUMERATOR_PATTERN,
             enumerated_list::enumerator,
         ),
@@ -265,12 +265,12 @@ impl State {
     /// An array of transitions related to `State::FieldList`.
     pub const FIELD_LIST_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::FieldMarker,
+            Pattern::FieldMarker,
             regex_patterns::FIELD_MARKER_PATTERN,
             field_list::field_marker,
         ),
@@ -287,17 +287,17 @@ impl State {
     /// An array of transitions related to `State::Line`.
     pub const LITERAL_BLOCK_TRANSITIONS: [UncompiledTransition; 3] = [
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::QuotedLiteralBlock,
+            Pattern::QuotedLiteralBlock,
             regex_patterns::QUOTED_LITERAL_BLOCK_PATTERN,
             literal_block::literal_block,
         ),
         (
-            PatternName::IndentedLiteralBlock,
+            Pattern::IndentedLiteralBlock,
             regex_patterns::INDENTED_LITERAL_BLOCK_PATTERN,
             literal_block::literal_block,
         ),
@@ -323,12 +323,12 @@ impl State {
 
     pub const LIST_TABLE_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::Bullet,
+            Pattern::Bullet,
             regex_patterns::BULLET_PATTERN,
             body::bullet
         ),
@@ -338,77 +338,77 @@ impl State {
     /// These are indentical to those, except the state also recognizes
     pub const APLUS_MULTICOL_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::AplusColBreak,
+            Pattern::AplusColBreak,
             regex_patterns::APLUS_COL_BREAK_PATTERN,
             aplus::aplus_col_break,
         ),
         (
-            PatternName::Bullet,
+            Pattern::Bullet,
             regex_patterns::BULLET_PATTERN,
             body::bullet
         ),
         (
-            PatternName::Enumerator,
+            Pattern::Enumerator,
             regex_patterns::ENUMERATOR_PATTERN,
             body::enumerator,
         ),
         (
-            PatternName::FieldMarker,
+            Pattern::FieldMarker,
             regex_patterns::FIELD_MARKER_PATTERN,
             body::field_marker,
         ),
         (
-            PatternName::Footnote(FootnoteKind::Manual),
+            Pattern::Footnote(FootnoteKind::Manual),
             regex_patterns::MANUAL_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoNumbered),
+            Pattern::Footnote(FootnoteKind::AutoNumbered),
             regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::SimpleRefName),
+            Pattern::Footnote(FootnoteKind::SimpleRefName),
             regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Footnote(FootnoteKind::AutoSymbol),
+            Pattern::Footnote(FootnoteKind::AutoSymbol),
             regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
-            PatternName::Citation,
+            Pattern::Citation,
             regex_patterns::CITATION_PATTERN,
             body::citation
         ),
         (
-            PatternName::HyperlinkTarget,
+            Pattern::HyperlinkTarget,
             regex_patterns::HYPERLINK_TARGET_PATTERN,
             body::hyperlink_target,
         ),
         (
-            PatternName::Directive,
+            Pattern::Directive,
             regex_patterns::DIRECTIVE_PATTERN,
             body::directive
         ),
         (
-            PatternName::Comment,
+            Pattern::Comment,
             regex_patterns::COMMENT_PATTERN,
             body::comment
         ),
         (
-            PatternName::Line,
+            Pattern::Line,
             regex_patterns::LINE_PATTERN,
             body::line
         ),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::TEXT_PATTERN,
             body::text
         ),
@@ -416,17 +416,17 @@ impl State {
 
     pub const APLUS_QUESTIONNAIRE_TRANSITIONS: &'static [UncompiledTransition] = &[
         (
-            PatternName::EmptyLine,
+            Pattern::EmptyLine,
             regex_patterns::BLANK_LINE_PATTERN,
             common::empty_line,
         ),
         (
-            PatternName::AplusQuestionnaireDirective,
+            Pattern::AplusQuestionnaireDirective,
             regex_patterns::APLUS_QUESTIONNAIRE_DIRECTIVE_PATTERN,
             aplus_questionnaire::parse_aplus_questionnaire_directive,
         ),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::TEXT_PATTERN,
             aplus_questionnaire::parse_aplus_questionnaire_text,
         ),
@@ -435,51 +435,51 @@ impl State {
     /// An array of inline transitions.
     pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
         (
-            PatternName::WhiteSpace,
+            Pattern::WhiteSpace,
             regex_patterns::INLINE_WHITESPACE_PATTERN,
             inline::whitespace),
         (
-            PatternName::StrongEmphasis,
+            Pattern::StrongEmphasis,
             regex_patterns::STRONG_EMPH_PATTERN,
             inline::paired_delimiter,
         ),
         (
-            PatternName::Emphasis,
+            Pattern::Emphasis,
             regex_patterns::EMPH_PATTERN,
             inline::paired_delimiter,
         ),
         (
-            PatternName::Literal,
+            Pattern::Literal,
             regex_patterns::LITERAL_PATTERN,
             inline::paired_delimiter,
         ),
         (
-            PatternName::InlineTarget,
+            Pattern::InlineTarget,
             regex_patterns::INLINE_TARGET_PATTERN,
             inline::inline_target,
         ),
         (
-            PatternName::PhraseRef,
+            Pattern::PhraseRef,
             regex_patterns::PHRASE_REF_PATTERN,
             inline::phrase_ref,
         ),
         (
-            PatternName::Interpreted,
+            Pattern::Interpreted,
             regex_patterns::INTERPRETED_TEXT_PATTERN,
             inline::interpreted_text,
         ),
         (
-            PatternName::FootNoteRef,
+            Pattern::FootNoteRef,
             regex_patterns::FOOTNOTE_REF_PATTERN,
             inline::footnote_ref,
         ),
         (
-            PatternName::SimpleRef,
+            Pattern::SimpleRef,
             regex_patterns::SIMPLE_REF_PATTERN,
             inline::simple_ref,
         ),
         (
-            PatternName::SubstitutionRef,
+            Pattern::SubstitutionRef,
             regex_patterns::SUBSTITUTION_REF_PATTERN,
             inline::substitution_ref,
         ),
@@ -508,12 +508,12 @@ impl State {
         //   fragment  = $9
         //(PatternName::StandaloneHyperlink, r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", Inline::reference),
         (
-            PatternName::StandaloneHyperlink,
+            Pattern::StandaloneHyperlink,
             regex_patterns::URI_PATTERN,
             inline::uri
         ),
         (
-            PatternName::Text,
+            Pattern::Text,
             regex_patterns::INLINE_TEXT_PATTERN,
             inline::text
         ),

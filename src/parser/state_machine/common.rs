@@ -14,7 +14,7 @@ pub fn empty_line(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let doctree = doctree.unwrap();
 

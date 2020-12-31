@@ -93,7 +93,7 @@ pub type LengthNum = f64;
 #[derive(Copy, Clone, Debug)]
 
 /// An enum of transition regex pattern names, both for body and inline level elements.
-pub enum PatternName {
+pub enum Pattern {
     // Body elements, possibly nested
     Attribution,
     EmptyLine,

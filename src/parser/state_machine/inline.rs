@@ -39,7 +39,7 @@ use utf8_to_latex::unicode_text_to_latex;
 /// and closing delimiters such as `**strong emphasis**` or ``` ``literal_text`` ```.
 pub fn paired_delimiter(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     // Destructuring the regex parts...
@@ -95,13 +95,13 @@ pub fn paired_delimiter(
     char_count +=
         markup_start.chars().count() + content.chars().count() + markup_end.chars().count();
     let markup_data = match pattern_name {
-        PatternName::StrongEmphasis => TreeNodeType::StrongEmphasis {
+        Pattern::StrongEmphasis => TreeNodeType::StrongEmphasis {
             text: content_string,
         },
-        PatternName::Emphasis => TreeNodeType::Emphasis {
+        Pattern::Emphasis => TreeNodeType::Emphasis {
             text: content_string,
         },
-        PatternName::Literal => TreeNodeType::Literal {
+        Pattern::Literal => TreeNodeType::Literal {
             text: content_string,
         },
         _ => panic!("No such simple paired delimiter type!"),
@@ -116,7 +116,7 @@ pub fn paired_delimiter(
 /// but push new labels into the doctree's inline target stack.
 pub fn inline_target(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
@@ -168,7 +168,7 @@ pub fn inline_target(
 /// Parses inline whitespace.
 pub fn whitespace(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let content = captures.get(0).unwrap();
@@ -182,7 +182,7 @@ pub fn whitespace(
 
 pub fn interpreted_text(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let whole_match = captures.get(0).unwrap().as_str();
@@ -446,7 +446,7 @@ pub fn interpreted_text(
 /// Parses simple hyperlink references.
 pub fn simple_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
@@ -506,7 +506,7 @@ pub fn simple_ref(
 /// Parses phrase references.
 pub fn phrase_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let whole_match = captures.get(0).unwrap().as_str();
@@ -607,7 +607,7 @@ pub fn phrase_ref(
 /// Parses footnote references.
 pub fn footnote_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
@@ -669,7 +669,7 @@ pub fn footnote_ref(
 /// Parses citation references.
 pub fn citation_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
@@ -720,7 +720,7 @@ pub fn citation_ref(
 /// if the matched string ended with a `__?`.
 pub fn substitution_ref(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
@@ -813,7 +813,7 @@ pub fn substitution_ref(
 /// such as `https://`.
 pub fn uri(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let whole_match = captures.get(0).unwrap().as_str();
@@ -940,7 +940,7 @@ pub fn uri(
 /// word of "text".
 pub fn text(
     opt_doctree_ref: &mut Option<&mut DocTree>,
-    pattern_name: PatternName,
+    pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
     let content = captures.get(0).unwrap().as_str();

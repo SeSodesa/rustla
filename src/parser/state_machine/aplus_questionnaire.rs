@@ -14,7 +14,7 @@ pub fn parse_aplus_questionnaire_text(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -100,7 +100,7 @@ pub fn parse_aplus_questionnaire_directive(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 

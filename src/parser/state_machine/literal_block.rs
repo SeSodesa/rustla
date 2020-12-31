@@ -4,7 +4,7 @@ A submodule that contains the functions related to parsing literal blocks of tex
 Copyright © 2020 Santtu Söderholm
 */
 
-use crate::common::PatternName;
+use crate::common::Pattern;
 use crate::doctree::tree_node_types::TreeNodeType;
 use crate::doctree::DocTree;
 use crate::parser::line_cursor::LineCursor;
@@ -20,7 +20,7 @@ pub fn literal_block(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let doctree = doctree.unwrap();
 
@@ -40,9 +40,9 @@ pub fn literal_block(
 
     match pattern_name {
 
-    PatternName::IndentedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
-    PatternName::QuotedLiteralBlock if detected_indent == body_indent => parse_quoted_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
-    PatternName::QuotedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+    Pattern::IndentedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+    Pattern::QuotedLiteralBlock if detected_indent == body_indent => parse_quoted_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+    Pattern::QuotedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
     _ => return TransitionResult::Failure {
         message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}. Computer says no...", pattern_name, detected_indent, body_indent, line_cursor.sum_total()),
         doctree: doctree

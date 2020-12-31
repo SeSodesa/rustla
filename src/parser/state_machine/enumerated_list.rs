@@ -14,7 +14,7 @@ pub fn enumerator(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 

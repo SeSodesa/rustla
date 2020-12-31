@@ -224,7 +224,7 @@ lazy_static! {
   /// the `Parser` `StateMachine`.
   ///
   /// With this regexes are only compiled into automata once.
-  pub static ref TRANSITION_MAP: HashMap<State, Vec<(PatternName, regex::Regex, TransitionMethod)>> = {
+  pub static ref TRANSITION_MAP: HashMap<State, Vec<(Pattern, regex::Regex, TransitionMethod)>> = {
 
     let mut action_map = collections::HashMap::with_capacity(10);
 
@@ -281,7 +281,7 @@ lazy_static! {
   ///
   /// Instead, a block of source text is given to `Parser::parse_inline_nodes`
   /// which is then scanned with regular expressions.
-  pub static ref COMPILED_INLINE_TRANSITIONS: Vec<(PatternName, regex::Regex, InlineParsingMethod)> = {
+  pub static ref COMPILED_INLINE_TRANSITIONS: Vec<(Pattern, regex::Regex, InlineParsingMethod)> = {
 
     let mut inline_transitions = Vec::with_capacity(State::INLINE_TRANSITIONS.len());
 
@@ -323,7 +323,7 @@ impl Parser {
         detected_number: usize,
         detected_kind: EnumKind,
         detected_delims: EnumDelims,
-        pattern_name: &PatternName,
+        pattern_name: &Pattern,
         list_kind: Option<&EnumKind>,
         in_list_item: bool,
         list_item_number: Option<usize>,

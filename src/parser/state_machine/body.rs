@@ -17,7 +17,7 @@ pub fn bullet(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut tree_wrapper = doctree.unwrap();
 
@@ -98,7 +98,7 @@ pub fn enumerator(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -211,7 +211,7 @@ pub fn field_marker(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut tree_wrapper = doctree.unwrap();
 
@@ -284,7 +284,7 @@ pub fn footnote(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -309,7 +309,7 @@ pub fn footnote(
         detected_text_indent
     };
 
-    let detected_kind = if let PatternName::Footnote(kind) = pattern_name {
+    let detected_kind = if let Pattern::Footnote(kind) = pattern_name {
         kind
     } else {
         return TransitionResult::Failure {
@@ -413,7 +413,7 @@ pub fn citation(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut tree_wrapper = doctree.unwrap();
 
@@ -524,7 +524,7 @@ pub fn hyperlink_target(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
 
     let mut doctree = doctree.unwrap();
@@ -725,7 +725,7 @@ pub fn directive(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -1482,7 +1482,7 @@ pub fn comment(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -1593,7 +1593,7 @@ pub fn text(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
     let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -1798,7 +1798,7 @@ pub fn line(
     line_cursor: &mut LineCursor,
     doctree: Option<DocTree>,
     captures: &regex::Captures,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
 ) -> TransitionResult {
     let mut doctree = doctree.unwrap();
 
@@ -2106,14 +2106,14 @@ pub fn line(
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label(
     doctree: &DocTree,
-    pattern_name: &PatternName,
+    pattern_name: &Pattern,
     detected_label_str: &str,
 ) -> Option<(String, String)> {
     use crate::common::normalize_refname;
 
     let normalized_name = normalize_refname(detected_label_str);
 
-    if let PatternName::Footnote(kind) = pattern_name {
+    if let Pattern::Footnote(kind) = pattern_name {
         match kind {
             FootnoteKind::Manual => {
                 // In this case the doctree is simply asked whether it has a reference
