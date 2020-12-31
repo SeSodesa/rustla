@@ -189,16 +189,16 @@ pub const FOOTNOTE_PATTERN: &'static str = r#"^(?x)
     (?P<autonumbered>
         \#
     )
-    |
+    |\#
     (?P<simplename>
-        \#([a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*)
+        [a-zA-Z][a-zA-Z0-9]+(?:[-+._:][a-zA-Z0-9]+)*
     )
     |
     (?P<autosymbol>
         \*
     )
 \]
-(?:[ ]+|$) # space after marker
+(?:\ +|$) # space after marker
 "#;
 
 /// A pattern for matching against manually numbered footnotes.
