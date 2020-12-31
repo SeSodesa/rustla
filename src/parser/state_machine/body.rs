@@ -290,11 +290,33 @@ pub fn footnote(
 
     // Detected parameters...
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
-    let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
-    let detected_label_str = captures.get(2).unwrap().as_str();
-
-    let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1)
-    {
+    let detected_marker_indent = match captures.get(1) {
+        Some(whitespace) => whitespace.as_str().chars().count() + base_indent,
+        None => return TransitionResult::Failure {
+            message: format!(
+                "Could not scan footnote marker for indentation on line {}. Computer says no...",
+                line_cursor.sum_total()
+            ),
+            doctree: doctree
+        }
+    };
+    let (detected_kind, detected_label_str) = if let Some(label) = captures.name("manual") {
+        (FootnoteKind::Manual, label.as_str())
+    } else if let Some(label) = captures.name("autonumbered") {
+        (FootnoteKind::AutoNumbered, label.as_str())
+    } else if let Some(label) = captures.name("simplename") {
+        (FootnoteKind::SimpleRefName, label.as_str())
+    } else if let Some(label) = captures.name("autosymbol") {
+        (FootnoteKind::AutoSymbol, label.as_str())
+    } else {
+        return TransitionResult::Failure {
+            message: format!("No footnote type information inside footnote transition function. Computer says no..."),
+            doctree: doctree
+        };
+    };
+    let detected_body_indent = if let Some(line) = src_lines.get(
+        line_cursor.relative_offset() + 1
+    ){
         if line.trim().is_empty() {
             detected_text_indent
         } else {
@@ -309,17 +331,8 @@ pub fn footnote(
         detected_text_indent
     };
 
-    let detected_kind = if let Pattern::Footnote(kind) = pattern_name {
-        kind
-    } else {
-        return TransitionResult::Failure {
-            message: format!("No footnote type information inside footnote transition function. Computer says no..."),
-            doctree: doctree
-        };
-    };
-
     let (label, target) = if let Some(label_and_target) =
-        detected_footnote_label_to_ref_label(&doctree, pattern_name, detected_label_str)
+        detected_footnote_label_to_ref_label(&doctree, &detected_kind, detected_label_str)
     {
         (label_and_target.0, label_and_target.1)
     } else {
@@ -335,7 +348,7 @@ pub fn footnote(
         IndentationMatch::JustRight => {
             let footnote_data = TreeNodeType::Footnote {
                 body_indent: detected_body_indent,
-                kind: *detected_kind,
+                kind: detected_kind,
                 label: label.clone(),
                 target: target.clone(),
             };
@@ -2117,83 +2130,77 @@ pub fn line(
 /// if possible. Returns an `Option`al pair `(label, target)` if successful.
 pub fn detected_footnote_label_to_ref_label(
     doctree: &DocTree,
-    pattern_name: &Pattern,
+    footnotekind: &FootnoteKind,
     detected_label_str: &str,
 ) -> Option<(String, String)> {
     use crate::common::normalize_refname;
 
     let normalized_name = normalize_refname(detected_label_str);
+    match footnotekind {
+        FootnoteKind::Manual => {
+            // In this case the doctree is simply asked whether it has a reference
+            // with this name. If yes, the user is warned of a duplicate label,
+            // but otherwise no special action is taken.
 
-    if let Pattern::Footnote(kind) = pattern_name {
-        match kind {
-            FootnoteKind::Manual => {
-                // In this case the doctree is simply asked whether it has a reference
-                // with this name. If yes, the user is warned of a duplicate label,
-                // but otherwise no special action is taken.
-
-                return Some((normalized_name.clone(), normalized_name));
-            }
-
-            FootnoteKind::AutoNumbered => {
-                // Here we iterate the set of all possible `u32` values
-                // and once a number that has not been used as a label is found,
-                // it is returned.
-
-                // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
-
-                for n in 1..=EnumAsInt::MAX {
-                    let n_str = n.to_string();
-                    if doctree.has_target_label(n_str.as_str()) {
-                        continue;
-                    }
-                    return Some((n_str.clone(), n_str));
-                }
-                eprintln!("All possible footnote numbers in use. Computer says no...");
-                return None;
-            }
-
-            FootnoteKind::SimpleRefName => {
-                // Same as with automatically numbered footnotes, check if this has already a number representation
-                // in the doctree and if not, return it.
-
-                for n in 1..=EnumAsInt::MAX {
-                    let n_str = n.to_string();
-                    if doctree.has_target_label(n_str.as_str()) {
-                        continue;
-                    }
-                    return Some((n_str, normalized_name));
-                }
-                eprintln!("All possible footnote numbers in use. Computer says no...");
-                return None;
-            }
-
-            FootnoteKind::AutoSymbol => {
-                // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
-                // entered into the document thus far.
-
-                use crate::common::FOOTNOTE_SYMBOLS; // Import constant locally
-
-                let n = doctree.n_of_symbolic_footnotes() as usize; // No overflow checks with as...
-
-                let n_of_symbols = FOOTNOTE_SYMBOLS.len();
-
-                let passes = n / n_of_symbols;
-                let index = n % n_of_symbols;
-                let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
-                    Some(symb) => symb,
-                    None => {
-                        eprintln!("No footnote symbol with index {}!", index);
-                        return None;
-                    }
-                };
-
-                let label: String = vec![*symbol; passes + 1].iter().collect();
-                return Some((label.clone(), label));
-            }
+            return Some((normalized_name.clone(), normalized_name));
         }
-    } else {
-        eprintln!("No footnote pattern inside a footnote transition function. Computer says no...");
-        None
+
+        FootnoteKind::AutoNumbered => {
+            // Here we iterate the set of all possible `u32` values
+            // and once a number that has not been used as a label is found,
+            // it is returned.
+
+            // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
+
+            for n in 1..=EnumAsInt::MAX {
+                let n_str = n.to_string();
+                if doctree.has_target_label(n_str.as_str()) {
+                    continue;
+                }
+                return Some((n_str.clone(), n_str));
+            }
+            eprintln!("All possible footnote numbers in use. Computer says no...");
+            return None;
+        }
+
+        FootnoteKind::SimpleRefName => {
+            // Same as with automatically numbered footnotes, check if this has already a number representation
+            // in the doctree and if not, return it.
+
+            for n in 1..=EnumAsInt::MAX {
+                let n_str = n.to_string();
+                if doctree.has_target_label(n_str.as_str()) {
+                    continue;
+                }
+                return Some((n_str, normalized_name));
+            }
+            eprintln!("All possible footnote numbers in use. Computer says no...");
+            return None;
+        }
+
+        FootnoteKind::AutoSymbol => {
+            // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
+            // entered into the document thus far.
+
+            use crate::common::FOOTNOTE_SYMBOLS; // Import constant locally
+
+            let n = doctree.n_of_symbolic_footnotes() as usize; // No overflow checks with as...
+
+            let n_of_symbols = FOOTNOTE_SYMBOLS.len();
+
+            let passes = n / n_of_symbols;
+            let index = n % n_of_symbols;
+            let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
+                Some(symb) => symb,
+                None => {
+                    eprintln!("No footnote symbol with index {}!", index);
+                    return None;
+                }
+            };
+
+            let label: String = vec![*symbol; passes + 1].iter().collect();
+            return Some((label.clone(), label));
+        }
     }
 }
 

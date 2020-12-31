@@ -31,23 +31,8 @@ impl State {
             body::field_marker,
         ),
         (
-            Pattern::Footnote(FootnoteKind::Manual),
-            regex_patterns::MANUAL_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoNumbered),
-            regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::SimpleRefName),
-            regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoSymbol),
-            regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
+            Pattern::Footnote,
+            regex_patterns::FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
@@ -109,23 +94,8 @@ impl State {
             body::field_marker,
         ),
         (
-            Pattern::Footnote(FootnoteKind::Manual),
-            regex_patterns::MANUAL_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoNumbered),
-            regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::SimpleRefName),
-            regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoSymbol),
-            regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
+            Pattern::Footnote,
+            regex_patterns::FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
@@ -197,23 +167,8 @@ impl State {
             unknown_transitions::back_up,
         ),
         (
-            Pattern::Footnote(FootnoteKind::Manual),
-            regex_patterns::MANUAL_FOOTNOTE_PATTERN,
-            unknown_transitions::back_up,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoNumbered),
-            regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
-            unknown_transitions::back_up,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::SimpleRefName),
-            regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
-            unknown_transitions::back_up,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoSymbol),
-            regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
+            Pattern::Footnote,
+            regex_patterns::FOOTNOTE_PATTERN,
             unknown_transitions::back_up,
         ),
         (
@@ -363,23 +318,8 @@ impl State {
             body::field_marker,
         ),
         (
-            Pattern::Footnote(FootnoteKind::Manual),
-            regex_patterns::MANUAL_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoNumbered),
-            regex_patterns::AUTO_NUM_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::SimpleRefName),
-            regex_patterns::SIMPLE_NAME_FOOTNOTE_PATTERN,
-            body::footnote,
-        ),
-        (
-            Pattern::Footnote(FootnoteKind::AutoSymbol),
-            regex_patterns::AUTO_SYM_FOOTNOTE_PATTERN,
+            Pattern::Footnote,
+            regex_patterns::FOOTNOTE_PATTERN,
             body::footnote,
         ),
         (
