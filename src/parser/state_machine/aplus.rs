@@ -41,7 +41,10 @@ pub fn aplus_col_break(
             }
         }
         IndentationMatch::TooLittle => {
-            eprintln!("Detected a column break on line {} with too little indentation. Interpreting as paragraph...", line_cursor.sum_total());
+            eprintln!(
+                "Detected a column break on line {} with too little indentation. Interpreting as paragraph...",
+                line_cursor.sum_total()
+            );
             doctree = doctree.focus_on_parent();
             TransitionResult::Success {
                 doctree: doctree,
@@ -50,9 +53,11 @@ pub fn aplus_col_break(
             }
         }
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                    TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {

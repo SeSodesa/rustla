@@ -40,9 +40,12 @@ pub fn parse_aplus_questionnaire_text(
             };
 
             let inline_nodes = match Parser::inline_parse(block_lines.join("\n"), None, line_cursor) {
-        InlineParsingResult::Nodes(nodes) => nodes,
-        _ => panic!("Could not parse intermediate questionnaire text on line {} for inline nodes. Computer says no...", line_cursor.sum_total())
-      };
+                InlineParsingResult::Nodes(nodes) => nodes,
+                _ => panic!(
+                    "Could not parse intermediate questionnaire text on line {} for inline nodes. Computer says no...",
+                    line_cursor.sum_total()
+                )
+            };
 
             let paragraph = TreeNodeType::Paragraph {
                 indent: detected_indent,

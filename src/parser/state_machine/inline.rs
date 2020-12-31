@@ -78,22 +78,27 @@ pub fn paired_delimiter(
             .collect::<String>();
 
         return (
-            vec![TreeNodeType::Text {
-                text: unicode_text_to_latex(quoted_start_string.as_str()),
-            }],
+            vec![
+                TreeNodeType::Text {
+                    text: unicode_text_to_latex(quoted_start_string.as_str()),
+                }
+            ],
             quoted_start_char_count,
         );
     }
 
     if !lookbehind_str.is_empty() {
         char_count += lookbehind_str.chars().count();
-        node_vec.push(TreeNodeType::Text {
-            text: unicode_text_to_latex(lookbehind_str),
-        });
+        node_vec.push(
+            TreeNodeType::Text {
+                text: unicode_text_to_latex(lookbehind_str),
+            }
+        );
     }
 
-    char_count +=
-        markup_start.chars().count() + content.chars().count() + markup_end.chars().count();
+    char_count += markup_start.chars().count()
+        + content.chars().count()
+        + markup_end.chars().count();
     let markup_data = match pattern_name {
         Pattern::StrongEmphasis => TreeNodeType::StrongEmphasis {
             text: content_string,

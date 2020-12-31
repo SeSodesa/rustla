@@ -75,9 +75,9 @@ fn parse_indented_literal(
         (lines.join("\n"), offset)
     } else {
         return TransitionResult::Failure {
-      message: format!("Error when reading an indented block of literal text on line {}. Computer says no...", line_cursor.sum_total()),
-      doctree: doctree
-    };
+            message: format!("Error when reading an indented block of literal text on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+        };
     };
 
     doctree = match doctree.push_data(TreeNodeType::LiteralBlock {
@@ -99,7 +99,7 @@ fn parse_indented_literal(
         doctree: doctree,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::Some(offset),
-    };
+    }
 }
 
 /// Generates a literal block node from a "quoted" block of text.
@@ -194,5 +194,5 @@ fn parse_quoted_literal(
         doctree: doctree,
         push_or_pop: PushOrPop::Pop,
         line_advance: LineAdvance::Some(block_length),
-    };
+    }
 }

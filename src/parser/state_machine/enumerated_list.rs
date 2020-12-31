@@ -102,18 +102,37 @@ pub fn enumerator(
             }
         };
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_text_indent, None, State::ListItem, section_level, false) {
-      Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-        (doctree, offset, state_stack)
-      } else {
-        unreachable!("Returned from a nested parsing session on line {} without necessary information. Computer says no...", line_cursor.sum_total())
-      },
-      Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-        message: format!("Looks like enumerated list item on line {} has no content. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      },
-      _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
-    };
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(
+            doctree,
+            src_lines,
+            base_indent,
+            line_cursor,
+            detected_text_indent,
+            None,
+            State::ListItem,
+            section_level,
+            false
+        ) {
+            Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
+                (doctree, offset, state_stack)
+            } else {
+                unreachable!(
+                    "Returned from a nested parsing session on line {} without necessary information. Computer says no...",
+                    line_cursor.sum_total()
+                )
+            },
+            Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+                message: format!(
+                    "Looks like enumerated list item on line {} has no content. Computer says no...",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            },
+            _ => unreachable!(
+                "Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...",
+                line_cursor.sum_total()
+            )
+        };
 
         return TransitionResult::Success {
             doctree: doctree,

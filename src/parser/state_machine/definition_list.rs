@@ -23,8 +23,10 @@ pub fn text(
     let next_line = src_lines.get(line_cursor.relative_offset() + 1);
 
     if let Some(n_line) = next_line {
-        let next_line_indent =
-            n_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+        let next_line_indent = n_line
+            .chars()
+            .take_while(|c| c.is_whitespace())
+            .count() + base_indent;
         if next_line_indent <= detected_indent {
             doctree = doctree.focus_on_parent();
 
@@ -58,9 +60,12 @@ pub fn text(
             (term, classifiers)
         } else {
             return TransitionResult::Failure {
-        message: format!("Could not extract term (and classifiers)? from a definition list item on line {}. Computer says no...", line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!(
+                    "Could not extract term (and classifiers)? from a definition list item on line {}. Computer says no...",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            };
         };
 
         let list_item_node = TreeNodeType::DefinitionListItem {

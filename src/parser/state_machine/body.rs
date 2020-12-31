@@ -471,7 +471,10 @@ pub fn citation(
                     )
                 },
                 Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
-                    message: format!("Looks like citation on line {} has no content. Computer says no...", line_cursor.sum_total()),
+                    message: format!(
+                        "Looks like citation on line {} has no content. Computer says no...",
+                        line_cursor.sum_total()
+                    ),
                     doctree: doctree
                 },
                 _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
@@ -486,9 +489,11 @@ pub fn citation(
             };
         }
         IndentationMatch::TooMuch => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            tree_wrapper = match tree_wrapper.push_data_and_focus(
+                    TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -686,7 +691,7 @@ pub fn hyperlink_target(
 
         IndentationMatch::TooMuch => {
             doctree = match doctree.push_data_and_focus(
-                TreeNodeType::BlockQuote {
+                    TreeNodeType::BlockQuote {
                     body_indent: detected_marker_indent,
                 }
             ) {
@@ -1444,9 +1449,11 @@ pub fn directive(
             }
         }
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                    TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -1553,9 +1560,11 @@ pub fn comment(
             };
         }
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_marker_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                    TreeNodeType::BlockQuote {
+                    body_indent: detected_marker_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -1730,9 +1739,11 @@ pub fn text(
                         };
                     }
                     IndentationMatch::TooMuch => {
-                        doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                            body_indent: detected_indent,
-                        }) {
+                        doctree = match doctree.push_data_and_focus(
+                                TreeNodeType::BlockQuote {
+                                body_indent: detected_indent,
+                            }
+                        ) {
                             Ok(tree) => tree,
                             Err(tree) => {
                                 return TransitionResult::Failure {
@@ -2313,9 +2324,11 @@ fn parse_paragraph(
         }
 
         IndentationMatch::TooMuch => {
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: detected_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                    TreeNodeType::BlockQuote {
+                    body_indent: detected_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {

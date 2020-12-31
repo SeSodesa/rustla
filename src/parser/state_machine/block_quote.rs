@@ -64,7 +64,7 @@ pub fn attribution(
                     first_indent,
                     true,
                 ) {
-                (lines.join(" ").trim().to_string(), offset)
+                    (lines.join(" ").trim().to_string(), offset)
             } else {
                 panic!(
                     "Could not read comment block on line {}...",
@@ -72,9 +72,11 @@ pub fn attribution(
                 )
             };
 
-            doctree = match doctree.push_data(TreeNodeType::Attribution {
-                raw_text: attribution_string,
-            }) {
+            doctree = match doctree.push_data(
+        TreeNodeType::Attribution {
+                    raw_text: attribution_string,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -96,9 +98,11 @@ pub fn attribution(
         }
         IndentationMatch::TooMuch => {
             // Create another block quote
-            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
-                body_indent: attribution_line_indent,
-            }) {
+            doctree = match doctree.push_data_and_focus(
+                TreeNodeType::BlockQuote {
+                    body_indent: attribution_line_indent,
+                }
+            ) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
