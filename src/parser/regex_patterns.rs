@@ -5,6 +5,50 @@ This is done lazily in the module `crate::parser::automata`.
 Copyright © 2020 Santtu Söderholm
 */
 
+#[derive(Copy, Clone, Debug)]
+/// An enum of transition regex pattern names, both for body and inline level elements.
+pub enum Pattern {
+    // Body elements, possibly nested
+    Attribution,
+    EmptyLine,
+    Bullet,
+    Citation,
+    Comment,
+    Enumerator,
+    ExplicitMarkup,
+    Directive,
+    DocTest,
+    FieldMarker,
+    Footnote(crate::common::FootnoteKind),
+    HyperlinkTarget,
+    IndentedLiteralBlock,
+    Line,
+    LineBlock,
+    OptionMarker,
+    Paragraph,
+    QuotedLiteralBlock,
+    Text,
+
+    // Inline Elements for parsing Strings
+    Escape,
+    StrongEmphasis, // **strongly emphasised text**
+    Emphasis,       // *emphasized text*
+    Interpreted,    // Plain interpreted text with the default role set by transpiler.
+    PhraseRef,      // A reference in the form `text with spaces`__?
+    SimpleRef,      // A reference that doesn't need backticks: reference__?
+    Literal,        // Code
+    FootNoteRef,
+    InlineTarget,    // Reference target in inline text: _`target label`
+    SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
+    ImplicitURL,
+    StandaloneHyperlink,
+    WhiteSpace,
+
+    // A+ specific
+    AplusColBreak,
+    AplusQuestionnaireDirective,
+}
+
 /// A pattern for matching attributions inside block quotes.
 pub const ATTRIBUTION_PATTERN: &'static str = r"^(\s*)(?:--|---|—) *";
 

@@ -42,8 +42,9 @@ mod directive_parsers;
 mod table_parsers;
 
 use crate::common::{
-    EnumDelims, EnumKind, FootnoteKind, ParsingResult, Pattern, SectionLineStyle,
+    EnumDelims, EnumKind, FootnoteKind, ParsingResult, SectionLineStyle,
 };
+use crate::parser::regex_patterns::Pattern;
 use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
 use crate::doctree::DocTree;

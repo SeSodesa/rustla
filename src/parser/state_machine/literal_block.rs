@@ -4,7 +4,7 @@ A submodule that contains the functions related to parsing literal blocks of tex
 Copyright © 2020 Santtu Söderholm
 */
 
-use crate::common::Pattern;
+use crate::parser::regex_patterns::Pattern;
 use crate::doctree::tree_node_types::TreeNodeType;
 use crate::doctree::DocTree;
 use crate::parser::line_cursor::LineCursor;

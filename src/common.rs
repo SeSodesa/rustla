@@ -90,51 +90,6 @@ pub type LengthNum = f64;
 // Enumerators and converters
 // ==========================
 
-#[derive(Copy, Clone, Debug)]
-
-/// An enum of transition regex pattern names, both for body and inline level elements.
-pub enum Pattern {
-    // Body elements, possibly nested
-    Attribution,
-    EmptyLine,
-    Bullet,
-    Citation,
-    Comment,
-    Enumerator,
-    ExplicitMarkup,
-    Directive,
-    DocTest,
-    FieldMarker,
-    Footnote(FootnoteKind),
-    HyperlinkTarget,
-    IndentedLiteralBlock,
-    Line,
-    LineBlock,
-    OptionMarker,
-    Paragraph,
-    QuotedLiteralBlock,
-    Text,
-
-    // Inline Elements for parsing Strings
-    Escape,
-    StrongEmphasis, // **strongly emphasised text**
-    Emphasis,       // *emphasized text*
-    Interpreted,    // Plain interpreted text with the default role set by transpiler.
-    PhraseRef,      // A reference in the form `text with spaces`__?
-    SimpleRef,      // A reference that doesn't need backticks: reference__?
-    Literal,        // Code
-    FootNoteRef,
-    InlineTarget,    // Reference target in inline text: _`target label`
-    SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
-    ImplicitURL,
-    StandaloneHyperlink,
-    WhiteSpace,
-
-    // A+ specific
-    AplusColBreak,
-    AplusQuestionnaireDirective,
-}
-
 /// An enumeration fo the different A+ questionnaire types. This is used the differentiate
 /// between questionnaire hint output formats, among other things.
 #[derive(Debug)]
