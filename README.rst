@@ -35,7 +35,7 @@ If you wish to build the project yourself, the easiest way to do it is to instal
 reboot your computer so the necessary `PATH` modifications come into effect,
 navigate to the project folder and run ::
 
-    cargo build [--release] | cargo run path/to/rst/file.rst
+    cargo build [--release]
 
 To run the unit tests, type `cargo test`. Running a specific test includes typing ::
 
