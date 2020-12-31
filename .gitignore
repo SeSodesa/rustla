@@ -16,6 +16,7 @@
 !LICENSE.rst
 !Cargo.toml
 !.gitlab-ci.yml
+!.github/workflows/build_and_test.yml
 
 # Blacklist specific files
 target/
