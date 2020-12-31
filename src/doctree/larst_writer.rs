@@ -465,14 +465,14 @@ impl TreeNodeType {
                         .map(|s| s.to_string())
                         .collect::<Vec<String>>();
                     for name in names.iter() {
-                        labels += &format!("\\label{}\n", name);
+                        labels += &format!("\\rstlabel{{{}}}\n", name);
                     }
                     labels
                 } else {
                     String::new()
                 };
                 format!(
-                    "\\begin{{equation}}\n{}{}\n",
+                    "{}\\begin{{equation}}\n{}\n",
                     ref_labels, crate::utf8_to_latex::unicode_math_to_latex(math_block)
                 )
             }
