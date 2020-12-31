@@ -581,15 +581,16 @@ pub fn parse_math_block(
     }
 
     // If no equation as argument, try reading block contents as multiple equations...
-    let (lines, offset) = match Parser::read_text_block(
+    let (lines, offset) = match Parser::read_indented_block(
         src_lines,
-        line_cursor.relative_offset(),
-        true,
-        true,
+        Some(line_cursor.relative_offset()),
+        Some(false),
+        Some(true),
         Some(body_indent),
-        false,
+        Some(body_indent),
+        false
     ) {
-        Ok((lines, offset)) => (lines, offset),
+        Ok((lines, _, offset, _)) => (lines, offset),
         Err(message) => return TransitionResult::Failure {
             message: format!(
                 "Could not read the math block on line {}. Computer says no...",
