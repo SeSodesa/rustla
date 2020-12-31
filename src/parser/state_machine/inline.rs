@@ -282,16 +282,16 @@ pub fn interpreted_text(
             .collect();
 
         return (
-            vec![TreeNodeType::Text {
-                text: quoted_start_string,
-            }],
+            vec![
+                TreeNodeType::Text { text: quoted_start_string }
+            ],
             quoted_start_char_count,
         );
     } else if !lookbehind_str.is_empty() {
         return (
-            vec![TreeNodeType::Text {
-                text: unicode_text_to_latex(lookbehind_str),
-            }],
+            vec![
+                TreeNodeType::Text { text: unicode_text_to_latex(lookbehind_str) }
+            ],
             lookbehind_str.chars().count(),
         );
     }
