@@ -241,8 +241,8 @@ impl DocTree {
         }
     }
 
-    /// Performs any node specific actions to the doctree based on given node data.
-    /// Returns an optional internal target label
+    /// Performs any node specific hyperref label additions to the doctree based on given node data.
+    /// Returns an optional internal target label.
     fn hyperref_actions(&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
         use crate::common::normalize_refname;
 
@@ -253,7 +253,6 @@ impl DocTree {
         } else {
             match shared_node_data {
                 TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => None,
-
                 _ => {
                     let label = Some(accumulated_target_label.drain(..).collect());
                     accumulated_target_label.clear();

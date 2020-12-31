@@ -458,19 +458,7 @@ impl TreeNodeType {
                 name,
                 class,
             } => {
-                let ref_labels = if let Some(name) = name {
-                    let mut labels = String::new();
-                    let names = name
-                        .split(" ")
-                        .map(|s| s.to_string())
-                        .collect::<Vec<String>>();
-                    for name in names.iter() {
-                        labels += &format!("\\rstlabel{{{}}}\n", name);
-                    }
-                    labels
-                } else {
-                    String::new()
-                };
+                let ref_labels = self.anchor_string_per_nodetype( ref_names);
                 format!(
                     "{}\\begin{{equation}}\n{}\n",
                     ref_labels, crate::utf8_to_latex::unicode_math_to_latex(math_block)
@@ -1324,6 +1312,186 @@ impl TreeNodeType {
         };
 
         post_string
+    }
+
+    /// Generates a suitable reference anchor string per TreeNodeType.
+    fn anchor_string_per_nodetype (
+        &self,
+        refnames_from_node: Option<&Vec<String>>,
+    ) -> String {
+
+        let mut anchor_string = String::new();
+
+        let (refnames, anchor_type_str): (Option<&String>, &str) = match self {
+            Self::Abbreviation { names, .. } => (names.as_ref(), "hypertarget"),
+            Self::AbsoluteURI { .. } => (None, ""),
+            Self::Acronym { .. } => (None, ""),
+            Self::Address => (None, ""),
+            Self::Admonition { variant, .. } => (None, ""),
+            Self::Attribution { .. } => (None, ""),
+            Self::Author { .. } => (None, ""),
+            Self::Authors { .. } => (None, ""),
+            Self::AutomaticSectionNumbering { .. } => (None, ""),
+            Self::BlockQuote { .. } => (None, ""),
+            Self::BulletList { .. } => (None, ""),
+            Self::BulletListItem { .. } => (None, ""),
+            Self::Caption { .. } => (None, ""),
+            Self::Citation { .. } => (None, ""),
+            Self::CitationReference { .. } => (None, ""),
+            Self::Class { .. } => (None, ""),
+            Self::Classifier { .. } => (None, ""),
+            Self::Code { .. } => (None, ""),
+            Self::ColSpec { .. } => (None, ""),
+            Self::Comment { .. } => (None, ""),
+            Self::CompoundParagraph { .. } => (None, ""),
+            Self::Contact { .. } => (None, ""),
+            Self::Container { .. } => (None, ""),
+            Self::Copyright { .. } => (None, ""),
+            Self::CSVTable { .. } => (None, ""),
+            Self::Date => (None, ""),
+            Self::Decoration => (None, ""),
+            Self::Definition => (None, ""),
+            Self::DefinitionList { .. } => (None, ""),
+            Self::DefinitionListItem { .. } => (None, ""),
+            Self::Description => (None, ""),
+            Self::DocInfo => (None, ""),
+            Self::DoctestBlock { .. } => (None, ""),
+            Self::Document { .. } => (None, ""),
+            Self::Emphasis { .. } => (None, ""),
+            Self::EmptyLine => (None, ""),
+            Self::Entry { is_last } => (None, ""),
+            Self::EnumeratedList { .. } => (None, ""),
+            Self::EnumeratedListItem { .. } => (None, ""),
+            Self::ExternalHyperlinkTarget { .. } => (None, ""),
+            Self::Field => (None, ""),
+            Self::FieldBody { .. } => (None, ""),
+            Self::FieldList { .. } => (None, ""),
+            Self::FieldListItem { .. } => (None, ""),
+            Self::Figure { .. } => (None, ""),
+            Self::Footer { .. } => (None, ""),
+            Self::Footnote { .. } => (None, ""),
+            Self::FootnoteReference { .. } => (None, ""),
+            Self::Header { .. } => (None, ""),
+            Self::Generated => (None, ""),
+            Self::Image { .. } => (None, ""),
+            Self::Include { .. } => (None, ""),
+            Self::IndirectHyperlinkTarget { .. } => (None, ""),
+            Self::Inline { .. } => (None, ""),
+            Self::InlineTarget { .. } => (None, ""),
+            Self::InterpretedText { .. } => (None, ""),
+            Self::Label { .. } => (None, ""),
+            Self::Legend { .. } => (None, ""),
+            Self::Line { .. } => (None, ""),
+            Self::LineBlock { .. } => (None, ""),
+            Self::ListTable { .. } => (None, ""),
+            Self::Literal { .. } => (None, ""),
+            Self::LiteralBlock { .. } => (None, ""),
+            Self::Math { .. } => (None, ""),
+            Self::MathBlock { name, .. } => (name.as_ref(), "rstlabel"),
+            Self::OptionList { .. } => (None, ""),
+            Self::OptionListItem { .. } => (None, ""),
+            Self::OptionString { .. } => (None, ""),
+            Self::Organization { .. } => (None, ""),
+            Self::Paragraph { .. } => (None, ""),
+            Self::ParsedLiteralBlock { .. } => (None, ""),
+            Self::Pending { .. } => (None, ""),
+            Self::Problematic { .. } => (None, ""),
+            Self::Raw { .. } => (None, ""),
+            Self::Reference { .. } => (None, ""),
+            Self::Revision { .. } => (None, ""),
+            Self::Row { .. } => (None, ""),
+            Self::Rubric { .. } => (None, ""),
+            Self::Section { .. } => (None, ""),
+            Self::Sidebar { .. } => (None, ""),
+            Self::Status { .. } => (None, ""),
+            Self::StrongEmphasis { .. } => (None, ""),
+            Self::Subscript { .. } => (None, ""),
+            Self::SubstitutionDefinition { .. } => (None, ""),
+            Self::SubstitutionReference { .. } => (None, ""),
+            Self::Subtitle { .. } => (None, ""),
+            Self::Superscript { .. } => (None, ""),
+            Self::SystemMessage { .. } => (None, ""),
+            Self::Table { .. } => (None, ""),
+            Self::Target { .. } => (None, ""),
+            Self::TBody { .. } => (None, ""),
+            Self::Term { .. } => (None, ""),
+            Self::Text { .. } => (None, ""),
+            Self::TGroup { .. } => (None, ""),
+            Self::THead { .. } => (None, ""),
+            Self::TRow => (None, ""),
+            Self::Title { .. } => (None, ""),
+            Self::TitleReference { .. } => (None, ""),
+            Self::Topic { .. } => (None, ""),
+            Self::Transition { .. } => (None, ""),
+            Self::UnknownDirective { directive_name, .. } => (None, ""),
+            Self::Version { .. } => (None, ""),
+            Self::WhiteSpace { .. } => (None, ""),
+
+            // ============================
+            //  Sphinx specific directives
+            // ============================
+            Self::SphinxOnly { .. } => (None, ""),
+            Self::SphinxCodeBlock { .. } => (None, ""),
+
+            // ========================
+            //  A+ specific directives
+            // ========================
+            Self::AplusPOI { .. } => (None, ""),
+            Self::AplusColBreak => (None, ""),
+            Self::AplusQuestionnaire { .. } => (None, ""),
+            Self::AplusPickOne { .. } => (None, ""),
+            Self::AplusPickAny { .. } => (None, ""),
+            Self::AplusFreeText { .. } => (None, ""),
+            Self::AplusPickChoices { .. } => (None, ""),
+            Self::AplusPickChoice { label, .. } => (None, ""),
+            Self::AplusQuestionnaireHints { .. } => (None, ""),
+            Self::AplusQuestionnaireHint { .. } => (None, ""),
+            Self::AplusSubmit { .. } => (None, ""),
+            Self::AplusActiveElementInput { .. } => (None, ""),
+            Self::AplusActiveElementOutput { .. } => (None, ""),
+        };
+
+        // TODO get ridi of ths first block by having directive options add the refnames and HTML classes
+        // to the directive node via DocTree::push_to_internal_target_stack, and not the contained data.
+        // It is stupid to have the storage in two different places.
+        if let Some(names) = refnames {
+            let names = names
+                .split(" ")
+                .map(|s| s.to_string())
+                .collect::<Vec<String>>();
+            for name in names {
+                match anchor_type_str {
+                    "rstlabel" => {
+                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
+                    }
+                    "label" => {
+                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
+                    }
+                    "hypertarget" => {
+                        anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
+                    }
+                    _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
+                }
+            }
+        }
+        if let Some(names) = refnames_from_node {
+            for name in names {
+                match anchor_type_str {
+                    "rstlabel" => {
+                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
+                    }
+                    "label" => {
+                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
+                    }
+                    "hypertarget" => {
+                        anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
+                    }
+                    _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
+                }
+            }
+        }
+
+        anchor_string
     }
 }
 
