@@ -81,7 +81,7 @@ The recognized flags are given in the following listing::
                         it directs the program output to the standard output of rustla.
                         This is the default functionality if "output-stream" is not specified.
 
-    --to-file           The option "file" creates a new reStructuredText file next to the source file,
+    --to-file           The option "file" creates a new LarST file next to the reST source file,
                         with the same name except for the suffix ".rst", which is replaced with ".tex".
                         There is currently no way to prevent this object file from being overwritten,
                         so care should be taken when running the program with this flag set.
