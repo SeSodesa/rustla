@@ -198,6 +198,7 @@ pub const FOOTNOTE_PATTERN: &'static str = r#"^(?x)
         \*
     )
 \]
+(?:[ ]+|$) # space after marker
 "#;
 
 /// A pattern for matching against manually numbered footnotes.
