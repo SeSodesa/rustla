@@ -34,7 +34,6 @@ pub fn enum_str_to_int_and_kind(
         EnumKind::Arabic => {
             detected_enum_str.parse::<usize>().unwrap() // Standard library has implemented conversions from str to integers
         }
-
         EnumKind::LowerAlpha | EnumKind::UpperAlpha => {
             if let Some(num) = alpha_to_usize(detected_enum_str) {
                 num
@@ -43,7 +42,6 @@ pub fn enum_str_to_int_and_kind(
                 return None;
             }
         }
-
         EnumKind::LowerRoman => {
             if let Some(num) = lower_roman_to_usize(detected_enum_str) {
                 num
@@ -52,7 +50,6 @@ pub fn enum_str_to_int_and_kind(
                 return None;
             }
         }
-
         EnumKind::UpperRoman => {
             if let Some(num) = lower_roman_to_usize(detected_enum_str) {
                 num
@@ -61,7 +58,6 @@ pub fn enum_str_to_int_and_kind(
                 return None;
             }
         }
-
         EnumKind::Automatic => {
             if list_item_number == 0 && !in_list_item {
                 // eprintln!("No items in list yet.\nSetting enumerator kind to Arabic...");
