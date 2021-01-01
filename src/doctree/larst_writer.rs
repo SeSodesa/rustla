@@ -1322,7 +1322,7 @@ impl TreeNodeType {
 
         let mut anchor_string = String::new();
 
-        let (refnames, anchor_type_str): (Option<&String>, &str) = match self {
+        let (refname, anchor_type_str): (Option<&String>, &str) = match self {
             Self::Abbreviation { names, .. } => (names.as_ref(), "hypertarget"),
             Self::AbsoluteURI { .. } => (None, ""),
             Self::Acronym { .. } => (None, ""),
@@ -1454,24 +1454,18 @@ impl TreeNodeType {
         // TODO get ridi of ths first block by having directive options add the refnames and HTML classes
         // to the directive node via DocTree::push_to_internal_target_stack, and not the contained data.
         // It is stupid to have the storage in two different places.
-        if let Some(names) = refnames {
-            let names = names
-                .split(" ")
-                .map(|s| s.to_string())
-                .collect::<Vec<String>>();
-            for name in names {
-                match anchor_type_str {
-                    "rstlabel" => {
-                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
-                    }
-                    "label" => {
-                        anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
-                    }
-                    "hypertarget" => {
-                        anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
-                    }
-                    _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
+        if let Some(name) = refname {
+            match anchor_type_str {
+                "rstlabel" => {
+                    anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
                 }
+                "label" => {
+                    anchor_string += &format!("\\{}{{{}}}\n", anchor_type_str, name);
+                }
+                "hypertarget" => {
+                    anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
+                }
+                _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
             }
         }
         if let Some(names) = refnames_from_node {
