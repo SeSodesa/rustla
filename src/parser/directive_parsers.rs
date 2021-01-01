@@ -385,6 +385,7 @@ pub fn parse_figure(
         } else {
             None
         },
+        name: None
     };
 
     // Add figure node to tree and focus on it

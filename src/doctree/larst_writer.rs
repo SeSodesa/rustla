@@ -345,6 +345,7 @@ impl TreeNodeType {
                 align,
                 figwidth,
                 figclass,
+                ..
             } => {
                 let mut options = Vec::<String>::new();
                 if let Some(alignment) = align {
@@ -363,7 +364,7 @@ impl TreeNodeType {
                     String::new()
                 };
 
-                format!("\\begin{{center}}\n")//{}\n"), options_string)
+                format!("\\begin{{center}}\n")
             }
             Self::Footer { .. } => todo!(),
             Self::Footnote { .. } => todo!(),
@@ -521,7 +522,10 @@ impl TreeNodeType {
                 } else {
                     ("section", "subsub")
                 };
-                format!("\\{}{}{{{}}}\n\n", subs, command, title_text)
+
+                let anchors = self.anchor_string_per_nodetype(ref_names);
+
+                format!("{}\\{}{}{{{}}}\n\n", anchors, subs, command, title_text)
             }
             Self::Sidebar { .. } => todo!(),
             Self::Status { .. } => todo!(),
@@ -1219,7 +1223,10 @@ impl TreeNodeType {
             Self::FieldBody { .. } => todo!(),
             Self::FieldList { .. } => "\\end{itemize}\n\n".to_string(),
             Self::FieldListItem { .. } => "\n".to_string(),
-            Self::Figure { .. } => "\\end{center}\n\n".to_string(),
+            Self::Figure { .. } => {
+                let anchors = self.anchor_string_per_nodetype(ref_names);
+                format!("{}\\end{{center}}\n\n", anchors)
+            },
             Self::Footer { .. } => todo!(),
             Self::Footnote { .. } => todo!(),
             Self::FootnoteReference { .. } => todo!(),
@@ -1323,7 +1330,7 @@ impl TreeNodeType {
         let mut anchor_string = String::new();
 
         let (refname, anchor_type_str): (Option<&String>, &str) = match self {
-            Self::Abbreviation { names, .. } => (names.as_ref(), "hypertarget"),
+            Self::Abbreviation { .. } => (None, ""),
             Self::AbsoluteURI { .. } => (None, ""),
             Self::Acronym { .. } => (None, ""),
             Self::Address => (None, ""),
@@ -1367,7 +1374,7 @@ impl TreeNodeType {
             Self::FieldBody { .. } => (None, ""),
             Self::FieldList { .. } => (None, ""),
             Self::FieldListItem { .. } => (None, ""),
-            Self::Figure { .. } => (None, ""),
+            Self::Figure { name, .. } => (name.as_ref(), "label"),
             Self::Footer { .. } => (None, ""),
             Self::Footnote { .. } => (None, ""),
             Self::FootnoteReference { .. } => (None, ""),
@@ -1401,7 +1408,7 @@ impl TreeNodeType {
             Self::Revision { .. } => (None, ""),
             Self::Row { .. } => (None, ""),
             Self::Rubric { .. } => (None, ""),
-            Self::Section { .. } => (None, ""),
+            Self::Section { .. } => (None, "rstlabel"),
             Self::Sidebar { .. } => (None, ""),
             Self::Status { .. } => (None, ""),
             Self::StrongEmphasis { .. } => (None, ""),

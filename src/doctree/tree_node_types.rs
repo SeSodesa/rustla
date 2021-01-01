@@ -24,7 +24,7 @@ pub enum TreeNodeType {
 
     /// The abbreviation element is an inline element used to represent an abbreviation being used in the document. An example of an abbreviation is 'St' being used instead of 'Street'.
     Abbreviation {
-        names: Option<String>,
+        name: Option<String>,
         classes: Option<String>,
     },
 
@@ -353,6 +353,7 @@ pub enum TreeNodeType {
         align: Option<HorizontalAlignment>, // not passed to contained image
         figwidth: Option<Length>,
         figclass: Option<String>,
+        name: Option<String>,
     },
 
     /// The "header" and "footer" directives create document decorations, useful for page navigation, notes, time/datestamp, etc.
