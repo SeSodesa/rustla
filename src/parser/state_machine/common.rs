@@ -12,11 +12,10 @@ pub fn empty_line(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let doctree = doctree.unwrap();
 
     TransitionResult::Success {
         doctree: doctree,

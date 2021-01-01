@@ -15,11 +15,10 @@ pub fn bullet(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut tree_wrapper = doctree.unwrap();
 
     let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
     let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -31,9 +30,9 @@ pub fn bullet(
         text_indent: detected_text_indent,
     };
 
-    match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_bullet_indent) {
+    match Parser::parent_indent_matches(doctree.shared_node_data(), detected_bullet_indent) {
         IndentationMatch::JustRight => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(sublist_data) {
+            doctree = match doctree.push_data_and_focus(sublist_data) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -46,13 +45,13 @@ pub fn bullet(
                 }
             };
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(vec![State::BulletList]),
                 line_advance: LineAdvance::None,
             };
         }
         IndentationMatch::TooMuch => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(TreeNodeType::BlockQuote {
+            doctree = match doctree.push_data_and_focus(TreeNodeType::BlockQuote {
                 body_indent: detected_bullet_indent,
             }) {
                 Ok(tree) => tree,
@@ -67,15 +66,15 @@ pub fn bullet(
                 }
             };
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
                 line_advance: LineAdvance::None,
             };
         }
         _ => {
-            tree_wrapper = tree_wrapper.focus_on_parent();
+            doctree = doctree.focus_on_parent();
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -96,11 +95,11 @@ pub fn enumerator(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
 
     let detected_enumerator_indent =
         captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -209,11 +208,11 @@ pub fn field_marker(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut tree_wrapper = doctree.unwrap();
+
 
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
@@ -223,9 +222,9 @@ pub fn field_marker(
 
     // Match against the parent node. Only document root ignores indentation;
     // inside any other container it makes a difference.
-    match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
+    match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
         IndentationMatch::JustRight => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(list_node_data) {
+            doctree = match doctree.push_data_and_focus(list_node_data) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -238,13 +237,13 @@ pub fn field_marker(
                 }
             };
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(vec![State::FieldList]),
                 line_advance: LineAdvance::None,
             };
         }
         IndentationMatch::TooMuch => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(
+            doctree = match doctree.push_data_and_focus(
                 TreeNodeType::BlockQuote {
                     body_indent: detected_marker_indent,
                 }
@@ -261,14 +260,14 @@ pub fn field_marker(
                 }
             };
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
                 line_advance: LineAdvance::None,
             };
         }
         _ => {
             return TransitionResult::Success {
-                doctree: tree_wrapper.focus_on_parent(),
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -282,11 +281,11 @@ pub fn footnote(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
 
     // Detected parameters...
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
@@ -428,11 +427,10 @@ pub fn citation(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut tree_wrapper = doctree.unwrap();
 
     // Detected parameters...
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
@@ -459,13 +457,13 @@ pub fn citation(
 
     // Match against the parent node. Only document root ignores indentation;
     // inside any other container it makes a difference.
-    match Parser::parent_indent_matches(tree_wrapper.shared_node_data(), detected_marker_indent) {
+    match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
         IndentationMatch::JustRight => {
             let citation_data = TreeNodeType::Citation {
                 body_indent: detected_body_indent,
                 label: normalize_refname(detected_label_str),
             };
-            tree_wrapper = match tree_wrapper.push_data_and_focus(citation_data) {
+            doctree = match doctree.push_data_and_focus(citation_data) {
                 Ok(tree) => tree,
                 Err(tree) => {
                     return TransitionResult::Failure {
@@ -478,7 +476,7 @@ pub fn citation(
                 }
             };
 
-            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Citation, section_level,false) {
+            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Citation, section_level,false) {
                 Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
                     (doctree, offset, state_stack)
                 } else {
@@ -504,7 +502,7 @@ pub fn citation(
             };
         }
         IndentationMatch::TooMuch => {
-            tree_wrapper = match tree_wrapper.push_data_and_focus(
+            doctree = match doctree.push_data_and_focus(
                     TreeNodeType::BlockQuote {
                     body_indent: detected_marker_indent,
                 }
@@ -521,14 +519,14 @@ pub fn citation(
                 }
             };
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(vec![State::BlockQuote]),
                 line_advance: LineAdvance::None,
             };
         }
         _ => {
             return TransitionResult::Success {
-                doctree: tree_wrapper.focus_on_parent(),
+                doctree: doctree.focus_on_parent(),
                 push_or_pop: PushOrPop::Pop,
                 line_advance: LineAdvance::None,
             };
@@ -542,12 +540,12 @@ pub fn hyperlink_target(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
 
-    let mut doctree = doctree.unwrap();
+
 
     // Detected parameters
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
@@ -743,11 +741,11 @@ pub fn directive(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
 
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_directive_label = captures
@@ -1502,11 +1500,11 @@ pub fn comment(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
 
     let match_len = captures.get(0).unwrap().as_str().chars().count() + base_indent;
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
@@ -1615,11 +1613,11 @@ pub fn text(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
     let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
     let next_line = src_lines.get(line_cursor.relative_offset() + 1);
@@ -1822,11 +1820,11 @@ pub fn line(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
 
     /// #### TRANSITION_LINE_LENGTH
     /// The minimum length of a transition line.
@@ -2194,6 +2192,7 @@ fn parse_paragraph(
     mut doctree: DocTree,
     detected_indent: usize,
 ) -> TransitionResult {
+
     match Parser::parent_indent_matches(doctree.shared_node_data(), detected_indent) {
         IndentationMatch::JustRight => {
             let relative_indent = detected_indent - base_indent;

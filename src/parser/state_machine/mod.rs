@@ -338,7 +338,7 @@ impl Parser {
                     base_indent,
                     section_level,
                     line_cursor,
-                    Some(doctree),
+                    doctree,
                     captures,
                     pattern_name,
                 ));
@@ -364,7 +364,7 @@ impl Parser {
                         base_indent,
                         section_level,
                         line_cursor,
-                        Some(doctree),
+                        doctree,
                         captures,
                         pattern_name,
                     ));

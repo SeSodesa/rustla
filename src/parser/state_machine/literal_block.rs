@@ -18,11 +18,10 @@ pub fn literal_block(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let doctree = doctree.unwrap();
 
     let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
@@ -39,15 +38,17 @@ pub fn literal_block(
     };
 
     match pattern_name {
-
-    Pattern::IndentedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
-    Pattern::QuotedLiteralBlock if detected_indent == body_indent => parse_quoted_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
-    Pattern::QuotedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
-    _ => return TransitionResult::Failure {
-        message: format!("Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}. Computer says no...", pattern_name, detected_indent, body_indent, line_cursor.sum_total()),
-        doctree: doctree
+        Pattern::IndentedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+        Pattern::QuotedLiteralBlock if detected_indent == body_indent => parse_quoted_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+        Pattern::QuotedLiteralBlock if detected_indent > body_indent => parse_indented_literal(doctree, src_lines, line_cursor, captures, body_indent, detected_indent),
+        _ => return TransitionResult::Failure {
+            message: format!(
+                "Non-literal pattern {:#?} after paragraph or wrong literal block indent ({} vs {}) on line {}. Computer says no...",
+                pattern_name, detected_indent, body_indent, line_cursor.sum_total()
+            ),
+            doctree: doctree
+        }
     }
-  }
 }
 
 /// Generates a literal block node from a "quoted" block of text.

@@ -12,11 +12,10 @@ pub fn enumerator(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
 
     let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match doctree.shared_node_data() {
     TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (*delims, *kind, *start_index, *n_of_items, *enumerator_indent),

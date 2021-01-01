@@ -23,7 +23,7 @@ pub type TransitionMethod = fn(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult;

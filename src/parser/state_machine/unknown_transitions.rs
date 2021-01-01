@@ -21,11 +21,10 @@ pub fn back_up(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let doctree = doctree.unwrap().focus_on_parent();
 
     TransitionResult::Success {
         doctree: doctree,

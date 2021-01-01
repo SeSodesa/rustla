@@ -15,17 +15,16 @@ pub fn bullet(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut tree_wrapper = doctree.unwrap();
 
     let detected_bullet = captures.get(2).unwrap().as_str().chars().next().unwrap();
     let detected_bullet_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_text_indent = captures.get(0).unwrap().end() + base_indent;
 
-    match tree_wrapper.shared_node_data() {
+    match doctree.shared_node_data() {
 
     TreeNodeType::BulletList { bullet, bullet_indent, text_indent } => {
 
@@ -40,7 +39,7 @@ pub fn bullet(
           text_indent: detected_text_indent
         };
 
-        tree_wrapper = match tree_wrapper.push_data_and_focus(item_node_data) {
+        doctree = match doctree.push_data_and_focus(item_node_data) {
           Ok(tree) => tree,
           Err(tree) => return TransitionResult::Failure {
             message: format!("Node insertion error on line {}. Computer says no...", line_cursor.sum_total()),
@@ -48,7 +47,7 @@ pub fn bullet(
           }
         };
 
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(tree_wrapper, src_lines, base_indent, line_cursor, detected_text_indent, None, State::ListItem, section_level, false) {
+        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_text_indent, None, State::ListItem, section_level, false) {
           Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
             (doctree, offset, state_stack)
           } else {
@@ -61,17 +60,15 @@ pub fn bullet(
           _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
         };
 
-        tree_wrapper = doctree;
-
         return TransitionResult::Success {
-          doctree: tree_wrapper,
+          doctree: doctree,
           push_or_pop: PushOrPop::Push(state_stack),
           line_advance: LineAdvance::Some(offset),
         }
       } else {
-        tree_wrapper = tree_wrapper.focus_on_parent();
+        doctree = doctree.focus_on_parent();
         return TransitionResult::Success {
-          doctree: tree_wrapper,
+          doctree: doctree,
           push_or_pop: PushOrPop::Pop,
           line_advance: LineAdvance::None,
         }

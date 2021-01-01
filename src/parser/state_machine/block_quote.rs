@@ -13,11 +13,10 @@ pub fn attribution(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
 
     let match_len = captures.get(0).unwrap().as_str().chars().count() + base_indent;
     let attribution_line_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;

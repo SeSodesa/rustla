@@ -249,12 +249,20 @@ impl Parser {
 
                     let line_before_transition = self.line_cursor.sum_total();
 
+                    let doctree = if let Some(doctree) = self.doctree.take() {
+                        doctree
+                    } else {
+                        panic!(
+                            "Doctree lost inside transition function around line {}? Computer says no...",
+                            self.line_cursor.sum_total()
+                        )
+                    };
                     self.doctree = match method(
                         &self.src_lines,
                         self.base_indent,
                         &mut self.section_level,
                         &mut self.line_cursor,
-                        self.doctree.take(),
+                        doctree,
                         &captures,
                         pattern_name,
                     ) {

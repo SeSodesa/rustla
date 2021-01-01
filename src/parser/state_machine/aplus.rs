@@ -12,11 +12,10 @@ pub fn aplus_col_break(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
 
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count();
 

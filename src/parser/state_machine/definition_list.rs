@@ -13,11 +13,11 @@ pub fn text(
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
-    doctree: Option<DocTree>,
+    mut doctree: DocTree,
     captures: &regex::Captures,
     pattern_name: &Pattern,
 ) -> TransitionResult {
-    let mut doctree = doctree.unwrap();
+
     let detected_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
 
     let next_line = src_lines.get(line_cursor.relative_offset() + 1);
