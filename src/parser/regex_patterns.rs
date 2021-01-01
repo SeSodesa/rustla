@@ -389,39 +389,38 @@ pub const SIMPLE_REF_PATTERN: &str = r#"(?x)^
 "#;
 
 pub const FOOTNOTE_REF_PATTERN: &str = r#"(?x)^
-  (?P<lookbehind>
+(?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
-  )?
-  (?P<markup_start>
+)?
+(?P<markup_start>
     \[
-  )
-  (?P<content>
+)
+(?P<content>
     (?P<number>
-      [0-9]+
+        [0-9]+
     )
     |
     (?P<auto_number>
-      #
+        \#
     )
-    |
+    |\#
     (?P<auto_number_label>
-      #[a-z](-?[a-z0-9]+)*
+        [a-zA-Z](-?[a-zA-Z0-9]+)*
     )
     |
     (?P<symbol>
-      \*
+        \*
     )
-
-  )
-  (?P<markup_end>
+)
+(?P<markup_end>
     \]
-  )
-  (?P<ref_type>
+)
+(?P<ref_type>
     __?
-  )
-  (?P<lookahead>
+)
+(?P<lookahead>
     \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$
-  )
+)
 "#;
 
 pub const CITATION_REF_PATTERN: &str = r#"(?x)^"

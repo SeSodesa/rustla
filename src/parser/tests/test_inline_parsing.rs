@@ -874,3 +874,63 @@ _`inline target` **This emphasis is a reference target**.
         panic!()
     }
 }
+
+#[test]
+fn footnote_ref_01 () {
+    let src = String::from(
+        r#"[1]_ [#]_ [#Label]_ [*]_"#,
+    )
+    .lines()
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
+
+    let mut doctree = DocTree::new(PathBuf::from("test"));
+
+    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+
+    doctree = parser.parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
+
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+        .shared_child(0)
+        .shared_child(0)
+        .shared_data()
+    {
+        assert_eq!(displayed_text, "1");
+        assert_eq!(target_label, "1");
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+        .shared_child(0)
+        .shared_child(2)
+        .shared_data()
+    {
+        assert_eq!(displayed_text, "2");
+        assert_eq!(target_label, "2");
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+        .shared_child(0)
+        .shared_child(4)
+        .shared_data()
+    {
+        assert_eq!(displayed_text, "Label");
+        assert_eq!(target_label, "3");
+    } else {
+        panic!()
+    }
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+        .shared_child(0)
+        .shared_child(6)
+        .shared_data()
+    {
+        assert_eq!(displayed_text, "*");
+        assert_eq!(target_label, "*");
+    } else {
+        panic!()
+    }
+    todo!()
+}

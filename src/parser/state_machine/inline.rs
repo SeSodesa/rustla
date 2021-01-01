@@ -622,6 +622,7 @@ pub fn footnote_ref(
     } else {
         ""
     };
+    let content = captures.name("content").unwrap().as_str();
     let markup_start_str = captures.name("markup_start").unwrap().as_str();
     let number = if let Some(label) = captures.name("number") {
         label.as_str()
@@ -662,30 +663,50 @@ pub fn footnote_ref(
         offset += lookbehind_str.chars().count();
     }
 
-    if !number.is_empty() {
+    offset += markup_start_str.chars().count();
+
+    if ! number.is_empty() {
         nodevec.push(
             TreeNodeType::FootnoteReference {
                 displayed_text: String::from(number),
                 target_label: crate::common::normalize_refname(number)
             }
         );
-    } else if !auto_number.is_empty() {
+    } else if ! auto_number.is_empty() {
+        let autonumber = if let Some(doctree) = opt_doctree_ref {
+            if let Some(label) = doctree.new_autonumber_footnote_ref_label() {
+                label
+            } else {
+                panic!("Could not generate an automatic number for a footnote reference becasue of too many automatically numbered footnote refs. Computer says no...")
+            }
+        } else {
+            panic!("Could not generate an automatic number for a footnote reference without a doctree. Computer says no...")
+        };
         nodevec.push(
             TreeNodeType::FootnoteReference {
-                displayed_text: String::from(auto_number),
-                target_label: crate::common::normalize_refname(auto_number)
+                displayed_text: autonumber.clone(),
+                target_label: autonumber
             }
         );
     } else if ! auto_number_label.is_empty() {
+        let autonumber = if let Some(doctree) = opt_doctree_ref {
+            if let Some(label) = doctree.new_autonumber_footnote_ref_label() {
+                label
+            } else {
+                panic!("Could not generate an automatic number for a footnote reference becasue of too many automatically numbered footnote refs. Computer says no...")
+            }
+        } else {
+            panic!("Could not generate an automatic number for a footnote reference without a doctree. Computer says no...")
+        };
         nodevec.push(
             TreeNodeType::FootnoteReference {
                 displayed_text: String::from(auto_number_label),
-                target_label: crate::common::normalize_refname(number)
+                target_label: crate::common::normalize_refname(&autonumber)
             }
         );
     } else if ! symbol.is_empty() {
         if let Some(doctree) = opt_doctree_ref {
-            let next_footnote_symbol = if let Some(label) = doctree.new_symbolic_footnote_label() {
+            let next_footnote_symbol = if let Some(label) = doctree.new_symbolic_footnote_ref_label() {
                 nodevec.push(
                     TreeNodeType::FootnoteReference {
                         displayed_text: label.clone(),
@@ -702,13 +723,15 @@ pub fn footnote_ref(
                 "Doctree required when constructing an auto-symbol footnote reference. Computer says no..."
             )
         }
-        todo!()
     } else {
         unreachable!(
             "Unknown footnote reference type for {}. Computer says no...",
             captures.get(0).unwrap().as_str()
         )
     };
+
+    offset += content.chars().count() + markup_end_str.chars().count() + ref_type.chars().count();
+
     (nodevec, offset)
 }
 
