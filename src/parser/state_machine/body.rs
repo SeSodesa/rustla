@@ -2156,54 +2156,34 @@ pub fn detected_footnote_label_to_ref_label(
 
             // TODO: retrieve a start value from doctree, so iteration doesn't have to start from 1...
 
-            for n in 1..=EnumAsInt::MAX {
-                let n_str = n.to_string();
-                if doctree.has_target_label(n_str.as_str()) {
-                    continue;
-                }
-                return Some((n_str.clone(), n_str));
-            }
-            eprintln!("All possible footnote numbers in use. Computer says no...");
-            return None;
+            let next_autonumber = if let Some(number_str) = doctree.new_autonumber_footnote_label() {
+                number_str
+            } else {
+                return None
+            };
+            Some((next_autonumber.clone(), next_autonumber))
         }
 
         FootnoteKind::SimpleRefName => {
             // Same as with automatically numbered footnotes, check if this has already a number representation
             // in the doctree and if not, return it.
 
-            for n in 1..=EnumAsInt::MAX {
-                let n_str = n.to_string();
-                if doctree.has_target_label(n_str.as_str()) {
-                    continue;
-                }
-                return Some((n_str, normalized_name));
-            }
-            eprintln!("All possible footnote numbers in use. Computer says no...");
-            return None;
+            let next_autonumber = if let Some(number_str) = doctree.new_autonumber_footnote_label() {
+                number_str
+            } else {
+                return None
+            };
+            Some((next_autonumber, normalized_name))
         }
 
         FootnoteKind::AutoSymbol => {
             // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
             // entered into the document thus far.
-
-            use crate::common::FOOTNOTE_SYMBOLS; // Import constant locally
-
-            let n = doctree.n_of_symbolic_footnotes() as usize; // No overflow checks with as...
-
-            let n_of_symbols = FOOTNOTE_SYMBOLS.len();
-
-            let passes = n / n_of_symbols;
-            let index = n % n_of_symbols;
-            let symbol: &char = match FOOTNOTE_SYMBOLS.get(index) {
-                Some(symb) => symb,
-                None => {
-                    eprintln!("No footnote symbol with index {}!", index);
-                    return None;
-                }
-            };
-
-            let label: String = vec![*symbol; passes + 1].iter().collect();
-            return Some((label.clone(), label));
+            if let Some(label) = doctree.new_symbolic_footnote_label() {
+                return Some((label.clone(), label))
+            } else {
+                None
+            }
         }
     }
 }

@@ -662,6 +662,46 @@ impl DocTree {
             None
         }
     }
+
+    /// Generates a new symbolic footnote label, wrapped in an `Option`.
+    /// Does not increment the symbolic footnote counter,
+    /// as at the point of calling this function we have no information about whether the
+    /// insertion of the respective node into the doctree succeeded.
+    pub fn new_symbolic_footnote_label (&self) -> Option<String> {
+            // Generate a label from crate::common::FOONOTE_SYMBOLS based on the number of autosymbol footnotes
+            // entered into the document thus far.
+
+            let n = self.n_of_symbolic_footnotes() as usize; // No overflow checks with as...
+
+            let n_of_symbols = crate::common::FOOTNOTE_SYMBOLS.len();
+
+            let passes = n / n_of_symbols;
+            let index = n % n_of_symbols;
+            let symbol: char = match crate::common::FOOTNOTE_SYMBOLS.get(index) {
+                Some(symb) => *symb,
+                None => {
+                    eprintln!("No footnote symbol with index {}!", index);
+                    return None;
+                }
+            };
+            let label: String = vec![symbol; passes + 1].iter().collect();
+            return Some(label)
+    }
+
+    /// Generates a new footnote number based on existing footnote labels.
+    /// Again, does not modify the doctree, as knowledge about
+    /// node insertion success is nil at this point.
+    pub fn new_autonumber_footnote_label (&self) -> Option<String>{
+        for n in 1..=crate::common::EnumAsInt::MAX {
+            let n_str = n.to_string();
+            if self.has_target_label(n_str.as_str()) {
+                continue;
+            }
+            return Some(n_str);
+        }
+        eprintln!("All possible footnote numbers in use. Computer says no...");
+        return None;
+    }
 }
 
 /// Shorthand for a vector of owned child nodes.

@@ -615,6 +615,8 @@ pub fn footnote_ref(
     pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
+
+    // Gather parts of regex into strings
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
         lookbehind.as_str()
     } else {
@@ -649,26 +651,65 @@ pub fn footnote_ref(
         ""
     };
 
+    let (mut nodevec, mut offset) = (Vec::new(), 0);
+
     if !lookbehind_str.is_empty() {
-        return (
-            vec![TreeNodeType::Text {
+        nodevec.push(
+            TreeNodeType::Text {
                 text: unicode_text_to_latex(lookbehind_str),
-            }],
-            lookbehind_str.chars().count(),
+            }
         );
+        offset += lookbehind_str.chars().count();
     }
 
     if !number.is_empty() {
-        todo!()
+        nodevec.push(
+            TreeNodeType::FootnoteReference {
+                displayed_text: String::from(number),
+                target_label: crate::common::normalize_refname(number)
+            }
+        );
     } else if !auto_number.is_empty() {
-        todo!()
-    } else if auto_number_label.is_empty() {
-        todo!()
-    } else if symbol.is_empty() {
+        nodevec.push(
+            TreeNodeType::FootnoteReference {
+                displayed_text: String::from(auto_number),
+                target_label: crate::common::normalize_refname(auto_number)
+            }
+        );
+    } else if ! auto_number_label.is_empty() {
+        nodevec.push(
+            TreeNodeType::FootnoteReference {
+                displayed_text: String::from(auto_number_label),
+                target_label: crate::common::normalize_refname(number)
+            }
+        );
+    } else if ! symbol.is_empty() {
+        if let Some(doctree) = opt_doctree_ref {
+            let next_footnote_symbol = if let Some(label) = doctree.new_symbolic_footnote_label() {
+                nodevec.push(
+                    TreeNodeType::FootnoteReference {
+                        displayed_text: label.clone(),
+                        target_label: label
+                    }
+                )
+            } else {
+                panic!(
+                    "Could not generate a new footnote symbol for footnote reference. Computer says no..."
+                )
+            };
+        } else {
+            panic!(
+                "Doctree required when constructing an auto-symbol footnote reference. Computer says no..."
+            )
+        }
         todo!()
     } else {
-        todo!()
-    }
+        unreachable!(
+            "Unknown footnote reference type for {}. Computer says no...",
+            captures.get(0).unwrap().as_str()
+        )
+    };
+    (nodevec, offset)
 }
 
 /// Parses citation references.

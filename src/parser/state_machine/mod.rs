@@ -28,7 +28,6 @@ use lazy_static::lazy_static;
 use regex;
 
 use super::*;
-use crate::common::EnumAsInt;
 
 /// An enum of states.
 /// Enclosing state variants in an enum allows us
