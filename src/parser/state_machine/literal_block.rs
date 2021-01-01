@@ -188,9 +188,9 @@ fn parse_quoted_literal(
         }
     };
 
-    doctree = match doctree.push_data(TreeNodeType::LiteralBlock {
-        text: literal_string,
-    }) {
+    doctree = match doctree.push_data(
+        TreeNodeType::LiteralBlock { text: literal_string }
+    ) {
         Ok(tree) => tree,
         Err(tree) => {
             return TransitionResult::Failure {
