@@ -381,6 +381,7 @@ impl TreeNodeType {
                 target,
                 name,
                 class,
+                ..
             } => {
                 let mut options = Vec::<String>::new();
 
@@ -1232,7 +1233,13 @@ impl TreeNodeType {
             Self::FootnoteReference { .. } => todo!(),
             Self::Header { .. } => todo!(),
             Self::Generated => todo!(),
-            Self::Image { .. } => "".to_string(),
+            Self::Image { inline, .. } => {
+                if *inline {
+                    String::new()
+                } else {
+                    String::from("\n")
+                }
+            },
             Self::Include { .. } => "".to_string(),
             Self::IndirectHyperlinkTarget { .. } => todo!(),
             Self::Inline { .. } => todo!(),

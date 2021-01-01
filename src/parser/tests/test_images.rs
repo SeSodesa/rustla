@@ -52,6 +52,7 @@ fn image_01() {
             target,
             name,
             class,
+            inline
         } => {
             assert_eq!(uri.as_str(), "this/is/an/image/uri.png");
             assert_eq!(

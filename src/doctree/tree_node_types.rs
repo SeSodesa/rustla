@@ -393,7 +393,6 @@ pub enum TreeNodeType {
     /// (as soon asn substitution definitions and references get implemented...).
     Image {
         uri: String,
-
         // Options
         alt: Option<String>,
         height: Option<Length>,
@@ -403,6 +402,9 @@ pub enum TreeNodeType {
         target: Option<String>,
         name: Option<String>,
         class: Option<String>,
+        /// Images can be inserted inline via substitution references
+        /// (not yet implemented in ruSTLa).
+        inline: bool
     },
 
     Include {

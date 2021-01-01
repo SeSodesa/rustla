@@ -283,6 +283,7 @@ pub fn parse_image(
         target: target,
         name: name,
         class: classes,
+        inline: false
     };
 
     doctree = match doctree.push_data(image_data) {
@@ -370,6 +371,7 @@ pub fn parse_figure(
         target: target,
         class: classes,
         name: None, // Sphinx patch moved "name" to containing figure node
+        inline: false
     };
 
     let figure = TreeNodeType::Figure {
