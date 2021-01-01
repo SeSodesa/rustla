@@ -636,10 +636,7 @@ pub fn hyperlink_target(
                             doctree: doctree
                         }
                     }
-
                     match nodes_data.get(0) {
-
-                        // Indirect target
                         Some(TreeNodeType::Reference { reference, displayed_text }) =>  {
 
                             use crate::common::Reference;
@@ -668,7 +665,6 @@ pub fn hyperlink_target(
                                 }
                             }
                         }
-
                         _ => return TransitionResult::Failure {
                             message: format!("Hyperlink target on line {} didn't match any known types. Computer says no...", line_cursor.sum_total()),
                             doctree: doctree
