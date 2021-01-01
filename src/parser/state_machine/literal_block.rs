@@ -182,9 +182,12 @@ fn parse_quoted_literal(
         Err(e) => {
             eprintln!("{}", e);
             return TransitionResult::Failure {
-        message: String::from("Error when reading lines of text of a supposed paragraph block. Computer says no..."),
-        doctree: doctree
-      };
+                message: format!(
+                    "Error when reading lines of text of a supposed paragraph block on line {}. Computer says no...",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            };
         }
     };
 
