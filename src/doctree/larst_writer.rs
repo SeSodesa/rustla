@@ -1479,6 +1479,9 @@ impl TreeNodeType {
                 "hypertarget" => {
                     anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
                 }
+                "" => {
+                    // Do nothing
+                }
                 _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
             }
         }
@@ -1493,6 +1496,9 @@ impl TreeNodeType {
                     }
                     "hypertarget" => {
                         anchor_string += &format!("\\{}{{{}}}{{{}}}\n", anchor_type_str, name, name);
+                    }
+                    "" => {
+                        // Do nothing
                     }
                     _ => unreachable!("No anchor of type {}. Computer says no...", anchor_type_str)
                 }
