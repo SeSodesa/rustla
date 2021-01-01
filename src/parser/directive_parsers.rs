@@ -369,7 +369,7 @@ pub fn parse_figure(
         align: None, // Image does not have alignenment inside a figure.
         target: target,
         class: classes,
-        name: name,
+        name: None, // Sphinx patch moved "name" to containing figure node
     };
 
     let figure = TreeNodeType::Figure {
@@ -385,7 +385,11 @@ pub fn parse_figure(
         } else {
             None
         },
-        name: None
+        name: if let Some(refname) = &name {
+            Some(crate::common::normalize_refname(refname))
+        } else {
+            None
+        }
     };
 
     // Add figure node to tree and focus on it
