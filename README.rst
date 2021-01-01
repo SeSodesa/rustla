@@ -15,7 +15,7 @@ of Santtu Söderholm's Master's Thesis. In other words:
 Note about the state of the project
 -----------------------------------
 
-ruSTLa is still very much work in progress. For example reStructuredText tables and many directives
+ruSTLa is still very much a work in progress. For example reStructuredText tables and many directives
 are not yet supported, as can be witnessed by looking into the files ``src/parser/table_parsers``
 and ``src/parser/directive_parsers``. Still, it was deemed appropriate to release it now,
 as the actual thesis writing project is nearing its end and the (rather simple) software architecture has been
@@ -24,7 +24,7 @@ set in stone, moving towards version 1.0.0.
 This tool can therefore help you with tranferring course materials from reStructuredText
 to the LarST format, but certain structures will need to be transferred by the user themselves.
 
-.. note::
+.. admonition:: Todo
 
     Add information about missing constructs.
 
@@ -86,7 +86,7 @@ The recognized flags are given in the following listing::
                         There is currently no way to prevent this object file from being overwritten,
                         so care should be taken when running the program with this flag set.
 
-    --full-doc          If this is set, the resulting output will be surrounded by the string::
+    --full-doc          If this is set, the resulting output will be surrounded by the string:
 
                             \documentclass{aplus}
                             \begin{document}
