@@ -497,10 +497,8 @@ pub fn citation(
                 _ => unreachable!("Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...", line_cursor.sum_total())
             };
 
-            tree_wrapper = doctree;
-
             return TransitionResult::Success {
-                doctree: tree_wrapper,
+                doctree: doctree,
                 push_or_pop: PushOrPop::Push(state_stack),
                 line_advance: LineAdvance::Some(offset),
             };
