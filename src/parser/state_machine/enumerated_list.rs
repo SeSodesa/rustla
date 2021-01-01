@@ -18,15 +18,14 @@ pub fn enumerator(
 ) -> TransitionResult {
 
     let (list_delims, list_kind, list_start_index, n_of_items,list_enumerator_indent) = match doctree.shared_node_data() {
-    TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (*delims, *kind, *start_index, *n_of_items, *enumerator_indent),
-    _ => return TransitionResult::Failure {
-      message: format!("Not focused on enumerated list when parsing an enumerated list item on line {}. Computer says no...", line_cursor.sum_total()),
-      doctree: doctree
-    }
-  };
+        TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, enumerator_indent } => (*delims, *kind, *start_index, *n_of_items, *enumerator_indent),
+        _ => return TransitionResult::Failure {
+            message: format!("Not focused on enumerated list when parsing an enumerated list item on line {}. Computer says no...", line_cursor.sum_total()),
+            doctree: doctree
+        }
+    };
 
-    let detected_enumerator_indent =
-        captures.get(1).unwrap().as_str().chars().count() + base_indent;
+    let detected_enumerator_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
 
     // Retrieve parent list information
@@ -69,7 +68,6 @@ pub fn enumerator(
         Ok(doctree) => doctree,
         Err(transition_result) => return transition_result,
     };
-
     if list_delims == detected_delims
         && detected_kind == list_kind
         && list_enumerator_indent == detected_enumerator_indent
@@ -79,7 +77,6 @@ pub fn enumerator(
         if let TreeNodeType::EnumeratedList { n_of_items, .. } = doctree.mut_node_data() {
             *n_of_items += 1;
         }
-
         let item_node_data = TreeNodeType::EnumeratedListItem {
             delims: list_delims,
             kind: detected_kind,
@@ -87,7 +84,6 @@ pub fn enumerator(
             enumerator_indent: detected_enumerator_indent,
             text_indent: detected_text_indent,
         };
-
         doctree = match doctree.push_data_and_focus(item_node_data) {
             Ok(tree) => tree,
             Err(tree) => {
@@ -100,7 +96,6 @@ pub fn enumerator(
                 }
             }
         };
-
         let (doctree, offset, state_stack) = match Parser::parse_first_node_block(
             doctree,
             src_lines,
@@ -132,17 +127,14 @@ pub fn enumerator(
                 line_cursor.sum_total()
             )
         };
-
         return TransitionResult::Success {
             doctree: doctree,
             push_or_pop: PushOrPop::Push(state_stack),
             line_advance: LineAdvance::Some(offset),
         };
     } else {
-        doctree = doctree.focus_on_parent();
-
         return TransitionResult::Success {
-            doctree: doctree,
+            doctree: doctree.focus_on_parent(),
             push_or_pop: PushOrPop::Pop,
             line_advance: LineAdvance::None,
         };
