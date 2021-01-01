@@ -81,9 +81,11 @@ fn parse_indented_literal(
         };
     };
 
-    doctree = match doctree.push_data(TreeNodeType::LiteralBlock {
-        text: literal_string,
-    }) {
+    doctree = match doctree.push_data(
+            TreeNodeType::LiteralBlock {
+            text: literal_string,
+        }
+    ) {
         Ok(tree) => tree,
         Err(tree) => {
             return TransitionResult::Failure {
@@ -121,9 +123,12 @@ fn parse_quoted_literal(
         c.as_str().chars().next().unwrap()
     } else {
         return TransitionResult::Failure {
-      message: format!("Supposed quoted literal block found on line {} but no quote symbol? Computer says no...", line_cursor.sum_total()),
-      doctree: doctree
-    };
+            message: format!(
+                "Supposed quoted literal block found on line {} but no quote symbol? Computer says no...",
+                line_cursor.sum_total()
+            ),
+            doctree: doctree
+        };
     };
 
     // Double checking that the used quotation symbol is in the accepted symbols
@@ -137,9 +142,13 @@ fn parse_quoted_literal(
             }
         } else {
             return TransitionResult::Failure {
-        message: format!("Unknown char '{}' used to quote literal block starting on line {}. Computer says no...", quote_char, line_cursor.sum_total()),
-        doctree: doctree
-      };
+                message: format!(
+                    "Unknown char '{}' used to quote literal block starting on line {}. Computer says no...",
+                    quote_char,
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            };
         }
     }
 
@@ -159,9 +168,12 @@ fn parse_quoted_literal(
                         *line = chars.as_str().trim_start().to_string()
                     } else {
                         return TransitionResult::Failure {
-              message: format!("Found mismatching line start symbol in a quoted literal block starting on line {}. Computer says no...", line_cursor.sum_total()),
-              doctree: doctree
-            };
+                            message: format!(
+                                "Found mismatching line start symbol in a quoted literal block starting on line {}. Computer says no...",
+                                line_cursor.sum_total()
+                            ),
+                            doctree: doctree
+                        };
                     }
                 }
             }
