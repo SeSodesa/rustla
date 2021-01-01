@@ -407,7 +407,7 @@ impl TreeNodeType {
                     format!("[{}]", options.join(LATEX_OPTION_DELIM))
                 };
 
-                format!("\\includegraphics{}{{{}}}\n", options, uri)
+                format!("\\includegraphics{}{{{}}}", options, uri)
             }
             Self::Include { uri, .. } => {
                 // Options ignored for now...
