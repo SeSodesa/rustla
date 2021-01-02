@@ -892,7 +892,7 @@ fn footnote_ref_01 () {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
         .shared_child(0)
         .shared_child(0)
         .shared_data()
@@ -902,7 +902,7 @@ fn footnote_ref_01 () {
     } else {
         panic!()
     }
-    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
         .shared_child(0)
         .shared_child(2)
         .shared_data()
@@ -912,7 +912,7 @@ fn footnote_ref_01 () {
     } else {
         panic!()
     }
-    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
         .shared_child(0)
         .shared_child(4)
         .shared_data()
@@ -922,7 +922,7 @@ fn footnote_ref_01 () {
     } else {
         panic!()
     }
-    if let TreeNodeType::FootnoteReference { displayed_text, target_label } = doctree
+    if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
         .shared_child(0)
         .shared_child(6)
         .shared_data()
@@ -932,5 +932,4 @@ fn footnote_ref_01 () {
     } else {
         panic!()
     }
-    todo!()
 }

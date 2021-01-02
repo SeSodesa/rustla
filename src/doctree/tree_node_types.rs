@@ -379,6 +379,7 @@ pub enum TreeNodeType {
     FootnoteReference {
         displayed_text: String,
         target_label: String,
+        kind: FootnoteKind
     },
 
     /// ?

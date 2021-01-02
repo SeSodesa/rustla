@@ -238,40 +238,32 @@ fn footnote_04() {
 
     match &doctree.shared_child(1).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "1" && target == "test-with-mixed" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "1");
+            assert_eq!(label, "1");
         }
         _ => panic!(),
     }
 
     match &doctree.shared_child(2).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "3" && target == "3" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "3");
+            assert_eq!(target, "3");
         }
         _ => panic!(),
     }
 
     match &doctree.shared_child(3).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "4" && target == "second" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "4");
+            assert_eq!(target, "4");
         }
         _ => panic!(),
     }
 
     match &doctree.shared_child(4).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "5" && target == "5" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "5");
+            assert_eq!(target, "5");
         }
         _ => panic!(),
     }
@@ -314,10 +306,8 @@ fn footnote_05() {
 
     match &doctree.shared_child(1).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "1" && target == "test-with-mixed" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "1");
+            assert_eq!(target, "1");
         }
         _ => panic!(),
     }
@@ -334,10 +324,8 @@ fn footnote_05() {
 
     match &doctree.shared_child(2).shared_child(0).shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
-            if label == "3" && target == "nested" {
-            } else {
-                panic!()
-            }
+            assert_eq!(label, "3");
+            assert_eq!(target, "3");
         }
         _ => panic!(),
     }

@@ -167,8 +167,8 @@ impl DocTree {
     /// Creates a new node from given data, pushes it to the children of currently focused on node and focuses on the new node.
     /// If this succeeds, also increments `self.node_count`.
     /// Returns `Result::{Ok(self), Err(self)}`, depending on the success of this operation.
-    pub fn push_data_and_focus(mut self, node_data: TreeNodeType) -> Result<Self, Self> {
-        let target_labels = self.hyperref_actions(&node_data);
+    pub fn push_data_and_focus(mut self, mut node_data: TreeNodeType) -> Result<Self, Self> {
+        let target_labels = self.hyperref_actions(&mut node_data);
         let classes = self.classes();
         match self
             .tree
@@ -189,8 +189,8 @@ impl DocTree {
     /// Creates a new node from given data and pushes it to the children of currently focused on node.
     /// If this succeeds, also increments `self.node_count`.
     /// Returns self in either `Ok` or an `Err`.
-    pub fn push_data(mut self, node_data: TreeNodeType) -> Result<Self, Self> {
-        let target_labels = self.hyperref_actions(&node_data);
+    pub fn push_data(mut self, mut node_data: TreeNodeType) -> Result<Self, Self> {
+        let target_labels = self.hyperref_actions(&mut node_data);
         let classes = self.classes();
         match self
             .tree
@@ -223,7 +223,7 @@ impl DocTree {
             }
         };
 
-        self.hyperref_actions(node.shared_data());
+        self.hyperref_actions(node.mut_data());
         match self.tree.push_child(node) {
             Ok(()) => {
                 self.node_count += 1;
@@ -243,43 +243,110 @@ impl DocTree {
 
     /// Performs any node specific hyperref label additions to the doctree based on given node data.
     /// Returns an optional internal target label.
-    fn hyperref_actions(&mut self, shared_node_data: &TreeNodeType) -> Option<Vec<String>> {
+    fn hyperref_actions(&mut self, node_data: &mut TreeNodeType) -> Option<Vec<String>> {
+
         use crate::common::normalize_refname;
 
         // Check if there is an incoming internal target label
         let accumulated_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
-        let mut target_label: Option<Vec<String>> = if accumulated_target_label.is_empty() {
-            None
+        let mut target_labels: Vec<String> = if accumulated_target_label.is_empty() {
+            Vec::new()
         } else {
-            match shared_node_data {
-                TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => None,
+            match node_data {
+                TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => Vec::new(),
                 _ => {
-                    let label = Some(accumulated_target_label.drain(..).collect());
+                    let labels = accumulated_target_label.drain(..).collect();
                     accumulated_target_label.clear();
-                    label
+                    labels
                 }
             }
         };
 
-        // Check for targetable or referential nodes. If one is encountered, add it to the known targets or references.
-        let normalized_refname = match &shared_node_data {
-            TreeNodeType::Footnote { target, label, .. } => {
-                let normalized_refname = normalize_refname(label);
-                self.add_target(
-                    &shared_node_data,
-                    &normalize_refname(normalized_refname.as_str()),
-                    self.node_count,
-                );
-                Some(normalized_refname)
+        // Check for targetable or referential nodes. If one is encountered,
+        // add it to the known targets or references.
+        match node_data {
+            TreeNodeType::Footnote { target, label, kind, .. } => {
+                match kind {
+                    FootnoteKind::Manual => {
+                        let normalized_refname = normalize_refname(label);
+                        target_labels.push(normalized_refname);
+                    }
+                    FootnoteKind::AutoNumbered => {
+                        match self.new_autonumber_footnote_label() {
+                            Some(number) => {
+                                *target = number.clone();
+                                *label = number.clone();
+                                target_labels.push(number)
+                            }
+                            None => ()
+                        }
+                    }
+                    FootnoteKind::SimpleRefName => {
+                        match self.new_autonumber_footnote_label() {
+                            Some(number) => {
+                                *target = number.clone();
+                                *label = number.clone();
+                                target_labels.push(number)
+                            }
+                            None => ()
+                        }
+                    }
+                    FootnoteKind::AutoSymbol => {
+                        match self.new_symbolic_footnote_label() {
+                            Some(symbol) => {
+                                *target = symbol.clone();
+                                *label = symbol.clone();
+                                target_labels.push(symbol)
+                            }
+                            None => ()
+                        }
+                    }
+                };
+                for label in target_labels.iter() {
+                    self.add_target(label, self.node_count)
+                }
+                if let FootnoteKind::AutoSymbol = kind {
+                    self.increment_symbolic_footnotes();
+                }
             }
+            TreeNodeType::FootnoteReference { displayed_text, target_label, kind } => {
+                match kind {
+                    FootnoteKind::Manual => target_labels.push(
+                        crate::common::normalize_refname(&displayed_text)
+                    ),
+                    FootnoteKind::AutoNumbered => match self.new_autonumber_footnote_ref_label() {
+                        Some(label) => {
+                            *displayed_text = label.clone();
+                            *target_label = label.clone();
+                            target_labels.push(label)
+                        },
+                        None => return None
+                    },
+                    FootnoteKind::SimpleRefName => {
+                        match self.new_autonumber_footnote_ref_label() {
+                            Some(label) => {
+                                *target_label = label.clone();
+                                target_labels.push(label)
+                            },
+                            None => return None
+                        }
+                        target_labels.push(crate::common::normalize_refname(&displayed_text));
+                    },
+                    FootnoteKind::AutoSymbol => match self.new_symbolic_footnote_label() {
+                        Some(label) => target_labels.push(label),
+                        None => return None
+                    }
+                };
+                for label in target_labels.iter() {
+                    self.add_reference(&label, self.node_count)
+                }
+            },
             TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
                 let normalized_refname = normalize_refname(target);
-                self.add_target(
-                    &shared_node_data,
-                    &normalize_refname(normalized_refname.as_str()),
-                    self.node_count,
-                );
-                Some(normalized_refname)
+                target_labels.push(normalized_refname);
+                for label in target_labels.iter() {
+                    self.add_target(label,self.node_count);
+                }
             }
             TreeNodeType::IndirectHyperlinkTarget {
                 target,
@@ -288,49 +355,36 @@ impl DocTree {
             } => {
                 let normalized_target_refname = normalize_refname(target);
                 let normalized_indirect_refname = normalize_refname(target);
-
-                self.add_target(
-                    &shared_node_data,
-                    &normalize_refname(normalized_target_refname.as_str()),
-                    self.node_count,
-                );
+                for label in target_labels.iter() {
+                    self.add_target(
+                        label,
+                        self.node_count,
+                    );
+                }
                 self.add_reference(
-                    &shared_node_data,
                     &normalize_refname(normalized_indirect_refname.as_str()),
                     self.node_count,
                 );
-                Some(normalized_target_refname)
             }
             TreeNodeType::Section {
                 title_text,
                 level,
                 line_style,
             } => {
-                let normalized_refname = normalize_refname(title_text);
-
-                self.add_target(
-                    &shared_node_data,
-                    &normalize_refname(normalized_refname.as_str()),
-                    self.node_count,
-                );
+                target_labels.push(normalize_refname(title_text));
+                for label in target_labels.iter() {
+                    self.add_target(label,self.node_count);
+                }
                 self.section_data.add_section_level(*line_style);
                 if *level > self.section_data.highest_encountered_section_level() {
                     self.section_data.increment_encountered_section_number();
                 }
-                Some(normalized_refname)
             }
-            _ => None,
+            _ => for label in target_labels.iter() {
+                self.add_target(label,self.node_count);
+            },
         };
-
-        if let Some(refname) = normalized_refname {
-            if let Some(label) = &mut target_label {
-                label.push(refname)
-            } else {
-                target_label = Some(vec![refname])
-            }
-        }
-
-        target_label
+        if target_labels.is_empty() { None } else { Some(target_labels) }
     }
 
 
@@ -494,26 +548,18 @@ impl DocTree {
 
     /// Adds a given label to the known hyperref targets or updates the actual targe node id
     /// if a label is already in the known labels.
-    pub fn add_target(&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
+    fn add_target(&mut self, label: &String, id: NodeId) {
         match self.hyperref_data.mut_targets().insert(label.clone(), id) {
             Some(node_id) => {
                 eprintln!("Found an existing node with the target label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
             }
             None => {}
         };
-
-        if let TreeNodeType::Footnote { kind, .. } = node_data {
-            eprintln!("kind: {:#?}", kind);
-
-            if let &FootnoteKind::AutoSymbol = kind {
-                self.increment_symbolic_footnotes();
-            }
-        }
     }
 
     /// Adds a given label to the known hyperref targets or updates the actual targe node id
     /// if a label is already in the known labels.
-    pub fn add_reference(&mut self, node_data: &TreeNodeType, label: &String, id: NodeId) {
+    fn add_reference(&mut self, label: &String, id: NodeId) {
         match self
             .hyperref_data
             .mut_references()

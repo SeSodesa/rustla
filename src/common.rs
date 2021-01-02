@@ -134,9 +134,14 @@ pub enum EnumKind {
 /// 4. Automatically generated symbolic markers: .. [*]
 #[derive(Debug, Clone, Copy)]
 pub enum FootnoteKind {
+    /// Signifies a manually numbered footnote.
     Manual,
+    /// Signifies an automatically numbered footnote.
     AutoNumbered,
+    /// Signifies an automatically numbered footnote,
+    /// with a simple reference name as its display label.
     SimpleRefName,
+    /// Signifies a footnote with an automatically generated string as its label.
     AutoSymbol,
 }
 
