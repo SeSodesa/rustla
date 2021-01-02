@@ -413,9 +413,7 @@ fn citation_02() {
 
     match &doctree.shared_child(0).shared_data() {
         TreeNodeType::Citation { label, .. } => {
-            if !(label == "one") {
-                panic!()
-            }
+            assert_eq!(label, "one");
         }
         _ => panic!(),
     }
@@ -427,9 +425,7 @@ fn citation_02() {
 
     match &doctree.shared_child(0).shared_child(1).shared_data() {
         TreeNodeType::BlockQuote { body_indent } => {
-            if *body_indent != 7 {
-                panic!()
-            }
+            assert_eq!(*body_indent, 7);
         }
         _ => panic!(),
     }
