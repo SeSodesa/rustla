@@ -211,19 +211,9 @@ impl DocTree {
     /// Pushes a new node to the children of the node currently focused on.
     /// If the addition was successful, returns `Ok(())`, else returns the given node wrapped in an `Err`.
     pub fn push_child(&mut self, mut node: TreeNode) -> Result<(), TreeNode> {
-        // Check if there is an incoming internal target label and if there is, add it to the node being processed.
-        let acc_target_label = self.hyperref_data.mut_accumulated_internal_target_label();
-        if !acc_target_label.is_empty() {
-            match node.shared_data() {
-                TreeNodeType::EmptyLine | TreeNodeType::WhiteSpace { .. } => {}
-                _ => {
-                    node.set_target_label(Some(acc_target_label.drain(..).collect()));
-                    acc_target_label.clear();
-                }
-            }
-        };
 
-        self.hyperref_actions(node.mut_data());
+        let incoming_target_labels = self.hyperref_actions(node.mut_data());
+        node.set_target_label(incoming_target_labels);
         match self.tree.push_child(node) {
             Ok(()) => {
                 self.node_count += 1;
@@ -232,7 +222,6 @@ impl DocTree {
             Err(node) => Err(node),
         }
     }
-
     /// Removes the last child of the  current node and returns in an `Option`.
     pub fn pop_child(&mut self) -> Option<TreeNode> {
         match self.tree.pop_child() {
