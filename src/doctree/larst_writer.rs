@@ -1290,7 +1290,7 @@ impl TreeNodeType {
             Self::Topic { .. } => todo!(),
             Self::Transition { .. } => "\n".to_string(),
             Self::UnknownDirective { directive_name, .. } => {
-                format!("\\end{{{}}}", directive_name.to_lowercase())
+                format!("\\end{{{}}}\n\n", directive_name.to_lowercase())
             }
             Self::Version { .. } => todo!(),
             Self::WhiteSpace { .. } => "".to_string(),
