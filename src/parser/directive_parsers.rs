@@ -677,7 +677,7 @@ pub fn parse_math_block(
     TransitionResult::Success {
         doctree: doctree,
         push_or_pop: PushOrPop::Neither,
-        line_advance: LineAdvance::Some(offset + 1),
+        line_advance: LineAdvance::Some(offset),
     }
 }
 
@@ -3645,8 +3645,6 @@ pub fn parse_aplus_embedded_page() {
     todo!()
 }
 
-/// ### parse_unknown_directive
-///
 /// Parses unknown directive blocks as literal text.
 pub fn parse_unknown_directive(
     mut doctree: DocTree,
