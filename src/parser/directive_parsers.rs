@@ -3662,7 +3662,7 @@ pub fn parse_unknown_directive(
         Some(first_line_indent),
         empty_after_marker,
     ) {
-        arg.join(" ")
+        arg.join(" ").trim().to_string()
     } else {
         String::new()
     };
