@@ -902,7 +902,7 @@ impl Parser {
     /// marker. If the line is *not* empty, scans it for indentation and if it is greater than
     /// the given marker indent, returns it as is. Otherwise returns the indentation after the marker.
     ///
-    /// This is mainly useful with markup eleements like footnotes, citations and field list items,
+    /// This is mainly useful with markup elements like footnotes, citations and field list items,
     /// that decide their body indentation based on the line directly after their respecive markup marker.
     fn indent_from_next_line (
         src_lines: &Vec<String>,
@@ -916,7 +916,7 @@ impl Parser {
                 indent_after_marker
             } else {
                 let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-                if indent < marker_indent + 3 {
+                if indent < marker_indent + 1 {
                     indent_after_marker
                 } else {
                     indent
