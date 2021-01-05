@@ -895,4 +895,34 @@ impl Parser {
 
         lines_skipped
     }
+
+    /// Returns an indentation level based on the indentation of the next line.
+    /// If the next line is empty or `None` (at the end of input),
+    /// returns the given indent after a markup (footnote, citation, field list)
+    /// marker. If the line is *not* empty, scans it for indentation and if it is greater than
+    /// the given marker indent, returns it as is. Otherwise returns the indentation after the marker.
+    ///
+    /// This is mainly useful with markup eleements like footnotes, citations and field list items,
+    /// that decide their body indentation based on the line directly after their respecive markup marker.
+    fn indent_from_next_line (
+        src_lines: &Vec<String>,
+        base_indent: usize,
+        marker_indent: usize,
+        indent_after_marker: usize,
+        line_cursor: &LineCursor
+    )  -> usize {
+        match src_lines.get(line_cursor.relative_offset() + 1) {
+            Some(line) => if line.trim().is_empty() {
+                indent_after_marker
+            } else {
+                let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+                if indent < marker_indent + 3 {
+                    indent_after_marker
+                } else {
+                    indent
+                }
+            }
+            None => indent_after_marker
+        }
+    }
 }
