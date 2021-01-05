@@ -288,7 +288,7 @@ pub fn footnote(
 
 
     // Detected parameters...
-    let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+    let indent_after_marker = captures.get(0).unwrap().as_str().chars().count() + base_indent;
     let detected_marker_indent = match captures.name("indent") {
         Some(whitespace) => whitespace.as_str().chars().count() + base_indent,
         None => return TransitionResult::Failure {
@@ -313,22 +313,13 @@ pub fn footnote(
             doctree: doctree
         };
     };
-    let detected_body_indent = if let Some(line) = src_lines.get(
-        line_cursor.relative_offset() + 1
-    ){
-        if line.trim().is_empty() {
-            detected_text_indent
-        } else {
-            let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-            if indent < detected_marker_indent + 3 {
-                detected_text_indent
-            } else {
-                indent
-            }
-        }
-    } else {
-        detected_text_indent
-    };
+    let detected_body_indent = Parser::indent_from_next_line(
+        src_lines,
+        base_indent,
+        detected_marker_indent,
+        indent_after_marker,
+        line_cursor
+    );
 
     let (label, target) = match detected_footnote_label_to_ref_label(
         &doctree,
@@ -368,7 +359,7 @@ pub fn footnote(
                 }
             };
 
-            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Footnote, section_level, false) {
+            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(indent_after_marker), State::Footnote, section_level, false) {
                 Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
                     (doctree, offset, state_stack)
                 } else {
@@ -433,25 +424,17 @@ pub fn citation(
 ) -> TransitionResult {
 
     // Detected parameters...
-    let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+    let indent_after_marker = captures.get(0).unwrap().as_str().chars().count() + base_indent;
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_label_str = captures.get(2).unwrap().as_str();
 
-    let detected_body_indent = if let Some(line) = src_lines.get(line_cursor.relative_offset() + 1)
-    {
-        if line.trim().is_empty() {
-            detected_text_indent
-        } else {
-            let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
-            if indent < detected_marker_indent + 3 {
-                detected_text_indent
-            } else {
-                indent
-            }
-        }
-    } else {
-        detected_text_indent
-    };
+    let detected_body_indent = Parser::indent_from_next_line(
+        src_lines,
+        base_indent,
+        detected_marker_indent,
+        indent_after_marker,
+        line_cursor
+    );
 
     use crate::common::normalize_refname;
 
@@ -476,7 +459,7 @@ pub fn citation(
                 }
             };
 
-            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(detected_text_indent), State::Citation, section_level,false) {
+            let (doctree, offset, state_stack) = match Parser::parse_first_node_block(doctree, src_lines, base_indent, line_cursor, detected_body_indent, Some(indent_after_marker), State::Citation, section_level,false) {
                 Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
                     (doctree, offset, state_stack)
                 } else {

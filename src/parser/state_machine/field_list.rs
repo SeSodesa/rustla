@@ -16,29 +16,16 @@ pub fn field_marker(
     pattern_name: &Pattern,
 ) -> TransitionResult {
 
-    let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+    let indent_after_marker = captures.get(0).unwrap().as_str().chars().count() + base_indent;
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_marker_name = captures.get(2).unwrap().as_str();
-
-    let detected_body_indent = if let Some(line) = src_lines.get(
-        line_cursor.relative_offset() + 1
-    ) {
-        if line.trim().is_empty() {
-            detected_text_indent
-        } else {
-            let indent = line
-                .chars()
-                .take_while(|c| c.is_whitespace())
-                .count() + base_indent;
-            if indent < detected_marker_indent + 1 {
-                detected_text_indent
-            } else {
-                indent
-            }
-        }
-    } else {
-        detected_text_indent
-    };
+    let detected_body_indent = Parser::indent_from_next_line(
+        src_lines,
+        base_indent,
+        detected_marker_indent,
+        indent_after_marker,
+        line_cursor
+    );
 
     // Make sure we are inside a FieldList and that indentations match
     match doctree.shared_node_data() {
@@ -60,7 +47,6 @@ pub fn field_marker(
                         doctree: doctree
                     }
                 };
-
                 let item_node_data = TreeNodeType::FieldListItem {
                     raw_marker_name: detected_marker_name.to_string(),
                     marker_name_as_inline_nodes: marker_inline_nodes,
@@ -74,14 +60,13 @@ pub fn field_marker(
                         doctree: tree
                     }
                 };
-
                 let (doctree, offset, state_stack) = match Parser::parse_first_node_block(
                     doctree,
                     src_lines,
                     base_indent,
                     line_cursor,
                     detected_body_indent,
-                    Some(detected_text_indent),
+                    Some(indent_after_marker),
                     State::ListItem,
                     section_level,
                     false
@@ -100,7 +85,6 @@ pub fn field_marker(
                         line_cursor.sum_total()
                     )
                 };
-
                 return TransitionResult::Success {
                     doctree: doctree,
                     push_or_pop: PushOrPop::Push(state_stack),
@@ -114,7 +98,6 @@ pub fn field_marker(
                 }
             }
         }
-
         _ => return TransitionResult::Failure {
             message: format!(
                 "Attempted parsing a FieldListItem outside a FieldList on line {}. Computer says no... ",
