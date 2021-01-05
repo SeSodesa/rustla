@@ -901,104 +901,47 @@ impl TreeNodeType {
                 lti_aplus_get_and_post,
             } => {
                 // Read relevant options
-                let mut option_string = String::new();
 
-                option_string = if !config.is_empty() {
-                    option_string + "config=" + config + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = option_string
-                    + "submissions="
-                    + submissions.to_string().as_str()
-                    + LATEX_OPTION_DELIM;
-                option_string = option_string
-                    + "points-to-pass="
-                    + points_to_pass.to_string().as_str()
-                    + LATEX_OPTION_DELIM;
-                option_string = if !class.is_empty() {
-                    option_string + "class=" + class + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if !title.is_empty() {
-                    option_string + "title=" + title + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if !category.is_empty() {
-                    option_string + "category=" + category + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = match status {
+                let mut options = Vec::<String>::new();
+                if !config.is_empty() { options.push(format!("config={}", config)) }
+                options.push(format!("submissions={}", *submissions));
+                options.push(format!("points-to-pass={}", *points_to_pass));
+                if !class.is_empty() { options.push(format!("class={}", class)) }
+                if !title.is_empty() { options.push(format!("title={}", title)) };
+                if !category.is_empty() { options.push(format!("category={}", category)) }
+                match status {
                     AplusExerciseStatus::Ready => {
-                        option_string + "status=ready" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=ready"))
                     }
                     AplusExerciseStatus::Unlisted => {
-                        option_string + "status=unlisted" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=unlisted"))
                     }
                     AplusExerciseStatus::Hidden => {
-                        option_string + "status=hidden" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=hidden"))
                     }
                     AplusExerciseStatus::Enrollment => {
-                        option_string + "status=enrollment" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=enrollment"))
                     }
                     AplusExerciseStatus::EnrollmentExt => {
-                        option_string + "status=enrollment_ext" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=enrollment_ext"))
                     }
                     AplusExerciseStatus::Maintenance => {
-                        option_string + "status=maintenance" + LATEX_OPTION_DELIM
+                        options.push(String::from("status=maintenance"))
                     }
                 };
-                option_string = if *ajax {
-                    option_string + "ajax" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if *allow_assistant_viewing {
-                    option_string + "allow-assistant-viewing" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if *allow_assistant_grading {
-                    option_string + "allow-assistant-grading" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if *quiz {
-                    String::from("quiz") + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if !lti.is_empty() {
-                    option_string + "lti" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if !lti_resource_link_id.is_empty() {
-                    option_string + "resource_link_id=" + lti_resource_link_id + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if *lti_open_in_iframe {
-                    option_string + "lti_open_in_iframe" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-                option_string = if *lti_aplus_get_and_post {
-                    option_string + "lti_aplus_get_and_post" + LATEX_OPTION_DELIM
-                } else {
-                    option_string
-                };
-
-                if !option_string.is_empty() {
-                    option_string = format!("[{}]", option_string)
-                }
+                if *ajax {options.push(String::from("ajax")) };
+                if *allow_assistant_viewing { options.push(String::from("allow-assistant-viewing")) };
+                if *allow_assistant_grading { options.push(String::from("allow-assistant-grading")) };
+                if *quiz { options.push(String::from("quiz")) };
+                if !lti.is_empty() { options.push(String::from("lti")) };
+                if !lti_resource_link_id.is_empty() { options.push(format!("resource_link_id={}", lti_resource_link_id))};
+                if *lti_open_in_iframe { options.push(String::from("lti_open_in_iframe")) };
+                if *lti_aplus_get_and_post { options.push(String::from("lti_aplus_get_and_post")) };
+                let option_string = options.join(LATEX_OPTION_DELIM);
 
                 format!(
                     "\\begin{{submit}}{}{{{}}}{{{}}}\n",
-                    option_string, key, max_points
+                    option_string.trim(), key, max_points
                 )
             }
 
