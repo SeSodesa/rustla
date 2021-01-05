@@ -929,7 +929,7 @@ impl TreeNodeType {
                         options.push(String::from("status=maintenance"))
                     }
                 };
-                if *ajax {options.push(String::from("ajax")) };
+                if *ajax { options.push(String::from("ajax")) };
                 if *allow_assistant_viewing { options.push(String::from("allow-assistant-viewing")) };
                 if *allow_assistant_grading { options.push(String::from("allow-assistant-grading")) };
                 if *quiz { options.push(String::from("quiz")) };
@@ -937,7 +937,8 @@ impl TreeNodeType {
                 if !lti_resource_link_id.is_empty() { options.push(format!("resource_link_id={}", lti_resource_link_id))};
                 if *lti_open_in_iframe { options.push(String::from("lti_open_in_iframe")) };
                 if *lti_aplus_get_and_post { options.push(String::from("lti_aplus_get_and_post")) };
-                let option_string = options.join(LATEX_OPTION_DELIM);
+
+                let option_string = format!("[{}]", options.join(LATEX_OPTION_DELIM));
 
                 format!(
                     "\\begin{{submit}}{}{{{}}}{{{}}}\n",
