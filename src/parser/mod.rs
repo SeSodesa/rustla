@@ -910,7 +910,7 @@ impl Parser {
         marker_indent: usize,
         indent_after_marker: usize,
         line_cursor: &LineCursor
-    )  -> usize {
+    ) -> usize {
         match src_lines.get(line_cursor.relative_offset() + 1) {
             Some(line) => if line.trim().is_empty() {
                 indent_after_marker
