@@ -367,8 +367,12 @@ impl TreeNodeType {
                 format!("\\begin{{center}}\n")
             }
             Self::Footer { .. } => todo!(),
-            Self::Footnote { .. } => todo!(),
-            Self::FootnoteReference { .. } => todo!(),
+            Self::Footnote { kind, label, target, .. } => {
+                format!("\\footnote{{\n")
+            },
+            Self::FootnoteReference { .. } => {
+                format!("\\footnotemark")
+            },
             Self::Header { .. } => todo!(),
             Self::Generated => todo!(),
             Self::Image {
@@ -1229,8 +1233,8 @@ impl TreeNodeType {
                 format!("{}\\end{{center}}\n\n", anchors)
             },
             Self::Footer { .. } => todo!(),
-            Self::Footnote { .. } => todo!(),
-            Self::FootnoteReference { .. } => todo!(),
+            Self::Footnote { .. } => String::from("}\n\n"),
+            Self::FootnoteReference { .. } => String::new(),
             Self::Header { .. } => todo!(),
             Self::Generated => todo!(),
             Self::Image { inline, .. } => {
