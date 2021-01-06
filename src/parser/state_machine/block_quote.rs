@@ -58,7 +58,7 @@ pub fn attribution(
                     src_lines,
                     line_cursor.relative_offset(),
                     true,
-                    Some(true),
+                    true,
                     next_indent,
                     first_indent,
                     true,

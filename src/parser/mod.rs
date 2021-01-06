@@ -506,7 +506,7 @@ impl Parser {
             src_lines,
             current_line.relative_offset(),
             true,
-            None,
+            true,
             Some(relative_block_indent),
             Some(relative_first_indent),
             force_alignment,
@@ -657,7 +657,7 @@ impl Parser {
         src_lines: &Vec<String>,
         start_line: usize,
         until_blank: bool,
-        strip_indent: Option<bool>,
+        strip_indent: bool,
         block_indent: Option<usize>,
         first_indent: Option<usize>,
         force_alignment: bool,
@@ -667,9 +667,6 @@ impl Parser {
                 "An empty block of text was handed for parsing.\nComputer says no...\n",
             ));
         }
-
-        // Default function parameters
-        let strip_indent = strip_indent.unwrap_or(true);
 
         let mut line_num = start_line;
         let last_line_num = src_lines.len();

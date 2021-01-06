@@ -68,7 +68,7 @@ fn parse_indented_literal(
             src_lines,
             line_cursor.relative_offset(),
             false,
-            Some(true),
+            true,
             Some(detected_indent),
             None,
             false,
