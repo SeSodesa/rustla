@@ -5,6 +5,7 @@ Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;
+use crate::parser::types_and_aliases::IndentedBlockResult;
 
 #[cfg(test)]
 #[test]
@@ -136,7 +137,7 @@ asdfsdafasdfasdfa
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, false, true, None, None, false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
             assert_eq!(
@@ -148,8 +149,7 @@ asdfsdafasdfsda  fadsfsdf
 "
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };
@@ -173,7 +173,7 @@ asdfsdafasdfasdfa
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, false, true, Some(2), None, false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
             assert_eq!(
@@ -185,8 +185,7 @@ asdfsdafasdfsda  fadsfsdf
 "
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };
@@ -209,7 +208,7 @@ asdfsdafasdfasdfa
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, false, true, None, None, false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
             assert_eq!(
@@ -221,8 +220,7 @@ asdfsdafasdfasdfa
  asdfdsfsdafsadfaf"
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };
@@ -246,10 +244,10 @@ asdfsdafasdfasdfa
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, false, true, Some(2), Some(2), false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
-            assert_eq!(line_diff, 7);
+            assert_eq!(offset, 7);
 
             assert_eq!(
                 lines.join("\n"),
@@ -262,8 +260,7 @@ asfsffdsfasfasdf
 "
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };
@@ -291,10 +288,10 @@ asfsadfasdfsad
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, false, true, Some(2), Some(2), false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
-            assert_eq!(line_diff, 12);
+            assert_eq!(offset, 12);
 
             assert_eq!(
                 lines.join("\n"),
@@ -312,8 +309,7 @@ sadfdfdsasfasff
 "
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };
@@ -336,10 +332,10 @@ asfsadfasdfsad
     let lines = crate::common::str_to_lines(src);
 
     match Parser::read_indented_block(&lines, 2, true, true, Some(2), None, false) {
-        Ok((lines, _indent, line_diff, _empty_finish)) => {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => {
             eprintln!("{:#?}", lines);
 
-            assert_eq!(line_diff, 2);
+            assert_eq!(offset, 2);
 
             assert_eq!(
                 lines.join("\n"),
@@ -347,8 +343,7 @@ asfsadfasdfsad
 adsadadasdasd"
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        _ => {
             panic!();
         }
     };

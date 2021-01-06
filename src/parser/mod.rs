@@ -23,6 +23,8 @@ use regex::Regex;
 // -----------
 
 use super::*;
+use crate::parser::types_and_aliases::IndentedBlockResult;
+
 
 mod automata;
 mod regex_patterns;
@@ -491,7 +493,7 @@ impl Parser {
         doctree: DocTree,
         src_lines: &Vec<String>,
         base_indent: usize,
-        current_line: &mut LineCursor,
+        line_cursor: &mut LineCursor,
         text_indent: usize,
         first_indent: Option<usize>,
         start_state: State,
@@ -504,19 +506,19 @@ impl Parser {
         // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
         let (block, line_offset) = match Parser::read_indented_block(
             src_lines,
-            current_line.relative_offset(),
+            line_cursor.relative_offset(),
             true,
             true,
             Some(relative_block_indent),
             Some(relative_first_indent),
             force_alignment,
         ) {
-            Ok((lines, min_indent, line_offset, blank_finish)) => (lines, line_offset),
-            Err(e) => {
+            IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => (lines, offset),
+            _ => {
                 return Err(ParsingResult::Failure {
                     message: format!(
-                        "Error when reading in a block of text for nested parse: {}",
-                        e
+                        "Error when reading in a block of text for nested parse in line {}.",
+                        line_cursor.sum_total()
                     ),
                     doctree: doctree,
                 })
@@ -528,7 +530,7 @@ impl Parser {
             block,
             doctree,
             Some(text_indent),
-            current_line.sum_total(),
+            line_cursor.sum_total(),
             Some(start_state),
             *section_level,
         ).parse() {
@@ -661,11 +663,10 @@ impl Parser {
         block_indent: Option<usize>,
         first_indent: Option<usize>,
         force_alignment: bool,
-    ) -> Result<(Vec<String>, Option<usize>, usize, bool), String> {
+    ) -> IndentedBlockResult {
+
         if src_lines.is_empty() {
-            return Err(String::from(
-                "An empty block of text was handed for parsing.\nComputer says no...\n",
-            ));
+            return IndentedBlockResult::EmptyLinesErr
         }
 
         let mut line_num = start_line;
@@ -702,10 +703,8 @@ impl Parser {
             let line: String = match src_lines.get(line_num) {
                 Some(line) => line.clone(),
                 None => {
-                    return Err(format!(
-                        "Line {} could not be read. Computer says no...",
-                        line_num
-                    ))
+                    loop_broken = true;
+                    break
                 }
             };
 
@@ -772,7 +771,12 @@ impl Parser {
         block_lines.shrink_to_fit(); // Free unnecessary used memory
         let line_diff = block_lines.len();
 
-        Ok((block_lines, minimal_indent, line_diff, blank_finish))
+        IndentedBlockResult::Ok {
+            lines: block_lines,
+            minimum_indent: minimal_indent.unwrap(),
+            offset: line_diff,
+            blank_finish: blank_finish
+        }
     }
 
     /// Checks how a given indentation matches with the indentation of a given parent node type.

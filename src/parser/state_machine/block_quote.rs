@@ -5,6 +5,7 @@ Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;
+use crate::parser::types_and_aliases::IndentedBlockResult;
 
 /// A function that generates attribution nodes inside a block quote.
 /// An attribution ends block quotes, so encountering one makes the parser focus on the parent of the current node.
@@ -53,7 +54,7 @@ pub fn attribution(
                 Some(match_len)
             };
 
-            let (attribution_string, offset) = if let Ok((lines, _, offset, _)) =
+            let (attribution_string, offset) = if let IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } =
                 Parser::read_indented_block(
                     src_lines,
                     line_cursor.relative_offset(),

@@ -120,10 +120,10 @@ pub enum IndentationMatch {
 }
 
 /// A enumeration of the different ways the function `Parser::read_indented_block` could succeed or fail.
-pub enum IndentedBlockResult <'src_lines> {
+pub enum IndentedBlockResult {
     /// The reading of the text block succeeded as intended
     Ok {
-        lines: Vec<&'src_lines str>,
+        lines: Vec<String>,
         minimum_indent: usize,
         offset: usize,
         blank_finish: bool,
@@ -132,7 +132,7 @@ pub enum IndentedBlockResult <'src_lines> {
     EmptyLinesErr,
     ///
     UnfinishedErr {
-        lines: Vec<&'src_lines str>,
+        lines: Vec<String>,
         minimum_indent: usize,
         offset: usize,
         blank_finish: bool,
@@ -140,13 +140,13 @@ pub enum IndentedBlockResult <'src_lines> {
 }
 
 /// A enumeration of the different ways the function `Parser::read_text_block` could succeed or fail.
-pub enum TextBlockResult <'src_lines> {
+pub enum TextBlockResult {
     Ok {
-        lines: Vec<&'src_lines str>,
+        lines: Vec<String>,
         offset: usize,
     },
     Err {
-        lines: Vec<&'src_lines str>,
+        lines: Vec<String>,
         offset: usize,
     }
 }

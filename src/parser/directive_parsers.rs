@@ -26,6 +26,7 @@ use crate::parser::types_and_aliases::{
 };
 use crate::parser::Parser;
 use crate::parser::converters;
+use crate::parser::types_and_aliases::IndentedBlockResult;
 
 pub fn parse_standard_admonition(
     src_lines: &Vec<String>,
@@ -56,7 +57,7 @@ pub fn parse_standard_admonition(
         ),
     };
 
-    let mut lines = if let Some(arg) = scan_directive_arguments(
+    let mut arg_lines = if let Some(arg) = scan_directive_arguments(
         src_lines,
         line_cursor,
         body_indent,
@@ -89,11 +90,11 @@ pub fn parse_standard_admonition(
         Some(body_indent),
         Some(body_indent),
         false) {
-        Ok((mut body_lines, _, offset, _)) => {
-            lines.append(&mut body_lines);
+            IndentedBlockResult::Ok {mut lines, minimum_indent, offset, blank_finish } => {
+            arg_lines.append(&mut lines);
             offset
         },
-        Err(e) => return TransitionResult::Failure {
+        _ => return TransitionResult::Failure {
             message: format!("Error when reading in the contents of \"{}\" around line {}. Computer says no...", variant.to_string(), line_cursor.sum_total()),
             doctree: doctree
         }
@@ -123,7 +124,7 @@ pub fn parse_standard_admonition(
 
     // Start nested parse inside admonition...
     let (doctree, nested_state_stack) = match Parser::new(
-        lines,
+        arg_lines,
         doctree,
         Some(body_indent),
         line_cursor.sum_total(),
@@ -485,7 +486,7 @@ pub fn parse_code(
         (None, None, None)
     };
 
-    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
+    let (lines, offset) = if let IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } = Parser::read_indented_block(
         src_lines,
         line_cursor.relative_offset(),
         false,
@@ -604,8 +605,8 @@ pub fn parse_math_block(
         Some(body_indent),
         false
     ) {
-        Ok((lines, _, offset, _)) => (lines, offset),
-        Err(message) => return TransitionResult::Failure {
+        IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => (lines, offset),
+        _ => return TransitionResult::Failure {
             message: format!(
                 "Could not read the math block on line {}. Computer says no...",
                 line_cursor.sum_total()
@@ -865,7 +866,7 @@ pub fn parse_list_table(
         }
     };
 
-    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
+    let (lines, offset) = if let IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } = Parser::read_indented_block(
         src_lines,
         line_cursor.relative_offset(),
         false,
@@ -1270,7 +1271,7 @@ pub fn parse_class(
         }
     };
 
-    let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
+    let (lines, offset) = if let IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } = Parser::read_indented_block(
         src_lines,
         line_cursor.relative_offset(),
         false,
@@ -1479,7 +1480,7 @@ pub fn parse_sphinx_code_block(
         None,
         false,
     ) {
-        Ok((mut lines, _, offset, _)) => {
+        IndentedBlockResult::Ok {mut lines, minimum_indent, offset, blank_finish } => {
             // Remove empty lines from front
             lines = lines
                 .iter()
@@ -1498,12 +1499,11 @@ pub fn parse_sphinx_code_block(
 
             (lines.join("\n") + "\n", offset)
         }
-        Err(e) => {
+        _ => {
             return TransitionResult::Failure {
                 message: format!(
-                    "Error when parsing a Sphinx code block on line {}: {}",
+                    "Error when parsing a Sphinx code block on line {}.",
                     line_cursor.sum_total(),
-                    e
                 ),
                 doctree: doctree,
             }

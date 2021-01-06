@@ -11,6 +11,7 @@ use crate::parser::line_cursor::LineCursor;
 use crate::parser::types_and_aliases::TransitionResult;
 use crate::parser::types_and_aliases::{LineAdvance, PushOrPop};
 use crate::parser::Parser;
+use crate::parser::types_and_aliases::IndentedBlockResult;
 
 /// A function for parsing indented literal block nodes.
 pub fn literal_block(
@@ -63,7 +64,7 @@ fn parse_indented_literal(
     // Read in a block with minimal indentation as-is with Parser::read_indented_block
     // and feed it to a LiteralBlock node.
 
-    let (literal_string, offset): (String, usize) = if let Ok((lines, _, offset, _)) =
+    let (literal_string, offset): (String, usize) = if let IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } =
         Parser::read_indented_block(
             src_lines,
             line_cursor.relative_offset(),

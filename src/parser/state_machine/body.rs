@@ -5,6 +5,7 @@ Copyright © 2020 Santtu Söderholm
 */
 
 use super::*;
+use crate::parser::types_and_aliases::IndentedBlockResult;
 
 /// The transition method for matching bullets in `Body` state.
 /// Causes the parser to push a new machine in the state
@@ -572,17 +573,20 @@ pub fn hyperlink_target(
                 Some(detected_text_indent),
                 false,
             ) {
-                Ok((block, _, offset, _)) => (
-                    block
+                IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => (
+                    lines
                         .join("\n")
                         .chars()
                         .filter(|c| !c.is_whitespace())
                         .collect(),
                     offset,
                 ),
-                Err(e) => {
+                _ => {
                     return TransitionResult::Failure {
-                        message: e,
+                        message: format!(
+                            "Error when reading indented text block on line {}.",
+                            line_cursor.sum_total()
+                        ),
                         doctree: doctree,
                     }
                 }
@@ -1513,13 +1517,12 @@ pub fn comment(
                 Some(match_len - base_indent),
                 false,
             ) {
-                Ok((lines, _, offset, d)) => (lines.join("\n").trim().to_string(), offset),
-                Err(e) => {
+                IndentedBlockResult::Ok {lines, minimum_indent, offset, blank_finish } => (lines.join("\n").trim().to_string(), offset),
+                _ => {
                     return TransitionResult::Failure {
                         message: format!(
-                            "Could not read comment on line {}: {}",
+                            "Could not read comment on line {}.",
                             line_cursor.sum_total(),
-                            e
                         ),
                         doctree: doctree,
                     }
