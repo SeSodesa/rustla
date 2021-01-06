@@ -135,7 +135,7 @@ asdfsdafasdfasdfa
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), None, Some(true), None, None, false) {
+    match Parser::read_indented_block(&lines, 2, None, Some(true), None, None, false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 
@@ -172,7 +172,7 @@ asdfsdafasdfasdfa
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), None, false) {
+    match Parser::read_indented_block(&lines, 2, None, None, Some(2), None, false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 
@@ -208,7 +208,7 @@ asdfsdafasdfasdfa
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), None, None, None, None, false) {
+    match Parser::read_indented_block(&lines, 2, None, None, None, None, false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 
@@ -245,7 +245,7 @@ asdfsdafasdfasdfa
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
+    match Parser::read_indented_block(&lines, 2, None, None, Some(2), Some(2), false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 
@@ -290,7 +290,7 @@ asfsadfasdfsad
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), None, None, Some(2), Some(2), false) {
+    match Parser::read_indented_block(&lines, 2, None, None, Some(2), Some(2), false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 
@@ -335,7 +335,7 @@ asfsadfasdfsad
 
     let lines = crate::common::str_to_lines(src);
 
-    match Parser::read_indented_block(&lines, Some(2), Some(true), None, Some(2), None, false) {
+    match Parser::read_indented_block(&lines, 2, Some(true), None, Some(2), None, false) {
         Ok((lines, _indent, line_diff, _empty_finish)) => {
             eprintln!("{:#?}", lines);
 

@@ -56,7 +56,7 @@ pub fn attribution(
             let (attribution_string, offset) = if let Ok((lines, _, offset, _)) =
                 Parser::read_indented_block(
                     src_lines,
-                    Some(line_cursor.relative_offset()),
+                    line_cursor.relative_offset(),
                     Some(true),
                     Some(true),
                     next_indent,

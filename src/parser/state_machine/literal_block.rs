@@ -66,7 +66,7 @@ fn parse_indented_literal(
     let (literal_string, offset): (String, usize) = if let Ok((lines, _, offset, _)) =
         Parser::read_indented_block(
             src_lines,
-            Some(line_cursor.relative_offset()),
+            line_cursor.relative_offset(),
             Some(false),
             Some(true),
             Some(detected_indent),

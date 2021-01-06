@@ -81,7 +81,7 @@ pub fn parse_standard_admonition(
     };
 
     // Read in the rest of the admonition contents...
-    let offset = match Parser::read_indented_block(src_lines, Some(line_cursor.relative_offset()), Some(false), Some(true), Some(body_indent), Some(body_indent), false) {
+    let offset = match Parser::read_indented_block(src_lines, line_cursor.relative_offset(), Some(false), Some(true), Some(body_indent), Some(body_indent), false) {
         Ok((mut body_lines, _, offset, _)) => {
             lines.append(&mut body_lines);
             offset
@@ -480,7 +480,7 @@ pub fn parse_code(
 
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
         src_lines,
-        Some(line_cursor.relative_offset()),
+        line_cursor.relative_offset(),
         Some(false),
         Some(true),
         Some(body_indent),
@@ -590,7 +590,7 @@ pub fn parse_math_block(
     // If no equation as argument, try reading block contents as multiple equations...
     let (lines, offset) = match Parser::read_indented_block(
         src_lines,
-        Some(line_cursor.relative_offset()),
+        line_cursor.relative_offset(),
         Some(false),
         Some(true),
         Some(body_indent),
@@ -860,7 +860,7 @@ pub fn parse_list_table(
 
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
         src_lines,
-        Some(line_cursor.relative_offset()),
+        line_cursor.relative_offset(),
         Some(false),
         Some(true),
         Some(body_indent),
@@ -1265,7 +1265,7 @@ pub fn parse_class(
 
     let (lines, offset) = if let Ok((lines, _, offset, _)) = Parser::read_indented_block(
         src_lines,
-        Some(line_cursor.relative_offset()),
+        line_cursor.relative_offset(),
         Some(false),
         Some(true),
         Some(body_indent),
@@ -1465,7 +1465,7 @@ pub fn parse_sphinx_code_block(
 
     let (code_text, offset) = match Parser::read_indented_block(
         src_lines,
-        Some(line_cursor.relative_offset()),
+        line_cursor.relative_offset(),
         Some(false),
         Some(true),
         Some(body_indent),

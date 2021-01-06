@@ -565,7 +565,7 @@ pub fn hyperlink_target(
 
             let (block_string, offset): (String, usize) = match Parser::read_indented_block(
                 src_lines,
-                Some(line_cursor.relative_offset()),
+                line_cursor.relative_offset(),
                 Some(true),
                 Some(true),
                 Some(detected_body_indent),
@@ -1506,7 +1506,7 @@ pub fn comment(
         IndentationMatch::JustRight => {
             let (comment_string, offset) = match Parser::read_indented_block(
                 src_lines,
-                Some(line_cursor.relative_offset()),
+                line_cursor.relative_offset(),
                 Some(false),
                 Some(true),
                 Some(next_line_indent - base_indent),

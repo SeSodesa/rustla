@@ -504,7 +504,7 @@ impl Parser {
         // Read indented block here. Notice we need to subtract base indent from assumed indent for this to work with nested parsers.
         let (block, line_offset) = match Parser::read_indented_block(
             src_lines,
-            Some(current_line.relative_offset()),
+            current_line.relative_offset(),
             Some(true),
             None,
             Some(relative_block_indent),
@@ -655,7 +655,7 @@ impl Parser {
     /// and uses it as a reference for ending the block.
     fn read_indented_block(
         src_lines: &Vec<String>,
-        start_line: Option<usize>,
+        start_line: usize,
         until_blank: Option<bool>,
         strip_indent: Option<bool>,
         block_indent: Option<usize>,
@@ -669,7 +669,6 @@ impl Parser {
         }
 
         // Default function parameters
-        let start_line = start_line.unwrap_or(0);
         let until_blank = until_blank.unwrap_or(false);
         let strip_indent = strip_indent.unwrap_or(true);
 
