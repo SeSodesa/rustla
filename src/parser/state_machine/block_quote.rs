@@ -57,7 +57,7 @@ pub fn attribution(
                 Parser::read_indented_block(
                     src_lines,
                     line_cursor.relative_offset(),
-                    Some(true),
+                    true,
                     Some(true),
                     next_indent,
                     first_indent,

@@ -67,7 +67,7 @@ fn parse_indented_literal(
         Parser::read_indented_block(
             src_lines,
             line_cursor.relative_offset(),
-            Some(false),
+            false,
             Some(true),
             Some(detected_indent),
             None,

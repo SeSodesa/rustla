@@ -505,7 +505,7 @@ impl Parser {
         let (block, line_offset) = match Parser::read_indented_block(
             src_lines,
             current_line.relative_offset(),
-            Some(true),
+            true,
             None,
             Some(relative_block_indent),
             Some(relative_first_indent),
@@ -656,7 +656,7 @@ impl Parser {
     fn read_indented_block(
         src_lines: &Vec<String>,
         start_line: usize,
-        until_blank: Option<bool>,
+        until_blank: bool,
         strip_indent: Option<bool>,
         block_indent: Option<usize>,
         first_indent: Option<usize>,
@@ -669,7 +669,6 @@ impl Parser {
         }
 
         // Default function parameters
-        let until_blank = until_blank.unwrap_or(false);
         let strip_indent = strip_indent.unwrap_or(true);
 
         let mut line_num = start_line;
