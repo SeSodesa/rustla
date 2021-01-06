@@ -91,9 +91,6 @@ pub struct Parser {
     state_stack: Vec<State>,
 }
 
-/// ==============
-/// Parser Methods
-/// ==============
 impl Parser {
     /// The `Parser` constructor. Transforms a given source string
     /// into a vector of lines and wraps this and a given `DocTree`
@@ -399,15 +396,6 @@ impl Parser {
         Ok(())
     }
 
-    /// The default step used by the functions
-    /// `nth_{previous|next}_line`.
-    const DEFAULT_LINE_STEP: usize = 1;
-}
-
-/// ===========================
-/// Parser associated functions
-/// ===========================
-impl Parser {
     /// Attempts to retrieve the source from a given line number.
     /// Returns an `Ok` clone of it if successful, else
     /// returns and `Err` with a message.
