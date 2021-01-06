@@ -566,17 +566,17 @@ impl Parser {
     }
 
     /// Skips empty lines until a non-empty one is found.
-    /// Panics (for now) if it runs over the end of input.
-    fn skip_to_next_block(src_lines: &Vec<String>, line_cursor: &mut LineCursor) {
+    /// If the end of input is encountered, returns `None`, else returns `Some(())`.
+    fn skip_to_next_block(src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> Option<()> {
         loop {
             if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
                 if line.trim().is_empty() {
                     line_cursor.increment_by(1);
                 } else {
-                    break;
+                    break Some(())
                 }
             } else {
-                panic!("Encountered end of input while skipping lines...")
+                break None
             }
         }
     }
