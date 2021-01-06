@@ -118,3 +118,35 @@ pub enum IndentationMatch {
     /// This node is most likely a block quote.
     TooMuch,
 }
+
+/// A enumeration of the different ways the function `Parser::read_indented_block` could succeed or fail.
+pub enum IndentedBlockResult <'src_lines> {
+    /// The reading of the text block succeeded as intended
+    Ok {
+        lines: Vec<&'src_lines str>,
+        minimum_indent: usize,
+        offset: usize,
+        blank_finish: bool,
+    },
+    /// The given line vector was empty
+    EmptyLinesErr,
+    ///
+    UnfinishedErr {
+        lines: Vec<&'src_lines str>,
+        minimum_indent: usize,
+        offset: usize,
+        blank_finish: bool,
+    }
+}
+
+/// A enumeration of the different ways the function `Parser::read_text_block` could succeed or fail.
+pub enum TextBlockResult <'src_lines> {
+    Ok {
+        lines: Vec<&'src_lines str>,
+        offset: usize,
+    },
+    Err {
+        lines: Vec<&'src_lines str>,
+        offset: usize,
+    }
+}
