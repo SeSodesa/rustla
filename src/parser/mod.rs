@@ -64,33 +64,28 @@ mod tests;
 /// `std::option::Option::take`
 /// without invalidating the fields.
 pub struct Parser {
-    /// #### src_lines
+
     /// The source `String` converted to a vector of owned `String`s.
     src_lines: Vec<String>,
 
-    /// #### line_cursor
     /// The absolute line index of src_lines.
     line_cursor: LineCursor,
 
-    /// #### base_indent
     /// The level of basic indentation that the parser is working with.
     /// This is useful information during nested parsing sessions, where
     /// the level of indentation of the incoming block of text to be parsed
     /// needs to be passed to the nested parser for node comparison.
     base_indent: usize,
 
-    /// #### section_level
     /// Keeps track of the section level the parser is currently focused on.
     /// Level 0 indicates document root.
     section_level: usize,
 
-    /// #### doctree
     /// An `Option`al document tree. The optionality is necessary,
     /// as this needs to be given to transition functions for modification
     /// via `Option::take`.
     doctree: Option<DocTree>,
 
-    /// #### machine_stack
     /// A stack of states that function as keys to vectors of state transitions.
     /// The set of transitios is chosen based on the current state on top of the stack.
     state_stack: Vec<State>,
@@ -915,7 +910,10 @@ impl Parser {
             Some(line) => if line.trim().is_empty() {
                 indent_after_marker
             } else {
-                let indent = line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+                let indent = line
+                    .chars()
+                    .take_while(|c| c.is_whitespace())
+                    .count() + base_indent;
                 if indent < marker_indent + 1 {
                     indent_after_marker
                 } else {
