@@ -450,14 +450,10 @@ impl TreeNodeType {
                 };
 
                 // Generating the option string
-                let mut options = Vec::<&String>::new();
-                if let Some(title) = title { options.push(title) }
+                let mut options = Vec::<String>::new();
+                if let Some(title) = title { options.push(format!("title={}", title)) }
                 let options_string = if ! options.is_empty() {
-                    let options = options
-                        .iter()
-                        .map(|s| String::from(*s))
-                        .collect::<Vec<String>>()
-                        .join(LATEX_OPTION_DELIM);
+                    let options = options.join(LATEX_OPTION_DELIM);
                     format!("[{}]", options)
                 } else {
                     String::new()
