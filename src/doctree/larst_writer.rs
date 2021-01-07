@@ -449,7 +449,21 @@ impl TreeNodeType {
                     panic!("Columns widths need to be set for all list tables. Computer says no...")
                 };
 
-                format!("\\begin{{tabular}}{{{}}}\n", widths)
+                // Generating the option string
+                let mut options = Vec::<&String>::new();
+                if let Some(title) = title { options.push(title) }
+                let options_string = if ! options.is_empty() {
+                    let options = options
+                        .iter()
+                        .map(|s| String::from(*s))
+                        .collect::<Vec<String>>()
+                        .join(LATEX_OPTION_DELIM);
+                    format!("[{}]", options)
+                } else {
+                    String::new()
+                };
+
+                format!("\\begin{{tabular}}{}{{{}}}\n", options_string, widths)
             }
             Self::Literal { text } => format!("\\texttt{{{}}}", text),
             Self::LiteralBlock { text } => {
