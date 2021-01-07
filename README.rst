@@ -74,8 +74,8 @@ Options can be given to `rustla` via different flags, specified *before* the reS
 
 The recognized flags are given in the following listing::
 
-    Option              Known values and explanation
-    ===========         ============================
+    Option              Explanation
+    ===========         ===========
 
     --to-stdout         The option "stdout" is self-explanatory:
                         it directs the program output to the standard output of rustla.
