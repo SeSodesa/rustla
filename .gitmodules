@@ -1,4 +1,0 @@
-[submodule "tests"]
-	path = tests
-	url = git@course-gitlab.tuni.fi:ITC/CS/larst/larsttest.git
-	branch = rustla-tests
