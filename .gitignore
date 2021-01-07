@@ -17,7 +17,7 @@
 !Cargo.toml
 !.gitlab-ci.yml
 !.github/workflows/build_and_test.yml
-!tests/
+!tests
 
 # Blacklist specific files
 target/
