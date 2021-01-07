@@ -24,8 +24,8 @@ pub struct HyperrefData {
     /// length of the label formed from said symbol
     /// with integer division and modulo operations:
     /// ```rust
-    /// let label_length = n_of_sym_footnotes / FOOTNOTE_SYMBOLS.len();
-    /// let symbol_index = n_of_sym_footnotes % FOOTNOTE_SYMBOLS.len();
+    /// let label_length = n_of_sym_footnotes / crate::common::FOOTNOTE_SYMBOLS.len();
+    /// let symbol_index = n_of_sym_footnotes % crate::common::FOOTNOTE_SYMBOLS.len();
     /// ```
     n_of_sym_footnotes: u32,
 
