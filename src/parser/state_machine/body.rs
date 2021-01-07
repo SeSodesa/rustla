@@ -2170,10 +2170,10 @@ fn parse_paragraph(
                 Some(relative_indent),
                 true
             ) {
-                Ok((lines, line_offset)) => lines.join("\n").trim_end().to_string(),
-                Err(e) => {
+                TextBlockResult::Ok {lines, offset } => lines.join("\n").trim_end().to_string(),
+                TextBlockResult::Err {lines, offset } => {
                     return TransitionResult::Failure {
-                        message: format!("Error on line {}: {}", line_cursor.sum_total(), e),
+                        message: format!("Error when reading text block on line {}.", line_cursor.sum_total()),
                         doctree: doctree,
                     }
                 }

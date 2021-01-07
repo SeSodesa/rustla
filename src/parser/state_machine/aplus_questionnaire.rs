@@ -25,7 +25,7 @@ pub fn parse_aplus_questionnaire_text(
             let indent_allowed = true;
             let remove_indent = true;
             let alignment = Some(detected_indent);
-            let (block_lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(
+            let (block_lines, offset) = if let TextBlockResult::Ok {lines, offset } = Parser::read_text_block(
                 src_lines,
                 start_line,
                 indent_allowed,

@@ -7,6 +7,7 @@ Copyright © 2020 Santtu Söderholm
 */
 use crate::parser::line_cursor::LineCursor;
 use crate::parser::Parser;
+use crate::parser::types_and_aliases::TextBlockResult;
 
 #[derive(Debug)]
 /// A data structure that will be returned once the table parsing has been completed, or if it fails.
@@ -134,7 +135,7 @@ impl Parser {
             return TableIsolationResult::EndOfInput;
         };
 
-        let (mut lines, offset) = if let Ok((lines, offset)) = Parser::read_text_block(
+        let (mut lines, offset) = if let TextBlockResult::Ok { lines, offset } = Parser::read_text_block(
             src_lines,
             start_line,
             indent_allowed,

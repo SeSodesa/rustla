@@ -6,6 +6,7 @@ Copyright © 2020 Santtu Söderholm
 
 use super::*;
 use crate::parser::types_and_aliases::IndentedBlockResult;
+use crate::parser::types_and_aliases::TextBlockResult;
 
 #[cfg(test)]
 #[test]
@@ -28,9 +29,8 @@ asdfsdafasdfasdfa
     eprintln!("{:#?}", lines);
 
     let (block, offset) = match Parser::read_text_block(&lines, 2, false, false, None, true) {
-        Ok(block) => block,
-        Err(e) => {
-            eprintln!("{}", e);
+        TextBlockResult::Ok {lines, offset } => (lines, offset),
+        TextBlockResult::Err {lines, offset } => {
             panic!();
         }
     };
@@ -68,14 +68,13 @@ asdfsdafasdfasdfa
     eprintln!("{:#?}", lines);
 
     match Parser::read_text_block(&lines, 2, false, false, None, true) {
-        Ok((lines, offset)) => {
+        TextBlockResult::Ok {lines, offset } => {
             assert_eq!(
                 vec!["asdsafasfgasf  fwsdaf", "asfsdafasdfffasfsdfsaf"],
                 lines
             )
         }
-        Err(e) => {
-            eprintln!("{:#?}", e);
+        TextBlockResult::Err {lines, offset } => {
             panic!()
         }
     };
@@ -101,19 +100,18 @@ asdfsdafasdfasdfa
     eprintln!("{:#?}", lines);
 
     match Parser::read_text_block(&lines, 2, true, false, None, true) {
-        Ok((block, offset)) => {
-            eprintln!("{:#?}", block);
+        TextBlockResult::Ok {lines, offset } => {
+            eprintln!("{:#?}", lines);
 
             assert_eq!(
-                block.join("\n"),
-                "  asdsafasfgasf  fwsdaf
+                lines.join("\n"),
+"  asdsafasfgasf  fwsdaf
   asfsdafasdfffasfsdfsaf
   asfdfasdfasdfafasdfasdf
   asdfsdafasdfsdafadsfsdf"
             );
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        TextBlockResult::Err {lines, offset } => {
             panic!();
         }
     };

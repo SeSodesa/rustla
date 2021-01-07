@@ -27,6 +27,7 @@ use crate::parser::types_and_aliases::{
 use crate::parser::Parser;
 use crate::parser::converters;
 use crate::parser::types_and_aliases::IndentedBlockResult;
+use crate::parser::types_and_aliases::TextBlockResult;
 
 pub fn parse_standard_admonition(
     src_lines: &Vec<String>,
@@ -1872,8 +1873,8 @@ pub fn parse_aplus_pick_one(
 
     let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
         let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent),true) {
-            Ok((lines, offset)) => (lines, offset),
-            Err(message) => return TransitionResult::Failure {
+            TextBlockResult::Ok {lines, offset } => (lines, offset),
+            TextBlockResult::Err { lines, offset } => return TransitionResult::Failure {
                 message: format!("Could not read pick-one assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
                 doctree: doctree
             }
@@ -2324,8 +2325,8 @@ pub fn parse_aplus_pick_any(
 
     let assignment_inline_nodes: Vec<TreeNodeType> = if !CHOICE_RE.is_match(start_line) {
         let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent), true) {
-            Ok((lines, offset)) => (lines, offset),
-            Err(message) => return TransitionResult::Failure {
+            TextBlockResult::Ok {lines, offset } => (lines, offset),
+            TextBlockResult::Err {lines, offset } => return TransitionResult::Failure {
                 message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
                 doctree: doctree
             }
@@ -2745,8 +2746,8 @@ pub fn parse_aplus_freetext(
 
     let assignment_inline_nodes: Vec<TreeNodeType> = {
         let (block_lines, offset) = match Parser::read_text_block(src_lines, line_cursor.relative_offset(),  true, true, Some(body_indent), true) {
-            Ok((lines, offset)) => (lines, offset),
-            Err(message) => return TransitionResult::Failure {
+            TextBlockResult::Ok { lines, offset } => (lines, offset),
+            TextBlockResult::Err { lines, offset } => return TransitionResult::Failure {
                 message: format!("Could not read pick-any assignment lines starting on line {}. Computer says no...", line_cursor.sum_total()),
                 doctree: doctree
             }

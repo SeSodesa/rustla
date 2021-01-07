@@ -596,20 +596,21 @@ impl Parser {
         remove_indent: bool,
         alignment: Option<usize>,
         until_blank: bool
-    ) -> Result<(Vec<String>, usize), String> {
+    ) -> TextBlockResult {
+
         let mut line_num = start_line;
         let last_line = src_lines.len();
-
         let mut lines: Vec<String> = Vec::with_capacity(last_line - start_line);
 
         while line_num < last_line {
             let mut line: String = match src_lines.get(line_num) {
                 Some(line) => line.clone(),
-                None => {
-                    return Err(format!(
-                        "Text block could not be read because of line {}...",
-                        line_num
-                    ))
+                None => return TextBlockResult::Err {
+                    offset: {
+                        lines.shrink_to_fit();
+                        lines.len()
+                    },
+                    lines: lines,
                 }
             };
 
@@ -649,7 +650,10 @@ impl Parser {
 
         lines.shrink_to_fit();
         let offset = lines.len();
-        Ok((lines, offset))
+        TextBlockResult::Ok {
+            lines: lines,
+            offset: offset
+        }
     }
 
     /// Reads in a block of indented lines text.

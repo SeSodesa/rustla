@@ -12,6 +12,7 @@ use crate::parser::types_and_aliases::TransitionResult;
 use crate::parser::types_and_aliases::{LineAdvance, PushOrPop};
 use crate::parser::Parser;
 use crate::parser::types_and_aliases::IndentedBlockResult;
+use crate::parser::types_and_aliases::TextBlockResult;
 
 /// A function for parsing indented literal block nodes.
 pub fn literal_block(
@@ -161,7 +162,7 @@ fn parse_quoted_literal(
         Some(detected_indent),
         true
     ) {
-        Ok((mut lines, line_offset)) => {
+        TextBlockResult::Ok { mut lines, offset } => {
             for line in lines.iter_mut() {
                 let mut chars = line.chars();
                 if let Some(c) = chars.next() {
@@ -178,10 +179,9 @@ fn parse_quoted_literal(
                     }
                 }
             }
-            (lines.join("\n"), line_offset)
+            (lines.join("\n"), offset)
         }
-        Err(e) => {
-            eprintln!("{}", e);
+        TextBlockResult::Err {lines, offset } => {
             return TransitionResult::Failure {
                 message: format!(
                     "Error when reading lines of text of a supposed paragraph block on line {}. Computer says no...",
