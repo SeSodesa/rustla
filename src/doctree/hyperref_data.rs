@@ -22,11 +22,7 @@ pub struct HyperrefData {
     /// the next symbol to be used in
     /// `crate::common::FOONOTE_SYMBOLS` and the
     /// length of the label formed from said symbol
-    /// with integer division and modulo operations:
-    /// ```rust
-    /// let label_length = n_of_sym_footnotes / crate::common::FOOTNOTE_SYMBOLS.len();
-    /// let symbol_index = n_of_sym_footnotes % crate::common::FOOTNOTE_SYMBOLS.len();
-    /// ```
+    /// with integer division and modulo operations.
     n_of_sym_footnotes: u32,
 
     /// Number of encountered symbolic footnote references
