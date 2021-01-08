@@ -27,11 +27,13 @@ pub fn run() -> Result<(), MainError> {
 
     let rustla_options = crate::rustla_options::ruSTLaOptions::new(&args);
 
-    let (src_lines, path): (Vec<String>, std::path::PathBuf) = if let Some(path) = args.last() {
+    let mut src_lines = Vec::new();
+
+    // Populate src_lines and generate a path buffer to the source
+    // (empty if read from stdin)
+    let path: std::path::PathBuf = if let Some(arg) = args.last() {
         if args_len == 1 {
             // Handle no arguments first
-
-            let mut src_lines = Vec::new();
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
                 match line {
@@ -45,8 +47,8 @@ pub fn run() -> Result<(), MainError> {
                 }
             }
 
-            (src_lines, std::path::PathBuf::new())
-        } else if let Ok(pathbuf) = std::fs::canonicalize(path) {
+            std::path::PathBuf::new()
+        } else if let Ok(pathbuf) = std::fs::canonicalize(arg) {
             let line_iter = match crate::common::read_path_lines(&pathbuf) {
                 Ok(lines) => lines,
                 Err(e) => {
@@ -56,8 +58,6 @@ pub fn run() -> Result<(), MainError> {
                     )))
                 }
             };
-
-            let mut src_lines: Vec<String> = Vec::new();
             for line in line_iter {
                 match line {
                     Ok(line) => src_lines.push(line),
@@ -69,9 +69,8 @@ pub fn run() -> Result<(), MainError> {
                 }
             }
 
-            (src_lines, pathbuf)
+            pathbuf
         } else {
-            let mut src_lines = Vec::new();
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
                 match line {
@@ -84,7 +83,7 @@ pub fn run() -> Result<(), MainError> {
                     }
                 }
             }
-            (src_lines, std::path::PathBuf::new())
+            std::path::PathBuf::new()
         }
     } else {
         unreachable!("No arguments, not even the program itself? Computer says no...")
