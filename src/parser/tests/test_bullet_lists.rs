@@ -25,7 +25,8 @@ fn bullet_list_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => (),
         _ => panic!("No bullet list node where one was expected!\n"),
     }
@@ -56,9 +57,9 @@ fn bullet_list_02() {
     doctree.print_tree();
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -66,9 +67,9 @@ fn bullet_list_02() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -100,20 +101,24 @@ fn bullet_list_03() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("First child of BulletList wasn't a ListItem!\n"),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("Second child of BulletList wasn't a ListItem!\n"),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -121,9 +126,9 @@ fn bullet_list_03() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -158,20 +163,24 @@ asfasdfdsfasfasdfasfd
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("First child of BulletList wasn't a ListItem!\n"),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("Second child of BulletList wasn't a ListItem!\n"),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -179,16 +188,17 @@ asfasdfdsfasfasdfasfd
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!("Third non-whitespace child of ListItem wasn't a paragraph!\n"),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!("No empty line after bullet list!\n"),
     }
@@ -224,22 +234,26 @@ asfasdfdsfasfasdfasfd
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("First child of BulletList wasn't a ListItem!\n"),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(2)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
         _ => panic!("Third child of BulletListItem wasn't a sublist!\n"),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("Third child of BulletList wasn't a ListItem!\n"),
     }
@@ -281,15 +295,17 @@ asfasdfdsfasfasdfasfd
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("First non-whitespace child of BulletList wasn't a ListItem!\n"),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -297,9 +313,9 @@ asfasdfdsfasfasdfasfd
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(2)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
@@ -307,10 +323,10 @@ asfasdfdsfasfasdfasfd
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => (),
@@ -318,10 +334,10 @@ asfasdfdsfasfasdfasfd
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => (),
@@ -329,18 +345,20 @@ asfasdfdsfasfasdfasfd
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(1)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
         _ => panic!("No BulletListItem!\n"),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => (),
         _ => panic!("Second non-whitespace child of BulletList wasn't a BulletList!\n"),
     }

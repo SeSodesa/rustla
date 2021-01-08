@@ -37,20 +37,26 @@ fn mixed_nested_lists_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::EnumeratedList { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::EnumeratedListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
@@ -58,10 +64,14 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => (),
@@ -69,10 +79,14 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => (),
@@ -80,11 +94,16 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(1)
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(1).unwrap()
+
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::EnumeratedList { .. } => (),
@@ -92,16 +111,21 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+
+        .shared_child(0).unwrap()
+
+        .shared_child(0).unwrap()
+
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::EnumeratedListItem { .. } => (),
         _ => panic!(),
     }
@@ -184,18 +208,23 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Section {title_text, level, line_style} => {
             assert_eq!(title_text, "Binomijakauma");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::UnknownDirective {directive_name, argument, options, ..} => {
             assert_eq!(directive_name, "maaritelma");
             assert_eq!(argument, "");
@@ -203,12 +232,18 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(1).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(1).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::MathBlock { math_block, .. } => {
             assert_eq!(math_block, "f(x) =\n\
             \\begin{cases}\n\
@@ -217,24 +252,32 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(2).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::MathBlock { math_block, name, class } => {
             assert_eq!(math_block, "P(X=x)=\\binom{n}{x}p^x(1-p)^{n-x}.");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::MathBlock { math_block, name, class } => {
             assert_eq!(math_block, "P(X=x)=\\binom{n}{x}p^x(1-p)^{n-x}.");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(4).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap().shared_data() {
         TreeNodeType::UnknownDirective { directive_name, argument, options, .. } => {
             assert_eq!(directive_name, "maaritelma");
             assert_eq!(argument, "");
@@ -242,35 +285,51 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(4).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(4).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::MathBlock { math_block, .. } => {
             assert_eq!(math_block, "\\Omega=\\{0,1,\\ldots,n\\}");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(4).shared_child(2).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(4).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::MathBlock { math_block, .. } => {
             assert_eq!(math_block, "f(x)=b(x; n, p)=\\binom{n}{x}p^x(1-p)^{n-x},\\qquad\\text{kun }x \\in \\Omega.");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(5).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(5).unwrap().shared_data() {
         TreeNodeType::Image { uri, alt, height, width, scale, align, target, name, class, inline } => {
             assert_eq!(uri, "kuvat/kuva29bin1.*");
         }
         _ => panic!()
     }
-    match doctree.shared_child(0).shared_child(6).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(6).unwrap().shared_data() {
         TreeNodeType::Image { uri, alt, height, width, scale, align, target, name, class, inline } => {
             assert_eq!(uri, "kuvat/kuva29bin2.*");
         }

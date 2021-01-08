@@ -38,12 +38,15 @@ term 4 : classifier one : classifier two
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::DefinitionList { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::DefinitionListItem {
             term, classifiers, ..
         } => {
@@ -54,7 +57,9 @@ term 4 : classifier one : classifier two
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::DefinitionListItem {
             term, classifiers, ..
         } => {
@@ -65,7 +70,9 @@ term 4 : classifier one : classifier two
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(2).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::DefinitionListItem {
             term, classifiers, ..
         } => {
@@ -75,7 +82,9 @@ term 4 : classifier one : classifier two
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::DefinitionListItem {
             term, classifiers, ..
         } => {

@@ -31,7 +31,8 @@ fn math_block_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::MathBlock {
             math_block,
             name,
@@ -72,7 +73,8 @@ fn math_block_02() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::MathBlock {
             math_block: block_text,
             name,
@@ -88,7 +90,8 @@ fn math_block_02() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::MathBlock {
             math_block: block_text,
             name,

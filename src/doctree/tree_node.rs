@@ -1000,27 +1000,27 @@ impl TreeNode {
 
     /// Returns a shared reference to a child node of a given index.
     /// Panics, if the child does not exist.
-    pub fn shared_child(&self, index: usize) -> &Self {
+    pub fn shared_child(&self, index: usize) -> Option<&Self> {
         if let Some(children) = &self.children {
             match children.get(index) {
-                Some(node) => node,
-                None => panic!("No child at index {}. Computer says no...", index),
+                Some(node) => Some(node),
+                None => None,
             }
         } else {
-            panic!("Current node cannot have children. Computer says no...")
+            None
         }
     }
 
     /// Returns a mutable reference to a child node of a given index.
     /// Panics, if the child does not exist.
-    pub fn mut_child(&mut self, index: usize) -> &mut Self {
+    pub fn mut_child(&mut self, index: usize) -> Option<&mut Self> {
         if let Some(children) = &mut self.children {
             match children.get_mut(index) {
-                Some(node) => node,
-                None => panic!("No child at index {}.\nComputer says no...\n", index),
+                Some(node) => Some(node),
+                None => None,
             }
         } else {
-            panic!("Current node cannot have children. Computer says no...")
+            None
         }
     }
 

@@ -49,7 +49,8 @@ fn list_table_01() {
         stub_columns,
         align,
         ..
-    } = doctree.shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(title.as_ref().unwrap().as_str(), "A title");
         if let Some(TableColWidths::Columns(vals)) = widths {
@@ -80,29 +81,31 @@ fn list_table_01() {
     } else {
         panic!()
     }
-    if let TreeNodeType::BulletList { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::BulletList { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
     if let TreeNodeType::BulletListItem { .. } = doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         if let TreeNodeType::BulletList { .. } = doctree
-            .shared_child(0)
-            .shared_child(0)
-            .shared_child(0)
-            .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
             .shared_data()
         {
             if let TreeNodeType::BulletListItem { .. } = doctree
-                .shared_child(0)
-                .shared_child(0)
-                .shared_child(0)
-                .shared_child(0)
-                .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
                 .shared_data()
             {
                 // In table cell (1,1)
@@ -116,9 +119,9 @@ fn list_table_01() {
         panic!()
     }
     if let TreeNodeType::BulletListItem { .. } = doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         // etc.

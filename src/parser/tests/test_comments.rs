@@ -27,7 +27,8 @@ fn comment_01() {
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Comment { text } => {
             if text.as_ref().unwrap().as_str() != "This is a comment on a single line" {
                 eprintln!("Erraneous text: {:#?}\n", text);
@@ -58,7 +59,8 @@ fn comment_02() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Comment { text } => {
             if text.as_ref().unwrap().as_str()
                 != "This is a single-line comment on the line following the marker"
@@ -93,7 +95,8 @@ The above comment is empty.
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Comment { text } => {
             if text.is_some() {
                 eprintln!("Erraneous text: {:#?}\n", text);
@@ -103,7 +106,8 @@ The above comment is empty.
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
@@ -134,20 +138,23 @@ This paragraph ends the test...
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => {}
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Comment { text } => {
@@ -159,16 +166,17 @@ This paragraph ends the test...
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }

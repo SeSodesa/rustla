@@ -91,41 +91,56 @@ fn aplus_questionnaire_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::AplusQuestionnaire { .. } = doctree.shared_child(0).shared_data() {
+    if let TreeNodeType::AplusQuestionnaire { .. } = doctree
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
-    if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(1).shared_data()
+    if let TreeNodeType::AplusPickOne { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
     } else {
         panic!()
     }
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(2).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
     } else {
         panic!()
     }
-    if let TreeNodeType::AplusPickOne { .. } = doctree.shared_child(0).shared_child(3).shared_data()
+    if let TreeNodeType::AplusPickOne { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data()
     {
     } else {
         panic!()
     }
-    if let TreeNodeType::AplusPickAny { .. } = doctree.shared_child(0).shared_child(4).shared_data()
+    if let TreeNodeType::AplusPickAny { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap().shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusFreeText { .. } =
-        doctree.shared_child(0).shared_child(5).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(5).unwrap().shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusFreeText { .. } =
-        doctree.shared_child(0).shared_child(6).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(6).unwrap().shared_data()
     {
     } else {
         panic!()
@@ -179,57 +194,59 @@ Kurssi pyytää siten jokaiselta opiskelijalta suostumuksen datan käyttöön.
     doctree.print_tree();
 
     if let TreeNodeType::AplusQuestionnaire { .. } =
-        doctree.shared_child(0).shared_child(2).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusPickOne { .. } = doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::Paragraph { .. } = doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusPickChoices { .. } = doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusPickChoice { .. } = doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusPickChoice { .. } = doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
     } else {

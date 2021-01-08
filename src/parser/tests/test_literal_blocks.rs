@@ -30,7 +30,8 @@ fn literal_block_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::LiteralBlock { text } => {
             assert_eq!(text.as_str(), "This is a literal block of text,\nindicated by the \"::\" at the end of last paragraph.")
         }
@@ -68,7 +69,8 @@ as that of the literal block indicator "::".
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::LiteralBlock { text } => {
             assert_eq!(text.as_str(), "An indented literal block with\nmultiple lines\n\n  Even more indent here.\n\n    And even more...\nReturn to original level of indentation\n")
         }
@@ -107,7 +109,8 @@ This paragraph ends the literal block.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Code {
             text,
             language,

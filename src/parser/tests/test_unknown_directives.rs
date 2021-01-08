@@ -32,7 +32,8 @@ A paragraph.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::UnknownDirective {
             directive_name,
             argument,
@@ -47,7 +48,8 @@ A paragraph.
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
@@ -86,12 +88,14 @@ This is no longer a part of the above literal block inside a block quote.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::UnknownDirective {
             directive_name,
             argument,
@@ -109,17 +113,22 @@ This is no longer a part of the above literal block inside a block quote.
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(2).shared_data() {
+    match doctree
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
@@ -152,7 +161,8 @@ fn unknown_directive_no_argument_nor_options() {
         argument,
         options,
         ..
-    } = doctree.shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(directive_name, "unknown");
         assert_eq!(argument, "");
@@ -161,7 +171,9 @@ fn unknown_directive_no_argument_nor_options() {
         panic!()
     }
 
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
@@ -197,7 +209,8 @@ fn unknown_directive_no_argument_but_options() {
         argument,
         options,
         ..
-    } = doctree.shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(directive_name, "unknown");
         assert_eq!(argument, "");
@@ -208,7 +221,9 @@ fn unknown_directive_no_argument_but_options() {
         panic!()
     }
 
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
@@ -242,7 +257,8 @@ fn unknown_directive_no_options_but_argument() {
         argument,
         options,
         ..
-    } = doctree.shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(directive_name, "unknown");
         assert_eq!(argument, "argument on multiple lines");
@@ -251,7 +267,9 @@ fn unknown_directive_no_options_but_argument() {
         panic!()
     }
 
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }

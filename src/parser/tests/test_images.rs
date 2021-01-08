@@ -41,7 +41,8 @@ fn image_01() {
 
     use crate::common::HTMLAlignment;
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Image {
             uri,
             alt,
@@ -73,7 +74,8 @@ fn image_01() {
         _ => panic!("Not a simple image..."),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => {}
         _ => panic!(),
     }
@@ -117,28 +119,37 @@ fn figure_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Figure { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Image { .. } => {}
         _ => panic!(),
     }
 
     // This node is transformed into a caption during the transdormation phase of the doctree.
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Caption { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(2).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => {}
         _ => panic!(),
     }
@@ -177,20 +188,23 @@ Back to no indentation.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::BulletListItem { .. } => {}
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => {}
@@ -198,9 +212,9 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Figure { .. } => {}
@@ -208,10 +222,10 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Image { .. } => {}
@@ -219,10 +233,10 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Comment { .. } => {}
@@ -230,10 +244,10 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(2)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(2).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => {}
@@ -241,10 +255,10 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(3)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(3).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => {}
@@ -252,11 +266,11 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(3)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(3).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => {}
@@ -264,18 +278,19 @@ Back to no indentation.
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(3)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(3).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletListItem { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
@@ -307,27 +322,31 @@ Back to no indentation.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
-        TreeNodeType::Figure { .. } => {}
-        _ => panic!(),
-    }
-
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Figure { .. } => {}
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
+        TreeNodeType::Figure { .. } => {}
+        _ => panic!(),
+    }
+
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }

@@ -57,7 +57,8 @@ fn poi_01() {
         not_in_book,
         no_poi_box,
         ..
-    } = doctree.shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(title, r#"Title text"#);
         assert_eq!(
@@ -99,21 +100,29 @@ fn poi_01() {
         panic!()
     }
 
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
     } else {
         panic!()
     }
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(1).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
     } else {
         panic!()
     }
     if let TreeNodeType::AplusColBreak { .. } =
-        doctree.shared_child(0).shared_child(2).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data()
     {
     } else {
         panic!()
     }
-    if let TreeNodeType::Paragraph { .. } = doctree.shared_child(0).shared_child(3).shared_data() {
+    if let TreeNodeType::Paragraph { .. } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
     } else {
         panic!()
     }

@@ -40,35 +40,23 @@ An ending paragraph...
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::FieldList { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
-        .shared_data()
-    {
-        TreeNodeType::Paragraph { .. } => (),
-        _ => panic!(),
-    }
-
-    match doctree.shared_child(0).shared_child(1).shared_data() {
-        TreeNodeType::FieldListItem { .. } => (),
-        _ => panic!(),
-    }
-
-    match doctree
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
@@ -76,9 +64,26 @@ An ending paragraph...
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
+        TreeNodeType::FieldListItem { .. } => (),
+        _ => panic!(),
+    }
+
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => (),
+        _ => panic!(),
+    }
+
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
@@ -110,17 +115,20 @@ An ending paragraph...
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::FieldList { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(2).shared_data() {
+    match doctree
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
@@ -155,80 +163,91 @@ fn field_list_03() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::FieldList { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(1)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(2).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(2)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::BulletList { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(3).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(3)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(4).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap().shared_data() {
         TreeNodeType::FieldListItem { .. } => (),
         _ => panic!(),
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(4)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         TreeNodeType::Paragraph { .. } => (),

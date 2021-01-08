@@ -31,17 +31,22 @@ fn footnote_01() {
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(1).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BulletList { .. } => (),
         _ => panic!(),
     }
@@ -70,22 +75,28 @@ fn footnote_02() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Footnote { .. } => (),
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => (),
         _ => panic!(),
     }
@@ -140,7 +151,8 @@ fn footnote_03() {
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "*" {
             } else {
@@ -150,7 +162,8 @@ fn footnote_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(2).shared_data() {
+    match doctree
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "‡" {
             } else {
@@ -160,7 +173,8 @@ fn footnote_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(10).shared_data() {
+    match doctree
+        .shared_child(10).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "**" {
             } else {
@@ -170,7 +184,8 @@ fn footnote_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(12).shared_data() {
+    match doctree
+        .shared_child(12).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "‡‡" {
             } else {
@@ -180,7 +195,8 @@ fn footnote_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(20).shared_data() {
+    match doctree
+        .shared_child(20).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "***" {
             } else {
@@ -190,7 +206,8 @@ fn footnote_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(28).shared_data() {
+    match doctree
+        .shared_child(28).unwrap().shared_data() {
         TreeNodeType::Footnote { label, .. } => {
             if label == "♦♦♦" {
             } else {
@@ -226,7 +243,8 @@ fn footnote_04() {
 
     doctree.print_tree();
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             if label == "2" && target == "2" {
             } else {
@@ -236,7 +254,8 @@ fn footnote_04() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(1).shared_data() {
+    match &doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "1");
             assert_eq!(label, "1");
@@ -244,7 +263,8 @@ fn footnote_04() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(2).shared_data() {
+    match &doctree
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "3");
             assert_eq!(target, "3");
@@ -252,7 +272,8 @@ fn footnote_04() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(3).shared_data() {
+    match &doctree
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "4");
             assert_eq!(target, "4");
@@ -260,7 +281,8 @@ fn footnote_04() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(4).shared_data() {
+    match &doctree
+        .shared_child(4).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "5");
             assert_eq!(target, "5");
@@ -294,7 +316,8 @@ fn footnote_05() {
 
     doctree.print_tree();
 
-    match &doctree.shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             if label == "2" && target == "2" {
             } else {
@@ -304,7 +327,8 @@ fn footnote_05() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(1).shared_data() {
+    match &doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "1");
             assert_eq!(target, "1");
@@ -312,7 +336,8 @@ fn footnote_05() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(2).shared_data() {
+    match &doctree
+        .shared_child(2).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             if label == "*" && target == "*" {
             } else {
@@ -322,7 +347,9 @@ fn footnote_05() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(2).shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(2).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             assert_eq!(label, "3");
             assert_eq!(target, "3");
@@ -330,7 +357,8 @@ fn footnote_05() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(3).shared_data() {
+    match &doctree
+        .shared_child(3).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             if label == "†" && target == "†" {
             } else {
@@ -340,7 +368,8 @@ fn footnote_05() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(4).shared_data() {
+    match &doctree
+        .shared_child(4).unwrap().shared_data() {
         TreeNodeType::Footnote { label, target, .. } => {
             if label == "2" && target == "2" {
             } else {
@@ -372,7 +401,8 @@ fn citation_01() {
 
     doctree.print_tree();
 
-    match &doctree.shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Citation { label, .. } => {
             if !(label == "cit2005") {
                 panic!()
@@ -381,7 +411,9 @@ fn citation_01() {
         _ => panic!(),
     }
 
-    match &doctree.shared_child(0).shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
@@ -411,19 +443,24 @@ fn citation_02() {
 
     doctree.print_tree();
 
-    match &doctree.shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Citation { label, .. } => {
             assert_eq!(label, "one");
         }
         _ => panic!(),
     }
 
-    match &doctree.shared_child(0).shared_child(0).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Paragraph { .. } => {}
         _ => panic!(),
     }
 
-    match &doctree.shared_child(0).shared_child(1).shared_data() {
+    match &doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::BlockQuote { body_indent } => {
             assert_eq!(*body_indent, 7);
         }
@@ -455,7 +492,8 @@ Paragraph here. Please give me the labels \"target1\" and \"target2\".
 
     doctree.print_tree();
 
-    if let Some(labels) = doctree.shared_child(0).shared_target_label() {
+    if let Some(labels) = doctree
+        .shared_child(0).unwrap().shared_target_label() {
         assert_eq!(labels.join("-").as_str(), "target1-target2")
     } else {
         panic!()
@@ -490,8 +528,8 @@ fn hyperlink_target_02() {
     doctree.print_tree();
 
     if let Some(labels) = doctree
-        .shared_child(0)
-        .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
         .shared_target_label()
     {
         assert_eq!(
@@ -530,7 +568,8 @@ fn hyperlink_target_03() {
     eprintln!("Doctree targets: {:#?}\n", doctree.shared_targets());
     eprintln!("Doctree references: {:#?}\n", doctree.shared_references());
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::ExternalHyperlinkTarget { uri, target, .. } => {
             if target != "an-external-hyperlink" || uri != "https://www.address.fi//" {
                 eprintln!("Target: {:#?}\nURI: {:#?}\n", target, uri);
@@ -540,7 +579,8 @@ fn hyperlink_target_03() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::IndirectHyperlinkTarget {
             target,
             indirect_target,
@@ -583,7 +623,8 @@ fn hyperlink_target_04() {
     eprintln!("Doctree targets: {:#?}", doctree.shared_targets());
     eprintln!("Doctree references: {:#?}", doctree.shared_references());
 
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::ExternalHyperlinkTarget { target, uri, .. } => {
             assert_eq!(target, "[[-ANON-LABEL-1-]]");
             assert_eq!(uri, "https://www.address.fi//");
@@ -591,7 +632,8 @@ fn hyperlink_target_04() {
         _ => panic!(),
     }
 
-    match doctree.shared_child(1).shared_data() {
+    match doctree
+        .shared_child(1).unwrap().shared_data() {
         TreeNodeType::IndirectHyperlinkTarget {
             target,
             indirect_target,
@@ -636,18 +678,22 @@ A Section title
     doctree.print_tree();
 
     // Structural tests
-    match doctree.shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Section { .. } => {}
         _ => panic!(),
     }
 
-    match doctree.shared_child(0).shared_child(0).shared_data() {
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Footnote { .. } => {}
         _ => panic!(),
     }
 
     // Target tests
-    match doctree.shared_child(0).shared_target_labels() {
+    match doctree
+        .shared_child(0).unwrap().shared_target_labels() {
         None => panic!(),
         Some(labels) => {
             if labels[0].as_str() != "target label" || labels[1].as_str() != "a section title" {
@@ -657,8 +703,8 @@ A Section title
     }
 
     match doctree
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_target_labels()
     {
         None => panic!(),

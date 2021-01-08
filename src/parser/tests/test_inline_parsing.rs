@@ -135,7 +135,9 @@ fn embedded_uri_01() {
     if let TreeNodeType::Reference {
         displayed_text,
         reference,
-    } = doctree.shared_child(0).shared_child(0).shared_data()
+    } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data()
     {
         if let Reference::URI(ref_str) = reference {
             assert_eq!(ref_str, "https://docs.rs/regex/1.3.9/regex/");
@@ -275,54 +277,70 @@ maybe a -simple-reference__- as well.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(8).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(8).unwrap().shared_data() {
         assert_eq!(text, "\"");
     } else {
         panic!()
     }
 
     if let TreeNodeType::StrongEmphasis { text } =
-        doctree.shared_child(0).shared_child(9).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(9).unwrap().shared_data()
     {
         assert_eq!(text, "strong emphasis");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(10).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(10).unwrap().shared_data() {
         assert_eq!(text, "\",");
     } else {
         panic!()
     }
 
     if let TreeNodeType::WhiteSpace { text } =
-        doctree.shared_child(0).shared_child(11).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(11).unwrap().shared_data()
     {
         assert_eq!(text, "\n");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(12).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(12).unwrap().shared_data() {
         assert_eq!(text, "<");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Emphasis { text } = doctree.shared_child(0).shared_child(13).shared_data()
+    if let TreeNodeType::Emphasis { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(13).unwrap().shared_data()
     {
         assert_eq!(text, "text in italics");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(14).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(14).unwrap().shared_data() {
         assert_eq!(text, ">,");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(16).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(16).unwrap().shared_data() {
         assert_eq!(text, "(");
     } else {
         panic!()
@@ -331,7 +349,9 @@ maybe a -simple-reference__- as well.
     if let TreeNodeType::Reference {
         displayed_text,
         reference,
-    } = doctree.shared_child(0).shared_child(17).shared_data()
+    } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(17).unwrap().shared_data()
     {
         if let Reference::Internal(ref_str) = reference {
             assert_eq!(
@@ -346,13 +366,17 @@ maybe a -simple-reference__- as well.
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(18).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(18).unwrap().shared_data() {
         assert_eq!(text, "),");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(24).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(24).unwrap().shared_data() {
         assert_eq!(text, "-");
     } else {
         panic!()
@@ -361,7 +385,9 @@ maybe a -simple-reference__- as well.
     if let TreeNodeType::Reference {
         displayed_text,
         reference,
-    } = doctree.shared_child(0).shared_child(25).shared_data()
+    } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(25).unwrap().shared_data()
     {
         assert_eq!(displayed_text, &None);
         if let Reference::Internal(ref_str) = reference {
@@ -373,7 +399,9 @@ maybe a -simple-reference__- as well.
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(26).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(26).unwrap().shared_data() {
         assert_eq!(text, "-");
     } else {
         panic!()
@@ -400,46 +428,60 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(4).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap().shared_data() {
         assert_eq!(text, "\"*\"quoted*");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(5).shared_data()
+    if let TreeNodeType::WhiteSpace { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(5).unwrap().shared_data()
     {
         assert_eq!(text, " ");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(6).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(6).unwrap().shared_data() {
         assert_eq!(text, "(**)start**");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(7).shared_data()
+    if let TreeNodeType::WhiteSpace { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(7).unwrap().shared_data()
     {
         assert_eq!(text, " ");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(8).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(8).unwrap().shared_data() {
         assert_eq!(text, "\'`\'strings");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(9).shared_data()
+    if let TreeNodeType::WhiteSpace { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(9).unwrap().shared_data()
     {
         assert_eq!(text, " "); // <- Plain text is LaTeX-escaped
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(10).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(10).unwrap().shared_data() {
         assert_eq!(text, "<"); // <- Plain text is LaTeX-escaped
     } else {
         panic!()
@@ -448,7 +490,9 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
     if let TreeNodeType::Reference {
         displayed_text,
         reference,
-    } = doctree.shared_child(0).shared_child(11).shared_data()
+    } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(11).unwrap().shared_data()
     {
         if let Reference::URI(ref_str) = reference {
             assert_eq!(ref_str, "https://www.absolute.uri.fi"); // <- Plain text is LaTeX-escaped
@@ -459,7 +503,9 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(12).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(12).unwrap().shared_data() {
         assert_eq!(text, ">`\\_\\_."); // <- Plain text is LaTeX-escaped
     } else {
         panic!()
@@ -486,13 +532,17 @@ Test for ats: @``@literal``.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(6).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(6).unwrap().shared_data() {
         assert_eq!(text, "@");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Literal { text } = doctree.shared_child(0).shared_child(7).shared_data() {
+    if let TreeNodeType::Literal { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(7).unwrap().shared_data() {
         assert_eq!(text, "@literal");
     } else {
         panic!()
@@ -527,14 +577,18 @@ The following should produce a title reference: `Söderholm2020`.
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Emphasis { text } = doctree.shared_child(0).shared_child(4).shared_data() {
+    if let TreeNodeType::Emphasis { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap().shared_data() {
         assert_eq!(text, "interpreted text");
     } else {
         panic!()
     }
 
     if let TreeNodeType::Math { text, name, class } =
-        doctree.shared_child(1).shared_child(16).shared_data()
+        doctree
+        .shared_child(1).unwrap()
+        .shared_child(16).unwrap().shared_data()
     {
         assert_eq!(
             text,
@@ -547,7 +601,9 @@ The following should produce a title reference: `Söderholm2020`.
     if let TreeNodeType::TitleReference {
         displayed_text,
         target_label,
-    } = doctree.shared_child(2).shared_child(12).shared_data()
+    } = doctree
+        .shared_child(2).unwrap()
+        .shared_child(12).unwrap().shared_data()
     {
         assert_eq!(displayed_text, "Söderholm2020");
         assert_eq!(target_label, "söderholm2020");
@@ -558,7 +614,9 @@ The following should produce a title reference: `Söderholm2020`.
     if let TreeNodeType::TitleReference {
         displayed_text,
         target_label,
-    } = doctree.shared_child(3).shared_child(14).shared_data()
+    } = doctree
+        .shared_child(3).unwrap()
+        .shared_child(14).unwrap().shared_data()
     {
         assert_eq!(displayed_text, "Söderholm2020");
         assert_eq!(target_label, "söderholm2020");
@@ -567,7 +625,9 @@ The following should produce a title reference: `Söderholm2020`.
     }
 
     if let TreeNodeType::StrongEmphasis { text } =
-        doctree.shared_child(4).shared_child(0).shared_data()
+        doctree
+        .shared_child(4).unwrap()
+        .shared_child(0).unwrap().shared_data()
     {
         assert_eq!(text, "Strong emphasis");
     } else {
@@ -598,19 +658,25 @@ Unknown roles also trigger literal text: :role1:`this is a literal`,
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Literal { text } = doctree.shared_child(0).shared_child(16).shared_data() {
+    if let TreeNodeType::Literal { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(16).unwrap().shared_data() {
         assert_eq!(text, ":emphasis:`text here`:strong:");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Literal { text } = doctree.shared_child(1).shared_child(12).shared_data() {
+    if let TreeNodeType::Literal { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(12).unwrap().shared_data() {
         assert_eq!(text, ":role1:`this is a literal`");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Literal { text } = doctree.shared_child(1).shared_child(15).shared_data() {
+    if let TreeNodeType::Literal { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(15).unwrap().shared_data() {
         assert_eq!(text, "`as is this`:role2:");
     } else {
         panic!()
@@ -637,7 +703,9 @@ fn quoted_interpreted_text_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "(");
     } else {
         panic!()
@@ -646,7 +714,9 @@ fn quoted_interpreted_text_01() {
     if let TreeNodeType::TitleReference {
         displayed_text,
         target_label,
-    } = doctree.shared_child(0).shared_child(1).shared_data()
+    } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
         assert_eq!(displayed_text, r#"a "quoted" title reference"#);
         assert_eq!(target_label, r#"a "quoted" title reference"#);
@@ -654,7 +724,9 @@ fn quoted_interpreted_text_01() {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(2).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         assert_eq!(text, ")");
     } else {
         panic!()
@@ -683,39 +755,51 @@ fn quoted_interpreted_text_02() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "\"");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Emphasis { text } = doctree.shared_child(0).shared_child(1).shared_data() {
+    if let TreeNodeType::Emphasis { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         assert_eq!(text, r#"quoted emphasis"#);
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(2).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         assert_eq!(text, "\"");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "<");
     } else {
         panic!()
     }
 
     if let TreeNodeType::StrongEmphasis { text } =
-        doctree.shared_child(1).shared_child(1).shared_data()
+        doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
         assert_eq!(text, r#"quoted strong emphasis"#);
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         assert_eq!(text, ">");
     } else {
         panic!()
@@ -742,26 +826,34 @@ fn quoted_interpreted_text_03() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "\":\"");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(1).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data() {
         assert_eq!(text, "emphasis:`quoted");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::WhiteSpace { text } = doctree.shared_child(0).shared_child(2).shared_data()
+    if let TreeNodeType::WhiteSpace { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data()
     {
         assert_eq!(text, " ");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(3).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(3).unwrap().shared_data() {
         assert_eq!(text, "emphasis`\"");
     } else {
         panic!()
@@ -790,14 +882,18 @@ fn uri_01() {
     doctree = doctree.walk_to_root();
     doctree.print_tree();
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "<");
     } else {
         panic!()
     }
 
     if let TreeNodeType::Reference { reference, .. } =
-        doctree.shared_child(0).shared_child(1).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
         if let Reference::URI(ref_str) = reference {
             assert_eq!(ref_str, "https://quoted.uri.fi");
@@ -808,20 +904,26 @@ fn uri_01() {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(0).shared_child(2).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         assert_eq!(text, ">.");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(0).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap().shared_data() {
         assert_eq!(text, "<");
     } else {
         panic!()
     }
 
     if let TreeNodeType::Reference { reference, .. } =
-        doctree.shared_child(1).shared_child(1).shared_data()
+        doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
         if let Reference::EMail(ref_str) = reference {
             assert_eq!(ref_str, "quoted@email.com");
@@ -832,7 +934,9 @@ fn uri_01() {
         panic!()
     }
 
-    if let TreeNodeType::Text { text } = doctree.shared_child(1).shared_child(2).shared_data() {
+    if let TreeNodeType::Text { text } = doctree
+        .shared_child(1).unwrap()
+        .shared_child(2).unwrap().shared_data() {
         assert_eq!(text, ">");
     } else {
         panic!()
@@ -861,11 +965,13 @@ _`inline target` **This emphasis is a reference target**.
     use crate::doctree::tree_node::TreeNode;
 
     if let TreeNodeType::StrongEmphasis { text } =
-        doctree.shared_child(0).shared_child(1).shared_data()
+        doctree
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap().shared_data()
     {
         if let Some(names) = doctree
-            .shared_child(0)
-            .shared_child(1)
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
             .shared_target_labels()
         {
             assert_eq!(names, &["inline target"]);
@@ -893,8 +999,8 @@ fn footnote_ref_01 () {
     doctree.print_tree();
 
     if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
-        .shared_child(0)
-        .shared_child(0)
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_data()
     {
         assert_eq!(displayed_text, "1");
@@ -903,8 +1009,8 @@ fn footnote_ref_01 () {
         panic!()
     }
     if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
-        .shared_child(0)
-        .shared_child(2)
+        .shared_child(0).unwrap()
+        .shared_child(2).unwrap()
         .shared_data()
     {
         assert_eq!(displayed_text, "2");
@@ -913,8 +1019,8 @@ fn footnote_ref_01 () {
         panic!()
     }
     if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
-        .shared_child(0)
-        .shared_child(4)
+        .shared_child(0).unwrap()
+        .shared_child(4).unwrap()
         .shared_data()
     {
         assert_eq!(displayed_text, "Label");
@@ -923,8 +1029,8 @@ fn footnote_ref_01 () {
         panic!()
     }
     if let TreeNodeType::FootnoteReference { displayed_text, target_label, kind } = doctree
-        .shared_child(0)
-        .shared_child(6)
+        .shared_child(0).unwrap()
+        .shared_child(6).unwrap()
         .shared_data()
     {
         assert_eq!(displayed_text, "*");

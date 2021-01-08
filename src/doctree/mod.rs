@@ -459,34 +459,38 @@ impl DocTree {
     }
 
     /// Retrieves a shared reference to a given child.
-    pub fn shared_child(&self, index: usize) -> &TreeNode {
+    pub fn shared_child(&self, index: usize) -> Option<&TreeNode> {
         if let Some(children) = self.tree.shared_node().shared_children() {
             match children.get(index) {
-                Some(node) => node,
+                Some(node) => Some(node),
                 None => {
-                    panic!("Focused on node does not have as many children as is implied. Computer says no...")
+                    eprintln!("Focused on node does not have as many children as is implied. Computer says no...");
+                    None
                 }
             }
         } else {
-            panic!(
+            eprintln!(
                 "Cannot retrieve child from a node that cannot have children. Computer says no..."
-            )
+            );
+            None
         }
     }
 
     /// Retrieves a shared reference to a given child.
-    pub fn mut_child(&mut self, index: usize) -> &mut TreeNode {
+    pub fn mut_child(&mut self, index: usize) -> Option<&mut TreeNode> {
         if let Some(children) = self.tree.mut_node().mut_children() {
             match children.get_mut(index) {
-                Some(node) => node,
+                Some(node) => Some(node),
                 None => {
-                    panic!("Focused on node does not have as many children as is implied. Computer says no...")
+                    eprintln!("Focused on node does not have as many children as is implied. Computer says no...");
+                    None
                 }
             }
         } else {
-            panic!(
+            eprintln!(
                 "Cannot retrieve child from a node that cannot have children. Computer says no..."
-            )
+            );
+            None
         }
     }
 
