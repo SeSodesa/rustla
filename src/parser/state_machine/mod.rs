@@ -329,37 +329,14 @@ impl Parser {
         list_start_index: Option<usize>,
     ) -> Result<DocTree, TransitionResult> {
         if let Some(next_line) = src_lines.get(line_cursor.relative_offset() + 1) {
-            let line_indent =
-                next_line.chars().take_while(|c| c.is_whitespace()).count() + base_indent;
+            let next_line_indent = next_line
+                .chars()
+                .take_while(|c| c.is_whitespace())
+                .count() + base_indent;
 
-            if !next_line.is_empty() && line_indent <= detected_enumerator_indent {
-                return Err(crate::parser::state_machine::body::text(
-                    src_lines,
-                    base_indent,
-                    section_level,
-                    line_cursor,
-                    doctree,
-                    captures,
-                    pattern_name,
-                ));
-            } else if let Some(next_captures) =
-                crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line)
-            {
-                let (next_number, next_kind, next_delims) = match converters::enum_captures_to_int_kind_and_delims(&next_captures, list_kind, in_list_item, list_item_number, list_start_index) {
-          Some((number, kind, delims)) => (number, kind, delims),
-          None => return Err(
-            TransitionResult::Failure {
-              message: format!("Line following line {} conformed to enumerator pattern but no valid enumerator found? Computer says no...", line_cursor.sum_total()),
-              doctree: doctree
-            }
-          )
-        };
-                if !(next_number == detected_number + 1
-                    && next_kind == detected_kind
-                    && next_delims == detected_delims)
-                {
-                    eprintln!("Non-matching enumerator n next line...");
-                    return Err(crate::parser::state_machine::body::text(
+            if !next_line.is_empty() && next_line_indent <= detected_enumerator_indent {
+                return Err(
+                    body::text(
                         src_lines,
                         base_indent,
                         section_level,
@@ -367,7 +344,43 @@ impl Parser {
                         doctree,
                         captures,
                         pattern_name,
-                    ));
+                    )
+                );
+            } else if let Some(next_captures) =
+                crate::parser::automata::ENUMERATOR_AUTOMATON.captures(next_line)
+            {
+                let (next_number, next_kind, next_delims) = match converters::enum_captures_to_int_kind_and_delims(
+                    &next_captures,
+                    list_kind,
+                    in_list_item,
+                    list_item_number,
+                    list_start_index
+                ) {
+                    Some((number, kind, delims)) => (number, kind, delims),
+                    None => return Err(
+                        TransitionResult::Failure {
+                        message: format!("Line following line {} conformed to enumerator pattern but no valid enumerator found? Computer says no...", line_cursor.sum_total()),
+                        doctree: doctree
+                        }
+                    )
+                };
+                if ! (
+                    next_number == detected_number + 1
+                    && next_kind == detected_kind
+                    && next_delims == detected_delims
+                ) {
+                    eprintln!("Non-matching enumerator n next line...");
+                    return Err(
+                        body::text(
+                            src_lines,
+                            base_indent,
+                            section_level,
+                            line_cursor,
+                            doctree,
+                            captures,
+                            pattern_name,
+                        )
+                    );
                 } else {
                     return Ok(doctree);
                 }
