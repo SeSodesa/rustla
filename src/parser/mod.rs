@@ -326,7 +326,8 @@ impl Parser {
                 } else {
                     return ParsingResult::Failure {
                         message: format!(
-                            "Doctree in possession of transition method after transition on line {}.\nComputer says no...\n", self.line_cursor.sum_total()
+                            "Doctree in possession of transition method after transition on line {}. Computer says no...",
+                            self.line_cursor.sum_total()
                         ),
                         doctree: if let Some(doctree) = self.doctree.take() { doctree } else {
                             panic!(
