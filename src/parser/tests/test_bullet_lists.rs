@@ -9,11 +9,10 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn bullet_list_01() {
-    let src = String::from(
-        "
-- This is the first bullet list item.",
-    )
-    .lines()
+    let src =
+"
+- This is the first bullet list item.
+"   .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
 
@@ -34,16 +33,15 @@ fn bullet_list_01() {
 
 #[test]
 fn bullet_list_02() {
-    let src = String::from(
-        "
+    let src =
+"
 - List item 1
 
   Second paragraph of the list item.
 
   Third paragraph of this list item...
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -79,16 +77,15 @@ fn bullet_list_02() {
 
 #[test]
 fn bullet_list_03() {
-    let src = String::from(
-        "
+    let src =
+"
 - List item 1
 
   Second paragraph of the list item.
 
 - List item 2
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -138,8 +135,8 @@ fn bullet_list_03() {
 
 #[test]
 fn bullet_list_04() {
-    let src = String::from(
-        "
+    let src =
+"
 - List item 1
 
   Second paragraph of the list item.
@@ -148,8 +145,7 @@ fn bullet_list_04() {
 
 asfasdfdsfasfasdfasfd
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -206,8 +202,8 @@ asfasdfdsfasfasdfasfd
 
 #[test]
 fn bullet_list_05() {
-    let src = String::from(
-        "
+    let src =
+"
 - List item 1
 
   Second paragraph of the list item.
@@ -220,8 +216,7 @@ fn bullet_list_05() {
 
 asfasdfdsfasfasdfasfd
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -261,8 +256,8 @@ asfasdfdsfasfasdfasfd
 
 #[test]
 fn bullet_list_06() {
-    let src = String::from(
-        "
+    let src =
+"
 + List item 1
 
   Second paragraph of the list item.
@@ -281,8 +276,7 @@ fn bullet_list_06() {
 
 asfasdfdsfasfasdfasfd
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

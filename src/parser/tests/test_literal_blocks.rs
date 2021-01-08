@@ -9,15 +9,14 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn literal_block_01() {
-    let src = String::from(
-        "
+    let src =
+"
 ::
 
 > This is a literal block of text,
 > indicated by the \"::\" at the end of last paragraph.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -41,7 +40,7 @@ fn literal_block_01() {
 
 #[test]
 fn literal_block_02() {
-    let src = String::from(
+    let src =
         r#"
 ::
 
@@ -56,8 +55,7 @@ fn literal_block_02() {
 This line ends the literal block, as its indentation is on the same level
 as that of the literal block indicator "::".
 
-  "#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -80,7 +78,7 @@ as that of the literal block indicator "::".
 
 #[test]
 fn code_01() {
-    let src = String::from(
+    let src =
         r#"
 .. code:: python
   :number lines: 3
@@ -95,8 +93,7 @@ fn code_01() {
     shout(text)
 
 This paragraph ends the literal block.
-"#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -123,7 +120,7 @@ This paragraph ends the literal block.
             assert_eq!(name.as_ref().unwrap().as_str(), "reference-name");
             assert_eq!(
                 class.as_ref().unwrap().as_str(),
-                "some-class and-another-one"
+"some-class and-another-one"
             );
         }
         _ => panic!(),

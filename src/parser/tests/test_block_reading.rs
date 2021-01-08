@@ -40,7 +40,7 @@ asdfsdafasdfasdfa
     let block_str = block.join("\n");
 
     assert_eq!(
-        "asdsafasfga  sffwsdaf
+"asdsafasfga  sffwsdaf
 asfsdafasdfffasfsdfsaf
 asfdfasdfasdfafasdfasdf
 asdfsdafasdfsdafadsfsdf",
@@ -140,7 +140,7 @@ asdfsdafasdfasdfa
 
             assert_eq!(
                 lines.join("\n"),
-                "asdsafasfgasf  fwsdaf
+"asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
@@ -176,7 +176,7 @@ asdfsdafasdfasdfa
 
             assert_eq!(
                 lines.join("\n"),
-                "  asdsafasfgasf  fwsdaf
+"  asdsafasfgasf  fwsdaf
     asfsdafasdfffas  fsdfsaf
   asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
@@ -211,7 +211,7 @@ asdfsdafasdfasdfa
 
             assert_eq!(
                 lines.join("\n"),
-                "asdsafasfgasf  fwsdaf
+"asdsafasfgasf  fwsdaf
      asfsdafasdfffas  fsdfsaf
    asfdfasd  fasdfafasdfasdf
  asdfsdafasdfsda  fadsfsdf
@@ -249,7 +249,7 @@ asdfsdafasdfasdfa
 
             assert_eq!(
                 lines.join("\n"),
-                "asdsafasfgasf  fwsdaf
+"asdsafasfgasf  fwsdaf
 asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
@@ -293,7 +293,7 @@ asfsadfasdfsad
 
             assert_eq!(
                 lines.join("\n"),
-                "asdsafasfgasf  fwsdaf
+"asdsafasfgasf  fwsdaf
 asfsdafasdfffas  fsdfsaf
 asfdfasd  fasdfafasdfasdf
 asdfsdafasdfsda  fadsfsdf
@@ -337,7 +337,7 @@ asfsadfasdfsad
 
             assert_eq!(
                 lines.join("\n"),
-                "sdasdasdasdasd
+"sdasdasdasdasd
 adsadadasdasd"
             );
         }

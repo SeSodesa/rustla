@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn mixed_nested_lists_01() {
-    let src = String::from(
-        "
+    let src =
+"
 (i) * List item 1
       of a nested bullet list within
       an enumerated list...
@@ -23,8 +23,7 @@ fn mixed_nested_lists_01() {
 
 (ii) List item 2 of the parent list.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -116,7 +115,7 @@ fn mixed_nested_lists_01() {
 #[test]
 fn binomial_distribution_01 () {
     // Taken from https://www.overleaf.com/project/5cd12f9f3dad7b5b9f18d75a
-    let src = String::from(
+    let src =
 r#"
 =============
 Binomijakauma
@@ -175,8 +174,7 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
 .. image:: kuvat/kuva29bin2.*
   :width: 50%
   :align: center
-"#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

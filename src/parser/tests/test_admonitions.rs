@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn standard_admonition_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. note:: This is a note admonition.
   This is the second line of the first paragraph.
 
@@ -26,8 +26,7 @@ fn standard_admonition_01() {
   This paragraph forms the contents of the tip admonition above.
   If content is not found, the parser will panic.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -107,8 +106,8 @@ fn standard_admonition_01() {
 
 #[test]
 fn generic_admonition_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. admonition:: This is a generic admonition with the argument on the first
     line after the directive marker and extending on the following line as well.
     :option1: This is not recognized as an admonition option, only \"class\" and \"name\" are valid.
@@ -119,8 +118,7 @@ fn generic_admonition_01() {
 
 This paragraph no longer belongs to the above admonition.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -160,8 +158,8 @@ This paragraph no longer belongs to the above admonition.
 
 #[test]
 fn generic_admonition_02() {
-    let src = String::from(
-        "
+    let src =
+"
 .. admonition::
   This is a generic admonition, the argument of which starts on
   the line following the directive marker.
@@ -175,8 +173,7 @@ fn generic_admonition_02() {
   - followed by
   - a bullet list
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

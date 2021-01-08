@@ -10,8 +10,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn aplus_questionnaire_01() {
-    let src = String::from(
-        r#"
+    let src =
+r#"
 .. questionnaire:: 1 A
   :submissions: 4
   :points-to-pass: 0
@@ -77,8 +77,7 @@ fn aplus_questionnaire_01() {
     The model solution is a regular expression.
 
     red|blue
-  "#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -149,7 +148,7 @@ fn aplus_questionnaire_01() {
 
 #[test]
 fn aplus_questionnaire_02() {
-    let src = String::from(
+    let src =
         r#"
 (K) Suostumus anonyymin kurssidatan tutkimuskäyttöön
 ====================================================
@@ -177,10 +176,7 @@ Kurssi pyytää siten jokaiselta opiskelijalta suostumuksen datan käyttöön.
     *a. Kyllä
     *b. En
 
-
-
-"#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

@@ -9,7 +9,7 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn math_block_01() {
-    let src = String::from(
+    let src =
         r"
 .. math::
   :name: name
@@ -17,8 +17,7 @@ fn math_block_01() {
 
   \alpha + \beta = \gamma
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -48,7 +47,7 @@ fn math_block_01() {
 
 #[test]
 fn math_block_02() {
-    let src = String::from(
+    let src =
         r#"
 .. math::
   :name: name
@@ -59,8 +58,7 @@ fn math_block_02() {
 
   Another block with math (printed as "Anotherblockwithmath" in LaTeX)
 
-  "#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -82,7 +80,7 @@ fn math_block_02() {
         } => {
             assert_eq!(
                 block_text.as_str(),
-                "(1) \\alpha + \\beta = \\gamma\n\\delta"
+"(1) \\alpha + \\beta = \\gamma\n\\delta"
             );
             assert_eq!(name.as_ref().unwrap().as_str(), r"name1");
             assert_eq!(class.as_ref().unwrap().as_str(), r"class");

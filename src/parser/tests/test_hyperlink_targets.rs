@@ -9,15 +9,14 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn footnote_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [1] Here is a paragraph
     with body indent.
 
     * Bullet list inside foonote
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -54,15 +53,14 @@ fn footnote_01() {
 
 #[test]
 fn footnote_02() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [1] Here is a paragraph
 
 .. [1] Another footnote with the same label (and target).
         The duplicate label should generate a warning.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -104,8 +102,8 @@ fn footnote_02() {
 
 #[test]
 fn footnote_03() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [*] 1
 .. [*] 2
 .. [*] 3
@@ -136,8 +134,7 @@ fn footnote_03() {
 .. [*] 28
 .. [*] 29
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -220,16 +217,15 @@ fn footnote_03() {
 
 #[test]
 fn footnote_04() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [2] 1
 .. [#test-with-mixed] 2
 .. [#] 3
 .. [#second] 4
 .. [#] 5
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -293,16 +289,15 @@ fn footnote_04() {
 
 #[test]
 fn footnote_05() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [2] 1
 .. [#test-with-mixed] 2
 .. [*] .. [#nested] 4
 .. [*] 5
 .. [2] 5
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -382,12 +377,11 @@ fn footnote_05() {
 
 #[test]
 fn citation_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [CIT2005] Citation
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -421,15 +415,14 @@ fn citation_01() {
 
 #[test]
 fn citation_02() {
-    let src = String::from(
-        "
+    let src =
+"
 .. [one] aaa
     .. [two] This line is a part of
     the paragraph started on previous line
        .. [three] This is a citation inside a block quote
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -470,15 +463,14 @@ fn citation_02() {
 
 #[test]
 fn hyperlink_target_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. _target1:
 .. _target2:
 
 Paragraph here. Please give me the labels \"target1\" and \"target2\".
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -502,8 +494,8 @@ Paragraph here. Please give me the labels \"target1\" and \"target2\".
 
 #[test]
 fn hyperlink_target_02() {
-    let src = String::from(
-        "
+    let src =
+"
 * This here is a bulleted list
 
   .. _internal-target-referencing-below-item:
@@ -513,8 +505,7 @@ fn hyperlink_target_02() {
 * The above internal targets that belong to the
   previous list item should reference this item.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -534,7 +525,7 @@ fn hyperlink_target_02() {
     {
         assert_eq!(
             labels.join("|").as_str(),
-            "internal-target-referencing-below-item|another-target-referencing-below-item"
+"internal-target-referencing-below-item|another-target-referencing-below-item"
         )
     } else {
         panic!()
@@ -543,15 +534,14 @@ fn hyperlink_target_02() {
 
 #[test]
 fn hyperlink_target_03() {
-    let src = String::from(
-        "
+    let src =
+"
 .. _an-external-hyperlink: https://www.address.fi//
 
 .. _indirect_hyperlink: an-external-hyperlink_
 
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -588,7 +578,7 @@ fn hyperlink_target_03() {
         } => {
             if target != "indirect_hyperlink" || indirect_target != "an-external-hyperlink" {
                 eprintln!(
-                    "Target: {:#?}\nIndirect target: {:#?}\n",
+"Target: {:#?}\nIndirect target: {:#?}\n",
                     target, indirect_target
                 );
                 panic!()
@@ -600,14 +590,13 @@ fn hyperlink_target_03() {
 
 #[test]
 fn hyperlink_target_04() {
-    let src = String::from(
-        "
+    let src =
+"
 .. __: https://www.address.fi//
 
 .. __: anon-target-ref__
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -648,8 +637,8 @@ fn hyperlink_target_04() {
 
 #[test]
 fn hyperlink_target_05() {
-    let src = String::from(
-        "
+    let src =
+"
 .. _target label:
 
 A Section title
@@ -663,8 +652,7 @@ A Section title
 
   * Bullet list inside foonote
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

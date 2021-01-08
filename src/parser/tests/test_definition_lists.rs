@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn definition_list_01() {
-    let src = String::from(
-        "
+    let src =
+"
 term 1
   Definition 1.
 
@@ -24,8 +24,7 @@ term 3 : classifier
 
 term 4 : classifier one : classifier two
   Definition 4.
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

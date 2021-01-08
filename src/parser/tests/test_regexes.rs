@@ -18,10 +18,10 @@ fn enumerator_01() {
 #[test]
 fn footnote_01 () {
     let test_strs = [
-        ".. [1] ",
-        ".. [#] ",
-        ".. [#asd] ",
-        ".. [*] ",
+".. [1] ",
+".. [#] ",
+".. [#asd] ",
+".. [*] ",
     ];
     for label in test_strs.iter() {
         if let None = crate::parser::automata::FOOTNOTE_AUTOMATON.captures(label) {

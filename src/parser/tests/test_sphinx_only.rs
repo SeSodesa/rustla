@@ -9,7 +9,7 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn sphinx_only_01() {
-    let src = String::from(
+    let src =
         r#"
 .. only:: html and (latex or draft)
 
@@ -19,8 +19,7 @@ fn sphinx_only_01() {
   * As is this bullet list...
   * ... with a second item
 
-  "#,
-    )
+"#
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

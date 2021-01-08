@@ -27,7 +27,7 @@ fn literal_and_strong_emphasis_01() {
         } else {
             panic!()
         },
-        "literal"
+"literal"
     );
 
     assert_eq!(
@@ -36,14 +36,14 @@ fn literal_and_strong_emphasis_01() {
         } else {
             panic!()
         },
-        "strong emphasis"
+"strong emphasis"
     );
 }
 
 #[test]
 fn references_01() {
     let src = String::from(
-        "This is a string with a simple-reference+with:punctuation_\nand a `phrase reference`_",
+"This is a string with a simple-reference+with:punctuation_\nand a `phrase reference`_",
     );
 
     let mut lc = LineCursor::new(0, 0);
@@ -188,7 +188,7 @@ refer to the "substitution and hyperlink reference" target.
     {
         assert_eq!(
             substitution_label.as_str(),
-            "substitution and hyperlink reference"
+"substitution and hyperlink reference"
         );
         assert_eq!(
             target_label.as_deref(),
@@ -868,7 +868,7 @@ fn uri_01() {
 
 <quoted@email.com>
 
-  "#,
+"#,
     )
     .lines()
     .map(|s| s.to_string())
@@ -948,7 +948,7 @@ fn inline_target_01() {
     let src = String::from(
         r#"
 _`inline target` **This emphasis is a reference target**.
-  "#,
+"#,
     )
     .lines()
     .map(|s| s.to_string())

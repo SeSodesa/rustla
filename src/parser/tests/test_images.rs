@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn image_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. image:: this/is/an/image/uri.png
   :class: html class attributes
   :name: here is a reference name
@@ -25,8 +25,7 @@ fn image_01() {
 - This bullet list
 - is not a part of the above image.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -58,7 +57,7 @@ fn image_01() {
             assert_eq!(uri.as_str(), "this/is/an/image/uri.png");
             assert_eq!(
                 alt.as_ref().unwrap().as_str(),
-                "This is alternate text for the visually impaired"
+"This is alternate text for the visually impaired"
             );
             assert_eq!(height.is_none(), true);
             assert_eq!(width.is_none(), true);
@@ -83,8 +82,8 @@ fn image_01() {
 
 #[test]
 fn figure_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. figure:: this/is/an/image/uri.png
   :class: html class attributes
   :name: here is a reference name
@@ -104,8 +103,7 @@ fn figure_01() {
   - As is
   - This bullet list
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -157,8 +155,8 @@ fn figure_01() {
 
 #[test]
 fn figure_02() {
-    let src = String::from(
-        "
+    let src =
+"
 * This bullet list item contains a figure.
 
   .. figure:: this/is/an/image/uri.png
@@ -174,8 +172,7 @@ fn figure_02() {
 
 Back to no indentation.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -298,8 +295,8 @@ Back to no indentation.
 
 #[test]
 fn figure_03() {
-    let src = String::from(
-        "
+    let src =
+"
 .. figure:: this/is/an/image/uri.png
 
   .. figure:: this/is/another/image/uri.png
@@ -308,8 +305,7 @@ fn figure_03() {
 
 Back to no indentation.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

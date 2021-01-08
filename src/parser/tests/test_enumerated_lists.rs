@@ -9,15 +9,14 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn enumerated_list_01() {
-    let src = String::from(
-        "
+    let src =
+"
 (i) List item 1
     with a valid second line
 
 Some unindented text.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -57,8 +56,8 @@ Some unindented text.
 
 #[test]
 fn enumerated_list_02() {
-    let src = String::from(
-        "
+    let src =
+"
 (i) List item 1
     with a valid second line
 
@@ -67,8 +66,7 @@ fn enumerated_list_02() {
 (i) List item 1
     of a second list
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -117,8 +115,8 @@ fn enumerated_list_02() {
 
 #[test]
 fn enumerated_list_03() {
-    let src = String::from(
-        "
+    let src =
+"
 (i) a) List item ia
        with a valid second line
 
@@ -127,8 +125,7 @@ fn enumerated_list_03() {
 (i) List item 1
     of a second list
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -224,8 +221,8 @@ fn enumerated_list_03() {
 
 #[test]
 fn enumerated_list_04() {
-    let src = String::from(
-        "
+    let src =
+"
 (#) First item of automatically numbered list
 
 (#) Second item of automatically numbered list
@@ -234,8 +231,7 @@ fn enumerated_list_04() {
 
 (#) Fourth item of the same list, with automatic numbering, again.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -301,8 +297,8 @@ fn enumerated_list_04() {
 
 #[test]
 fn enumerated_list_05() {
-    let src = String::from(
-        "
+    let src =
+"
 (i) #) List item i1
        with a valid second line
 
@@ -316,8 +312,7 @@ fn enumerated_list_05() {
 
 (iii) List item iii
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

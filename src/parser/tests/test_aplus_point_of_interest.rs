@@ -9,7 +9,7 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn poi_01() {
-    let src = String::from("
+    let src = "
 .. point-of-interest:: Title text
   :id: unique id, if not supplied a random id will be generated
   :previous: id of previous point-of-interest (optional)
@@ -33,7 +33,7 @@ fn poi_01() {
   (The presentation maker slides do not support the newcol feature.)
 
 
-  ").lines().map(|s| s.to_string()).collect::<Vec<String>>();
+".lines().map(|s| s.to_string()).collect::<Vec<String>>();
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 

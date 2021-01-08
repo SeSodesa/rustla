@@ -9,11 +9,10 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn comment_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. This is a comment on a single line
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -41,12 +40,11 @@ fn comment_01() {
 
 #[test]
 fn comment_02() {
-    let src = String::from(
-        "
+    let src =
+"
 ..
   This is a single-line comment on the line following the marker
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -75,13 +73,12 @@ fn comment_02() {
 
 #[test]
 fn comment_03() {
-    let src = String::from(
-        "
+    let src =
+"
 ..
 
 The above comment is empty.
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -115,8 +112,8 @@ The above comment is empty.
 
 #[test]
 fn comment_04() {
-    let src = String::from(
-        "
+    let src =
+"
 * ..
     This is a comment inside a bullet list item
 
@@ -124,8 +121,7 @@ fn comment_04() {
 
 This paragraph ends the test...
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

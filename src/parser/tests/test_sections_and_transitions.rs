@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn transition_01() {
-    let src = String::from(
-        "
+    let src =
+"
 
 Below is a transition.
 
@@ -18,8 +18,7 @@ Below is a transition.
 
 The line is at least 4 symbols long.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -42,8 +41,8 @@ The line is at least 4 symbols long.
 
 #[test]
 fn over_under_section_01() {
-    let src = String::from(
-        "
+    let src =
+"
 
 Below is an over- and underlined section title.
 
@@ -54,8 +53,7 @@ Below is an over- and underlined section title.
 This paragraph belongs to the section started by the above title,
 not to the document root.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -82,8 +80,8 @@ not to the document root.
 
 #[test]
 fn mixed_sections_01() {
-    let src = String::from(
-        "
+    let src =
+"
 =======================
  Level 1 Section Title
 =======================
@@ -127,8 +125,7 @@ Level 11 Section Title
 Level 1 Section Title
 ======================
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -164,11 +161,8 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -181,13 +175,9 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -200,15 +190,10 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -232,11 +217,8 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -249,13 +231,9 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -268,15 +246,10 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -289,17 +262,11 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -312,19 +279,12 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -337,21 +297,13 @@ Level 1 Section Title
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -376,8 +328,8 @@ Level 1 Section Title
 
 #[test]
 fn transition_after_admonition() {
-    let src = String::from(
-        "
+    let src =
+"
 .. ATTENTION::
 
   Seuraavan tehtävän tekeminen (eli ``.gitignore``-tiedoston luominen)
@@ -393,8 +345,7 @@ fn transition_after_admonition() {
 
 A paragraph after transition.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

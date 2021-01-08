@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn list_table_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. list-table:: A title
    :widths: 2 2 2
    :width: 50 %
@@ -25,8 +25,7 @@ fn list_table_01() {
      - This is the second column.
 
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

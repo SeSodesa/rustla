@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn block_quote_01() {
-    let src = String::from(
-        "
+    let src =
+"
   This is a paragraph inside a block quote.
   Indentation determines quotation level.
 
@@ -19,8 +19,7 @@ fn block_quote_01() {
 
   This paragraph is again at the first level of quotation.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -73,8 +72,8 @@ fn block_quote_01() {
 
 #[test]
 fn block_quote_02() {
-    let src = String::from(
-        "
+    let src =
+"
   This is a paragraph inside a block quote.
   Indentation determines quotation level.
   The following attribution ends this block quote
@@ -84,8 +83,7 @@ fn block_quote_02() {
   This paragraph starts a new block quote at the same level
   as the previous one (as in it is not nested).
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -138,8 +136,8 @@ fn block_quote_02() {
 
 #[test]
 fn block_quote_03() {
-    let src = String::from(
-        "
+    let src =
+"
   This is a paragraph inside a block quote.
   Indentation determines quotation level.
   The below attribution does not end this block quote,
@@ -151,8 +149,7 @@ fn block_quote_03() {
   as the above attribution ends the nested block quote
   it also ended up triggering.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -205,8 +202,8 @@ fn block_quote_03() {
 
 #[test]
 fn block_quote_04() {
-    let src = String::from(
-        "
+    let src =
+"
   Below is a multi-line attribution
 
   -- Santtu Söderholm
@@ -214,8 +211,7 @@ fn block_quote_04() {
 
 The attribution will be combined into a single line,
 at least for now.
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -254,8 +250,8 @@ at least for now.
 
 #[test]
 fn block_quote_05() {
-    let src = String::from(
-        "
+    let src =
+"
   Below is a multi-line attribution
 
   -- Santtu Söderholm
@@ -263,8 +259,7 @@ fn block_quote_05() {
  This indented block actually ends up inside another less indented
  block quote as a paragraph.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

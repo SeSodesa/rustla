@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn field_list_01() {
-    let src = String::from(
-        "
+    let src =
+"
 :field marker 1: Marker body
   with a line indented relative to it
 
@@ -26,8 +26,7 @@ fn field_list_01() {
 
 An ending paragraph...
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -93,16 +92,15 @@ An ending paragraph...
 
 #[test]
 fn field_list_02() {
-    let src = String::from(
-        "
+    let src =
+"
 :field marker 1: Marker body
 and a line with too little indentation
 
 
 An ending paragraph...
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -136,8 +134,8 @@ An ending paragraph...
 
 #[test]
 fn field_list_03() {
-    let src = String::from(
-        "
+    let src =
+"
 :Date: 2001-08-16
 :Version: 1
 :Authors: - Me
@@ -149,8 +147,7 @@ fn field_list_03() {
     field name marker, and they must line up with each other.
 :Parameter i: integer
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn unknown_directive_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. some-unknown-dirctive:: some argument here...
   :option1: something
   :option2: something else
@@ -18,8 +18,7 @@ fn unknown_directive_01() {
 A paragraph.
 
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -57,8 +56,8 @@ A paragraph.
 
 #[test]
 fn unknown_directive_02() {
-    let src = String::from(
-        "
+    let src =
+"
 Below is an unknown directive. It will be parsed as an unknown directive.
 
 .. unknown:: argument with
@@ -74,8 +73,7 @@ Below is an unknown directive. It will be parsed as an unknown directive.
   - And a bullet list with just one item
 
 This is no longer a part of the above literal block inside a block quote.
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -136,14 +134,13 @@ This is no longer a part of the above literal block inside a block quote.
 
 #[test]
 fn unknown_directive_no_argument_nor_options() {
-    let src = String::from(
-        "
+    let src =
+"
 .. unknown::
 
   A paragraph.
 
-",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -181,8 +178,8 @@ fn unknown_directive_no_argument_nor_options() {
 
 #[test]
 fn unknown_directive_no_argument_but_options() {
-    let src = String::from(
-        "
+    let src =
+"
 .. unknown::
   :option: 1
   :or: 2
@@ -190,8 +187,7 @@ fn unknown_directive_no_argument_but_options() {
 
   A paragraph.
 
-",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
@@ -231,15 +227,14 @@ fn unknown_directive_no_argument_but_options() {
 
 #[test]
 fn unknown_directive_no_options_but_argument() {
-    let src = String::from(
-        "
+    let src =
+"
 .. unknown:: argument
   on multiple lines
 
   Content paragraph.
 
-",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();

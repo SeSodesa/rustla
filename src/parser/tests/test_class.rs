@@ -9,8 +9,8 @@ use super::*;
 #[cfg(test)]
 #[test]
 fn class_01() {
-    let src = String::from(
-        "
+    let src =
+"
 .. class:: class1 class2 class3
 
   This paragraph will receive the above class
@@ -23,8 +23,7 @@ fn class_01() {
 
 This paragraph is no longer of classes 1, 2 and 3.
 
-  ",
-    )
+"
     .lines()
     .map(|s| s.to_string())
     .collect::<Vec<String>>();
