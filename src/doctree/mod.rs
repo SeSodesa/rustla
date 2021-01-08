@@ -32,9 +32,6 @@ use crate::common::{
     NodeId, SectionLineStyle, TableColWidths, ToCBacklinks,
 };
 
-// --------------
-//  Test module
-// --------------
 mod tests;
 
 /// A container for the document tree.

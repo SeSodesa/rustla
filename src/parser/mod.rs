@@ -51,8 +51,6 @@ use crate::doctree::tree_node::TreeNode;
 use crate::doctree::tree_node_types::TreeNodeType;
 use crate::doctree::DocTree;
 
-// Unit test modules
-// -----------------
 mod tests;
 
 // ==========================
