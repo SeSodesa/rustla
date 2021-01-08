@@ -51,11 +51,8 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -64,13 +61,9 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
         .shared_data()
     {
@@ -79,13 +72,9 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
         .shared_data()
     {
@@ -94,15 +83,10 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
-
         .shared_child(1).unwrap()
         .shared_data()
     {
@@ -111,11 +95,8 @@ fn mixed_nested_lists_01() {
     }
 
     match doctree
-
         .shared_child(0).unwrap()
-
         .shared_child(0).unwrap()
-
         .shared_child(1).unwrap()
         .shared_data()
     {
