@@ -12,7 +12,7 @@ pub mod parser;
 use parser::Parser;
 pub mod doctree;
 use doctree::DocTree;
-mod common;
+pub mod common;
 mod utf8_to_latex;
 
 use std::io::BufRead;
