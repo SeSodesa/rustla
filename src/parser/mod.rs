@@ -314,10 +314,8 @@ impl Parser {
 
             // No matches in current state so pop from state stack and attempt
             // parsing in the previous state down stack
-            if !match_found {
-                // eprintln!("No match found.\nPopping from machine stack...\n");
+            if ! match_found {
                 if let None = self.state_stack.pop() {
-                    // eprintln!("Cannot pop from an empty stack.\n");
                     return ParsingResult::EmptyStateStack {
                         doctree: self.doctree.take().unwrap(),
                         state_stack: self.state_stack.drain(..self.state_stack.len()).collect(),
