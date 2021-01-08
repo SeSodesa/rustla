@@ -286,7 +286,7 @@ impl Parser {
                             };
 
                             if let LineAdvance::Some(offset) = line_advance {
-                                *self.line_cursor.relative_offset_mut_ref() += offset;
+                                self.line_cursor.increment_by(offset);
                             }
 
                             // Incrementing the line_not_changed counter, if match was found but no incrementing occurred
