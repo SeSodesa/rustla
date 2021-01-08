@@ -11,7 +11,8 @@ use rustla::parser::state_machine::State;
 use rustla::doctree::DocTree;
 use rustla::doctree::tree_node_types::TreeNodeType;
 use rustla::common;
-use rustla::common::ParsingResult;
+use rustla::common::EnumDelims;
+use rustla::common::EnumKind;
 
 #[cfg(test)]
 
@@ -33,9 +34,14 @@ id est laborum.
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
-    doctree.print_tree();
 
-    todo!()
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {},
+        _ => panic!()
+    }
 }
 
 #[test]
@@ -68,13 +74,12 @@ Something after
 #. .. image:: fig/clique.*
 
 "
-            );
-            let mut doctree = DocTree::new(PathBuf::new());
-            doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
-                .parse()
-                .unwrap_tree();
-            doctree = doctree.walk_to_root();
-            doctree.print_tree();
+    );
+    let mut doctree = DocTree::new(PathBuf::new());
+    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+        .parse()
+        .unwrap_tree();
+    doctree = doctree.walk_to_root();
     todo!()
 }
 
@@ -115,7 +120,101 @@ Something after
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
-    doctree.print_tree();
+
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletList { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedList { delims, kind, n_of_items, .. } => {
+            if let EnumDelims::Period = delims {} else { panic!() }
+            if let EnumKind::Arabic = kind {} else { panic!() }
+            assert_eq!(*n_of_items, 2);
+
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedListItem { delims, kind, index_in_list, .. } => {
+            if let EnumDelims::Period = delims {} else { panic!() }
+            if let EnumKind::Arabic = kind {} else { panic!() }
+            assert_eq!(*index_in_list, 1);
+
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedListItem { delims, kind, index_in_list, .. } => {
+            if let EnumDelims::Period = delims {} else { panic!() }
+            if let EnumKind::Arabic = kind {} else { panic!() }
+            assert_eq!(*index_in_list, 2);
+
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(2).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+
+        }
+        _ => panic!()
+    }
+
     todo!()
 }
 
@@ -184,7 +283,14 @@ Three
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
-    doctree.print_tree();
+
+    match doctree
+        .shared_child(2).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::ListTable { .. } => {}
+        _ => panic!()
+    }
     todo!()
 }
 
@@ -219,6 +325,32 @@ r#"
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
-    doctree.print_tree();
-    todo!()
+
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Citation { label, .. } => {
+            assert_eq!(label, "DG84");
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Citation { label, .. } => {
+            assert_eq!(label, "Lloyd87");
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Citation { label, .. } => {
+            assert_eq!(label, "MMZZM01");
+        }
+        _ => panic!()
+    }
 }
