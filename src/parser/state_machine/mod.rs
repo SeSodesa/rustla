@@ -310,7 +310,8 @@ lazy_static! {
 
 impl Parser {
     /// Checks whether the line following the current one allows for the construction of an enumerate list item.
-    /// If successful, returns `Ok(DocTree)`, else returns
+    /// Either the following line has to be blank, indented or the next enumerator in
+    /// the current list has to be constructable from it.
     fn is_enumerated_list_item(
         src_lines: &Vec<String>,
         line_cursor: &mut LineCursor,
@@ -336,11 +337,10 @@ impl Parser {
                 .take_while(|c| c.is_whitespace())
                 .count() + base_indent;
 
-            if ! next_line.is_empty() {
-
-                if next_line_indent <= detected_enumerator_indent {
-                    return false
-                } else if let Some(next_captures) = ENUMERATOR_AUTOMATON.captures(next_line) {
+            if next_line.trim().is_empty() || next_line_indent > detected_enumerator_indent {
+                return true
+            } else if next_line_indent == detected_enumerator_indent {
+                if let Some(next_captures) = ENUMERATOR_AUTOMATON.captures(next_line) {
                     let (next_number, next_kind, next_delims) = match converters::enum_captures_to_int_kind_and_delims(
                         &next_captures,
                         list_kind,
@@ -362,7 +362,7 @@ impl Parser {
                         true
                     }
                 } else {
-                    true
+                    return false
                 }
             } else {
                 true
