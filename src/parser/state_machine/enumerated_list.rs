@@ -34,6 +34,7 @@ pub fn enumerator(
             &captures,
             Some(&list_kind),
             true,
+            false,
             n_of_items,
             list_start_index,
         ) {
@@ -59,7 +60,7 @@ pub fn enumerator(
         detected_kind,
         detected_delims,
         pattern_name,
-        Some(&list_kind),
+        &list_kind,
         true,
         n_of_items,
         list_start_index

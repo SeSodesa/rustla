@@ -323,7 +323,7 @@ impl Parser {
         detected_kind: EnumKind,
         detected_delims: EnumDelims,
         pattern_name: &Pattern,
-        list_kind: Option<&EnumKind>,
+        list_kind: &EnumKind,
         in_list_item: bool,
         list_item_number: usize,
         list_start_index: usize,
@@ -343,8 +343,9 @@ impl Parser {
                 if let Some(next_captures) = ENUMERATOR_AUTOMATON.captures(next_line) {
                     let (next_number, next_kind, next_delims) = match converters::enum_captures_to_int_kind_and_delims(
                         &next_captures,
-                        list_kind,
+                        Some(list_kind),
                         in_list_item,
+                        true,
                         list_item_number,
                         list_start_index
                     ) {

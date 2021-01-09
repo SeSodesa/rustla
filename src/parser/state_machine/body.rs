@@ -112,6 +112,7 @@ pub fn enumerator(
             &captures,
             None,
             false,
+            false,
             0,
             1
         ) {
@@ -137,7 +138,7 @@ pub fn enumerator(
         detected_kind,
         detected_delims,
         pattern_name,
-        None,
+        &detected_kind,
         false,
         0,
         1,

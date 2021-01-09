@@ -80,12 +80,10 @@ pub fn enum_captures_to_int_kind_and_delims(
     captures: &regex::Captures,
     list_kind: Option<&EnumKind>,
     in_list_item: bool,
+    observing_next_line: bool,
     list_item_number: usize,
     list_start_index: usize,
 ) -> Option<(usize, EnumKind, EnumDelims)> {
-
-    // let list_item_number = list_item_number.unwrap_or(0);
-    // let list_start_index = list_start_index.unwrap_or(1);
 
     let (opt_number, enum_kind, enum_delims) = if let Some(number_str) =
         captures.name("arabic_parens")
@@ -198,11 +196,14 @@ pub fn enum_captures_to_int_kind_and_delims(
         panic!("Tried converting a set of regex captures \"{}\" into a list enumerator, but captured string was not of the form specified by enumerator pattern. Computer says no...", captures.get(0).unwrap().as_str());
     };
 
-    if opt_number.is_none() {
+    let number = if opt_number.is_none() {
         return None;
-    }
+    } else {
+        let number = opt_number.unwrap();
+        if observing_next_line { number + 1 } else { number }
+    };
 
-    Some((opt_number.unwrap(), enum_kind, enum_delims))
+    Some((number, enum_kind, enum_delims))
 }
 
 /// Converts and ASCII letter to a corresponding `Option`al integer between 1--26 inclusive.
