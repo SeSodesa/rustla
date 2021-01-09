@@ -80,6 +80,43 @@ Something after
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
+
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, .. } => {
+            assert_eq!(*delims, EnumDelims::Period);
+            assert_eq!(*kind, EnumKind::Arabic);
+            assert_eq!(*start_index, 1);
+            assert_eq!(*n_of_items, 1);
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedListItem { delims, kind, index_in_list, .. } => {
+            assert_eq!(*delims, EnumDelims::Period);
+            assert_eq!(*kind, EnumKind::Arabic);
+            assert_eq!(*index_in_list, 1);
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedListItem { delims, kind, index_in_list, .. } => {
+            assert_eq!(*delims, EnumDelims::Period);
+            assert_eq!(*kind, EnumKind::Arabic);
+            assert_eq!(*index_in_list, 2);
+        }
+        _ => panic!()
+    }
     todo!()
 }
 
@@ -214,8 +251,6 @@ Something after
         }
         _ => panic!()
     }
-
-    todo!()
 }
 
 #[test]
