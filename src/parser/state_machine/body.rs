@@ -101,7 +101,6 @@ pub fn enumerator(
     pattern_name: &Pattern,
 ) -> TransitionResult {
 
-
     let detected_enumerator_indent =
         captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_text_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
@@ -743,7 +742,7 @@ pub fn directive(
         .split_whitespace()
         .collect::<String>()
         .to_lowercase();
-    let detected_first_indent = captures.get(0).unwrap().as_str().chars().count() + base_indent;
+    let detected_first_indent = captures.get(0).unwrap().as_str().chars().count();
 
     let empty_after_marker: bool = {
         let line = src_lines.get(line_cursor.relative_offset()).unwrap(); // Unwrapping is not a problem here.
@@ -756,7 +755,7 @@ pub fn directive(
 
     let (body_indent, body_offset) =
         match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
-            Some((indent, offset)) => (indent + base_indent, offset),
+            Some((indent, offset)) => (indent, offset),
             None => (detected_first_indent, 0), // EOF encountered => stay on same line
         };
 

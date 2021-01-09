@@ -95,37 +95,45 @@ pub fn enumerator(
                 }
             }
         };
-        let (doctree, offset, state_stack) = match Parser::parse_first_node_block(
-            doctree,
+        let relative_indent = detected_text_indent - base_indent;
+        let (lines, offset) = match Parser::read_indented_block(
             src_lines,
-            base_indent,
-            line_cursor,
-            detected_text_indent,
-            None,
-            State::ListItem,
-            section_level,
+            line_cursor.relative_offset(),
+            false,
+            true,
+            Some(relative_indent),
+            Some(relative_indent),
             false
         ) {
-            Ok((parsing_result, offset)) => if let ParsingResult::EOF { doctree, state_stack } | ParsingResult::EmptyStateStack { doctree, state_stack } = parsing_result {
-                (doctree, offset, state_stack)
-            } else {
-                unreachable!(
-                    "Returned from a nested parsing session on line {} without necessary information. Computer says no...",
-                    line_cursor.sum_total()
-                )
-            },
-            Err(ParsingResult::Failure { message, doctree }) => return TransitionResult::Failure {
+            IndentedBlockResult::Ok { lines, offset, .. } => (lines, offset),
+            _ => return TransitionResult::Failure {
                 message: format!(
-                    "Looks like enumerated list item on line {} has no content. Computer says no...",
+                    "Could not read text block on line {}.",
                     line_cursor.sum_total()
                 ),
                 doctree: doctree
-            },
-            _ => unreachable!(
-                "Parsing first node block on line {} resulted in unknown combination of return values. Computer says no...",
-                line_cursor.sum_total()
-            )
+            }
         };
+
+        let (doctree, state_stack) = match Parser::new(
+            lines,
+            doctree,
+            Some(detected_text_indent),
+            line_cursor.sum_total(),
+            Some(State::ListItem),
+            *section_level
+        ).parse() {
+            ParsingResult::EOF {doctree, state_stack}
+            | ParsingResult::EmptyStateStack {doctree, state_stack} => (doctree, state_stack),
+            ParsingResult::Failure {doctree, message }  => return TransitionResult::Failure {
+                message: format!(
+                    "Nested parsing failed on line {}.",
+                    line_cursor.sum_total()
+                ),
+                doctree: doctree
+            }
+        };
+
         return TransitionResult::Success {
             doctree: doctree,
             push_or_pop: PushOrPop::Push(state_stack),

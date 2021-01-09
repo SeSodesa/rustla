@@ -51,21 +51,21 @@ fn enumerate () {
 Something before
 
 #. First :math:`X=1`
-    with wrapping
+   with wrapping
 #. Next :math:`X=2` and something
-    that continues to the next line!
+   that continues to the next line!
 
-    * Recursive items
-    * Another recursive
-        item continues
-        to the next line
-        how deep
-        this could go
-        after
-        all
+   * Recursive items
+   * Another recursive
+     item continues
+     to the next line
+     how deep
+     this could go
+     after
+     all
 
 #. An this list just
-    goes on!
+   goes on!
 
 Something after
 
@@ -89,7 +89,7 @@ Something after
             assert_eq!(*delims, EnumDelims::Period);
             assert_eq!(*kind, EnumKind::Arabic);
             assert_eq!(*start_index, 1);
-            assert_eq!(*n_of_items, 1);
+            assert_eq!(*n_of_items, 3);
         }
         _ => panic!()
     }
@@ -117,7 +117,94 @@ Something after
         }
         _ => panic!()
     }
-    todo!()
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletList { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!(*bullet, '*');
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(1).unwrap()
+        .shared_child(2).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedListItem { delims, kind, index_in_list, .. } => {
+            assert_eq!(*delims, EnumDelims::Period);
+            assert_eq!(*kind, EnumKind::Arabic);
+            assert_eq!(*index_in_list, 3);
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(2).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(3).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::EnumeratedList { delims, kind, start_index, n_of_items, .. } => {
+            assert_eq!(*delims, EnumDelims::Period);
+            assert_eq!(*kind, EnumKind::Arabic);
+            assert_eq!(*start_index, 1);
+            assert_eq!(*n_of_items, 2);
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(3).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Image { uri,  .. } => {
+            assert_eq!(uri, "fig/clique.*");
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(3).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Image { uri, .. } => {
+            assert_eq!(uri, "fig/clique.*");
+        }
+        _ => panic!()
+    }
 }
 
 #[test]
