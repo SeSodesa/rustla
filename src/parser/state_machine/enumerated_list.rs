@@ -79,7 +79,7 @@ pub fn enumerator(
         let item_node_data = TreeNodeType::EnumeratedListItem {
             delims: list_delims,
             kind: detected_kind,
-            index_in_list: detected_number, //detected_enum_as_usize,
+            index_in_list: detected_number,
             enumerator_indent: detected_enumerator_indent,
             text_indent: detected_text_indent,
         };
