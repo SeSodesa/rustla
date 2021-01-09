@@ -13,6 +13,7 @@ use rustla::doctree::tree_node_types::TreeNodeType;
 use rustla::common;
 use rustla::common::EnumDelims;
 use rustla::common::EnumKind;
+use rustla::common::TableColWidths;
 
 #[cfg(test)]
 
@@ -404,13 +405,103 @@ Three
     doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
         .parse()
         .unwrap_tree();
+    doctree = doctree.perform_restructuredtext_transforms();
     doctree = doctree.walk_to_root();
 
     match doctree
         .shared_child(2).unwrap()
         .shared_data()
     {
-        TreeNodeType::ListTable { .. } => {}
+        TreeNodeType::ListTable { title, .. } => {
+            assert_eq!(title.as_ref().unwrap(), "ABCD");
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(4).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::ListTable { title, .. } => {
+            assert!(title.is_none());
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(5).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::ListTable { title, .. } => {
+            assert!(title.is_none());
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::ListTable { title, widths, .. } => {
+            assert!(title.is_none());
+            if let Some(TableColWidths::Columns(cols)) = widths {
+                assert_eq!(cols[0], 67.0);
+                assert_eq!(cols[1], 33.0);
+            } else {
+                panic!()
+            }
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::TBody => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::TRow => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Entry { is_last } => {
+            assert!( ! *is_last );
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Entry { is_last } => {
+            assert!( *is_last );
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Image { uri, .. } => {
+            assert_eq!( uri, "fig/clique.*" );
+        }
         _ => panic!()
     }
     todo!()
