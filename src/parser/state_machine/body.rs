@@ -108,7 +108,13 @@ pub fn enumerator(
     // let detected_enum_str = captures.get(2).unwrap().as_str();
 
     let (detected_number, detected_kind, detected_delims) =
-        match converters::enum_captures_to_int_kind_and_delims(&captures, None, false, None, None) {
+        match converters::enum_captures_to_int_kind_and_delims(
+            &captures,
+            None,
+            false,
+            0,
+            1
+        ) {
             Some((number, kind, delims)) => (number, kind, delims),
             None => return TransitionResult::Failure {
                 message: format!(
@@ -133,8 +139,8 @@ pub fn enumerator(
         pattern_name,
         None,
         false,
-        None,
-        None,
+        0,
+        1,
     ) {
         return text(src_lines, base_indent, section_level, line_cursor, doctree, captures, pattern_name)
     };

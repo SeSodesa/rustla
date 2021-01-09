@@ -34,8 +34,8 @@ pub fn enumerator(
             &captures,
             Some(&list_kind),
             true,
-            Some(n_of_items),
-            Some(list_start_index),
+            n_of_items,
+            list_start_index,
         ) {
             Some((number, kind, delims)) => (number, kind, delims),
             None => return TransitionResult::Failure {
@@ -61,8 +61,8 @@ pub fn enumerator(
         pattern_name,
         Some(&list_kind),
         true,
-        Some(n_of_items),
-        Some(list_start_index),
+        n_of_items,
+        list_start_index
     ) {
         return super::body::text(src_lines, base_indent, section_level, line_cursor, doctree, captures, pattern_name)
     };

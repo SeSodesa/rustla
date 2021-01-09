@@ -325,8 +325,8 @@ impl Parser {
         pattern_name: &Pattern,
         list_kind: Option<&EnumKind>,
         in_list_item: bool,
-        list_item_number: Option<usize>,
-        list_start_index: Option<usize>,
+        list_item_number: usize,
+        list_start_index: usize,
     ) -> bool {
 
         use crate::parser::automata::ENUMERATOR_AUTOMATON;

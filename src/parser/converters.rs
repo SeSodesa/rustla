@@ -80,11 +80,12 @@ pub fn enum_captures_to_int_kind_and_delims(
     captures: &regex::Captures,
     list_kind: Option<&EnumKind>,
     in_list_item: bool,
-    list_item_number: Option<usize>,
-    list_start_index: Option<usize>,
+    list_item_number: usize,
+    list_start_index: usize,
 ) -> Option<(usize, EnumKind, EnumDelims)> {
-    let list_item_number = list_item_number.unwrap_or(0);
-    let list_start_index = list_start_index.unwrap_or(1);
+
+    // let list_item_number = list_item_number.unwrap_or(0);
+    // let list_start_index = list_start_index.unwrap_or(1);
 
     let (opt_number, enum_kind, enum_delims) = if let Some(number_str) =
         captures.name("arabic_parens")
