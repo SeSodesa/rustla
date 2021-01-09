@@ -120,8 +120,7 @@ pub fn enumerator(
         };
 
     // Ceck validity of list item
-    doctree = match Parser::is_enumerated_list_item(
-        doctree,
+    if ! Parser::is_enumerated_list_item(
         src_lines,
         line_cursor,
         captures,
@@ -137,8 +136,7 @@ pub fn enumerator(
         None,
         None,
     ) {
-        Ok(doctree) => doctree,
-        Err(transition_result) => return transition_result,
+        return text(src_lines, base_indent, section_level, line_cursor, doctree, captures, pattern_name)
     };
 
     let list_node_data = TreeNodeType::EnumeratedList {

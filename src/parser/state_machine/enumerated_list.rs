@@ -48,8 +48,7 @@ pub fn enumerator(
         };
 
     // Ceck validity of list item
-    doctree = match Parser::is_enumerated_list_item(
-        doctree,
+    if ! Parser::is_enumerated_list_item(
         src_lines,
         line_cursor,
         captures,
@@ -65,8 +64,7 @@ pub fn enumerator(
         Some(n_of_items),
         Some(list_start_index),
     ) {
-        Ok(doctree) => doctree,
-        Err(transition_result) => return transition_result,
+        return super::body::text(src_lines, base_indent, section_level, line_cursor, doctree, captures, pattern_name)
     };
     if list_delims == detected_delims
         && detected_kind == list_kind
