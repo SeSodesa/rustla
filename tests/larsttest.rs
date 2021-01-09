@@ -483,6 +483,86 @@ Three
         .shared_child(8).unwrap()
         .shared_child(0).unwrap()
         .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletList { bullet, .. } => {
+            assert_eq!( *bullet, '*' );
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!( *bullet, '*' );
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::BulletListItem { bullet, .. } => {
+            assert_eq!( *bullet, '*' );
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::Paragraph { .. } => {}
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_child(1).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::MathBlock { math_block, .. } => {
+            assert_eq!(*math_block, "B=C");
+        }
+        _ => panic!()
+    }
+    match doctree
+        .shared_child(8).unwrap()
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
         .shared_child(1).unwrap()
         .shared_data()
     {
@@ -504,7 +584,6 @@ Three
         }
         _ => panic!()
     }
-    todo!()
 }
 
 #[test]
