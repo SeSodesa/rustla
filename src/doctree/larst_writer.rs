@@ -239,7 +239,7 @@ impl TreeNodeType {
                 displayed_text,
                 target_label,
             } => {
-                format!(r"\hyperref[{}]{{{}}}", target_label, displayed_text)
+                format!("\\cite{{{}}}", displayed_text)
             }
             Self::Class { .. } => "".to_string(),
             Self::Classifier { .. } => todo!(),
