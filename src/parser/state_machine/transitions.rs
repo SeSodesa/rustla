@@ -373,7 +373,7 @@ impl State {
     ];
 
     /// An array of inline transitions.
-    pub const INLINE_TRANSITIONS: [InlineTransition; 12] = [
+    pub const INLINE_TRANSITIONS: [InlineTransition; 13] = [
         (
             Pattern::WhiteSpace,
             regex_patterns::INLINE_WHITESPACE_PATTERN,
@@ -412,6 +412,11 @@ impl State {
             Pattern::FootNoteRef,
             regex_patterns::FOOTNOTE_REF_PATTERN,
             inline::footnote_ref,
+        ),
+        (
+            Pattern::CitationRef,
+            regex_patterns::CITATION_REF_PATTERN,
+            inline::citation_ref,
         ),
         (
             Pattern::SimpleRef,

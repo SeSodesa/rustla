@@ -1039,3 +1039,30 @@ fn footnote_ref_01 () {
         panic!()
     }
 }
+
+#[test]
+fn citation_ref_01 () {
+    let src = crate::common::str_to_lines(
+r#"
+[CIT2001]_
+"#,
+    );
+    let mut doctree = DocTree::new(PathBuf::from("test"));
+    doctree = Parser::new(
+        src, doctree, None, 0, None, 0
+    ).parse().unwrap_tree();
+    doctree = doctree.walk_to_root();
+    doctree.print_tree();
+
+    match doctree
+        .shared_child(0).unwrap()
+        .shared_child(0).unwrap()
+        .shared_data()
+    {
+        TreeNodeType::CitationReference { displayed_text, target_label } => {
+            assert_eq!(displayed_text, "CIT2001");
+            assert_eq!(target_label, "CIT2001");
+        }
+        _ => panic!()
+    }
+}

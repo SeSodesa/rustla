@@ -38,6 +38,7 @@ pub enum Pattern {
     SimpleRef,      // A reference that doesn't need backticks: reference__?
     Literal,        // Code
     FootNoteRef,
+    CitationRef,
     InlineTarget,    // Reference target in inline text: _`target label`
     SubstitutionRef, // Reference to substitution definition. Is replaced by the definition
     ImplicitURL,
@@ -423,7 +424,7 @@ pub const FOOTNOTE_REF_PATTERN: &str = r#"(?x)^
 )
 "#;
 
-pub const CITATION_REF_PATTERN: &str = r#"(?x)^"
+pub const CITATION_REF_PATTERN: &str = r#"(?x)^
   (?P<lookbehind>
     [-:/'"<(\[{\p{Ps}\p{Pi}\p{Pf}\p{Pd}\p{Po}\s&&[^\\*]]
   )?
@@ -431,13 +432,10 @@ pub const CITATION_REF_PATTERN: &str = r#"(?x)^"
     \[
   )
   (?P<content>
-    [a-zA-Z0-9]+([-_.]?[a-zA-Z0-9]+)*
+    [a-zA-Z0-9][a-zA-Z0-9]*(?:[-_.]?[a-zA-Z0-9]+)*
   )
   (?P<markup_end>
-    \]
-  )
-  (?P<ref_type>
-    __?
+    \]_
   )
   (?P<lookahead>
     \s|[-.,:;!?\\/'")\]}>\p{Pe}\p{Pi}\p{Pf}\p{Pd}\p{Po}&&[^*]]|$

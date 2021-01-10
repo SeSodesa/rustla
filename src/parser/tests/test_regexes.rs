@@ -29,3 +29,11 @@ fn footnote_01 () {
         }
     }
 }
+
+#[test]
+fn citation_ref_01 () {
+    let test_str = "[CIT2001]_";
+    if let None = crate::parser::automata::CITATION_REF_AUTOMATON.captures(test_str) {
+        panic!("Did not recognize \"{}\" as a citation reference label. Computer says no...", test_str)
+    }
+}

@@ -715,6 +715,10 @@ pub fn citation_ref(
     pattern_name: Pattern,
     captures: &regex::Captures,
 ) -> (Vec<TreeNodeType>, usize) {
+
+    let mut node_data = Vec::<TreeNodeType>::new();
+    let mut offset = 0 as usize;
+
     let lookbehind_str = if let Some(lookbehind) = captures.name("lookbehind") {
         lookbehind.as_str()
     } else {
@@ -722,7 +726,6 @@ pub fn citation_ref(
     };
     let markup_start_str = captures.name("markup_start").unwrap().as_str();
     let content = captures.name("content").unwrap().as_str();
-    let ref_type = captures.name("ref_type").unwrap().as_str();
     let markup_end_str = captures.name("markup_end").unwrap().as_str();
     let lookahead_str = if let Some(lookahead) = captures.name("lookahead") {
         lookahead.as_str()
@@ -730,33 +733,36 @@ pub fn citation_ref(
         ""
     };
 
-    if quotation_matches(lookbehind_str, content) {
-        let quoted_start_char_count =
-            lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
+    // Check for quoted start
+    if ! lookbehind_str.is_empty() {
+        if quotation_matches(lookbehind_str, content) {
+            offset +=
+                lookbehind_str.chars().count() + markup_start_str.chars().count() + 1;
 
-        let quoted_start_string: String = captures
-            .get(0)
-            .unwrap()
-            .as_str()
-            .chars()
-            .take(quoted_start_char_count)
-            .collect();
-        return (
-            vec![TreeNodeType::Text {
-                text: quoted_start_string,
-            }],
-            quoted_start_char_count,
-        );
-    } else if !lookbehind_str.is_empty() {
-        return (
-            vec![TreeNodeType::Text {
-                text: unicode_text_to_latex(lookbehind_str),
-            }],
-            lookbehind_str.chars().count(),
-        );
+            let quoted_start_string: String = captures
+                .get(0)
+                .unwrap()
+                .as_str()
+                .chars()
+                .take(offset)
+                .collect();
+            return ( vec![ TreeNodeType::Text { text: quoted_start_string }], offset );
+        } else {
+            node_data.push(TreeNodeType::Text { text: String::from(lookbehind_str) });
+            offset += lookbehind_str.chars().count();
+        }
     }
 
-    todo!()
+    let citation_ref = TreeNodeType::CitationReference {
+        displayed_text: content.trim().to_string(),
+        target_label: content.trim().to_string()
+    };
+    node_data.push(citation_ref);
+    offset += markup_start_str.chars().count()
+        + content.chars().count()
+        + markup_end_str.chars().count();
+
+    (node_data, offset)
 }
 
 /// Parses inline subsitution references. Also adds hyperlink information to the reference,
