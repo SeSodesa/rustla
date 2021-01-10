@@ -562,12 +562,14 @@ impl DocTree {
         match self
             .hyperref_data
             .mut_references()
-            .insert(label.clone(), id)
+            .get_mut(label)
         {
-            Some(node_id) => {
-                eprintln!("Found an existing node with the reference label \"{}\".\nReplacing duplicate node id value {} with {}...\n", label, node_id, id);
+            Some(node_ids) => {
+                node_ids.push(id);
+            },
+            None => {
+                self.hyperref_data.mut_references().insert(label.clone(), vec![id]);
             }
-            None => {}
         };
     }
 
@@ -653,12 +655,12 @@ impl DocTree {
     }
 
     /// Returns a shared reference to `self.references`.
-    pub fn shared_references(&self) -> &HashMap<String, NodeId> {
+    pub fn shared_references(&self) -> &HashMap<String, Vec<NodeId>> {
         self.hyperref_data.shared_references()
     }
 
     /// Returns a mutable reference to `self.references`.
-    pub fn mut_references(&mut self) -> &mut HashMap<String, NodeId> {
+    pub fn mut_references(&mut self) -> &mut HashMap<String, Vec<NodeId>> {
         self.hyperref_data.mut_references()
     }
 

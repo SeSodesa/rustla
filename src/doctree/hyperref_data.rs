@@ -10,11 +10,15 @@ use super::*;
 /// such as reserved foonote labels and mappings between
 pub struct HyperrefData {
 
-    /// A mapping of foonote labels added to the doctree to node identifiers.
+    /// A mapping of hyperref targets added to the doctree thus far,
+    /// pointing to the node the label was entered into.
     targets: HashMap<String, NodeId>,
 
-    /// A map of references to node identifiers entered into the doctree thus far.
-    references: HashMap<String, NodeId>,
+    /// A map of references to node identifiers that point to the key,
+    /// entered into the doctree thus far.
+    /// A string can point to multiple node ids,
+    /// as multiple nodes can reference the same reference target.
+    references: HashMap<String, Vec<NodeId>>,
 
     /// A counter of how many symbolic footnotes
     /// have been encountered and successfully
@@ -66,12 +70,12 @@ impl HyperrefData {
     }
 
     /// Returns a shared reference to `self.references`.
-    pub fn shared_references(&self) -> &HashMap<String, NodeId> {
+    pub fn shared_references(&self) -> &HashMap<String, Vec<NodeId>> {
         &self.references
     }
 
     /// Returns a mutable reference to `self.references`.
-    pub fn mut_references(&mut self) -> &mut HashMap<String, NodeId> {
+    pub fn mut_references(&mut self) -> &mut HashMap<String, Vec<NodeId>> {
         &mut self.references
     }
 
