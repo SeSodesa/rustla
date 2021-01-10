@@ -251,6 +251,15 @@ impl DocTree {
         // Check for targetable or referential nodes. If one is encountered,
         // add it to the known targets or references.
         match node_data {
+            TreeNodeType::Citation { label, .. } => {
+                let normalized_refname = normalize_refname(label);
+                self.add_target(&normalized_refname, self.node_count);
+                target_labels.push(normalized_refname);
+            }
+            TreeNodeType::CitationReference { displayed_text, .. } => {
+                let normalized_refname = normalize_refname(displayed_text);
+                self.add_reference(&normalized_refname, self.node_count)
+            }
             TreeNodeType::Footnote { target, label, kind, .. } => {
                 match kind {
                     FootnoteKind::Manual => {
@@ -298,7 +307,7 @@ impl DocTree {
             TreeNodeType::FootnoteReference { displayed_text, target_label, kind } => {
                 match kind {
                     FootnoteKind::Manual => target_labels.push(
-                        crate::common::normalize_refname(&displayed_text)
+                        crate::common::normalize_refname(displayed_text)
                     ),
                     FootnoteKind::AutoNumbered => match self.new_autonumber_footnote_ref_label() {
                         Some(label) => {
@@ -316,7 +325,7 @@ impl DocTree {
                             },
                             None => return None
                         }
-                        target_labels.push(crate::common::normalize_refname(&displayed_text));
+                        target_labels.push(crate::common::normalize_refname(displayed_text));
                     },
                     FootnoteKind::AutoSymbol => match self.new_symbolic_footnote_label() {
                         Some(label) => target_labels.push(label),

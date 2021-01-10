@@ -398,7 +398,7 @@ fn citation_01() {
     match &doctree
         .shared_child(0).unwrap().shared_data() {
         TreeNodeType::Citation { label, .. } => {
-            if !(label == "cit2005") {
+            if !(label == "CIT2005") {
                 panic!()
             }
         }

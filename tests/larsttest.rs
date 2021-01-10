@@ -617,6 +617,7 @@ r#"
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
+    doctree.print_tree();
 
     match doctree
         .shared_child(0).unwrap()

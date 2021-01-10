@@ -440,15 +440,13 @@ pub fn citation(
         line_cursor
     );
 
-    use crate::common::normalize_refname;
-
     // Match against the parent node. Only document root ignores indentation;
     // inside any other container it makes a difference.
     match Parser::parent_indent_matches(doctree.shared_node_data(), detected_marker_indent) {
         IndentationMatch::JustRight => {
             let citation_data = TreeNodeType::Citation {
                 body_indent: detected_body_indent,
-                label: normalize_refname(detected_label_str),
+                label: detected_label_str.trim().to_string(),
             };
             doctree = match doctree.push_data_and_focus(citation_data) {
                 Ok(tree) => tree,
