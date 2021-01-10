@@ -3748,7 +3748,7 @@ fn scan_directive_arguments(
     first_indent: Option<usize>,
     empty_after_marker: bool,
 ) -> Option<Vec<String>> {
-    use crate::parser::state_machine::FIELD_MARKER_RE;
+    use crate::parser::automata::FIELD_MARKER_AUTOMATON;
 
     // The vector containing references to the argument lines.
     let mut argument_lines: Vec<String> = Vec::new();
@@ -3786,7 +3786,7 @@ fn scan_directive_arguments(
         };
 
         if line_without_indent.as_str().trim().is_empty()
-            || FIELD_MARKER_RE.is_match(line_without_indent.as_str())
+            || FIELD_MARKER_AUTOMATON.is_match(line_without_indent.as_str())
         {
             break;
         }
@@ -3816,7 +3816,7 @@ fn scan_directive_options(
     line_cursor: &mut LineCursor,
     body_indent: usize,
 ) -> Option<HashMap<String, String>> {
-    use crate::parser::state_machine::FIELD_MARKER_RE;
+    use crate::parser::automata::FIELD_MARKER_AUTOMATON;
 
     let mut option_map: HashMap<String, String> = HashMap::new();
 
@@ -3828,7 +3828,7 @@ fn scan_directive_options(
             break;
         } // End of option list
 
-        if let Some(captures) = FIELD_MARKER_RE.captures(line) {
+        if let Some(captures) = FIELD_MARKER_AUTOMATON.captures(line) {
             let line_indent = captures.get(1).unwrap().as_str().chars().count();
             if line_indent != body_indent {
                 break;

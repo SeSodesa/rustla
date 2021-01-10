@@ -26,21 +26,21 @@ use super::*;
 use crate::parser::types_and_aliases::IndentedBlockResult;
 
 
-mod automata;
+pub mod automata;
 mod regex_patterns;
 
 mod converters;
 
-mod types_and_aliases;
+pub mod types_and_aliases;
 use types_and_aliases::*;
 
-mod line_cursor;
+pub mod line_cursor;
 use line_cursor::{Line, LineCursor};
 
 pub mod state_machine;
 use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
 
-mod directive_parsers;
+pub mod directive_parsers;
 mod table_parsers;
 
 use crate::common::{

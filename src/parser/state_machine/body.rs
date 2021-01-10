@@ -1622,7 +1622,7 @@ pub fn text(
     if next_line.is_some() {
         let next_line_str = next_line.unwrap();
 
-        if let Some(line_capts) = LINE_RE.captures(next_line_str) {
+        if let Some(line_capts) = crate::parser::automata::LINE_AUTOMATON.captures(next_line_str) {
             // Underlined section title
             if detected_indent > 0 {
                 return TransitionResult::Failure {
@@ -1706,7 +1706,7 @@ pub fn text(
             }
         }
 
-        if let Some(text_capts) = TEXT_RE.captures(next_line_str) {
+        if let Some(text_capts) = crate::parser::automata::TEXT_AUTOMATON.captures(next_line_str) {
             // Paragraph or definition list item. Determine based on indentation.
 
             let next_line_indent =
@@ -1881,11 +1881,11 @@ pub fn line(
                     push_or_pop: PushOrPop::Neither,
                     line_advance: LineAdvance::Some(2) // jump over the empty line following the transition
                 }
-            } else if TEXT_RE.is_match(n_line) {
+            } else if crate::parser::automata::TEXT_AUTOMATON.is_match(n_line) {
                 // A possible section title.
                 // Check next line for line pattern and its length.
                 if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
-                    if let Some(capts) = LINE_RE.captures(next_next_line) {
+                    if let Some(capts) = crate::parser::automata::LINE_AUTOMATON.captures(next_next_line) {
                         let next_line_len = n_line.trim_end().chars().count(); // title text line
                         let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();
                         let next_next_line_len = next_next_line.trim_end().chars().count();
@@ -1986,11 +1986,11 @@ pub fn line(
         }
 
         (None, Some(n_line)) => {
-            if TEXT_RE.is_match(n_line) {
+            if crate::parser::automata::TEXT_AUTOMATON.is_match(n_line) {
                 // A possible section title.
                 // Check next line for line pattern and its length.
                 if let Some(next_next_line) = src_lines.get(line_cursor.relative_offset() + 2) {
-                    if let Some(capts) = LINE_RE.captures(next_next_line) {
+                    if let Some(capts) = crate::parser::automata::LINE_AUTOMATON.captures(next_next_line) {
 
                         let next_line_len = n_line.trim_end().chars().count(); // title text line
                         let next_next_line_char = next_next_line.trim_end().chars().next().unwrap();

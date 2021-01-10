@@ -1,5 +1,5 @@
 /*!
-This module contains the state typ and the different transition functions corresponding to each state
+This module contains the `State` type and the different transition functions corresponding to each state
 in its submodules.
 
 Copyright © 2020 Santtu Söderholm
@@ -21,7 +21,6 @@ mod inline;
 mod literal_block;
 pub mod transitions;
 mod unknown_transitions;
-use crate::parser::regex_patterns::{FIELD_MARKER_PATTERN, LINE_PATTERN, TEXT_PATTERN};
 
 use std::collections::HashMap;
 use lazy_static::lazy_static;
@@ -30,10 +29,6 @@ use regex;
 use super::*;
 
 /// An enum of states.
-/// Enclosing state variants in an enum allows us
-/// to give ownership of a generic machine to an arbitrary structure,
-/// as enums are only as large as their largest variant.
-///
 /// The variants are used as keys to the static `TRANSITION_MAP`, which stores vectors of
 /// transitions as values.
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -219,8 +214,7 @@ impl State {}
 
 lazy_static! {
 
-  /// A static map of transititions for each state of
-  /// the `Parser` `StateMachine`.
+  /// A static map of transititions for each `State` of the `Parser`.
   ///
   /// With this regexes are only compiled into automata once.
   pub static ref TRANSITION_MAP: HashMap<State, Vec<(Pattern, regex::Regex, TransitionMethod)>> = {
@@ -291,21 +285,6 @@ lazy_static! {
 
     inline_transitions
   };
-
-  // DFAs compiled from patterns found under self::transitions
-
-  /// ### LINE_RE
-  /// A DFA compiled from `LINE_PATTERN`
-  static ref LINE_RE: Regex = Regex::new(LINE_PATTERN).unwrap();
-
-  /// ### TEXT_RE
-  /// A DFA compiled from `TEXT_PATTERN`
-  static ref TEXT_RE: Regex = Regex::new(TEXT_PATTERN).unwrap();
-
-  /// ### FIELD_MARKER_RE
-  /// A DFA compiled from `FIELD_MARKER_PATTERN`
-  pub static ref FIELD_MARKER_RE: Regex = Regex::new(FIELD_MARKER_PATTERN).unwrap();
-
 }
 
 impl Parser {
