@@ -317,13 +317,20 @@ pub fn footnote(
             doctree: doctree
         };
     };
-    let detected_body_indent = Parser::indent_from_next_line(
+    let (detected_body_indent, offset) = match Parser::indent_on_subsequent_lines(
         src_lines,
-        base_indent,
-        detected_marker_indent,
-        indent_after_marker,
-        line_cursor
-    );
+        line_cursor.relative_offset(),
+    ) {
+        Some((indent, offset)) => {
+            let indent = if indent > detected_marker_indent {
+                indent
+            } else {
+                indent_after_marker
+            };
+            (indent, offset)
+        },
+        None => (indent_after_marker, 0 as usize)
+    };
 
     let (label, target) = match detected_footnote_label_to_ref_label(
         &doctree,
@@ -432,13 +439,20 @@ pub fn citation(
     let detected_marker_indent = captures.get(1).unwrap().as_str().chars().count() + base_indent;
     let detected_label_str = captures.get(2).unwrap().as_str();
 
-    let detected_body_indent = Parser::indent_from_next_line(
+    let detected_body_indent = match Parser::indent_on_subsequent_lines(
         src_lines,
-        base_indent,
-        detected_marker_indent,
-        indent_after_marker,
-        line_cursor
-    );
+        line_cursor.relative_offset(),
+    ) {
+        Some((indent, offset)) => {
+            let indent = if indent > detected_marker_indent {
+                indent
+            } else {
+                indent_after_marker
+            };
+            indent
+        },
+        None => indent_after_marker
+    };
 
     // Match against the parent node. Only document root ignores indentation;
     // inside any other container it makes a difference.
@@ -752,7 +766,7 @@ pub fn directive(
     };
 
     let (body_indent, body_offset) =
-        match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1) {
+        match Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset()) {
             Some((indent, offset)) => (indent, offset),
             None => (detected_first_indent, 0), // EOF encountered => stay on same line
         };

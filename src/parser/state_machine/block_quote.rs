@@ -43,7 +43,7 @@ pub fn attribution(
             };
 
             let next_indent = if let Some((indent, offset)) =
-                Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset() + 1)
+                Parser::indent_on_subsequent_lines(src_lines, line_cursor.relative_offset())
             {
                 if offset == 0 && indent >= attribution_line_indent {
                     Some(indent)

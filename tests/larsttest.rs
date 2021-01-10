@@ -638,7 +638,7 @@ r#"
         _ => panic!()
     }
     match doctree
-        .shared_child(1).unwrap()
+        .shared_child(2).unwrap()
         .shared_data()
     {
         TreeNodeType::Citation { label, .. } => {
