@@ -1,5 +1,5 @@
 /*!
-A submodule that contains `StateMachine::BulletList` related transition functions.
+A submodule that contains `State::BulletList` related transition functions.
 
 Copyright © 2020 Santtu Söderholm
 */

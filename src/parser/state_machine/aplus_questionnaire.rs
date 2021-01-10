@@ -1,5 +1,5 @@
 /*!
-A submodule dedicated to parsing functions of the `StateMachine::AplusQuestionnaire` state.
+A submodule dedicated to parsing functions of the `State::AplusQuestionnaire` state.
 
 Copyright © 2020 Santtu Söderholm
 */

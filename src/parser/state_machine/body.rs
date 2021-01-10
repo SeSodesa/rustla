@@ -1,5 +1,5 @@
 /*!
-This module contains the transition functions related to `StateMachine::Body`.
+This module contains the transition functions related to `State::Body`.
 
 Copyright © 2020 Santtu Söderholm
 */

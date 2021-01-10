@@ -8,19 +8,19 @@ Copyright © 2020 Santtu Söderholm
 // ===============================================
 // Submodules for namespacing transition functions
 // ===============================================
-mod aplus;
-mod aplus_questionnaire;
-mod block_quote;
-mod body;
-mod bullet_list;
-mod common;
-mod definition_list;
-mod enumerated_list;
-mod field_list;
-mod inline;
-mod literal_block;
+pub mod aplus;
+pub mod aplus_questionnaire;
+pub mod block_quote;
+pub mod body;
+pub mod bullet_list;
+pub mod common;
+pub mod definition_list;
+pub mod enumerated_list;
+pub mod field_list;
+pub mod inline;
+pub mod literal_block;
 pub mod transitions;
-mod unknown_transitions;
+pub mod unknown_transitions;
 
 use std::collections::HashMap;
 use lazy_static::lazy_static;

@@ -1,5 +1,5 @@
 /*!
-A submodule for `Statemachine::EnumeratedList` related transition functions.
+A submodule for `State::EnumeratedList` related transition functions.
 
 Copyright © 2020 Santtu Söderholm
 */
