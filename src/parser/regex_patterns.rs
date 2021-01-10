@@ -498,7 +498,7 @@ pub const URI_PATTERN: &str = r#"(?x)^
       )?
     )?
     (?P<path>
-      /?[a-zA-Z0-9]*(?:/[A-Za-z0-9]+)*/?
+      /?[a-zA-Z0-9~_.]*(?:/[A-Za-z0-9~_.]+)*/?
     )
     [_~*/=+a-zA-Z0-9] # Allowed URI suffixes
     (?:\?
