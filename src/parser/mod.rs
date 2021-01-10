@@ -100,18 +100,18 @@ impl Parser {
     pub fn new(
         src: Vec<String>,
         doctree: DocTree,
-        base_indent: Option<usize>,
+        base_indent: usize,
         base_line: Line,
-        initial_state: Option<State>,
+        initial_state: State,
         section_level: usize,
     ) -> Self {
         Self {
             src_lines: src, //.lines().map(|s| s.to_string()).collect::<Vec<String>>(),
             line_cursor: LineCursor::new(0, base_line),
-            base_indent: base_indent.unwrap_or(0),
+            base_indent: base_indent,
             section_level: section_level,
             doctree: Some(doctree),
-            state_stack: vec![initial_state.unwrap_or(State::Body)],
+            state_stack: vec![initial_state],
         }
     }
 
@@ -526,9 +526,9 @@ impl Parser {
         match Parser::new(
             block,
             doctree,
-            Some(text_indent),
+            text_indent,
             line_cursor.sum_total(),
-            Some(start_state),
+            start_state,
             *section_level,
         ).parse() {
             ParsingResult::EOF {

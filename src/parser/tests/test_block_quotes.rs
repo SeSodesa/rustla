@@ -26,7 +26,7 @@ fn block_quote_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -90,7 +90,7 @@ fn block_quote_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -156,7 +156,7 @@ fn block_quote_03() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -218,7 +218,7 @@ at least for now.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -266,7 +266,7 @@ fn block_quote_05() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();

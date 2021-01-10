@@ -127,9 +127,9 @@ pub fn parse_standard_admonition(
     let (doctree, nested_state_stack) = match Parser::new(
         arg_lines,
         doctree,
-        Some(body_indent),
+        body_indent,
         line_cursor.sum_total(),
-        Some(State::Admonition),
+        State::Admonition,
         section_level,
     ).parse() {
         ParsingResult::EOF {
@@ -883,9 +883,9 @@ pub fn parse_list_table(
     let (mut doctree, mut nested_state_stack) = match Parser::new(
         lines,
         doctree,
-        Some(body_indent),
+        body_indent,
         line_cursor.sum_total(),
-        Some(State::ListTable),
+        State::ListTable,
         section_level,
     ).parse() {
         ParsingResult::EOF {
@@ -1291,9 +1291,9 @@ pub fn parse_class(
     let (doctree, nested_state_stack) = match Parser::new(
         lines,
         doctree,
-        Some(body_indent),
+        body_indent,
         line_cursor.sum_total(),
-        Some(State::Body),
+        State::Body,
         section_level,
     ).parse() {
         ParsingResult::EOF {

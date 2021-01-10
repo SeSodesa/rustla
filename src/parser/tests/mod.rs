@@ -21,6 +21,7 @@ use crate::doctree::DocTree;
 use crate::parser::line_cursor::LineCursor;
 use crate::parser::types_and_aliases::InlineParsingResult;
 use crate::parser::Parser;
+use crate::parser::state_machine::State;
 
 mod test_admonitions;
 mod test_aplus_point_of_interest;

@@ -10,6 +10,7 @@ Copyright © 2020 Santtu Söderholm
 mod rustla_options;
 pub mod parser;
 use parser::Parser;
+use parser::state_machine::State;
 pub mod doctree;
 use doctree::DocTree;
 pub mod common;
@@ -92,7 +93,7 @@ pub fn run() -> Result<(), MainError> {
     // Enter parser here...
 
     let mut doctree = DocTree::new(path);
-    let mut parser = Parser::new(src_lines, doctree, None, 0, None, 0);
+    let mut parser = Parser::new(src_lines, doctree, 0, 0, State::Body, 0);
 
     use common::ParsingResult;
 

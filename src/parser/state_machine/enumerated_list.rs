@@ -118,9 +118,9 @@ pub fn enumerator(
         let (doctree, state_stack) = match Parser::new(
             lines,
             doctree,
-            Some(detected_text_indent),
+            detected_text_indent,
             line_cursor.sum_total(),
-            Some(State::ListItem),
+            State::ListItem,
             *section_level
         ).parse() {
             ParsingResult::EOF {doctree, state_stack}

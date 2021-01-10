@@ -31,7 +31,7 @@ id est laborum.
 "
     );
     let mut doctree = DocTree::new(PathBuf::new());
-    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+    doctree = Parser::new(src, doctree, 0, 0,State::Body, 0)
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -77,7 +77,7 @@ Something after
 "
     );
     let mut doctree = DocTree::new(PathBuf::new());
-    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+    doctree = Parser::new(src, doctree, 0, 0,State::Body, 0)
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -241,7 +241,7 @@ Something after
 "
     );
     let mut doctree = DocTree::new(PathBuf::new());
-    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+    doctree = Parser::new(src, doctree, 0, 0,State::Body, 0)
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -402,7 +402,7 @@ Three
 "
     );
     let mut doctree = DocTree::new(PathBuf::new());
-    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+    doctree = Parser::new(src, doctree, 0, 0,State::Body, 0)
         .parse()
         .unwrap_tree();
     doctree = doctree.perform_restructuredtext_transforms();
@@ -613,7 +613,7 @@ r#"
 "#
     );
     let mut doctree = DocTree::new(PathBuf::new());
-    doctree = Parser::new(src, doctree, Some(0), 0, Some(State::Body), 0)
+    doctree = Parser::new(src, doctree, 0, 0,State::Body, 0)
         .parse()
         .unwrap_tree();
     doctree = doctree.walk_to_root();
