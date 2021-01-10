@@ -160,8 +160,6 @@ pub fn parse_standard_admonition(
     }
 }
 
-/// ### parse_generic admonition
-///
 /// Much like `parse_standard_admonition`, except
 /// 1. first checks that the admonition contains an argument,
 /// 2. then checks for possible options and
@@ -535,8 +533,6 @@ pub fn parse_code(
     }
 }
 
-/// ### parse_math_block
-///
 /// The display math parser. Content blocks separated by a blank lines are put in adjacent math blocks.
 pub fn parse_math_block(
     src_lines: &Vec<String>,
@@ -1571,12 +1567,12 @@ pub fn parse_sphinx_only(
     first_indent: usize,
     body_indent: usize,
 ) -> TransitionResult {
-    /// ### ALWAYS_DEFINED_TAGS
-    ///
+
+
     /// Directive `only` tags that are always known to the Sphinx parser.
     /// These work like expressions in predicate logic and can be combined with
     /// ` and `, ` or ` and grouped with parentheses.
-    ///
+
     /// They should be included with the directive argument.
     const ALWAYS_DEFINED_TAGS: &[&str] = &["html", "latex", "text"];
 
@@ -1749,8 +1745,6 @@ pub fn parse_aplus_questionnaire(
     }
 }
 
-/// ### parse_aplus_pick_one
-///
 /// A `pick-one` type questionnaire question parser.
 pub fn parse_aplus_pick_one(
     src_lines: &Vec<String>,
@@ -1761,7 +1755,7 @@ pub fn parse_aplus_pick_one(
     empty_after_marker: bool,
 ) -> TransitionResult {
 
-    /// ### APLUS_PICK_ONE_CHOICE_PATTERN
+
     /// Correct answers in `pick-one` and `pick-any` directives are marked with `*`.
     /// A `pick-any` question may have neutral options, which are marked with `?`.
     /// Neutral options are always counted as correct, whether the student selected them or not.
@@ -2183,8 +2177,6 @@ pub fn parse_aplus_pick_one(
     }
 }
 
-/// ### parse_aplus_pick_any
-///
 /// A `pick-any` type questionnaire question parser.
 pub fn parse_aplus_pick_any(
     src_lines: &Vec<String>,
@@ -2632,8 +2624,6 @@ pub fn parse_aplus_pick_any(
     }
 }
 
-/// ### parse_aplus_freetext
-///
 /// A `freetext` type questionnaire question parser.
 pub fn parse_aplus_freetext(
     src_lines: &Vec<String>,
@@ -3506,8 +3496,8 @@ pub fn parse_aplus_hidden_block() {
 }
 
 /// Parses an A+ point of interest directive into the respective node.
-///
-/// ### TODO
+
+
 /// Add support for the row and column directives introduced in November 2020.
 pub fn parse_aplus_point_of_interest(
     src_lines: &Vec<String>,
@@ -3742,14 +3732,12 @@ pub fn parse_unknown_directive(
 //  HELPERS
 // ---------
 
-/// ### scan_directive_arguments
-///
 /// Reads the first block of text of a directive,
 /// until an empty line or something like a list of options
 /// (recognized by the automaton `FIELD_MAKRER_RE`) is encountered.
 /// Combines the lines into a single string and `Option`ally returns it.
 /// If no arguments are found, returns `None`.
-///
+
 /// In case the directive starts on the same line as the directive marker,
 /// allows specifying first and block indents separately.
 /// `first_indent` (on the first line) or `block_indent` are ignored on each line.
@@ -3814,12 +3802,12 @@ fn scan_directive_arguments(
     }
 }
 
-/// ### scan_directive_options
+
 /// Scans the lines following the directive marker for something resembling a field list,
 /// and attempts to scan the contents of the list into an `Option`al `HashMap` of directive
 /// option names and values. The calling directive parser will handle their validation,
 /// as different directives have different options available to them.
-///
+
 /// An empty line separates directive options from the directive content, so encountering one
 /// will terminate the scan. This means that the options have to start of the line following
 /// the directive marker.
@@ -3874,8 +3862,6 @@ fn scan_directive_options(
     }
 }
 
-/// ### aplus_key_difficulty_and_max_points
-///
 /// Parses the given `&str` for the directive key,
 /// difficulty and maximum points.
 /// Empty strings are returned for every missing part.
