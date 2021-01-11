@@ -233,7 +233,7 @@ impl TreeNodeType {
                 format!(r"\captionof{{figure}}{{")
             }
             Self::Citation { body_indent, label } => {
-                todo!()
+                format!("\\bibitem{{{}}}\n", label)
             }
             Self::CitationReference {
                 displayed_text,
