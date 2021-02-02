@@ -474,7 +474,7 @@ impl TreeNodeType {
                 name,
                 class,
             } => {
-                let ref_labels = self.anchor_string_per_nodetype( ref_names);
+                let ref_labels = self.anchor_string(ref_names);
                 format!(
                     "{}\\begin{{equation}}\n{}\n",
                     ref_labels, crate::utf8_to_latex::unicode_math_to_latex(math_block)
@@ -538,7 +538,7 @@ impl TreeNodeType {
                     ("section", "subsub")
                 };
 
-                let anchors = self.anchor_string_per_nodetype(ref_names);
+                let anchors = self.anchor_string(ref_names);
 
                 format!("{}\\{}{}{{{}}}\n\n", anchors, subs, command, title_text)
             }
@@ -1183,7 +1183,7 @@ impl TreeNodeType {
             Self::FieldList { .. } => "\\end{itemize}\n\n".to_string(),
             Self::FieldListItem { .. } => "\n".to_string(),
             Self::Figure { .. } => {
-                let anchors = self.anchor_string_per_nodetype(ref_names);
+                let anchors = self.anchor_string(ref_names);
                 format!("{}\\end{{center}}\n\n", anchors)
             },
             Self::Footer { .. } => todo!(),
@@ -1287,7 +1287,7 @@ impl TreeNodeType {
     }
 
     /// Generates a suitable reference anchor string per TreeNodeType.
-    fn anchor_string_per_nodetype (
+    fn anchor_string (
         &self,
         refnames_from_node: Option<&Vec<String>>,
     ) -> String {
