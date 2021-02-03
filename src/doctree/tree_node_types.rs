@@ -439,10 +439,11 @@ pub enum TreeNodeType {
     /// An inline reference target.
     InlineTarget { target_label: String },
 
-    /// Text, whose meaning depends entirely on the given `role`:
-    /// (:role:`content`|`content`:role:). There are predefined roles
-    /// such as `math` or `emphasis`, but others may be defined by applications.
-    InterpretedText,
+    /// This node type is reserved for unknown interpreted text roles.
+    InterpretedText {
+        role: String,
+        content: String
+    },
 
     /// ?
     Label,

@@ -420,7 +420,9 @@ impl TreeNodeType {
             Self::IndirectHyperlinkTarget { .. } => todo!(),
             Self::Inline { .. } => todo!(),
             Self::InlineTarget { .. } => todo!(),
-            Self::InterpretedText { .. } => todo!(),
+            Self::InterpretedText { role, content } => {
+                format!("\\{}{{{}}}", role, content)
+            },
             Self::Label { .. } => todo!(),
             Self::Legend { .. } => todo!(),
             Self::Line { .. } => todo!(),
@@ -1202,7 +1204,7 @@ impl TreeNodeType {
             Self::IndirectHyperlinkTarget { .. } => todo!(),
             Self::Inline { .. } => todo!(),
             Self::InlineTarget { .. } => todo!(),
-            Self::InterpretedText { .. } => todo!(),
+            Self::InterpretedText { .. } => String::new(),
             Self::Label { .. } => todo!(),
             Self::Legend { .. } => "\n".to_string(),
             Self::Line { .. } => "\n".to_string(),

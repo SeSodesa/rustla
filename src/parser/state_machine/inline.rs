@@ -441,7 +441,11 @@ pub fn interpreted_text(
                 .count();
             let match_string: String = whole_match.chars().take(match_len).collect();
             return (
-                vec![TreeNodeType::Literal { text: match_string }],
+                vec![
+                    TreeNodeType::InterpretedText {
+                        role: role.to_string(),
+                        content: content.to_string()
+                }],
                 match_len,
             );
         }

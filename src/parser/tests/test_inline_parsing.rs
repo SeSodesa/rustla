@@ -666,18 +666,22 @@ Unknown roles also trigger literal text: :role1:`this is a literal`,
         panic!()
     }
 
-    if let TreeNodeType::Literal { text } = doctree
+    if let TreeNodeType::InterpretedText { role, content } = doctree
         .shared_child(1).unwrap()
-        .shared_child(12).unwrap().shared_data() {
-        assert_eq!(text, ":role1:`this is a literal`");
+        .shared_child(12).unwrap().shared_data()
+    {
+            assert_eq!(role, "role1");
+            assert_eq!(content, "this is a literal");
     } else {
         panic!()
     }
 
-    if let TreeNodeType::Literal { text } = doctree
+    if let TreeNodeType::InterpretedText { role, content } = doctree
         .shared_child(1).unwrap()
-        .shared_child(15).unwrap().shared_data() {
-        assert_eq!(text, "`as is this`:role2:");
+        .shared_child(15).unwrap().shared_data()
+    {
+        assert_eq!(role, "role2");
+        assert_eq!(content, "as is this");
     } else {
         panic!()
     }
