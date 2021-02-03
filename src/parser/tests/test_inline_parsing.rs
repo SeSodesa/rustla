@@ -670,8 +670,8 @@ Unknown roles also trigger literal text: :role1:`this is a literal`,
         .shared_child(1).unwrap()
         .shared_child(12).unwrap().shared_data()
     {
-            assert_eq!(role, "role1");
-            assert_eq!(content, "this is a literal");
+        assert_eq!(role, "role1");
+        assert_eq!(content, "this is a literal");
     } else {
         panic!()
     }
