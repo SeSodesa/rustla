@@ -2,7 +2,7 @@
 name = "ruSTLa"
 description = "A reStructuredText → LarST ⊂ LaTeX transpiler."
 authors = ["Santtu Söderholm <santtu.soderholm@tuni.fi>"]
-version = "0.5.0"
+version = "0.38.0"
 repository= "https://github.com/SeSodesa/rustla"
 edition = "2018"
 license-file = "LICENSE.rst"
