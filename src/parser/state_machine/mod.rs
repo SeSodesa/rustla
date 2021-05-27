@@ -22,7 +22,6 @@ pub mod literal_block;
 pub mod transitions;
 pub mod unknown_transitions;
 
-use std::collections::HashMap;
 use lazy_static::lazy_static;
 use regex;
 
@@ -217,9 +216,9 @@ lazy_static! {
   /// A static map of transititions for each `State` of the `Parser`.
   ///
   /// With this regexes are only compiled into automata once.
-  pub static ref TRANSITION_MAP: HashMap<State, Vec<(Pattern, regex::Regex, TransitionMethod)>> = {
+  pub static ref TRANSITION_MAP: std::collections::HashMap<State, Vec<(Pattern, regex::Regex, TransitionMethod)>> = {
 
-    let mut action_map = collections::HashMap::with_capacity(10);
+    let mut action_map = std::collections::HashMap::with_capacity(10);
 
     let body_actions = State::compile_state_transitions(&State::BODY_TRANSITIONS);
     action_map.insert(State::Body, body_actions);

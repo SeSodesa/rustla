@@ -9,12 +9,6 @@ Copyright © 2020 Santtu Söderholm
 //  Imports
 // =========
 
-// Standard library
-use std::cmp;
-
-use std::collections;
-use std::str;
-
 // External crates
 // ---------------
 use regex::Regex;
@@ -465,7 +459,7 @@ impl Parser {
     /// generated node if successful, otherwise returns with `None`.
     fn match_inline_str<'chars>(
         opt_doctree_ref: &mut Option<&mut DocTree>,
-        chars_iter: &'chars str::Chars,
+        chars_iter: &'chars std::str::Chars,
     ) -> Option<(Vec<TreeNodeType>, usize)> {
         let src_str = chars_iter.as_str();
         if src_str.is_empty() {
@@ -743,7 +737,7 @@ impl Parser {
                 if minimal_indent.is_none() {
                     minimal_indent = Some(line_indent);
                 } else if line_indent > 0 {
-                    minimal_indent = Some(cmp::min(minimal_indent.unwrap(), line_indent));
+                    minimal_indent = Some(std::cmp::min(minimal_indent.unwrap(), line_indent));
                 }
             }
 
