@@ -105,7 +105,7 @@ This is no longer a part of the above literal block inside a block quote.
             assert_eq!(options.get("option1").unwrap(), "a");
             assert_eq!(options.get("option2").unwrap(), "bunch");
             assert_eq!(options.get("option3").unwrap(), "here");
-            assert!(options.get("option4").is_none(), true);
+            assert_eq!(options.get("option4").is_none(), true);
             assert_eq!(options.get("option5").unwrap(), "something else entirely");
         }
         _ => panic!(),
