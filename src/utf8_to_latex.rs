@@ -12,7 +12,7 @@ use std::collections::HashMap;
 /// a specific LaTeX package for the resulting object code to parse without errors,
 /// which is *not* taken into account by this function.
 ///
-/// If not conversion exists, adds the unicode scalar into the string unchanged.
+/// If no conversion exists, adds the unicode scalar into the string unchanged.
 pub fn unicode_math_to_latex(utf_str: &str) -> String {
     let source_char_count = utf_str.chars().count();
     let mut latex_string = String::with_capacity(source_char_count);
