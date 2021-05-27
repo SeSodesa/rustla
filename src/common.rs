@@ -5,7 +5,6 @@ sensibly belong to any specific entity in the program.
 Copyright © 2020 Santtu Söderholm
 */
 use std::io::BufRead;
-use std::{fs, io, path, str};
 
 // =======================
 // Text handling utilities
@@ -23,12 +22,12 @@ pub fn str_to_lines(string: &str) -> Vec<String> {
 }
 
 /// Read the lines of a given file into a buffer.
-pub fn read_path_lines<P>(file_path: P) -> io::Result<io::Lines<io::BufReader<fs::File>>>
+pub fn read_path_lines<P>(file_path: P) -> std::io::Result<std::io::Lines<std::io::BufReader<std::fs::File>>>
 where
-    P: AsRef<path::Path>,
+    P: AsRef<std::path::Path>,
 {
-    let file: fs::File = fs::File::open(file_path)?;
-    Ok(io::BufReader::new(file).lines())
+    let file: std::fs::File = std::fs::File::open(file_path)?;
+    Ok(std::io::BufReader::new(file).lines())
 }
 
 /// Normalizes the given `&str` according to the reStructuredText specification.
