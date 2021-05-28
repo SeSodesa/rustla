@@ -31,7 +31,7 @@ term 4 : classifier one : classifier two
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();

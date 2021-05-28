@@ -126,7 +126,7 @@ fn embedded_uri_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -271,7 +271,7 @@ maybe a -simple-reference__- as well.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -422,7 +422,7 @@ Test for "*"quoted* (**)start** '`'strings <https://www.absolute.uri.fi>`__.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -526,7 +526,7 @@ Test for ats: @``@literal``.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -571,7 +571,7 @@ The following should produce a title reference: `Söderholm2020`.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -652,7 +652,7 @@ Unknown roles also trigger literal text: :role1:`this is a literal`,
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -701,7 +701,7 @@ fn quoted_interpreted_text_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -753,7 +753,7 @@ fn quoted_interpreted_text_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -824,7 +824,7 @@ fn quoted_interpreted_text_03() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -880,7 +880,7 @@ fn uri_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -960,7 +960,7 @@ _`inline target` **This emphasis is a reference target**.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -996,7 +996,7 @@ fn footnote_ref_01 () {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -1053,7 +1053,7 @@ r#"
     );
     let mut doctree = DocTree::new(PathBuf::from("test"));
     doctree = Parser::new(
-        src, doctree, 0, 0, State::Body, 0
+        &src, doctree, 0, 0, State::Body, 0
     ).parse().unwrap_tree();
     doctree = doctree.walk_to_root();
     doctree.print_tree();

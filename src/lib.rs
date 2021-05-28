@@ -93,7 +93,7 @@ pub fn run() -> Result<(), MainError> {
     // Enter parser here...
 
     let mut doctree = DocTree::new(path);
-    let mut parser = Parser::new(src_lines, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src_lines, doctree, 0, 0, State::Body, 0);
 
     use common::ParsingResult;
 

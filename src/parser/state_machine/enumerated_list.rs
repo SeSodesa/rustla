@@ -116,7 +116,7 @@ pub fn enumerator(
         };
 
         let (doctree, state_stack) = match Parser::new(
-            lines,
+            &lines,
             doctree,
             detected_text_indent,
             line_cursor.sum_total(),

@@ -125,7 +125,7 @@ pub fn parse_standard_admonition(
 
     // Start nested parse inside admonition...
     let (doctree, nested_state_stack) = match Parser::new(
-        arg_lines,
+        &arg_lines,
         doctree,
         body_indent,
         line_cursor.sum_total(),
@@ -881,7 +881,7 @@ pub fn parse_list_table(
     };
 
     let (mut doctree, mut nested_state_stack) = match Parser::new(
-        lines,
+        &lines,
         doctree,
         body_indent,
         line_cursor.sum_total(),
@@ -1289,7 +1289,7 @@ pub fn parse_class(
     };
 
     let (doctree, nested_state_stack) = match Parser::new(
-        lines,
+        &lines,
         doctree,
         body_indent,
         line_cursor.sum_total(),

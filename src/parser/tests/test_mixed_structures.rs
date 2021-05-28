@@ -30,7 +30,7 @@ fn mixed_nested_lists_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -181,7 +181,7 @@ Vaihtoehtoja alkeistapahtumiksi, joihin liittyy :math:`x` onnistumista, on :math
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();

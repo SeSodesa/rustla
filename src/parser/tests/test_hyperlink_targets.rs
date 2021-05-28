@@ -23,7 +23,7 @@ fn footnote_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -67,7 +67,7 @@ fn footnote_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -141,7 +141,7 @@ fn footnote_03() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -232,7 +232,7 @@ fn footnote_04() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -304,7 +304,7 @@ fn footnote_05() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -388,7 +388,7 @@ fn citation_01() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -429,7 +429,7 @@ fn citation_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -477,7 +477,7 @@ Paragraph here. Please give me the labels \"target1\" and \"target2\".
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -512,7 +512,7 @@ fn hyperlink_target_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -548,7 +548,7 @@ fn hyperlink_target_03() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -603,7 +603,7 @@ fn hyperlink_target_04() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -659,7 +659,7 @@ A Section title
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();

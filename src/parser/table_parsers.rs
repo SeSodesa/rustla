@@ -51,7 +51,7 @@ impl Cell {
 type Row = Vec<Cell>;
 
 /// Implementation of the table parsing functions for the `Parser` type.
-impl Parser {
+impl <'source> Parser <'source> {
 
     /// Parses a grid table, returning a `TableResult`.
     pub fn parse_grid_table(src_lines: &Vec<String>, line_cursor: &LineCursor) -> TableResult {

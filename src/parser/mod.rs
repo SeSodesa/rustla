@@ -57,10 +57,10 @@ mod tests;
 /// to any transitions functions via
 /// `std::option::Option::take`
 /// without invalidating the fields.
-pub struct Parser {
+pub struct Parser <'source> {
 
     /// The source `String` converted to a vector of owned `String`s.
-    src_lines: Vec<String>,
+    src_lines: &'source Vec<String>,
 
     /// The absolute line index of src_lines.
     line_cursor: LineCursor,
@@ -85,14 +85,14 @@ pub struct Parser {
     state_stack: Vec<State>,
 }
 
-impl Parser {
+impl <'source> Parser <'source> {
     /// The `Parser` constructor. Transforms a given source string
     /// into a vector of lines and wraps this and a given `DocTree`
     /// in `Option`s. This wrapping allows the passing of these to owned
     /// state machnes via swapping the optional contents
     /// to `None` before granting ownership of the original contents.
     pub fn new(
-        src: Vec<String>,
+        src: &'source Vec<String>,
         doctree: DocTree,
         base_indent: usize,
         base_line: Line,
@@ -518,7 +518,7 @@ impl Parser {
 
         // Run a nested `Parser` over the first indented block with base indent set to `text_indent`.
         match Parser::new(
-            block,
+            &block,
             doctree,
             text_indent,
             line_cursor.sum_total(),

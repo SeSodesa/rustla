@@ -23,7 +23,7 @@ Some unindented text.
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -73,7 +73,7 @@ fn enumerated_list_02() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -132,7 +132,7 @@ fn enumerated_list_03() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -238,7 +238,7 @@ fn enumerated_list_04() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();
@@ -319,7 +319,7 @@ fn enumerated_list_05() {
 
     let mut doctree = DocTree::new(PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     doctree = doctree.walk_to_root();

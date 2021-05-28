@@ -286,7 +286,7 @@ lazy_static! {
   };
 }
 
-impl Parser {
+impl <'source> Parser <'source> {
     /// Checks whether the line following the current one allows for the construction of an enumerate list item.
     /// Either the following line has to be blank, indented or the next enumerator in
     /// the current list has to be constructable from it.

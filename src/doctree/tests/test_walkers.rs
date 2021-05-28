@@ -22,7 +22,7 @@ And another one.
     .collect::<Vec<String>>();
 
     let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
     doctree = parser.parse().unwrap_tree();
 
     let n_of_nodes = doctree.n_of_nodes();
@@ -54,7 +54,7 @@ fn walk_to_id_02() {
 
     let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     // doctree.print_tree();
@@ -94,7 +94,7 @@ Now with a second row.
 
     let mut doctree = DocTree::new(std::path::PathBuf::from("test"));
 
-    let mut parser = Parser::new(src, doctree, 0, 0, State::Body, 0);
+    let mut parser = Parser::new(&src, doctree, 0, 0, State::Body, 0);
 
     doctree = parser.parse().unwrap_tree();
     // doctree.print_tree();
