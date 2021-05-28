@@ -5,38 +5,23 @@ that hosts the state transition functions of different states.
 
 Copyright © 2020 Santtu Söderholm
 */
-// =========
-//  Imports
-// =========
 
-// External crates
-// ---------------
+// --------- Imports ---------
+
 use regex::Regex;
-
-// Own modules
-// -----------
-
 use super::*;
 use crate::parser::types_and_aliases::IndentedBlockResult;
-
-
 pub mod automata;
 mod regex_patterns;
-
 mod converters;
-
 pub mod types_and_aliases;
 use types_and_aliases::*;
-
 pub mod line_cursor;
 use line_cursor::{Line, LineCursor};
-
 pub mod state_machine;
 use state_machine::{State, COMPILED_INLINE_TRANSITIONS};
-
 pub mod directive_parsers;
 mod table_parsers;
-
 use crate::common::{
     EnumDelims, EnumKind, FootnoteKind, ParsingResult, SectionLineStyle,
 };
@@ -47,9 +32,7 @@ use crate::doctree::DocTree;
 
 mod tests;
 
-// ==========================
-//  The Parser specification
-// ==========================
+// ---------  The Parser specification ---------
 
 /// The parser type. Contains an optional source line vector and a document tree.
 /// These are optional to facilitate their passing to any transitions functions via
