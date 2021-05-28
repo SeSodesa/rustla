@@ -81,7 +81,7 @@ pub struct Parser <'source> {
     doctree: Option<DocTree>,
 
     /// A stack of states that function as keys to vectors of state transitions.
-    /// The set of transitios is chosen based on the current state on top of the stack.
+    /// The set of transitions is chosen based on the current state on top of the stack.
     state_stack: Vec<State>,
 }
 
