@@ -16,7 +16,7 @@ use crate::parser::types_and_aliases::TextBlockResult;
 
 /// A function for parsing indented literal block nodes.
 pub fn literal_block(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -56,7 +56,7 @@ pub fn literal_block(
 /// Generates a literal block node from a "quoted" block of text.
 fn parse_indented_literal(
     mut doctree: DocTree,
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     line_cursor: &mut LineCursor,
     captures: &regex::Captures,
     body_indent: usize,
@@ -110,7 +110,7 @@ fn parse_indented_literal(
 /// Generates a literal block node from a "quoted" block of text.
 fn parse_quoted_literal(
     mut doctree: DocTree,
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     line_cursor: &mut LineCursor,
     captures: &regex::Captures,
     body_indent: usize,

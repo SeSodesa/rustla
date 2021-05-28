@@ -8,7 +8,7 @@ use super::*;
 
 /// A function for reading in blocks of intermediate text (rST paragraphs) between questionnaire questions.
 pub fn parse_aplus_questionnaire_text(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -96,7 +96,7 @@ pub fn parse_aplus_questionnaire_text(
 /// Parses an A+ questionnaire directive. Works as an entry point between the parser and the functions
 /// `crate::parser::directive_parsers::{parse_aplus_pick_any, parse_aplus_pick_one, parse_aplus_freetext}`.
 pub fn parse_aplus_questionnaire_directive(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

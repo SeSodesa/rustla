@@ -17,7 +17,7 @@ use super::*;
 /// One such case is the definition list state, where only normal text should be allowed,
 /// but other possibilities such as bullet lists beed to be eliminated first.
 pub fn back_up(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

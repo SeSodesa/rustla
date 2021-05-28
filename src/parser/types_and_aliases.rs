@@ -19,7 +19,7 @@ use super::*;
 /// the new state is pushed on top of the machine stack of the parser and parsing proceeds
 /// in that state from the current line.
 pub type TransitionMethod = fn(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

@@ -9,7 +9,7 @@ use super::*;
 
 /// A transition function for parsing definition list items.
 pub fn text(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

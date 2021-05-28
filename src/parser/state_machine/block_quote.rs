@@ -10,7 +10,7 @@ use crate::parser::types_and_aliases::IndentedBlockResult;
 /// A function that generates attribution nodes inside a block quote.
 /// An attribution ends block quotes, so encountering one makes the parser focus on the parent of the current node.
 pub fn attribution(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

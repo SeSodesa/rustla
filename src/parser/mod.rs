@@ -40,7 +40,7 @@ mod tests;
 pub struct Parser <'source> {
 
     /// The source `String` converted to a vector of owned `String`s.
-    src_lines: &'source Vec<String>,
+    src_lines: &'source [String],
 
     /// The absolute line index of src_lines.
     line_cursor: LineCursor,
@@ -72,7 +72,7 @@ impl <'source> Parser <'source> {
     /// state machnes via swapping the optional contents
     /// to `None` before granting ownership of the original contents.
     pub fn new(
-        src: &'source Vec<String>,
+        src: &'source [String],
         doctree: DocTree,
         base_indent: usize,
         base_line: Line,
@@ -355,7 +355,7 @@ impl <'source> Parser <'source> {
     /// Attempts to retrieve the source from a given line number.
     /// Returns an `Ok` clone of it if successful, else
     /// returns and `Err` with a message.
-    fn get_source_from_line<'src_lines>(src_lines: &Vec<String>, line_num: usize) -> Option<&str> {
+    fn get_source_from_line<'src_lines>(src_lines: &[String], line_num: usize) -> Option<&str> {
         let src = match src_lines.get(line_num) {
             Some(line) => line.as_str(),
             None => {
@@ -445,7 +445,7 @@ impl <'source> Parser <'source> {
     /// right after a marker such as an enumerator, on the same line.
     fn parse_first_node_block(
         doctree: DocTree,
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         base_indent: usize,
         line_cursor: &mut LineCursor,
         text_indent: usize,
@@ -523,7 +523,7 @@ impl <'source> Parser <'source> {
 
     /// Skips empty lines until a non-empty one is found.
     /// If the end of input is encountered, returns `None`, else returns `Some(())`.
-    fn skip_to_next_block(src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> Option<()> {
+    fn skip_to_next_block(src_lines: &[String], line_cursor: &mut LineCursor) -> Option<()> {
         loop {
             if let Some(line) = src_lines.get(line_cursor.relative_offset()) {
                 if line.trim().is_empty() {
@@ -544,7 +544,7 @@ impl <'source> Parser <'source> {
     /// if indentation is not allowed but indentation is found,
     /// returns an error message in an `Err`.
     fn read_text_block(
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         start_line: usize,
         indent_allowed: bool,
         remove_indent: bool,
@@ -614,7 +614,7 @@ impl <'source> Parser <'source> {
     /// Determines the minimum level of indentation
     /// and uses it as a reference for ending the block.
     fn read_indented_block(
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         start_line: usize,
         until_blank: bool,
         strip_indent: bool,
@@ -757,7 +757,7 @@ impl <'source> Parser <'source> {
 
     /// Scans the source lines until it finds a non-empty line and returns the `Option`al indent of it.
     fn indent_on_subsequent_lines(
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         mut current_line: usize,
     ) -> Option<(usize, usize)> {
         loop {
@@ -806,7 +806,7 @@ impl <'source> Parser <'source> {
 
     /// Increments the given line cursor while empty lines are found.
     /// Returns the number of lines skipped.
-    fn skip_empty_lines(src_lines: &Vec<String>, line_cursor: &mut LineCursor) -> usize {
+    fn skip_empty_lines(src_lines: &[String], line_cursor: &mut LineCursor) -> usize {
         let mut lines_skipped = 0 as usize;
 
         while let Some(line) = src_lines.get(line_cursor.relative_offset()) {
@@ -830,7 +830,7 @@ impl <'source> Parser <'source> {
     /// This is mainly useful with markup elements like footnotes, citations and field list items,
     /// that decide their body indentation based on the line directly after their respecive markup marker.
     fn indent_from_next_line (
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         base_indent: usize,
         marker_indent: usize,
         indent_after_marker: usize,

@@ -8,7 +8,7 @@ use super::*;
 
 /// Simply adds an empty line to the children of the curren node.
 pub fn empty_line(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

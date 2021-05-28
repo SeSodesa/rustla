@@ -7,7 +7,7 @@ use super::*;
 
 /// Creates FieldListItems, if parameters such as detected indentation and such match with the parent node ones.
 pub fn field_marker(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

@@ -30,7 +30,7 @@ use crate::parser::types_and_aliases::IndentedBlockResult;
 use crate::parser::types_and_aliases::TextBlockResult;
 
 pub fn parse_standard_admonition(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     body_indent: usize,
     section_level: usize,
     first_indent: usize,
@@ -165,7 +165,7 @@ pub fn parse_standard_admonition(
 /// 2. then checks for possible options and
 /// 3. focuses on the admonition itself.
 pub fn parse_generic_admonition(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     empty_after_marker: bool,
@@ -226,7 +226,7 @@ pub fn parse_generic_admonition(
 }
 
 pub fn parse_image(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     empty_after_marker: bool,
@@ -314,7 +314,7 @@ pub fn parse_image(
 }
 
 pub fn parse_figure(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -454,7 +454,7 @@ pub fn parse_parsed_literal() {
 
 /// The "code" directive parser.
 pub fn parse_code(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -535,7 +535,7 @@ pub fn parse_code(
 
 /// The display math parser. Content blocks separated by a blank lines are put in adjacent math blocks.
 pub fn parse_math_block(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     body_indent: usize,
@@ -717,7 +717,7 @@ pub fn parse_csv_table() {
 }
 
 pub fn parse_list_table(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -1066,7 +1066,7 @@ pub fn parse_meta() {
 /// Parses in "include" directive for its argument and options.
 /// Generates an "include" node in the parse tree with the given options.
 pub fn parse_include(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -1220,7 +1220,7 @@ pub fn parse_raw() {
 }
 
 pub fn parse_class(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -1378,7 +1378,7 @@ pub fn parse_sphinx_highlight() {
 /// A parser for the Sphinx-specific `code-block` directive. See https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block
 /// for explanations of different settings and arguments.
 pub fn parse_sphinx_code_block(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -1560,7 +1560,7 @@ pub fn parse_sphinx_index() {
 }
 
 pub fn parse_sphinx_only(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     empty_after_marker: bool,
@@ -1633,7 +1633,7 @@ pub fn parse_sphinx_productionlist() {
 // ========================
 
 pub fn parse_aplus_questionnaire(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -1747,7 +1747,7 @@ pub fn parse_aplus_questionnaire(
 
 /// A `pick-one` type questionnaire question parser.
 pub fn parse_aplus_pick_one(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -2179,7 +2179,7 @@ pub fn parse_aplus_pick_one(
 
 /// A `pick-any` type questionnaire question parser.
 pub fn parse_aplus_pick_any(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -2626,7 +2626,7 @@ pub fn parse_aplus_pick_any(
 
 /// A `freetext` type questionnaire question parser.
 pub fn parse_aplus_freetext(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -2964,7 +2964,7 @@ pub fn parse_aplus_freetext(
 }
 
 pub fn parse_aplus_submit(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     first_indent: usize,
@@ -3199,7 +3199,7 @@ pub fn parse_aplus_toctree() {
 }
 
 pub fn parse_aplus_active_element_input(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -3329,7 +3329,7 @@ pub fn parse_aplus_active_element_input(
 
 /// Parses an A+ active element output directive into the respective node
 pub fn parse_aplus_active_element_output(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -3500,7 +3500,7 @@ pub fn parse_aplus_hidden_block() {
 
 /// Add support for the row and column directives introduced in November 2020.
 pub fn parse_aplus_point_of_interest(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     mut doctree: DocTree,
     line_cursor: &mut LineCursor,
     base_indent: usize,
@@ -3646,7 +3646,7 @@ pub fn parse_aplus_embedded_page() {
 /// Parses unknown directive blocks as literal text.
 pub fn parse_unknown_directive(
     mut doctree: DocTree,
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     line_cursor: &mut LineCursor,
     directive_name: &str,
     first_line_indent: usize,
@@ -3742,7 +3742,7 @@ pub fn parse_unknown_directive(
 /// allows specifying first and block indents separately.
 /// `first_indent` (on the first line) or `block_indent` are ignored on each line.
 fn scan_directive_arguments(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     line_cursor: &mut LineCursor,
     body_indent: usize,
     first_indent: Option<usize>,
@@ -3812,7 +3812,7 @@ fn scan_directive_arguments(
 /// will terminate the scan. This means that the options have to start of the line following
 /// the directive marker.
 fn scan_directive_options(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     line_cursor: &mut LineCursor,
     body_indent: usize,
 ) -> Option<HashMap<String, String>> {

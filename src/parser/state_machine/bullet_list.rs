@@ -11,7 +11,7 @@ use super::*;
 /// in that this detects whether a list of a different type has started
 /// and acts accordingly.
 pub fn bullet(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

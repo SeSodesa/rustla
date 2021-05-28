@@ -12,7 +12,7 @@ use crate::parser::types_and_aliases::IndentedBlockResult;
 /// `BulletList` on top of its machine stack. Leaves the reponsibility
 /// of the actual parsing to that state.
 pub fn bullet(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -92,7 +92,7 @@ pub fn bullet(
 /// That responsibility is on the corresponding enumerator method
 /// of the `EnumeratedList` state.
 pub fn enumerator(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -208,7 +208,7 @@ pub fn enumerator(
 
 /// A transitioin function for handling detected field markers in a state that generates body type nodes.
 pub fn field_marker(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -281,7 +281,7 @@ pub fn field_marker(
 
 /// A transition function for generating footnotes
 pub fn footnote(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -425,7 +425,7 @@ pub fn footnote(
 
 /// A transition function for generating citations
 pub fn citation(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -535,7 +535,7 @@ pub fn citation(
 
 /// Parses a hyperlink target into a node.
 pub fn hyperlink_target(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -735,7 +735,7 @@ pub fn hyperlink_target(
 
 /// A transition function for parsing directives in a state that recognizes body elements.
 pub fn directive(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -1494,7 +1494,7 @@ pub fn directive(
 
 /// A function for parsing reST comments.
 pub fn comment(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -1606,7 +1606,7 @@ pub fn comment(
 /// This includes paragraphs, but also underlined titles and definition lists.
 /// The latter are detected via lookahead.
 pub fn text(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -1813,7 +1813,7 @@ pub fn text(
 
 /// Parses reStructuredText transitions and section titles prefixed with an overline.
 pub fn line(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -2166,7 +2166,7 @@ pub fn detected_footnote_label_to_ref_label(
 
 /// A helper for parsing a paragraph node.
 fn parse_paragraph(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     line_cursor: &mut LineCursor,
     mut doctree: DocTree,

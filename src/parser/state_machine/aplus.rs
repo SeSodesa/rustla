@@ -8,7 +8,7 @@ use super::*;
 
 /// Parses an A+ col break, found in Points of Interest nodes (deprecated).
 pub fn aplus_col_break(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,

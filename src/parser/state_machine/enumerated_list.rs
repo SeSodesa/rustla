@@ -8,7 +8,7 @@ use super::*;
 
 /// Parses enumerated list items inside enumerated lists.
 pub fn enumerator(
-    src_lines: &Vec<String>,
+    src_lines: &[String],
     base_indent: usize,
     section_level: &mut usize,
     line_cursor: &mut LineCursor,
@@ -50,7 +50,7 @@ pub fn enumerator(
 
     // Ceck validity of list item
     if ! Parser::is_enumerated_list_item(
-        src_lines,
+        &src_lines[..],
         line_cursor,
         captures,
         section_level,

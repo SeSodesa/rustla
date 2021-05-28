@@ -289,7 +289,7 @@ impl <'source> Parser <'source> {
     /// Either the following line has to be blank, indented or the next enumerator in
     /// the current list has to be constructable from it.
     fn is_enumerated_list_item(
-        src_lines: &Vec<String>,
+        src_lines: &[String],
         line_cursor: &mut LineCursor,
         captures: &regex::Captures,
         section_level: &mut usize,
