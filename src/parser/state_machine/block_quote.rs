@@ -34,7 +34,7 @@ pub fn attribution(
 
             let line_after_marker = Parser::line_suffix(current_line, match_len - base_indent);
 
-            let empty_after_marker = line_after_marker.as_str().trim().is_empty();
+            let empty_after_marker = line_after_marker.trim().is_empty();
 
             let first_indent = if empty_after_marker {
                 None

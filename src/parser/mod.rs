@@ -778,44 +778,30 @@ impl <'source> Parser <'source> {
     }
 
     /// Takes characters from a given string, until a given index, or until a newline is encountered.
-    fn line_prefix(line: &str, end_index: usize) -> String {
-        let prefix = line
-            .chars()
-            .enumerate()
-            .take_while(|(i, c)| *c == '\n' || *i < end_index)
-            .map(|(i, c)| c)
-            .collect::<String>();
-
-        if prefix.chars().count() < end_index {
+    fn line_prefix(line: &str, end_index: usize) -> &str {
+        let mut line_chars = line.chars();
+        let overflew = match &mut line_chars.nth_back(end_index - 1) {
+            Some(_) => false,
+            None => true
+        };
+        if overflew {
             eprintln!("Encountered a newline or line shorter than given...")
         }
-
-        prefix
+        line_chars.as_str()
     }
 
     /// Skips the first `start_index` characters of the given `line`
     /// and returns the remainder as a string. If a new
-    fn line_suffix(line: &str, start_index: usize) -> String {
-        let suffix_len = match line.chars().count().checked_sub(start_index) {
-            Some(len) => len,
-            None => {
-                panic!("Cannot scan line suffix whose start index is greater than the line length")
-            }
+    fn line_suffix(line: &str, start_index: usize) -> &str {
+        let mut line_chars = line.chars();
+        let overflew = match &mut line_chars.nth(start_index - 1) {
+            Some(_) => false,
+            None => true
         };
-
-        let suffix = line
-            .chars()
-            .enumerate()
-            .skip_while(|(i, c)| *c == '\n' || *i < start_index)
-            .map(|(i, c)| c)
-            .collect::<String>();
-
-        if suffix.chars().count() > suffix_len {
-            eprintln!("Encountered a newline before reaching suffix. Returning an empty string...");
-            String::new()
-        } else {
-            suffix
+        if overflew {
+            eprintln!("Encountered a newline or line shorter than given...")
         }
+        line_chars.as_str()
     }
 
     /// Increments the given line cursor while empty lines are found.
