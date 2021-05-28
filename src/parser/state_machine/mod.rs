@@ -191,9 +191,7 @@ impl State {
 
     /// Takes in a reference/slice to an associated array of uncompiled transitions
     /// and compiles the regex patterns found. Returns a `Vec<Transition>` with compiled state machines
-    /// in palce of the regex patterns.
-    ///
-    /// Error handling needs to be added.
+    /// in place of the regex patterns.
     fn compile_state_transitions(transitions: &[UncompiledTransition]) -> Vec<Transition> {
         let mut compiled_transitions = Vec::with_capacity(transitions.len());
 
