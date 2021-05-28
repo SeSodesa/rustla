@@ -189,7 +189,7 @@ impl <'source> Parser <'source> {
             };
 
             // Iterate over the retrieved transitions
-            for (pattern_name, regex, method) in latest_state_transitions.iter() {
+            for (pattern_name, regex, transition_function) in latest_state_transitions.iter() {
                 // Fetching a reference to current line
                 let src_line: &str = match Parser::get_source_from_line(&self.src_lines, self.line_cursor.relative_offset()) {
                     Some(line) => line,
@@ -219,7 +219,7 @@ impl <'source> Parser <'source> {
                         )
                     };
                     // Call transition function related to recognised pattern
-                    self.doctree = match method(
+                    self.doctree = match transition_function(
                         &self.src_lines,
                         self.base_indent,
                         &mut self.section_level,
